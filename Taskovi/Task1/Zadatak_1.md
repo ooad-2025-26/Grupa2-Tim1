@@ -1,5 +1,5 @@
-PRVI PROJEKTNI ZADATAK
-ODABIR TEME I SPECIFIKACIJA PROJEKTA
+# PRVI PROJEKTNI ZADATAK
+## ODABIR TEME I SPECIFIKACIJA PROJEKTA
 
 Svi projektni zadaci uploaduju se na repozitorij tima. Svaki tim treba odabrati željenu temu projekta. 
 
