@@ -3,4 +3,4 @@
 
 Svi projektni zadaci uploaduju se na repozitorij tima. Svaki tim treba odabrati željenu temu projekta. 
 
-Nakon odabira, potrebno je razraditi formalnu specifikaciju projekta (template za specifikaciju projekta nalazi se u file-u Specifikacija projekta.docx) imajući u vidu različite zahtjeve koji su definisani u dokumentu BodovanjeProjektnogZadatka.
+Nakon odabira, potrebno je razraditi formalnu specifikaciju projekta (template za specifikaciju projekta nalazi se u file-u Specifikacija projekta.docx) imajući u vidu različite zahtjeve koji su definisani u dokumentu *BodovanjeProjektnogZadatka*.
