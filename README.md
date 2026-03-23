@@ -1,4 +1,4 @@
-# ✈️ InterTrips – Turistička Agencija 🌍
+# ✈️ InterTrips - Turistička Agencija 🌍
 <img width="438" height="283" alt="image" src="https://github.com/user-attachments/assets/d2d97bfc-5d9e-4676-845d-1460f6837ef3" />
 
 Sistem za upravljanje turističkom agencijom koji omogućava rezervaciju putovanja, upravljanje paketima i finansijama te generisanje planova putovanja.
@@ -36,7 +36,7 @@ Korisnici mogu pregledati dostupne destinacije, rezervisati putovanja i pratiti 
 
 
 
-**Univerzitet u Sarajevu – Elektrotehnički fakultet**
+**Univerzitet u Sarajevu - Elektrotehnički fakultet**
 
 *Objektno orijentisana analiza i dizajn*
 
