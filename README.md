@@ -1,14 +1,16 @@
 # ✈️ InterTrips - Turistička Agencija 🌍
-<img width="438" height="283" alt="image" src="https://github.com/user-attachments/assets/d2d97bfc-5d9e-4676-845d-1460f6837ef3" />
 
-Sistem za upravljanje turističkom agencijom koji omogućava rezervaciju putovanja, upravljanje paketima i finansijama te generisanje planova putovanja.
+**Sistem za upravljanje turističkom agencijom koji omogućava rezervaciju putovanja, upravljanje paketima i finansijama te generisanje planova putovanja.**
 
-## O Projektu
+![InterTrips Logo](https://github.com/user-attachments/assets/d2d97bfc-5d9e-4676-845d-1460f6837ef3)
 
-**InterTrips** je informacioni sistem koji omogućava korisnicima pregled i rezervaciju turističkih paketa, upravljanje plaćanjima i komunikaciju sa agentima.
+---
 
-Korisnici mogu pregledati dostupne destinacije, rezervisati putovanja i pratiti status svojih rezervacija. Sistem također omogućava automatsko generisanje planova putovanja i slanje e-mail potvrda i podsjetnika.
+##  O Projektu
 
+**InterTrips** je informatički sistem namijenjen upravljanju poslovnim procesima turističke agencije. Sistem omogućava klijentima pregledavanje raznovrsnih turističkih paketa, rezervaciju putovanja, upravljanje plaćanjima i komunikaciju sa agentima. Agenti mogu kreirati i upravljati turističkim paketima s detaljnim informacijama o destinacijama, hotelima, letovima i aktivnostima. Sistem automatski šalje e-mail potvrde i podsjetnike, te omogućava kompletno praćenje rezervacija. Sistem generiše analitiku i izvještaje o prodaji, popularnosti destinacija i efikasnosti agencije.
+
+---
 ## Tim
 
 **Nastavna grupa:** Grupa 2-Tim1, RI
@@ -39,8 +41,4 @@ Korisnici mogu pregledati dostupne destinacije, rezervisati putovanja i pratiti 
 **Univerzitet u Sarajevu - Elektrotehnički fakultet**
 
 *Objektno orijentisana analiza i dizajn*
-
-
-
-
 
