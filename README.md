@@ -38,7 +38,7 @@
 
 
 
-**Univerzitet u Sarajevu - Elektrotehnički fakultet**
+**Elektrotehnički fakultet Univerzitet**
 
 *Objektno orijentisana analiza i dizajn*
 
