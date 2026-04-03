@@ -29,8 +29,8 @@
 
 | Korisnik | Tip | Opis | Funkcionalnosti |
 |---|---|---|---|
-| **Klijent / Turist** | Korisnik | Koristi sistem za rezervaciju putovanja i plaćanja | Pregled paketa, rezervacija, plaćanja, preporuke, analitika |
-| **Turistički Agent** | Zaposlenik | Upravlja paketima i rezervacijama | Upravljanje paketima, rezervacije, upravljanje dobavljačima, notifikacije |
+| **Klijent / Turist** | Korisnik | Koristi sistem za rezervaciju putovanja i plaćanja | Pregled paketa, rezervacija, plaćanja|
+| **Turistički Agent** | Zaposlenik | Upravlja paketima i rezervacijama | Upravljanje paketima, rezervacije |
 | **Administrator** | Administrator | Kontroliše cijeli sistem i pristupa svim funkcijama | Sve funkcionalnosti sa mogućnošću editovanja |
 
 ---
