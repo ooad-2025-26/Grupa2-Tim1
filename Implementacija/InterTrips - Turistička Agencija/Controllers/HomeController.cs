@@ -11,15 +11,19 @@ namespace InterTrips___Turistička_Agencija.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Kontakt()
         {
-            return View();
+            return View("~/Views/Home/Kontakt.cshtml");
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult ONama()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View("~/Views/Home/ONama.cshtml");
+        }
+
+        public IActionResult Privacy()
+        {
+            return View("~/Views/Home/Privacy.cshtml");
         }
     }
 }
