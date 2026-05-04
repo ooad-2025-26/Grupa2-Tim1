@@ -8,7 +8,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
         [HttpGet("")]
         public IActionResult Index()
         {
-            return View("Index"); /
+            return View("Index"); 
         }
     }
 }
