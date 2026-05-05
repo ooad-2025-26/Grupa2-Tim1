@@ -1,0 +1,713 @@
+@{
+    Layout = "_LayoutRaw";
+}
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InterTrips - Turističke destinacije</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #eaf7f7;
+      --bg-soft: #f6fcfc;
+      --card: rgba(255,255,255,0.82);
+      --line: rgba(95,181,187,0.16);
+      --primary: #2aa9b0;
+      --primary-dark: #1e7f88;
+      --accent: #86d9ff;
+      --text: #24414a;
+      --muted: #5f7c86;
+      --shadow: 0 16px 36px rgba(63,116,128,0.10);
+      --field: rgba(255,255,255,0.92);
+      --success: #36d399;
+      --danger: #ff8fa3;
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{
+      font-family:'Poppins',sans-serif;
+      background: linear-gradient(180deg, #edfafa 0%, #e2f4f5 45%, #f8fdfd 100%);
+      color:var(--text);
+      min-height:100vh;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    button,input{ font:inherit; }
+
+    .topbar{
+      height:56px;
+      background: rgba(255,255,255,0.82);
+      border-bottom:1px solid rgba(95,181,187,0.14);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 26px;
+      position:sticky;
+      top:0;
+      z-index:50;
+      backdrop-filter: blur(10px);
+    }
+
+    .logo-link{ display:inline-block; }
+    .logo{
+      width:80px;
+      height:40px;
+      object-fit:contain;
+      display:block;
+    }
+
+    .nav{
+      display:flex;
+      align-items:center;
+      gap:20px;
+      font-size:12px;
+      font-weight:600;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .nav a{ color:rgba(36,65,74,0.88); }
+    .nav a.active{ color:var(--primary-dark); }
+
+    .nav .pill{
+      padding:6px 14px;
+      border-radius:999px;
+      border:1px solid var(--primary);
+      color:var(--primary-dark);
+      background:rgba(125,207,207,0.08);
+    }
+
+    .nav .fill{
+      padding:6px 14px;
+      border-radius:999px;
+      background: linear-gradient(135deg, #7dcfcf, #a7d8ff);
+      color:#18424a;
+    }
+
+    .hero{
+      min-height:280px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      background:
+        linear-gradient(rgba(125,207,207,0.16), rgba(167,216,255,0.18)),
+        url('/assets/destinations-hero.jpg') center/cover no-repeat;
+      border-bottom:1px solid rgba(95,181,187,0.10);
+      padding:40px 18px;
+    }
+
+    .hero > div{
+      background: rgba(255,255,255,0.68);
+      border: 1px solid rgba(95,181,187,0.14);
+      padding: 28px 24px;
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+      max-width: 760px;
+    }
+
+    .tag{
+      display:inline-block;
+      padding:5px 14px;
+      border:1px solid rgba(95,181,187,0.35);
+      border-radius:999px;
+      color:var(--primary-dark);
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.6px;
+      margin-bottom:14px;
+      background:rgba(125,207,207,0.10);
+    }
+
+    .hero h1{
+      font-size:clamp(2.2rem, 5vw, 3.8rem);
+      line-height:1.05;
+      font-weight:800;
+      margin-bottom:12px;
+      color:var(--text);
+    }
+
+    .hero h1 span{ color:var(--primary-dark); }
+
+    .hero p{
+      max-width:700px;
+      margin:0 auto;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .section{
+      padding:28px 24px 56px;
+    }
+
+    .container{
+      max-width:1180px;
+      margin:0 auto;
+    }
+
+    .filters{
+      display:flex;
+      justify-content:space-between;
+      gap:18px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom:18px;
+    }
+
+    .search{
+      width:290px;
+      max-width:100%;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:rgba(255,255,255,0.84);
+      border:1px solid rgba(95,181,187,0.18);
+      border-radius:999px;
+      padding:0 14px;
+      height:40px;
+      box-shadow: var(--shadow);
+    }
+
+    .search input{
+      width:100%;
+      background:transparent;
+      border:none;
+      outline:none;
+      color:var(--text);
+      font-size:13px;
+    }
+
+    .chip-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .chip{
+      border:1px solid rgba(95,181,187,0.18);
+      background:rgba(255,255,255,0.75);
+      color:rgba(36,65,74,0.82);
+      border-radius:999px;
+      padding:7px 14px;
+      font-size:12px;
+      cursor:pointer;
+    }
+
+    .chip.active{
+      background: linear-gradient(135deg, #7dcfcf, #a7d8ff);
+      color:#18424a;
+      border-color:transparent;
+      font-weight:700;
+    }
+
+    .section-title{
+      margin:22px 0 20px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .section-title strong{
+      color:var(--primary-dark);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:18px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid rgba(95,181,187,0.14);
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      min-height:100%;
+    }
+
+    .card img{
+      width:100%;
+      height:210px;
+      object-fit:cover;
+      display:block;
+    }
+
+    .card-body{
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      flex:1;
+    }
+
+    .card-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+
+    .tag-small{
+      display:inline-block;
+      background:rgba(125,207,207,0.12);
+      border:1px solid rgba(95,181,187,0.16);
+      color:var(--primary-dark);
+      border-radius:999px;
+      padding:4px 10px;
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .rating{
+      background:rgba(30,127,136,0.10);
+      color:var(--primary-dark);
+      border-radius:999px;
+      padding:4px 10px;
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .card h3{
+      font-size:18px;
+      margin-top:2px;
+      color:var(--text);
+    }
+
+    .country{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .desc{
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.7;
+      min-height:54px;
+    }
+
+    .price-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:12px;
+      margin-top:auto;
+      padding-top:10px;
+    }
+
+    .price-row .from{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .price{
+      color:var(--primary-dark);
+      font-size:22px;
+      font-weight:800;
+      line-height:1;
+    }
+
+    .status{
+      display:inline-block;
+      margin-top:6px;
+      font-size:11px;
+      font-weight:700;
+      padding:4px 10px;
+      border-radius:999px;
+      width:fit-content;
+    }
+
+    .status.available{
+      background:rgba(54,211,153,0.12);
+      color:#1f8f68;
+      border:1px solid rgba(54,211,153,0.25);
+    }
+
+    .status.soldout{
+      background:rgba(255,143,163,0.12);
+      color:#c04f67;
+      border:1px solid rgba(255,143,163,0.25);
+    }
+
+    .reserve-btn{
+      margin-top:10px;
+      width:100%;
+      height:44px;
+      border:none;
+      border-radius:12px;
+      background: linear-gradient(135deg, #7dcfcf, #a7d8ff);
+      color:#18424a;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .reserve-btn:hover{
+      filter:brightness(1.03);
+    }
+
+    .newsletter {
+      margin-top: 60px;
+      padding: 28px 24px;
+      border-top: 1px solid rgba(95,181,187,0.12);
+      border-bottom: 1px solid rgba(95,181,187,0.12);
+      background: rgba(255,255,255,0.60);
+    }
+
+    .newsletter > div:first-child {
+      margin-bottom: 18px;
+    }
+
+    .newsletter h3 {
+      font-size: 22px;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .newsletter p {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .newsletter-form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .newsletter-form input {
+      min-width: 260px;
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid rgba(95,181,187,0.18);
+      background: rgba(255,255,255,0.92);
+      color: var(--text);
+      padding: 0 16px;
+      outline: none;
+    }
+
+    .newsletter-form input::placeholder {
+      color: rgba(95,124,134,0.7);
+    }
+
+    .newsletter-form button {
+      height: 40px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #7dcfcf, #a7d8ff);
+      color: #18424a;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .newsletter-form button:hover {
+      filter: brightness(1.03);
+    }
+
+    #newsletterMessage {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    .footer{
+      padding:34px 24px 24px;
+      background: linear-gradient(180deg, #eefbfb 0%, #e0f4f4 100%);
+    }
+
+    .footer-grid{
+      display:grid;
+      grid-template-columns:1.5fr 1fr 1fr 1fr;
+      gap:24px;
+      align-items:start;
+    }
+
+    .footer .logo{ margin-bottom:14px; }
+
+    .footer p, .footer a{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.8;
+    }
+
+    .footer h4{
+      color:var(--primary-dark);
+      font-size:11px;
+      margin-bottom:12px;
+      text-transform:uppercase;
+      letter-spacing:.7px;
+    }
+
+    .copyright{
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-top:22px;
+      padding-top:16px;
+      border-top:1px solid rgba(95,181,187,0.12);
+      color:var(--muted);
+      font-size:11px;
+    }
+
+    @@media (max-width: 980px){
+      .grid, .footer-grid{ grid-template-columns:1fr 1fr; }
+    }
+
+    @@media (max-width: 700px){
+      .grid, .footer-grid{ grid-template-columns:1fr; }
+      .section{ padding:22px 16px 48px; }
+      .topbar{ padding:0 14px; flex-direction:column; height:auto; gap:10px; padding-top:10px; padding-bottom:10px; }
+      .newsletter-form input{ min-width:100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a asp-controller="Home" asp-action="Index" class="logo-link">
+        <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+    </a>
+
+    <nav class="nav">
+        <a asp-controller="Home" asp-action="Index">Početna</a>
+        <a class="active" asp-controller="Destinacije" asp-action="Index">Destinacije</a>
+        <a asp-controller="Home" asp-action="ONama">O nama</a>
+        <a asp-controller="Home" asp-action="Kontakt">Kontakt</a>
+        <a class="pill" asp-controller="Rezervacija" asp-action="Index">Rezerviraj</a>
+        <a class="fill" asp-controller="Korisnik" asp-action="Login">Prijava</a>
+    </nav>
+</header>
+
+  <section class="hero">
+    <div>
+      <div class="tag">TURISTIČKE DESTINACIJE</div>
+      <h1>Pregled <span>destinacija</span></h1>
+      <p>Odaberite destinaciju putovanja, pogledajte cijenu, trajanje i dostupnost, te nastavite na proces rezervacije.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="filters">
+        <div class="search">
+          <span style="color:var(--primary-dark); font-size:14px;">⌕</span>
+          <input type="text" placeholder="Pretražite pakete...">
+        </div>
+
+        <div class="chip-row">
+          <button class="chip active">Sve destinacije</button>
+        </div>
+      </div>
+
+      <div class="section-title">Prikazano <strong>6</strong> turističkih paketa</div>
+
+      <div class="grid">
+        <article class="card">
+          <img src="~/assets/destination1.jpg" alt="Santorini paket">
+          <div class="card-body">
+            <div class="card-top">
+              <span class="tag-small">Beach</span>
+              <span class="rating">★ 4.9</span>
+            </div>
+            <h3>Santorini paket</h3>
+            <div class="country">Grčka • 7 noći</div>
+            <div class="desc">Let + hotel + doručak. Idealno za odmor na Egejskom moru.</div>
+            <div class="status available">Dostupan</div>
+            <div class="price-row">
+              <div class="from">Od</div>
+              <div class="price">$1,299</div>
+            </div>
+           <button class="reserve-btn"
+        onclick="window.location.href='/Rezervacija/Rezervacija'">
+    Rezerviši paket
+</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="~/assets/destination2.jpg" alt="Kyoto paket">
+          <div class="card-body">
+            <div class="card-top">
+              <span class="tag-small">Cultural</span>
+              <span class="rating">★ 4.8</span>
+            </div>
+            <h3>Kyoto paket</h3>
+            <div class="country">Japan • 8 noći</div>
+            <div class="desc">Drevni hramovi, lokalna kultura i organizovan boravak.</div>
+            <div class="status available">Dostupan</div>
+            <div class="price-row">
+              <div class="from">Od</div>
+              <div class="price">$1,850</div>
+            </div>
+<button class="reserve-btn"
+        onclick="window.location.href='/Rezervacija/Rezervacija'">
+    Rezerviši paket
+</button>          </div>
+        </article>
+
+        <article class="card">
+          <img src="~/assets/destination3.jpg" alt="Machu Picchu paket">
+          <div class="card-body">
+            <div class="card-top">
+              <span class="tag-small">Adventure</span>
+              <span class="rating">★ 4.9</span>
+            </div>
+            <h3>Machu Picchu paket</h3>
+            <div class="country">Peru • 9 noći</div>
+            <div class="desc">Avanturistički paket sa organizovanim prevozom i obilascima.</div>
+            <div class="status available">Dostupan</div>
+            <div class="price-row">
+              <div class="from">Od</div>
+              <div class="price">$2,100</div>
+            </div>
+<button class="reserve-btn"
+        onclick="window.location.href='/Rezervacija/Rezervacija'">
+    Rezerviši paket
+</button>          </div>
+        </article>
+
+        <article class="card">
+          <img src="~/assets/destination4.jpg" alt="Dubai paket">
+          <div class="card-body">
+            <div class="card-top">
+              <span class="tag-small">City</span>
+              <span class="rating">★ 4.7</span>
+            </div>
+            <h3>Dubai paket</h3>
+            <div class="country">UAE • 6 noći</div>
+            <div class="desc">Luksuzni gradski odmor sa hotelom, transferom i letom.</div>
+            <div class="status available">Dostupan</div>
+            <div class="price-row">
+              <div class="from">Od</div>
+              <div class="price">$1,560</div>
+            </div>
+<button class="reserve-btn"
+        onclick="window.location.href='/Rezervacija/Rezervacija'">
+    Rezerviši paket
+</button>          </div>
+        </article>
+
+        <article class="card">
+          <img src="~/assets/destination5.jpg" alt="Paris paket">
+          <div class="card-body">
+            <div class="card-top">
+              <span class="tag-small">City</span>
+              <span class="rating">★ 4.8</span>
+            </div>
+            <h3>Paris paket</h3>
+            <div class="country">Francuska • 5 noći</div>
+            <div class="desc">Romantični gradski paket sa slobodnim vremenom i vodičem.</div>
+            <div class="status soldout">Rasprodano</div>
+            <div class="price-row">
+              <div class="from">Od</div>
+              <div class="price">$1,420</div>
+            </div>
+<button class="reserve-btn"
+        onclick="window.location.href='/Rezervacija/Rezervacija'">
+    Rezerviši paket
+</button>          </div>
+        </article>
+
+        <article class="card">
+          <img src="~/assets/destination6.jpg" alt="Bali paket">
+          <div class="card-body">
+            <div class="card-top">
+              <span class="tag-small">Relax</span>
+              <span class="rating">★ 4.9</span>
+            </div>
+            <h3>Bali paket</h3>
+            <div class="country">Indonezija • 10 noći</div>
+            <div class="desc">Tropski odmor sa hotelom, prevozom i planom putovanja.</div>
+            <div class="status available">Dostupan</div>
+            <div class="price-row">
+              <div class="from">Od</div>
+              <div class="price">$1,980</div>
+            </div>
+<button class="reserve-btn"
+        onclick="window.location.href='/Rezervacija/Rezervacija'">
+    Rezerviši paket
+</button>          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="newsletter">
+    <div>
+      <span class="section-label">NEWSLETTER</span>
+      <h3>Budite prvi koji saznaju o novim ponudama</h3>
+      <p>Prijavite se i pratite nove turističke pakete, popuste i obavještenja.</p>
+    </div>
+
+    <form class="newsletter-form" id="newsletterForm">
+      <input type="email" placeholder="Unesite Vašu e-mail adresu" required />
+      <button type="submit" class="btn btn-gold">Pretplatite se</button>
+    </form>
+
+    <p id="newsletterMessage" style="margin-top:12px; font-size:13px; color:#2aa9b0; font-weight:600; display:none;"></p>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="/" class="logo-link">
+            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+          </a>
+          <p>Pregledajte i rezervišite turističke pakete uz InterTrips.</p>
+        </div>
+
+        <div>
+          <h4>Istraži</h4>
+          <p><a href="/destinacije">Destinacije</a></p>
+          <p><a href="#">Putni vodiči</a></p>
+          <p><a href="#">Najbolja iskustva</a></p>
+          <p><a href="#">Skriveni dragulji</a></p>
+        </div>
+
+        <div>
+          <h4>Kompanija</h4>
+          <p><a href="/Home/About">O nama</a></p>
+          <p><a href="karijere.html">Karijere</a></p>
+          <p><a href="/Home/Contact">Kontakt</a></p>
+        </div>
+
+        <div>
+          <h4>Podrška</h4>
+          <p><a href="#">Centar za pomoć</a></p>
+          <p><a href="#">Politika privatnosti</a></p>
+          <p><a href="#">Uvjeti korištenja</a></p>
+          <p><a href="#">Politika kolačića</a></p>
+        </div>
+      </div>
+
+      <div class="copyright">
+        <div>© 2026 InterTrips. Sva prava zadržana.</div>
+        <div>Napravljen s ❤ za putnike širom svijeta</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const newsletterForm = document.getElementById('newsletterForm');
+    const newsletterMessage = document.getElementById('newsletterMessage');
+
+    newsletterForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      newsletterMessage.style.display = 'block';
+      newsletterMessage.textContent = 'Hvala Vam na pretplati. InterTrips tim vam šalje najbolje ponude.';
+      newsletterForm.reset();
+    });
+  </script>
+</body>
+</html>

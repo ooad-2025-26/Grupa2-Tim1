@@ -1,0 +1,614 @@
+@{
+    ViewData["Title"] = "InterTrips - Kontakt";
+    Layout = null; 
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"]</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
+  <style>
+    .topbar{
+      height:56px;
+      background: rgba(255,255,255,0.82);
+      border-bottom:1px solid rgba(95,181,187,0.14);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 26px;
+      position:sticky;
+      top:0;
+      z-index:50;
+      backdrop-filter: blur(10px);
+    }
+
+    .logo-link{ display:inline-block; }
+    .logo{
+      width:80px;
+      height:40px;
+      object-fit:contain;
+      display:block;
+    }
+
+    .nav{
+      display:flex;
+      align-items:center;
+      gap:20px;
+      font-size:12px;
+      font-weight:600;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .nav a{ color:rgba(36,65,74,0.88); }
+    .nav a.active{ color:var(--primary-dark); }
+
+    .nav .pill{
+      padding:6px 14px;
+      border-radius:999px;
+      border:1px solid var(--primary);
+      color:var(--primary-dark);
+      background:rgba(125,207,207,0.08);
+    }
+
+    .nav .fill{
+      padding:6px 14px;
+      border-radius:999px;
+      background: linear-gradient(135deg, #7dcfcf, #a7d8ff);
+      color:#18424a;
+    }
+
+    .hero{
+      min-height:220px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      background:
+        linear-gradient(rgba(106,191,198,0.18), rgba(134,191,224,0.14)),
+        url('/assets/contact-hero.jpg') center/cover no-repeat;
+      border-bottom:1px solid rgba(95,181,187,0.12);
+    }
+
+    .hero .inner{
+      max-width:780px;
+      padding:40px 18px;
+      background: rgba(255,255,255,0.68);
+      border: 1px solid rgba(95,181,187,0.16);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero p{
+      color: var(--muted);
+    }
+
+    .section{
+      padding:56px 24px;
+    }
+
+    .container{
+      max-width:1140px;
+      margin:0 auto;
+    }
+
+    .info-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+      margin-top:-30px;
+    }
+
+    .info-card{
+      background:rgba(255,255,255,0.78);
+      border:1px solid rgba(95,181,187,0.16);
+      border-radius:14px;
+      padding:16px 14px;
+      box-shadow:var(--shadow);
+      min-height:90px;
+    }
+
+    .info-card .ico{
+      width:22px;
+      height:22px;
+      border-radius:7px;
+      border:1px solid rgba(95,181,187,0.35);
+      color:var(--primary-dark);
+      display:grid;
+      place-items:center;
+      font-size:11px;
+      margin-bottom:10px;
+      background: rgba(106,191,198,0.08);
+    }
+
+    .info-card h4{
+      font-size:12px;
+      color:var(--primary-dark);
+      margin-bottom:6px;
+      text-transform:uppercase;
+      letter-spacing:.6px;
+    }
+
+    .info-card p{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+    .contact-layout{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      align-items:start;
+      margin-top:28px;
+    }
+
+    .panel{
+      background:rgba(255,255,255,0.78);
+      border:1px solid rgba(95,181,187,0.16);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+    }
+
+    .panel-pad{ padding:18px; }
+
+    .panel h2{
+      font-size:20px;
+      margin-bottom:4px;
+      color: var(--text);
+    }
+
+    .panel p.sub{
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:18px;
+    }
+
+    .field-label{
+      display:block;
+      font-size:11px;
+      font-weight:700;
+      color:var(--primary-dark);
+      margin:12px 0 8px;
+      letter-spacing:.6px;
+    }
+
+    .input,.textarea{
+      width:100%;
+      background:rgba(255,255,255,0.94);
+      border:1px solid rgba(95,181,187,0.18);
+      color:var(--text);
+      outline:none;
+      border-radius:10px;
+      height:40px;
+      padding:0 14px;
+      font-size:13px;
+    }
+
+    .textarea{
+      height:110px;
+      padding:12px 14px;
+      resize:none;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .topic-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:8px;
+    }
+
+    .topic-option{
+      border:1px solid rgba(95,181,187,0.18);
+      background: rgba(255,255,255,0.78);
+      color:var(--text);
+      border-radius:10px;
+      padding:12px;
+      font-size:12px;
+      cursor:pointer;
+      text-align:left;
+      transition:0.2s ease;
+    }
+
+    .topic-option:hover{
+      border-color:var(--primary-dark);
+      background:rgba(106,191,198,0.10);
+    }
+
+    .topic-option.active{
+      border-color:var(--primary-dark);
+      background:rgba(106,191,198,0.14);
+      color:var(--text);
+    }
+
+    .main-btn{
+      width:100%;
+      height:46px;
+      border:none;
+      border-radius:12px;
+      background: linear-gradient(135deg, #6abfc6, #86bfe0);
+      color:#fff;
+      font-weight:800;
+      cursor:pointer;
+      margin-top:14px;
+    }
+
+    .map{
+      height:228px;
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid rgba(95,181,187,0.12);
+      box-shadow:var(--shadow);
+      background:#eee;
+      margin-bottom:14px;
+    }
+
+    .map iframe{
+      width:100%;
+      height:100%;
+      border:0;
+    }
+
+    .faq{
+      padding:16px 18px;
+    }
+
+    .faq h3{
+      font-size:16px;
+      margin-bottom:12px;
+      color: var(--text);
+    }
+
+    .faq-item{
+      padding:12px 0;
+      border-top:1px solid rgba(95,181,187,0.12);
+    }
+
+    .faq-item:first-of-type{
+      border-top:none;
+      padding-top:0;
+    }
+
+    .faq-item strong{
+      display:block;
+      font-size:12px;
+      color:var(--primary-dark);
+      margin-bottom:4px;
+    }
+
+    .faq-item p{
+      font-size:11px;
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    .hotline{
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:14px;
+      border:1px solid rgba(95,181,187,0.16);
+      background:rgba(106,191,198,0.10);
+      color:var(--text);
+      font-size:12px;
+    }
+
+    .newsletter {
+      margin-top: 60px;
+      padding: 28px 24px;
+      border-top: 1px solid rgba(95,181,187,0.12);
+      border-bottom: 1px solid rgba(95,181,187,0.12);
+      background: rgba(255,255,255,0.70);
+    }
+
+    .newsletter > div:first-child {
+      margin-bottom: 18px;
+    }
+
+    .newsletter h3 {
+      font-size: 22px;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .newsletter p {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .newsletter-form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .newsletter-form input {
+      min-width: 260px;
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid rgba(95,181,187,0.20);
+      background: rgba(255,255,255,0.94);
+      color: var(--text);
+      padding: 0 16px;
+      outline: none;
+    }
+
+    .newsletter-form input::placeholder {
+      color: rgba(95,124,134,0.7);
+    }
+
+    .newsletter-form button {
+      height: 40px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #6abfc6, #86bfe0);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #newsletterMessage {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    .footer{
+      padding:34px 24px 24px;
+      background: linear-gradient(180deg, #d8ecec 0%, #c6e0e4 100%);
+    }
+
+    .footer-grid{
+      display:grid;
+      grid-template-columns:1.5fr 1fr 1fr 1fr;
+      gap:24px;
+      align-items:start;
+    }
+
+    .footer .logo{ margin-bottom:14px; }
+
+    .footer p, .footer a{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.8;
+    }
+
+    .footer h4{
+      color:var(--primary-dark);
+      font-size:11px;
+      margin-bottom:12px;
+      text-transform:uppercase;
+      letter-spacing:.7px;
+    }
+
+    .copyright{
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-top:22px;
+      padding-top:16px;
+      border-top:1px solid rgba(95,181,187,0.12);
+      color:var(--muted);
+      font-size:11px;
+    }
+
+    @@media (max-width: 980px){
+      .info-grid, .contact-layout, .footer-grid{ grid-template-columns:1fr 1fr; }
+    }
+
+    @@media (max-width: 700px){
+      .info-grid, .contact-layout, .footer-grid, .row, .topic-grid{ grid-template-columns:1fr; }
+      .section{ padding:48px 16px; }
+      .topbar{ padding:0 14px; flex-direction:column; height:auto; gap:10px; padding-top:10px; padding-bottom:10px; }
+      .newsletter-form input{ min-width:100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="/" class="logo-link">
+      <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+    </a>
+    <nav class="nav">
+      <a href="/">Početna</a>
+      <a href="/destinacije">Destinacije</a>
+      <a href="/home/onama">O nama</a>
+      <a class="active" href="/home/kontakt">Kontakt</a>
+<a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a>      <a class="fill" href="/korisnik/login">Prijava</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="inner">
+      <div class="tag">KONTAKT INTERTRIPS</div>
+      <h1>Kontaktirajte <em>naš tim</em></h1>
+      <p>Imate pitanje o turističkim paketima, rezervaciji, plaćanju ili planu putovanja?</p>
+      <p>Pišite nam i odgovorićemo u najkraćem mogućem roku.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="ico">📍</div>
+          <h4>Adresa</h4>
+          <p>Ferhadija 12<br>71000 Sarajevo, BiH</p>
+        </div>
+        <div class="info-card">
+          <div class="ico">☎</div>
+          <h4>Telefon</h4>
+          <p>+387 33 123 456<br>+387 61 987 654</p>
+        </div>
+        <div class="info-card">
+          <div class="ico">✉</div>
+          <h4>E-mail</h4>
+          <p>info@intertrips.ba<br>podrska@intertrips.ba</p>
+        </div>
+        <div class="info-card">
+          <div class="ico">⏰</div>
+          <h4>Radno vrijeme</h4>
+          <p>Pon - Pet: 09:00 - 18:00<br>Sub: 10:00 - 14:00</p>
+        </div>
+      </div>
+
+      <div class="contact-layout">
+        <div class="panel panel-pad">
+          <h2>Pošaljite upit</h2>
+          <p class="sub">Popunite formu i javit ćemo Vam se u roku od 24 sata.</p>
+
+          <div class="row">
+            <div>
+              <label class="field-label">IME I PREZIME</label>
+              <input class="input" type="text" placeholder="Vaše ime">
+            </div>
+            <div>
+              <label class="field-label">E-MAIL ADRESA</label>
+              <input class="input" type="email" placeholder="ime@primjer.com">
+            </div>
+          </div>
+
+          <label class="field-label">TEMA UPITA</label>
+          <div class="topic-grid">
+            <button type="button" class="topic-option active" onclick="selectTopic(this, 'Rezervacija putovanja')">Rezervacija putovanja</button>
+            <button type="button" class="topic-option" onclick="selectTopic(this, 'Cijene i ponude')">Cijene i ponude</button>
+            <button type="button" class="topic-option" onclick="selectTopic(this, 'Promjena ili otkazivanje rezervacije')">Promjena ili otkazivanje rezervacije</button>
+            <button type="button" class="topic-option" onclick="selectTopic(this, 'Grupna putovanja')">Grupna putovanja</button>
+            <button type="button" class="topic-option" onclick="selectTopic(this, 'Informacije o destinacijama')">Informacije o destinacijama</button>
+            <button type="button" class="topic-option" onclick="selectTopic(this, 'Plaćanje i fakture')">Plaćanje i fakture</button>
+          </div>
+          <input type="hidden" id="selectedTopic" value="Rezervacija putovanja">
+
+          <label class="field-label">PORUKA</label>
+          <textarea class="textarea" placeholder="Opišite vaš upit što detaljnije..."></textarea>
+
+          <button class="main-btn" type="button" onclick="sendInquiry()">Pošalji poruku</button>
+        </div>
+
+        <div>
+          <div class="map">
+            <iframe src="https://www.google.com/maps?q=Sarajevo&output=embed" allowfullscreen loading="lazy"></iframe>
+          </div>
+
+          <div class="panel faq">
+            <h3>Često postavljana pitanja</h3>
+            <div class="faq-item">
+              <strong>Koliko unaprijed trebam rezervisati putovanje?</strong>
+              <p>Preporučujemo rezervaciju najmanje 4-6 sedmica unaprijed, posebno za popularne destinacije.</p>
+            </div>
+            <div class="faq-item">
+              <strong>Mogu li promijeniti ili otkazati rezervaciju?</strong>
+              <p>Da, promjene su moguće do 14 dana prije polaska. Kontaktirajte nas i uredimo sve.</p>
+            </div>
+            <div class="faq-item">
+              <strong>Da li nudite grupna putovanja?</strong>
+              <p>Naravno! Za grupe nudimo posebne popuste i prilagođene itinerere.</p>
+            </div>
+          </div>
+
+          <div class="hotline">
+            <strong>Hitna podrška</strong><br>
+            Za hitne situacije tokom putovanja dostupni smo 24/7 na +387 61 987 654
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="newsletter">
+    <div>
+      <span class="section-label">NEWSLETTER</span>
+      <h3>Budite prvi koji saznaju o novim ponudama</h3>
+      <p>Prijavite se i pratite nove turističke pakete, popuste i obavještenja.</p>
+    </div>
+
+    <form class="newsletter-form" id="newsletterForm">
+      <input type="email" placeholder="Unesite Vašu e-mail adresu" required />
+      <button type="submit" class="btn btn-gold">Pretplatite se</button>
+    </form>
+
+    <p id="newsletterMessage" style="margin-top:12px; font-size:13px; color:#2aa9b0; font-weight:600; display:none;"></p>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="/" class="logo-link">
+            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+          </a>
+          <p>InterTrips - sistem za upravljanje turističkim paketima, rezervacijama i putnim informacijama.</p>
+        </div>
+        <div>
+          <h4>Istraži</h4>
+          <p><a href="/destinacije">Destinacije</a></p>
+          <p><a href="#">Putni vodiči</a></p>
+          <p><a href="#">Najbolja iskustva</a></p>
+        </div>
+        <div>
+          <h4>Kompanija</h4>
+          <p><a href="/">Početna</a></p>
+          <p><a href="/home/onama">O nama</a></p>
+          <p><a href="/home/kontakt">Kontakt</a></p>
+        </div>
+        <div>
+          <h4>Podrška</h4>
+          <p><a href="#">Centar za pomoć</a></p>
+          <p><a href="/home/privacy">Politika privatnosti</a></p>
+          <p><a href="#">Uvjeti korištenja</a></p>
+        </div>
+      </div>
+
+      <div class="copyright">
+        <div>© 2026 InterTrips. Sva prava zadržana.</div>
+        <div>Napravljen s &lt;3 za putni svijet</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function selectTopic(button, value) {
+      document.querySelectorAll('.topic-option').forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+      document.getElementById('selectedTopic').value = value;
+    }
+
+    function sendInquiry() {
+      const topic = document.getElementById('selectedTopic').value;
+      alert('Hvala! Vaš upit za temu "' + topic + '" je poslan.');
+    }
+  </script>
+
+  <script>
+    const newsletterForm = document.getElementById('newsletterForm');
+    const newsletterMessage = document.getElementById('newsletterMessage');
+
+    newsletterForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      newsletterMessage.style.display = 'block';
+      newsletterMessage.textContent = 'Hvala Vam na korištenju usluga InterTripsa. Vaš InterTrips tim <3';
+      newsletterForm.reset();
+    });
+  </script>
+</body>
+</html>

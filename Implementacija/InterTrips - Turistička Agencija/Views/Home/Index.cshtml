@@ -1,8 +1,315 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "InterTrips";
+    Layout = "_Layout";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<header class="hero">
+    <div class="hero-overlay"></div>
+
+    <nav class="navbar">
+        <a asp-controller="Home" asp-action="Index" class="logo-link">
+            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+        </a>
+
+        <ul class="nav-links">
+            <li><a class="active" asp-controller="Home" asp-action="Index">Početna</a></li>
+            <li><a asp-controller="Destinacije" asp-action="Index">Destinacije</a></li>
+            <li><a asp-controller="Home" asp-action="ONama">O nama</a></li>
+            <li><a asp-controller="Home" asp-action="Kontakt">Kontakt</a></li>
+            <a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a>
+            <li><a id="myReservationsLink" asp-controller="Rezervacija" asp-action="Index" style="display:none;">Moje rezervacije</a></li>
+            <li><a id="loginLink" class="btn btn-gold" asp-controller="Korisnik" asp-action="Login">Prijava</a></li>
+        </ul>
+
+        <div id="userArea">
+            <div id="userAvatar">A</div>
+            <span id="userName">Korisnik</span>
+            <button id="logoutBtn" type="button">Odjavi se</button>
+        </div>
+    </nav>
+  
+
+    <div class="hero-content">
+        <span class="badge">ISTRAŽITE SVIJET</span>
+        <h1>REZERVIŠITE PUTOVANJE</h1>
+        <h2>uz InterTrips sistem</h2>
+        <p>
+            Otkrijte pažljivo odabrane destinacije, jedinstvena putna iskustva i
+            nezaboravna putovanja širom svijeta.
+        </p>
+
+        <div class="hero-actions">
+            <a class="btn btn-gold" asp-controller="Destinacije" asp-action="Index">Istražite destinacije</a>
+            <a class="btn btn-light" asp-controller="Destinacije" asp-action="Index">Pogledajte istaknuta putovanja</a>
+        </div>
+
+        <div class="hero-stats">
+            <div class="stat">
+                <strong>120+</strong>
+                <span>Destinacija</span>
+            </div>
+            <div class="stat">
+                <strong>50K+</strong>
+                <span>Zadovoljnih putnika</span>
+            </div>
+            <div class="stat">
+                <strong>4.9/5</strong>
+                <span>Prosječna ocjena</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main>
+    <section class="section section-dark">
+        <div class="section-header">
+            <div>
+                <span class="section-label">ODABRANO ZA VAS</span>
+                <h3>Istaknute <em>destinacije</em></h3>
+            </div>
+            <a asp-controller="Destinacije" asp-action="Index" class="see-all">Pogledajte sve destinacije →</a>
+        </div>
+
+        <div class="destinations-grid">
+            <article class="card">
+                <img src="~/assets/destination1.jpg" alt="Santorini">
+                <div class="card-content">
+                    <div class="card-top">
+                        <span class="tag">Beach</span>
+                        <span class="rating">★ 4.9</span>
+                    </div>
+                    <h4>Santorini</h4>
+                    <p>Grčka</p>
+                </div>
+            </article>
+
+            <article class="card">
+                <img src="~/assets/destination2.jpg" alt="Kyoto">
+                <div class="card-content">
+                    <div class="card-top">
+                        <span class="tag">Cultural</span>
+                        <span class="rating">★ 4.8</span>
+                    </div>
+                    <h4>Kyoto</h4>
+                    <p>Japan</p>
+                </div>
+            </article>
+
+            <article class="card">
+                <img src="~/assets/destination3.jpg" alt="Machu Picchu">
+                <div class="card-content">
+                    <div class="card-top">
+                        <span class="tag">Adventure</span>
+                        <span class="rating">★ 4.9</span>
+                    </div>
+                    <h4>Machu Picchu</h4>
+                    <p>Peru</p>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="center-title">
+            <span class="section-label">ZAŠTO INTERTRIPS</span>
+            <h3>Putujte pametnije, <em>doživite više</em></h3>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h4>Pažljivo odabrana iskustva</h4>
+                <p>Svakom destinacijom vodimo računa o kvalitetu i detaljima.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Sigurno i pouzdano</h4>
+                <p>Uživajte u putovanju uz jednostavnu rezervaciju i podršku.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Podrška 24/7</h4>
+                <p>Dostupni smo kad god Vam zatreba pomoć.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-dark">
+        <div class="center-title">
+            <span class="section-label">PRIČE PUTNIKA</span>
+            <h3>Voljeni od istraživača<br><em>širom svijeta</em></h3>
+        </div>
+
+        <div class="testimonials-grid">
+            <blockquote class="testimonial">
+                <div class="stars">★★★★★</div>
+                <p>“InterTrips je naš medeni mjesec na Santoriniju učinio savršenim. Svaki detalj je bio isplaniran, od vile na litici do privatne krstarenja pri zalasku sunca. Pravo čudo!”</p>
+                <div class="testimonial-user">
+                    <img src="~/assets/user1.jpg" alt="Sophie Laurent">
+                    <div>
+                        <footer>Sophie Laurent</footer>
+                        <span>Santorini, Grčka</span>
+                    </div>
+                </div>
+            </blockquote>
+
+            <blockquote class="testimonial">
+                <div class="stars">★★★★★</div>
+                <p>“Trek kroz Patagoniju bio je avantura života. InterTrips nas je povezao s najstručnijim lokalnim vodičima. Već sam rezervirao sljedeće putovanje!”</p>
+                <div class="testimonial-user">
+                    <img src="~/assets/user2.jpg" alt="James Okafor">
+                    <div>
+                        <footer>James Okafor</footer>
+                        <span>Patagonija, Argentina</span>
+                    </div>
+                </div>
+            </blockquote>
+
+            <blockquote class="testimonial">
+                <div class="stars">★★★★★</div>
+                <p>“Kyoto u sezoni trešnjinog cvijeta bio je san. Itinerer je bio savršeno tempiran, bez žurbe, s dovoljno vremena da upijemo kulturu i ljepotu.”</p>
+                <div class="testimonial-user">
+                    <img src="~/assets/user3.jpg" alt="Yuki Tanaka">
+                    <div>
+                        <footer>Yuki Tanaka</footer>
+                        <span>Kyoto, Japan</span>
+                    </div>
+                </div>
+            </blockquote>
+        </div>
+    </section>
+
+    <section class="cta section">
+        <div class="cta-box">
+            <div>
+                <span class="section-label">ZAPOČNITE PUTOVANJE</span>
+                <h3>Spremni za istraživanje svijeta?</h3>
+                <p>Pridružite se hiljadama putnika koji vjeruju InterTripsu za svoja najljepša putovanja.</p>
+            </div>
+            <a class="btn btn-gold" href="Login">Počnite besplatno →</a>
+        </div>
+    </section>
+
+    <section class="newsletter">
+        <div>
+            <span class="section-label">NEWSLETTER</span>
+            <h3>Budite prvi koji saznaju o novim ponudama</h3>
+        </div>
+
+        <form class="newsletter-form" id="newsletterForm">
+            <input type="email" placeholder="Unesite Vašu e-mail adresu" required />
+            <button type="submit" class="btn btn-gold">Pretplatite se</button>
+        </form>
+
+        <p id="newsletterMessage" style="margin-top:12px; font-size:13px; color:#f8be21; font-weight:600; display:none;"></p>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="footer-grid">
+        <div>
+            <a asp-controller="Home" asp-action="Index" class="logo-link">
+                <img src="~/assets/logo.png" alt="InterTrips logo" class="logo small-logo">
+            </a>
+            <p>Otkrijte najbolje destinacije na svijetu.</p>
+        </div>
+
+        <div>
+            <h4>Istraži</h4>
+            <a asp-controller="Destinacije" asp-action="Index">Destinacije</a>
+            <a href="#">Putni vodiči</a>
+            <a href="#">Najbolja iskustva</a>
+        </div>
+
+        <div>
+            <h4>Kompanija</h4>
+            <a asp-controller="Home" asp-action="ONama">O nama</a>
+            <a href="#">Karijere</a>
+            <a asp-controller="Home" asp-action="Kontakt">Kontakt</a>
+        </div>
+
+        <div>
+            <h4>Podrška</h4>
+            <a href="#">Centar za pomoć</a>
+            <a asp-controller="Home" asp-action="Privacy">Politika privatnosti</a>
+            <a href="#">Uvjeti korištenja</a>
+        </div>
+    </div>
+    <div class="footer-bottom">© 2026 InterTrips. Sva prava zadržana.</div>
+</footer>
+
+@section Scripts {
+    <script>
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        const userName = localStorage.getItem('userName');
+        const userInitial = localStorage.getItem('userInitial');
+
+        const userArea = document.getElementById('userArea');
+        const loginLink = document.getElementById('loginLink');
+        const myReservationsLink = document.getElementById('myReservationsLink');
+
+        if (isLoggedIn === 'true') {
+            if (myReservationsLink) myReservationsLink.style.display = 'inline-block';
+        }
+        const userAvatar = document.getElementById('userAvatar');
+        const userNameEl = document.getElementById('userName');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        if (isLoggedIn === 'true') {
+            if (loginLink) loginLink.classList.add('hidden');
+            if (userArea) userArea.style.display = 'flex';
+            if (userAvatar) userAvatar.textContent = userInitial || 'U';
+            if (userNameEl) userNameEl.textContent = userName || 'Korisnik';
+        }
+
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userInitial');
+                localStorage.removeItem('userRole');
+                window.location.reload();
+            });
+        }
+
+        const newsletterForm = document.getElementById('newsletterForm');
+        const newsletterMessage = document.getElementById('newsletterMessage');
+
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log("Forma poslana!"); 
+
+                const emailInput = document.getElementById('emailInput');
+                const emailValue = emailInput ? emailInput.value : '';
+        
+                console.log("Email za slanje:", emailValue); 
+
+                fetch('/Newsletter/Subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'email=' + encodeURIComponent(emailValue)
+                })
+                    .then(async response => {
+                        if (response.ok) {
+                            console.log("Server odgovorio sa OK!");
+                            if (newsletterMessage) {
+                                newsletterMessage.style.display = 'block';
+                                newsletterMessage.style.color = 'green';
+                                newsletterMessage.textContent = 'Hvala Vam na korištenju usluga InterTripsa. Vaš InterTrips tim <3';
+                            }
+                            newsletterForm.style.display = 'none';
+                        } else {
+                            const errorText = await response.text();
+                            console.error("Server Greška:", errorText);
+                            alert("Greška na serveru: " + errorText);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Mrežna greška (Fetch error):', error);
+                        alert("Nije moguće kontaktirati server.");
+                    });
+            });
+        }
+
+    </script>
+}

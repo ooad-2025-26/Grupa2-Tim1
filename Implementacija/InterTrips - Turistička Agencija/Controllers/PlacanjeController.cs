@@ -1,14 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace InterTrips___Turistička_Agencija.Controllers
+namespace InterTrips___Turistička_Agencija.Controllers;
+
+public class PlacanjeController : Controller
 {
-    [Route("placanje")]
-    public class PlacanjeController : Controller
+    public IActionResult Index()
     {
-        [HttpGet("")]
-        public IActionResult Index()
-        {
-            return View("Placanje"); 
-        }
+        return View("Placanje");
+    }
+
+    public IActionResult Uspjeh()
+    {
+        return View();
+    }
+
+    public IActionResult Neuspjeh(string razlog)
+    {
+        ViewBag.Razlog = razlog;
+        return View();
     }
 }

@@ -1,6 +1,79 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Politika privatnosti";
+    Layout = null; 
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
+    <style>
+            .page {
+                max-width: 980px;
+                margin: 0 auto;
+                padding: 40px 18px 60px;
+            }
+
+            .card {
+                background: rgba(255,255,255,0.78);
+                border: 1px solid rgba(95,181,187,0.16);
+                border-radius: 18px;
+                box-shadow: var(--shadow);
+                padding: 22px;
+            }
+
+            h1 {
+                color: var(--text);
+                margin-bottom: 10px;
+            }
+
+            p, li {
+                color: var(--muted);
+                line-height: 1.8;
+                font-size: 13px;
+            }
+
+            ul {
+                padding-left: 18px;
+            }
+    </style>
+</head>
+<body class="auth-page">
+    <main class="page">
+        <div class="card">
+            <h1>@ViewData["Title"]</h1>
+
+            <p>
+                Ova stranica opisuje kako InterTrips prikuplja i koristi osnovne podatke korisnika
+                u okviru prototipa aplikacije.
+            </p>
+
+            <h2 style="margin-top:16px; color: var(--primary-dark); font-size: 16px;">Podaci</h2>
+            <ul>
+                <li>Podaci za prijavu (npr. korisničko ime/e-mail) — samo u svrhu demonstracije.</li>
+                <li>Podaci o rezervaciji (destinacija, putnici, datumi) — u svrhu kreiranja rezervacije.</li>
+            </ul>
+
+            <h2 style="margin-top:16px; color: var(--primary-dark); font-size: 16px;">Kontakt</h2>
+            <p>
+                Za pitanja možete koristiti stranicu <a href="/home/kontakt">Kontakt</a>.
+            </p>
+
+            <p style="margin-top:18px;">
+                <a href="/" style="color: var(--primary-dark); font-weight:700; text-decoration: underline;">
+                    Nazad na početnu
+                </a>
+            </p>
+        </div>
+    </main>
+</body>
+</html>

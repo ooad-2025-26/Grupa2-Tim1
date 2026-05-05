@@ -17,7 +17,7 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Putnik> Putnici => Set<Putnik>();
     public DbSet<Placanje> Placanja => Set<Placanje>();
     public DbSet<Notifikacija> Notifikacije => Set<Notifikacija>();
-    
+
     public DbSet<StavkaPlana> StavkePlana => Set<StavkaPlana>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,7 +31,7 @@ public class ApplicationDbContext : IdentityDbContext
         modelBuilder.Entity<Placanje>().ToTable("Placanje");
         modelBuilder.Entity<Notifikacija>().ToTable("Notifikacija");
         modelBuilder.Entity<PlanPutovanja>().ToTable("PlanPutovanja");
-   
+
 
         modelBuilder.Entity<Rezervacija>()
             .HasOne(r => r.Placanje)
