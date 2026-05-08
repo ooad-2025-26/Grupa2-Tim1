@@ -370,6 +370,7 @@
 
                 <p class="switch-text">Niste agent? <a href="#" id="back-to-user-from-agent">Vrati se na korisničku prijavu</a></p>
                 <div class="demo-box">Agent login: agent@intertrips.ba / agent123</div>
+           
             </div>
 
             <div id="admin-form" class="auth-form">
@@ -427,8 +428,6 @@
     </main>
 
     <script>
-
-
             const loginTab = document.getElementById('login-tab');
             const agentTab = document.getElementById('agent-tab');
             const adminTab = document.getElementById('admin-tab');
@@ -502,7 +501,6 @@
             backToUserFromAgent?.addEventListener('click', e => { e.preventDefault(); showLogin(); });
             backToUserFromAdmin?.addEventListener('click', e => { e.preventDefault(); showLogin(); });
 
-
             document.getElementById('loginBtn').addEventListener('click', function() {
                 const email = document.getElementById('loginEmail').value.trim();
                 const password = document.getElementById('loginPassword').value.trim();
@@ -517,14 +515,13 @@
                     localStorage.setItem('userName', email);
                     localStorage.setItem('userInitial', 'A');
                     localStorage.setItem('userRole', 'client');
-
+                    localStorage.setItem('agentId', '1');
 
                     window.location.href = '/';
                 } else {
                     alert('Pogrešan login.');
                 }
             });
-
 
             document.getElementById('agentBtn').addEventListener('click', function() {
                 const email = document.getElementById('agentEmail').value.trim();
@@ -550,11 +547,10 @@
                 localStorage.setItem('userInitial', letter);
                 localStorage.setItem('userRole', 'agent');
 
-
                 window.location.href = '/Agent';
             });
 
-
+           
             document.getElementById('adminBtn').addEventListener('click', function() {
                 const username = document.getElementById('adminUsername').value.trim();
                 const password = document.getElementById('adminPassword').value.trim();
@@ -579,10 +575,8 @@
                 localStorage.setItem('userInitial', letter);
                 localStorage.setItem('userRole', 'admin');
 
-
                 window.location.href = '/Admin';
             });
-
 
             document.getElementById('registerBtn').addEventListener('click', function() {
                 const name = document.getElementById('registerName').value.trim();
@@ -618,7 +612,6 @@
 
                 alert('Uspješno ste kreirali račun!');
             });
-
 
             const savedLogin = localStorage.getItem('isLoggedIn');
             const savedName = localStorage.getItem('userName');

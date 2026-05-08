@@ -1,0 +1,350 @@
+@model InterTrips___Turistička_Agencija.Models.ViewModels.AdminDashboardVm
+@{
+    ViewData["Title"] = "InterTrips - Admin panel";
+    Layout = null; 
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"]</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
+  <style>
+    .dash-page{
+      padding: 28px 24px 56px;
+    }
+
+    .dash-topbar{
+      height: 58px;
+      padding: 0 28px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background: rgba(255,255,255,0.78);
+      border-bottom:1px solid rgba(95,181,187,0.12);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top:0;
+      z-index:50;
+    }
+
+    .dash-topbar .logo{
+      width: 80px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    .dash-shell{
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .dash-hero{
+      margin: 22px 0 24px;
+      padding: 24px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(95,181,187,0.16);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .dash-hero h1{
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .dash-hero p{
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .dash-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .dash-card{
+      background: rgba(255,255,255,0.84);
+      border:1px solid rgba(95,181,187,0.16);
+      border-radius:16px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .dash-card h2{
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .form-grid{
+      display:grid;
+      gap:12px;
+    }
+
+    .input, .select, .textarea{
+      width:100%;
+      background: rgba(255,255,255,0.94);
+      border:1px solid rgba(95,181,187,0.18);
+      color: var(--text);
+      outline:none;
+      border-radius:10px;
+      height:40px;
+      padding:0 14px;
+      font-size:13px;
+    }
+
+    .textarea{
+      height:92px;
+      padding:12px 14px;
+      resize:none;
+    }
+
+    .field-label{
+      display:block;
+      font-size:11px;
+      font-weight:700;
+      color: var(--primary-dark);
+      margin:12px 0 8px;
+      letter-spacing:0.6px;
+    }
+
+    .main-btn{
+      height:46px;
+      border-radius:12px;
+      border:none;
+      cursor:pointer;
+      font-weight:700;
+      font-size:14px;
+      background: linear-gradient(135deg, #6abfc6, #86bfe0);
+      color:#fff;
+    }
+
+    .dest-table{
+      display:grid;
+      gap:10px;
+    }
+
+    .dest-item{
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(95,181,187,0.14);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+
+    .dest-item strong{
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .dest-item small{
+      display:block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 3px;
+    }
+
+    .mini-btn{
+      border:none;
+      border-radius:999px;
+      padding:8px 12px;
+      background: rgba(106,191,198,0.14);
+      color: var(--primary-dark);
+      font-weight:700;
+      font-size:12px;
+    }
+
+    .logout-btn{
+      border:1px solid rgba(95,181,187,0.25);
+      background: transparent;
+      color: var(--text);
+      border-radius:999px;
+      padding:8px 14px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:12px;
+    }
+
+    .stats-row{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+      margin-bottom: 18px;
+    }
+
+    .stat-box{
+      padding:16px;
+      border-radius:14px;
+      background: rgba(106,191,198,0.10);
+      border:1px solid rgba(95,181,187,0.14);
+      text-align:center;
+    }
+
+    .stat-box strong{
+      display:block;
+      font-size:28px;
+      color: var(--primary-dark);
+      margin-bottom:4px;
+    }
+
+    .stat-box span{
+      font-size:12px;
+      color: var(--muted);
+    }
+
+    .full-width{
+      grid-column: 1 / -1;
+    }
+
+    @@media (max-width: 900px){
+      .dash-grid, .stats-row{
+        grid-template-columns: 1fr;
+      }
+
+      .dash-topbar{
+        padding: 0 16px;
+      }
+    }
+  </style>
+</head>
+<body class="auth-page">
+  <header class="dash-topbar">
+    <a href="/" class="logo-link">
+      <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+    </a>
+
+        <div style="display:flex; gap:10px; align-items:center;">
+            <a href="/Administrator/Paketi" class="logout-btn" style="text-decoration:none;">Paketi</a>
+            <a href="/Destinacije" class="logout-btn" style="text-decoration:none;">Pregled na sajtu</a>
+            <button class="logout-btn" type="button" onclick="logout()">Odjavi se</button>
+        </div>
+  </header>
+
+  <main class="dash-page">
+    <div class="dash-shell">
+      <div class="dash-hero">
+        <span class="badge">ADMIN PANEL</span>
+        <h1>Dobrodošli, administrator</h1>
+        <p>Ovde možete dodavati nove destinacije, upravljati ponudom i pregledati stanje sistema.</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+                    <strong id="destCount">@Model.DestinacijeCount</strong>          <span>Aktivnih destinacija</span>
+        </div>
+        <div class="stat-box">
+                    <strong id="agentCount">@Model.KorisniciCount</strong>
+          <span>Aktivnih agenata</span>
+        </div>
+        <div class="stat-box">
+                    <strong id="bookingCount">@Model.RezervacijeCount</strong>
+          <span>Ukupno rezervacija</span>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="dash-card">
+          <h2>Dodaj novu destinaciju</h2>
+                    <form class="form-grid"
+                          asp-controller="Administrator"
+                          asp-action="DestinacijaCreate"
+                          method="post"
+                          enctype="multipart/form-data">
+
+                        @Html.AntiForgeryToken()
+
+                        <div>
+                            <label class="field-label">NAZIV DESTINACIJE</label>
+                            <input class="input" name="Naziv" type="text" placeholder="Npr. Roma" required>
+                        </div>
+
+                        <div>
+                            <label class="field-label">DRŽAVA</label>
+                            <input class="input" name="Drzava" type="text" placeholder="Npr. Italija" required>
+                        </div>
+
+                        <div>
+                            <label class="field-label">KATEGORIJA</label>
+                            <input class="input" name="Kategorija" type="text" placeholder="Beach / City / Adventure">
+                        </div>
+
+                        <div class="full-width">
+                            <label class="field-label">OPIS</label>
+                            <textarea class="textarea" name="Opis" placeholder="Kratki opis destinacije..."></textarea>
+                        </div>
+
+                        <div class="full-width">
+                            <label class="field-label">SLIKA (UPLOAD)</label>
+                            <input class="input" type="file" name="slika" accept="image/*">
+                        </div>
+
+                        <button class="main-btn" type="submit">Dodaj destinaciju</button>
+                    </form>
+        </div>
+
+        <div class="dash-card">
+          <h2>Postojeće destinacije</h2>
+                    <div class="dest-table" id="destList">
+                        @foreach (var d in Model.Destinacije)
+                        {
+                            <div class="dest-item">
+                                <div>
+                                    <strong>@d.Naziv</strong>
+                                    <small>@d.Drzava @(!string.IsNullOrWhiteSpace(d.Kategorija) ? "• " + d.Kategorija : "")</small>
+                                </div>
+
+                                <div style="display:flex; gap:8px;">
+                                    <a class="mini-btn" asp-controller="Administrator" asp-action="DestinacijaEdit" asp-route-id="@d.Id">Uredi</a>
+
+                                    <form asp-controller="Administrator" asp-action="DestinacijaDelete" asp-route-id="@d.Id" method="post" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button class="mini-btn" type="submit" style="background: rgba(255,0,0,0.10); color:#b42318;"
+                                                onclick="return confirm('Obrisati destinaciju?')">
+                                            Obriši
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    
+
+    function logout() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userInitial');
+      localStorage.removeItem('userRole');
+
+      window.location.href = '/';
+    }
+
+    window.addEventListener('DOMContentLoaded', function () {
+      const role = localStorage.getItem('userRole');
+
+      if (role !== 'admin') {
+        window.location.href = '/korisnik/login';
+      }
+    });
+  </script>
+</body>
+</html>

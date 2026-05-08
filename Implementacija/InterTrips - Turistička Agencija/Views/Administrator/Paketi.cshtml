@@ -1,0 +1,89 @@
+@model List<InterTrips___Turistička_Agencija.Models.Paket>
+
+@{
+    ViewData["Title"] = "Admin - Paketi";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <style>
+        .wrap { max-width: 1150px; margin: 28px auto; padding: 0 18px; }
+        .bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:12px; flex-wrap:wrap; }
+        .card { background: rgba(255,255,255,0.86); border:1px solid rgba(95,181,187,0.16); border-radius:16px; box-shadow: var(--shadow); padding:16px; }
+        .row { display:grid; grid-template-columns: 1.6fr 1.2fr 0.7fr 0.7fr auto; gap:12px; align-items:center; padding:12px; border-radius:12px; border:1px solid rgba(95,181,187,0.14); background: rgba(255,255,255,0.72); margin-bottom:10px; }
+        .muted { color: var(--muted); font-size: 12px; }
+        .btn { height:40px; padding:0 14px; border-radius:12px; cursor:pointer; font-weight:800; border:1px solid rgba(95,181,187,0.18); background:#fff; }
+        .btn-primary { border:none; color:#fff; background: linear-gradient(135deg, #6abfc6, #86bfe0); }
+        .btn-danger { border:1px solid rgba(255,0,0,0.18); background: rgba(255,0,0,0.06); color:#b42318; }
+        a.btn { display:inline-flex; align-items:center; text-decoration:none; }
+        .actions { display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
+        .badge { display:inline-block; padding:4px 10px; border-radius:999px; font-size:11px; font-weight:800; border:1px solid rgba(95,181,187,0.18); background: rgba(106,191,198,0.10); color: var(--primary-dark); }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="bar">
+        <div>
+            <h2 style="margin:0;">Paketi</h2>
+            <div class="muted">Ukupno: @Model.Count</div>
+        </div>
+
+        <div class="actions">
+            <a class="btn" href="/Administrator">Dashboard</a>
+            <a class="btn" href="/Administrator/Destinacije">Destinacije</a>
+            <a class="btn btn-primary" asp-controller="Administrator" asp-action="PaketCreate">+ Dodaj paket</a>
+            <a class="btn" href="/Destinacije" target="_blank">Pregled na sajtu</a>
+        </div>
+    </div>
+
+    <div class="card">
+        @if (!Model.Any())
+        {
+            <div class="muted" style="font-weight:800;">Nema paketa. Klikni “Dodaj paket”.</div>
+        }
+        else
+        {
+            foreach (var p in Model)
+            {
+                <div class="row">
+                    <div>
+                        <div style="font-weight:900;">@p.Naziv</div>
+                        <div class="muted">
+                            @(p.Destinacija != null ? $"{p.Destinacija.Naziv} • {p.Destinacija.Drzava}" : "—")
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="muted">Cijena od</div>
+                        <div style="font-weight:900;">@p.CijenaOd.ToString("0.##") BAM</div>
+                    </div>
+
+                    <div>
+                        <div class="muted">Noći</div>
+                        <div style="font-weight:900;">@p.TrajanjeNoci</div>
+                    </div>
+
+                    <div>
+                        <span class="badge">@p.Status</span>
+                    </div>
+
+                    <div class="actions">
+                        <a class="btn" asp-controller="Administrator" asp-action="PaketEdit" asp-route-id="@p.Id">Uredi</a>
+                        <form asp-controller="Administrator" asp-action="PaketDelete" asp-route-id="@p.Id" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-danger" type="submit" onclick="return confirm('Obrisati paket?')">Obriši</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+</body>
+</html>

@@ -86,6 +86,7 @@ img {
         background: rgba(106,191,198,0.10);
     }
 
+/* Hero */
 .hero {
     position: relative;
     min-height: 100vh;
@@ -221,6 +222,7 @@ img {
     margin-top: 28px;
     flex-wrap: wrap;
 }
+/* Sections */
 .section {
     padding: 72px 48px;
     background: linear-gradient(180deg, #f4fbfb 0%, #e6f3f3 100%);
@@ -273,6 +275,7 @@ main,
     font-size: 14px;
     font-weight: 600;
 }
+/* Grids */
 .destinations-grid,
 .features-grid,
 .testimonials-grid,
@@ -294,6 +297,7 @@ main,
     grid-template-columns: repeat(3, 1fr);
     margin-top: 28px;
 }
+/* Cards */
 .card,
 .feature-card,
 .testimonial,
@@ -401,8 +405,9 @@ main,
         font-size: 11px;
         color: var(--muted);
     }
+/* CTA */
 .cta-box {
-    background: linear-gradient(rgba(106,191,198,0.18), rgba(134,191,224,0.18)), url('assets/cta.jpg') center/cover no-repeat, url('../assets/cta.jpg') center/cover no-repeat;
+    background: linear-gradient(rgba(106,191,198,0.18), rgba(134,191,224,0.18)), url('/assets/cta.jpg') center/cover no-repeat, url('../assets/cta.jpg') center/cover no-repeat;
     border-radius: 22px;
     padding: 40px;
     min-height: 260px;
@@ -413,6 +418,7 @@ main,
     border: 1px solid rgba(95,181,187,0.20);
 }
 
+/* Newsletter */
 .newsletter {
     display: flex;
     justify-content: space-between;
@@ -464,6 +470,7 @@ main,
     color: var(--primary-dark);
     font-weight: 600;
 }
+/* Footer */
 .footer {
     padding: 48px;
     background: linear-gradient(180deg, #d8ecec 0%, #c6e0e4 100%);
@@ -515,6 +522,7 @@ main,
         font-size: 11px;
         color: #2b6d75;
     }
+/* Auth */
 .auth-page {
     background: linear-gradient(180deg, #e6f3f3 0%, #dff4f5 100%);
 }
@@ -702,6 +710,7 @@ main,
     font-weight: 600;
     text-align: center;
 }
+/* Common helpers */
 .hidden {
     display: none !important;
 }
@@ -742,6 +751,7 @@ main,
     #logoutBtn:hover {
         background: rgba(106,191,198,0.14);
     }
+/* Destinations / booking */
 .destination-cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -871,6 +881,7 @@ main,
     font-size: 14px;
     line-height: 1;
 }
+/* Responsive */
 @media (max-width: 980px) {
     .about-grid,
     .contact-grid,
@@ -994,4 +1005,17 @@ main,
 
 .hero {
     background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('/assets/hero.jpg') center/cover no-repeat;
+}
+
+#userAvatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7dcfcf, #a7d8ff);
+    color: #18424a;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 12px;
+    border: 1px solid rgba(95,181,187,0.18);
 }

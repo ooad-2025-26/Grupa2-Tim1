@@ -1,3 +1,4 @@
+@model List<InterTrips___Turistička_Agencija.Models.Paket>
 @{
     Layout = "_LayoutRaw";
 }
@@ -483,9 +484,20 @@
         <a class="active" asp-controller="Destinacije" asp-action="Index">Destinacije</a>
         <a asp-controller="Home" asp-action="ONama">O nama</a>
         <a asp-controller="Home" asp-action="Kontakt">Kontakt</a>
-        <a class="pill" asp-controller="Rezervacija" asp-action="Index">Rezerviraj</a>
-        <a class="fill" asp-controller="Korisnik" asp-action="Login">Prijava</a>
-    </nav>
+        <a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a>
+        <a id="myReservationsLink" asp-controller="Rezervacija" asp-action="Index" style="display:none;">Moje rezervacije</a>
+        <a id="loginLink" class="btn btn-gold" asp-controller="Korisnik" asp-action="Login">Prijava</a>
+
+<div id="userArea" style="display:none; align-items:center; gap:10px;">
+  <div id="userAvatar">A</div>
+
+  <a id="profileLink" href="/korisnik" style="color:rgba(36,65,74,0.88); font-weight:600; text-decoration:none;">
+    <span id="userName">Profil</span>
+  </a>
+
+  <button id="logoutBtn" type="button" class="pill" style="cursor:pointer;">Odjavi se</button>
+</div>
+</nav>
 </header>
 
   <section class="hero">
@@ -509,136 +521,60 @@
         </div>
       </div>
 
-      <div class="section-title">Prikazano <strong>6</strong> turističkih paketa</div>
+      <div class="section-title">Prikazano <strong>@Model.Count</strong> turističkih paketa</div>
 
-      <div class="grid">
-        <article class="card">
-          <img src="~/assets/destination1.jpg" alt="Santorini paket">
-          <div class="card-body">
-            <div class="card-top">
-              <span class="tag-small">Beach</span>
-              <span class="rating">★ 4.9</span>
-            </div>
-            <h3>Santorini paket</h3>
-            <div class="country">Grčka • 7 noći</div>
-            <div class="desc">Let + hotel + doručak. Idealno za odmor na Egejskom moru.</div>
-            <div class="status available">Dostupan</div>
-            <div class="price-row">
-              <div class="from">Od</div>
-              <div class="price">$1,299</div>
-            </div>
-           <button class="reserve-btn"
-        onclick="window.location.href='/Rezervacija/Rezervacija'">
-    Rezerviši paket
-</button>
-          </div>
-        </article>
+     <div class="grid">
+  @foreach (var p in Model)
+  {
+    <article class="card">
+@functions{
+  string ImgFor(string? destName)
+  {
+    var n = (destName ?? "").ToLowerInvariant();
+    if (n.Contains("santorini")) return "/assets/destination1.jpg";
+    if (n.Contains("kyoto")) return "/assets/destination2.jpg";
+    if (n.Contains("machu")) return "/assets/destination3.jpg";
+    if (n.Contains("dubai")) return "/assets/destination4.jpg";
+    if (n.Contains("paris")) return "/assets/destination5.jpg";
+    if (n.Contains("bali")) return "/assets/destination6.jpg";
+    return "/assets/destination1.jpg";
+  }
+}
+<img src="@ImgFor(p.Destinacija?.Naziv)" alt="@p.Naziv">
+      <div class="card-body">
+        <div class="card-top">
+          <span class="tag-small">
+            @(string.IsNullOrWhiteSpace(p.Destinacija?.Kategorija) ? "Paket" : p.Destinacija!.Kategorija)
+          </span>
+          <span class="rating">★ 4.8</span>
+        </div>
 
-        <article class="card">
-          <img src="~/assets/destination2.jpg" alt="Kyoto paket">
-          <div class="card-body">
-            <div class="card-top">
-              <span class="tag-small">Cultural</span>
-              <span class="rating">★ 4.8</span>
-            </div>
-            <h3>Kyoto paket</h3>
-            <div class="country">Japan • 8 noći</div>
-            <div class="desc">Drevni hramovi, lokalna kultura i organizovan boravak.</div>
-            <div class="status available">Dostupan</div>
-            <div class="price-row">
-              <div class="from">Od</div>
-              <div class="price">$1,850</div>
-            </div>
-<button class="reserve-btn"
-        onclick="window.location.href='/Rezervacija/Rezervacija'">
-    Rezerviši paket
-</button>          </div>
-        </article>
+        <h3>@p.Naziv</h3>
 
-        <article class="card">
-          <img src="~/assets/destination3.jpg" alt="Machu Picchu paket">
-          <div class="card-body">
-            <div class="card-top">
-              <span class="tag-small">Adventure</span>
-              <span class="rating">★ 4.9</span>
-            </div>
-            <h3>Machu Picchu paket</h3>
-            <div class="country">Peru • 9 noći</div>
-            <div class="desc">Avanturistički paket sa organizovanim prevozom i obilascima.</div>
-            <div class="status available">Dostupan</div>
-            <div class="price-row">
-              <div class="from">Od</div>
-              <div class="price">$2,100</div>
-            </div>
-<button class="reserve-btn"
-        onclick="window.location.href='/Rezervacija/Rezervacija'">
-    Rezerviši paket
-</button>          </div>
-        </article>
+        <div class="country">
+          @p.Destinacija?.Drzava • @p.TrajanjeNoci noći
+        </div>
 
-        <article class="card">
-          <img src="~/assets/destination4.jpg" alt="Dubai paket">
-          <div class="card-body">
-            <div class="card-top">
-              <span class="tag-small">City</span>
-              <span class="rating">★ 4.7</span>
-            </div>
-            <h3>Dubai paket</h3>
-            <div class="country">UAE • 6 noći</div>
-            <div class="desc">Luksuzni gradski odmor sa hotelom, transferom i letom.</div>
-            <div class="status available">Dostupan</div>
-            <div class="price-row">
-              <div class="from">Od</div>
-              <div class="price">$1,560</div>
-            </div>
-<button class="reserve-btn"
-        onclick="window.location.href='/Rezervacija/Rezervacija'">
-    Rezerviši paket
-</button>          </div>
-        </article>
+        <div class="desc">
+@(string.IsNullOrWhiteSpace(p.Destinacija?.Opis) ? "Opis nije unesen." : p.Destinacija!.Opis)        </div>
 
-        <article class="card">
-          <img src="~/assets/destination5.jpg" alt="Paris paket">
-          <div class="card-body">
-            <div class="card-top">
-              <span class="tag-small">City</span>
-              <span class="rating">★ 4.8</span>
-            </div>
-            <h3>Paris paket</h3>
-            <div class="country">Francuska • 5 noći</div>
-            <div class="desc">Romantični gradski paket sa slobodnim vremenom i vodičem.</div>
-            <div class="status soldout">Rasprodano</div>
-            <div class="price-row">
-              <div class="from">Od</div>
-              <div class="price">$1,420</div>
-            </div>
-<button class="reserve-btn"
-        onclick="window.location.href='/Rezervacija/Rezervacija'">
-    Rezerviši paket
-</button>          </div>
-        </article>
+        <div class="status @(p.Status == InterTrips.Models.Enums.StatusPaketa.Dostupan ? "available" : "soldout")">
+  @(p.Status == InterTrips.Models.Enums.StatusPaketa.Dostupan ? "Dostupan" : "Rasprodano")
+</div>
 
-        <article class="card">
-          <img src="~/assets/destination6.jpg" alt="Bali paket">
-          <div class="card-body">
-            <div class="card-top">
-              <span class="tag-small">Relax</span>
-              <span class="rating">★ 4.9</span>
-            </div>
-            <h3>Bali paket</h3>
-            <div class="country">Indonezija • 10 noći</div>
-            <div class="desc">Tropski odmor sa hotelom, prevozom i planom putovanja.</div>
-            <div class="status available">Dostupan</div>
-            <div class="price-row">
-              <div class="from">Od</div>
-              <div class="price">$1,980</div>
-            </div>
-<button class="reserve-btn"
-        onclick="window.location.href='/Rezervacija/Rezervacija'">
-    Rezerviši paket
-</button>          </div>
-        </article>
+        <div class="price-row">
+          <div class="from">Od</div>
+          <div class="price">@p.CijenaOd.ToString("0.##") BAM</div>
+        </div>
+
+        <button class="reserve-btn"
+                onclick="window.location.href='/Rezervacija/Rezervacija?paketId=@p.Id'">
+          Rezerviši paket
+        </button>
       </div>
+    </article>
+  }
+</div>
     </div>
   </section>
 
@@ -709,5 +645,40 @@
       newsletterForm.reset();
     });
   </script>
+  <script>
+  window.addEventListener('DOMContentLoaded', function () {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const userName = localStorage.getItem('displayName') || localStorage.getItem('userName') || 'Profil';
+    const userInitial = localStorage.getItem('userInitial') || (userName ? userName[0].toUpperCase() : 'U');
+
+    const loginLink = document.getElementById('loginLink');
+    const userArea = document.getElementById('userArea');
+    const userAvatar = document.getElementById('userAvatar');
+    const userNameEl = document.getElementById('userName');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    if (isLoggedIn) {
+      if (loginLink) loginLink.style.display = 'none';
+      if (userArea) userArea.style.display = 'flex';
+      if (userAvatar) userAvatar.textContent = userInitial;
+      if (userNameEl) userNameEl.textContent = userName;
+    } else {
+      if (loginLink) loginLink.style.display = 'inline-block';
+      if (userArea) userArea.style.display = 'none';
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function () {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('displayName');
+        localStorage.removeItem('userInitial');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('userPassword');
+        window.location.href = '/';
+      });
+    }
+  });
+</script>
 </body>
 </html>

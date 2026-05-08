@@ -434,7 +434,19 @@
       <a href="/destinacije">Destinacije</a>
       <a href="/home/onama">O nama</a>
       <a class="active" href="/home/kontakt">Kontakt</a>
-<a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a>      <a class="fill" href="/korisnik/login">Prijava</a>
+      <a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a>
+      <a id="myReservationsLink" asp-controller="Rezervacija" asp-action="Index" style="display:none;">Moje rezervacije</a>
+      <a id="loginLink" class="btn btn-gold" asp-controller="Korisnik" asp-action="Login">Prijava</a>
+
+<div id="userArea" style="display:none; align-items:center; gap:10px;">
+  <div id="userAvatar">A</div>
+
+  <a id="profileLink" href="/korisnik" style="color:rgba(36,65,74,0.88); font-weight:600; text-decoration:none;">
+    <span id="userName">Profil</span>
+  </a>
+
+  <button id="logoutBtn" type="button" class="pill" style="cursor:pointer;">Odjavi se</button>
+</div>
     </nav>
   </header>
 
@@ -610,5 +622,59 @@
       newsletterForm.reset();
     });
   </script>
+  <script>
+  window.addEventListener('DOMContentLoaded', function () {
+    const authLink = document.getElementById('authLink');
+    if (!authLink) return;
+
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const role = localStorage.getItem('userRole');
+
+    if (isLoggedIn) {
+      authLink.textContent = 'Profil';
+      authLink.href = (role === 'admin') ? '/Admin'
+                   : (role === 'agent') ? '/Agent'
+                   : '/';
+    } else {
+      authLink.textContent = 'Prijava';
+      authLink.href = '/Korisnik/Login';
+    }
+  });
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const userName = localStorage.getItem('displayName') || localStorage.getItem('userName') || 'Profil';
+    const userInitial = localStorage.getItem('userInitial') || (userName ? userName[0].toUpperCase() : 'U');
+
+    const loginLink = document.getElementById('loginLink');
+    const userArea = document.getElementById('userArea');
+    const userAvatar = document.getElementById('userAvatar');
+    const userNameEl = document.getElementById('userName');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    if (isLoggedIn) {
+      if (loginLink) loginLink.style.display = 'none';
+      if (userArea) userArea.style.display = 'flex';
+      if (userAvatar) userAvatar.textContent = userInitial;
+      if (userNameEl) userNameEl.textContent = userName;
+    } else {
+      if (loginLink) loginLink.style.display = 'inline-block';
+      if (userArea) userArea.style.display = 'none';
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function () {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('displayName');
+        localStorage.removeItem('userInitial');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('userPassword');
+        window.location.href = '/';
+      });
+    }
+  });
+</script>
 </body>
 </html>

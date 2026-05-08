@@ -1,0 +1,83 @@
+@model List<InterTrips___Turistička_Agencija.Models.Rezervacija>
+
+@{
+    ViewData["Title"] = "Agent - Rezervacije";
+    Layout = null;
+    int agentId = (int)ViewBag.AgentId;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>@ViewData["Title"]</title>
+  <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    .wrap{ max-width:1150px; margin:28px auto; padding:0 18px; }
+    .top{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+    .card{ background:rgba(255,255,255,0.84); border:1px solid rgba(95,181,187,0.16); border-radius:16px; box-shadow:var(--shadow); padding:16px; }
+    .row{ display:grid; grid-template-columns: 1.4fr 1.2fr 0.8fr; gap:12px; align-items:center; padding:12px; border-radius:12px; border:1px solid rgba(95,181,187,0.14); background:rgba(255,255,255,0.72); margin-bottom:10px; }
+    .muted{ color:var(--muted); font-size:12px; }
+    .btn{ height:40px; padding:0 14px; border-radius:999px; cursor:pointer; font-weight:800; border:1px solid rgba(95,181,187,0.18); background:#fff; }
+    a.btn{ display:inline-flex; align-items:center; text-decoration:none; }
+    .badge{ display:inline-block; padding:5px 10px; border-radius:999px; font-size:11px; font-weight:900; border:1px solid rgba(95,181,187,0.18); background:rgba(106,191,198,0.10); color:var(--primary-dark); }
+  </style>
+</head>
+<body class="auth-page">
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h2 style="margin:0;">Aktivne rezervacije</h2>
+        <div class="muted">Prikazuje Kreirana i Potvrdjena (bez Otkazana).</div>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn" href="/Agent?agentId=@agentId">Dashboard</a>
+        <a class="btn" href="/Agent/Paketi?agentId=@agentId">Paketi</a>
+      </div>
+    </div>
+
+    <div class="card">
+      @if (!Model.Any())
+      {
+        <div class="muted" style="font-weight:800;">Nema aktivnih rezervacija za tvoje pakete.</div>
+      }
+      else
+      {
+        foreach (var r in Model)
+        {
+          <div class="row">
+            <div>
+              <div style="font-weight:900;">Rezervacija #@r.Id</div>
+              <div class="muted">
+                @(r.Paket?.Naziv ?? "Paket") •
+                @(r.Paket?.Destinacija != null ? $"{r.Paket.Destinacija.Naziv}, {r.Paket.Destinacija.Drzava}" : "—")
+              </div>
+            </div>
+
+            <div class="muted" style="font-weight:800;">
+              Status: <span class="badge">@r.Status</span>
+            </div>
+
+            <div style="text-align:right;">
+              <span class="badge">PaketId: @r.PaketId</span>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      const role = localStorage.getItem('userRole');
+      if (role !== 'agent') window.location.href = '/korisnik/login';
+    });
+  </script>
+</body>
+</html>
