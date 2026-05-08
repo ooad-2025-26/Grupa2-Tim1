@@ -1,9 +1,9 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace InterTrips___Turistička_Agencija.Models;
-
-public class Destinacija
+namespace InterTrips___Turistička_Agencija.Models
+{
+    public class Destinacija
 {
     public Destinacija() { }
 
@@ -22,5 +22,8 @@ public class Destinacija
     [MaxLength(800)]
     public string? Opis { get; set; }
 
+    [MaxLength(260)]
+    public string? SlikaUrl { get; set; }
     public List<Paket> Paketi { get; set; } = new();
+}
 }

@@ -1,3 +1,4 @@
+using InterTrips___Turistička_Agencija.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace InterTrips___Turistička_Agencija.Models;

@@ -1,0 +1,89 @@
+@model InterTrips___Turistička_Agencija.Models.Destinacija
+
+@{
+    var isEdit = Model != null && Model.Id != 0;
+    ViewData["Title"] = isEdit ? "Uredi destinaciju" : "Nova destinacija";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <style>
+        .wrap { max-width: 900px; margin: 28px auto; padding: 0 18px; }
+        .card { background: rgba(255,255,255,0.86); border:1px solid rgba(95,181,187,0.16); border-radius:16px; box-shadow: var(--shadow); padding:18px; }
+        .row { display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+        .field-label{ display:block; font-size:11px; font-weight:800; color: var(--primary-dark); margin: 10px 0 8px; letter-spacing: .6px; }
+        .input, .textarea{ width:100%; background:#fff; border:1px solid rgba(95,181,187,0.18); border-radius:10px; height:42px; padding:0 14px; font-size:13px; outline:none; }
+        .textarea{ height:110px; padding:12px 14px; resize:none; }
+        .btnrow{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap; }
+        .btn{ height:42px; padding:0 14px; border-radius:12px; cursor:pointer; font-weight:900; border:1px solid rgba(95,181,187,0.18); background:#fff; }
+        .btn-primary{ border:none; color:#fff; background: linear-gradient(135deg, #6abfc6, #86bfe0); }
+        a.btn{ display:inline-flex; align-items:center; text-decoration:none; }
+        .preview{ width:220px; height:140px; border-radius:14px; object-fit:cover; border:1px solid rgba(95,181,187,0.16); background:#eef; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h2 style="margin:0 0 14px;">@ViewData["Title"]</h2>
+
+    <div class="card">
+        <form asp-controller="Administrator"
+              asp-action="@(isEdit ? "DestinacijaEdit" : "DestinacijaCreate")"
+              asp-route-id="@(Model.Id)"
+              method="post"
+              enctype="multipart/form-data">
+
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+                <div>
+                    <label class="field-label">NAZIV</label>
+                    <input class="input" asp-for="Naziv" />
+                    <span asp-validation-for="Naziv" style="color:#b42318; font-size:12px;"></span>
+                </div>
+                <div>
+                    <label class="field-label">DRŽAVA</label>
+                    <input class="input" asp-for="Drzava" />
+                    <span asp-validation-for="Drzava" style="color:#b42318; font-size:12px;"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div>
+                    <label class="field-label">KATEGORIJA</label>
+                    <input class="input" asp-for="Kategorija" />
+                </div>
+                <div>
+                    <label class="field-label">SLIKA (upload)</label>
+                    <input class="input" type="file" name="slika" />
+                </div>
+            </div>
+
+            @if (isEdit && !string.IsNullOrWhiteSpace(Model.SlikaUrl))
+            {
+                <div style="margin-top:12px;">
+                    <div class="field-label">TRENUTNA SLIKA</div>
+                    <img class="preview" src="@Model.SlikaUrl" alt="preview" />
+                </div>
+            }
+
+            <div style="margin-top:12px;">
+                <label class="field-label">OPIS</label>
+                <textarea class="textarea" asp-for="Opis"></textarea>
+            </div>
+
+            <div class="btnrow">
+    <a class="btn" asp-controller="Administrator" asp-action="Index">Nazad na dashboard</a>
+    <a class="btn" asp-controller="Administrator" asp-action="Destinacije">Nazad na destinacije</a>
+    <button class="btn btn-primary" type="submit">Sačuvaj</button>
+</div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

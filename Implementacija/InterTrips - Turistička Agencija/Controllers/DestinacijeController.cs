@@ -6,19 +6,13 @@ namespace InterTrips___Turistička_Agencija.Controllers;
 
 public class DestinacijeController : Controller
 {
-    private readonly ApplicationDbContext _context;
+    private readonly ApplicationDbContext _db;
+    public DestinacijeController(ApplicationDbContext db) => _db = db;
 
-    public DestinacijeController(ApplicationDbContext context)
+    [HttpGet]
+    public async Task<IActionResult> Index()
     {
-        _context = context;
-    }
-
-    public IActionResult Index()
-    {
-        var paketi = _context.Paketi
-            .Include(p => p.Destinacija)
-            .ToList();
-
+        var paketi = await _db.Paketi.Include(p => p.Destinacija).ToListAsync();
         return View(paketi);
     }
 }

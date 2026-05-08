@@ -1,0 +1,22 @@
+@{
+    Layout = "_LayoutRaw";
+    ViewData["Title"] = "Plaćanje nije uspješno - InterTrips";
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+    <div class="page">
+        <div class="center-shell">
+            <h2>🔴 Plaćanje nije uspjelo</h2>
+            <p>@ViewBag.Razlog</p>
+            <button class="secondary-btn" onclick="history.back()">Povratak na prethodnu stranicu</button>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,603 @@
+@{
+    ViewData["Title"] = "InterTrips - Plaćanje";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
+    <style>
+            .page {
+                padding: 34px 24px 56px;
+            }
+
+            .topbar {
+                height: 56px;
+                background: rgba(255,255,255,0.80);
+                border-bottom: 1px solid rgba(95,181,187,0.12);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 26px;
+                position: sticky;
+                top: 0;
+                z-index: 50;
+                backdrop-filter: blur(10px);
+            }
+
+            .secure {
+                font-size: 12px;
+                color: var(--muted);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+                .secure::before {
+                    content: "🛡";
+                    color: var(--primary-dark);
+                }
+
+            .center-shell {
+                max-width: 1140px;
+                margin: 0 auto;
+            }
+
+            .steps {
+                display: flex;
+                justify-content: center;
+                gap: 48px;
+                align-items: center;
+                margin: 16px 0 26px;
+                flex-wrap: wrap;
+            }
+
+            .step {
+                text-align: center;
+                color: var(--muted);
+                font-size: 11px;
+            }
+
+                .step .circle {
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    border: 1px solid rgba(95,181,187,0.35);
+                    display: grid;
+                    place-items: center;
+                    margin: 0 auto 8px;
+                    color: var(--primary-dark);
+                    background: rgba(255,255,255,0.65);
+                }
+
+                .step.active {
+                    color: var(--text);
+                    font-weight: 600;
+                }
+
+                    .step.active .circle {
+                        background: linear-gradient(135deg, #6abfc6, #86bfe0);
+                        color: #ffffff;
+                        border-color: transparent;
+                    }
+
+            .booking-grid {
+                display: grid;
+                grid-template-columns: 1.7fr 1fr;
+                gap: 20px;
+                align-items: start;
+            }
+
+            .panel {
+                background: rgba(255,255,255,0.84);
+                border: 1px solid rgba(95,181,187,0.16);
+                border-radius: 16px;
+                box-shadow: var(--shadow);
+                backdrop-filter: blur(10px);
+            }
+
+            .panel-pad {
+                padding: 18px;
+            }
+
+            .field-label {
+                display: block;
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--primary-dark);
+                margin: 12px 0 8px;
+                letter-spacing: 0.6px;
+            }
+
+            .input {
+                width: 100%;
+                background: rgba(255,255,255,0.94);
+                border: 1px solid rgba(95,181,187,0.18);
+                color: var(--text);
+                outline: none;
+                border-radius: 10px;
+                height: 40px;
+                padding: 0 14px;
+                font-size: 13px;
+            }
+
+            .row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
+
+            .main-btn, .secondary-btn {
+                height: 46px;
+                border-radius: 12px;
+                border: none;
+                cursor: pointer;
+                font-weight: 700;
+                font-size: 14px;
+                transition: 0.2s ease;
+            }
+
+            .main-btn {
+                background: linear-gradient(135deg, #6abfc6, #86bfe0);
+                color: #ffffff;
+            }
+
+            .secondary-btn {
+                background: transparent;
+                border: 1px solid rgba(95,181,187,0.25);
+                color: var(--text);
+            }
+
+            .btn-row {
+                display: flex;
+                gap: 12px;
+                justify-content: space-between;
+                margin-top: 16px;
+            }
+
+            .summary-card {
+                overflow: hidden;
+            }
+
+            .summary-photo {
+                height: 170px;
+                position: relative;
+                border-bottom: 1px solid rgba(255,255,255,.08);
+            }
+
+            .summary-rating {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                background: rgba(31,63,71,0.86);
+                padding: 4px 8px;
+                border-radius: 999px;
+                font-size: 11px;
+                color: #8ecae6;
+                font-weight: 700;
+            }
+
+            .summary-place {
+                position: absolute;
+                left: 14px;
+                bottom: 14px;
+                font-weight: 700;
+                font-size: 18px;
+                color: #fff;
+            }
+
+                .summary-place small {
+                    display: block;
+                    font-size: 11px;
+                    color: #dff4f5;
+                    font-weight: 500;
+                    margin-top: 2px;
+                }
+
+            .summary-body {
+                padding: 16px;
+            }
+
+            .summary-title {
+                color: var(--primary-dark);
+                font-size: 12px;
+                font-weight: 800;
+                margin-bottom: 14px;
+            }
+
+            .summary-row {
+                display: flex;
+                justify-content: space-between;
+                gap: 16px;
+                margin-bottom: 10px;
+                font-size: 12px;
+                color: var(--muted);
+            }
+
+                .summary-row strong {
+                    color: var(--text);
+                    font-size: 12px;
+                }
+
+            .price-line {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 14px;
+                padding-top: 12px;
+                border-top: 1px solid rgba(95,181,187,0.12);
+            }
+
+            .total {
+                color: var(--primary-dark);
+                font-size: 24px;
+                font-weight: 800;
+            }
+
+            .payment-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+
+            .payment-option {
+                border: 1px solid rgba(95,181,187,0.18);
+                border-radius: 10px;
+                padding: 12px;
+                background: rgba(255,255,255,0.78);
+                color: var(--muted);
+                cursor: pointer;
+                transition: 0.2s ease;
+            }
+
+                .payment-option.active {
+                    border-color: var(--primary-dark);
+                    background: rgba(106,191,198,0.14);
+                    color: var(--text);
+                }
+
+            /* početno stanje polja */
+            #cardFields {
+                display: block;
+            }
+
+            #bankFields {
+                display: none;
+            }
+
+            #ratesFields {
+                display: none;
+            }
+            /* DODANO */
+
+            @@media (max-width: 980px) {
+                .booking-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="/" class="logo-link">
+            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+        </a>
+        <div class="secure">Plaćanje</div>
+    </div>
+
+    <div class="page">
+        <div class="center-shell">
+            <div class="steps">
+                <div class="step active"><div class="circle">✓</div>Detalji putovanja</div>
+                <div class="step active"><div class="circle">✓</div>Putnici</div>
+                <div class="step active"><div class="circle">3</div>Plaćanje</div>
+                <div class="step"><div class="circle">4</div>Potvrda</div>
+            </div>
+
+            <div class="booking-grid">
+                <div class="panel panel-pad">
+                    <label class="field-label">ODABERITE NAČIN PLAĆANJA</label>
+                    <div class="payment-grid">
+                        <div class="payment-option active" onclick="selectPayment(this, 'card')">
+                            <strong>Kartica</strong>
+                            <small>Visa / Mastercard</small>
+                        </div>
+                        <div class="payment-option" onclick="selectPayment(this, 'bank')">
+                            <strong>Bank transfer</strong>
+                            <small>Uplata na račun</small>
+                        </div>
+                        <div class="payment-option" onclick="selectPayment(this, 'cash')">
+                            <strong>Gotovina</strong>
+                            <small>Na licu mjesta</small>
+                        </div>
+                        <div class="payment-option" onclick="selectPayment(this, 'rates')">
+                            <strong>Rate</strong>
+                            <small>Mjesečna otplata</small>
+                        </div>
+                    </div>
+
+                    <div id="cardFields">
+                        <label class="field-label">BROJ KARTICE</label>
+                        <input class="input" id="cardNumber" placeholder="1234 5678 9012 3456">
+                        <div class="row">
+                            <div>
+                                <label class="field-label">IME NA KARTICI</label>
+                                <input class="input" id="cardName" placeholder="Ime i prezime">
+                            </div>
+                            <div>
+                                <label class="field-label">CVV</label>
+                                <input class="input" id="cvv" placeholder="123">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div>
+                                <label class="field-label">ISTEK</label>
+                                <input class="input" id="cardExpiry" placeholder="MM/GG">
+                            </div>
+                            <div>
+                                <label class="field-label">POŠTANSKI BROJ</label>
+                                <input class="input" id="zip" placeholder="71000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="bankFields">
+                        <label class="field-label">PODACI ZA UPLATU</label>
+                        <div class="panel" style="padding:14px; background: rgba(255,255,255,0.72); margin-bottom:10px;">
+                            <div style="font-size:12px; line-height:1.8; color: var(--text);">
+                                <div><strong>Primaoc:</strong> InterTrips d.o.o.</div>
+                                <div><strong>Banka:</strong> UniCredit Bank</div>
+                                <div><strong>Račun:</strong> 154-1234567890-12</div>
+                                <div><strong>IBAN:</strong> BA39 1541 2345 6789 0123</div>
+                            </div>
+                        </div>
+                        <label class="field-label">UČITAJ POTVRDU (opcionalno)</label>
+                        <input class="input" type="file" id="bankProof">
+                    </div>
+
+                    <div id="ratesFields">
+                        <label class="field-label">NA KOLIKO MJESECI PLAĆATE?</label>
+                        <input class="input" id="ratesMonths" type="number" min="1" max="60" placeholder="npr. 12">
+                        <p id="ratesMessage" style="font-size:12px; color: var(--muted); margin-top:6px;"></p>
+                    </div>
+
+                    <div class="btn-row">
+                        <button class="secondary-btn" type="button" onclick="history.back()">← Nazad</button>
+                        <button class="main-btn" type="button" onclick="payNow()">Plati sada</button>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="panel summary-card">
+                        <div class="summary-photo" id="summaryPhoto">
+                            <div class="summary-rating">★ 4.8</div>
+                            <div class="summary-place" id="summaryDest">Destinacija <small id="summaryCountry">—</small></div>
+                        </div>
+                        <div class="summary-body">
+                            <div class="summary-title">SAŽETAK REZERVACIJE</div>
+                            <div class="summary-row"><span>Polazak</span><strong id="summaryDeparture">—</strong></div>
+                            <div class="summary-row"><span>Povratak</span><strong id="summaryReturn">—</strong></div>
+                            <div class="summary-row"><span>Trajanje</span><strong id="summaryDuration">—</strong></div>
+                            <div class="summary-row"><span>Putnici</span><strong id="summaryTravelers">—</strong></div>
+                            <div class="summary-row"><span>Smještaj</span><strong id="summaryRoom">—</strong></div>
+                            <div class="price-line">
+                                <span>Ukupno</span>
+                                <span class="total" id="summaryTotal">$0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        let selectedPaymentType = 'card';
+
+        function selectPayment(el, type) {
+        selectedPaymentType = type;
+
+        document.querySelectorAll('.payment-option').forEach(x => x.classList.remove('active'));
+        el.classList.add('active');
+
+        document.getElementById('cardFields').style.display = (type === 'card') ? 'block' : 'none';
+        document.getElementById('bankFields').style.display = (type === 'bank') ? 'block' : 'none';
+        document.getElementById('ratesFields').style.display = (type === 'rates') ? 'block' : 'none';
+
+        const msg = document.getElementById('ratesMessage');
+        if (msg) msg.textContent = '';
+
+        if (type === 'rates') {
+        updateRatesPreview();
+        }
+        }
+
+        function parseTotalKM(raw) {
+        if (!raw) return 0;
+
+        let s = String(raw).trim();
+
+        s = s.replace(/KM/gi, '').replace(/\$/g, '').replace(/\s/g, '');
+
+        if (s.includes('.') && s.includes(',')) {
+        s = s.replace(/\./g, '');
+        s = s.replace(',', '.');
+        }
+        else if (s.includes(',')) {
+        s = s.replace(/,/g, '');
+        }
+        else if (s.includes('.')) {
+        const parts = s.split('.');
+        if (parts.length > 1 && parts[parts.length - 1].length === 3) {
+        s = s.replace(/\./g, '');
+        }
+        }
+
+        s = s.replace(/[^0-9.]/g, '');
+
+        const n = parseFloat(s);
+        return isNaN(n) ? 0 : n;
+        }
+        function updateRatesPreview() {
+        const monthsEl = document.getElementById('ratesMonths');
+        const msgEl = document.getElementById('ratesMessage');
+        if (!monthsEl || !msgEl) return;
+
+        const months = parseInt(monthsEl.value, 10);
+        const totalRaw = localStorage.getItem('reservationTotal') || '0';
+        const total = parseTotalKM(totalRaw);
+
+        if (!monthsEl.value) {
+        msgEl.textContent = '';
+        return;
+        }
+
+        if (isNaN(months) || months < 1 || months > 60) {
+        msgEl.textContent = 'Unesite broj mjeseci od 1 do 60.';
+        return;
+        }
+
+        if (!total || total <= 0) {
+        msgEl.textContent = 'Ukupan iznos nije ispravno postavljen.';
+        return;
+        }
+
+        const rata = (total / months).toFixed(2);
+        msgEl.textContent = `Vaša rata iznosi: ${rata} KM mjesečno za ${months} mjeseci.`;
+
+        localStorage.setItem('ratesMonths', String(months));
+        localStorage.setItem('ratesMonthly', String(rata));
+        }
+
+        function loadPaymentSummary() {
+        const dest = localStorage.getItem('reservationDestination') || 'Destinacija';
+        const country = localStorage.getItem('reservationCountry') || '—';
+
+        const image = localStorage.getItem('reservationImage') || '/assets/bali.jpg';
+
+        document.getElementById('summaryDest').innerHTML = `${dest} <small>${country}</small>`;
+        document.getElementById('summaryDeparture').textContent = localStorage.getItem('reservationDeparture') || '—';
+        document.getElementById('summaryReturn').textContent = localStorage.getItem('reservationReturn') || '—';
+        document.getElementById('summaryDuration').textContent = localStorage.getItem('reservationDuration') || '—';
+        document.getElementById('summaryTravelers').textContent = localStorage.getItem('reservationTravelers') || '—';
+        document.getElementById('summaryRoom').textContent = localStorage.getItem('reservationRoom') || '—';
+        document.getElementById('summaryTotal').textContent = localStorage.getItem('reservationTotal') || '$0';
+
+        const photo = document.getElementById('summaryPhoto');
+        photo.style.background =
+        `linear-gradient(rgba(0,0,0,0.12), rgba(0,0,0,0.12)), url('${image}') center/cover no-repeat`;
+        }
+
+        function saveReservationToHistory(resCode) {
+        const reservations = JSON.parse(localStorage.getItem('reservations') || '[]');
+
+        const reservation = {
+        id: resCode,
+        userName: localStorage.getItem('userName') || 'guest',
+        createdAt: new Date().toISOString(),
+        status: 'Aktivna',
+
+        destination: localStorage.getItem('reservationDestination'),
+        country: localStorage.getItem('reservationCountry'),
+        departure: localStorage.getItem('reservationDeparture'),
+        return: localStorage.getItem('reservationReturn'),
+        travelers: localStorage.getItem('reservationTravelers'),
+        room: localStorage.getItem('reservationRoom'),
+        total: localStorage.getItem('reservationTotal'),
+        paymentType: localStorage.getItem('paymentType'),
+
+        passengers: JSON.parse(localStorage.getItem('savedPassengers') || '[]'),
+
+        ratesMonths: localStorage.getItem('ratesMonths'),
+        ratesMonthly: localStorage.getItem('ratesMonthly')
+        };
+
+        const idx = reservations.findIndex(r => r.id === reservation.id);
+        if (idx >= 0) reservations[idx] = reservation;
+        else reservations.unshift(reservation);
+
+        localStorage.setItem('reservations', JSON.stringify(reservations));
+        }
+        function payNow() {
+        if (selectedPaymentType === 'card') {
+        const cardName = document.getElementById('cardName').value.trim();
+        const cardNumber = document.getElementById('cardNumber').value.trim();
+
+        if (!cardName || !cardNumber) {
+        window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Kartica je odbijena.");
+        return;
+        }
+        }
+
+        if (selectedPaymentType === 'bank') {
+        const day = new Date().getDay();
+        if (day === 0 || day === 6) {
+        window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Banka ne radi subotom i nedjeljom.");
+        return;
+        }
+        }
+
+        if (selectedPaymentType === 'rates') {
+        const months = parseInt(document.getElementById('ratesMonths').value, 10);
+        const totalRaw = localStorage.getItem('reservationTotal') || '0';
+        const total = parseTotalKM(totalRaw);
+
+        if (!months || months < 1 || months > 60) {
+        alert("Unesite validan broj mjeseci (1-60).");
+        return;
+        }
+        if (!total || total <= 0) {
+        alert("Ukupan iznos nije ispravno postavljen. Vratite se na rezervaciju i pokušajte ponovo.");
+        return;
+        }
+
+        const rata = (total / months).toFixed(2);
+        document.getElementById('ratesMessage').textContent =
+        `Vaša rata iznosi: ${rata} KM mjesečno za ${months} mjeseci.`;
+
+        localStorage.setItem('ratesMonths', String(months));
+        localStorage.setItem('ratesMonthly', String(rata));
+        } else {
+        localStorage.removeItem('ratesMonths');
+        localStorage.removeItem('ratesMonthly');
+        }
+
+        const resCode = 'IT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+
+        localStorage.setItem('finalReservationCode', resCode);
+        localStorage.setItem('reservationDate', new Date().toLocaleDateString('bs-BA'));
+        localStorage.setItem('paymentType', selectedPaymentType);
+
+        saveReservationToHistory(resCode);
+
+        window.location.href = "/Placanje/Uspjeh";
+        }
+
+        window.addEventListener('DOMContentLoaded', function () {
+        loadPaymentSummary();
+
+        document.getElementById('cardFields').style.display = 'block';
+        document.getElementById('bankFields').style.display = 'none';
+        document.getElementById('ratesFields').style.display = 'none';
+
+        const monthsEl = document.getElementById('ratesMonths');
+        if (monthsEl) {
+        monthsEl.addEventListener('input', updateRatesPreview);
+        monthsEl.addEventListener('change', updateRatesPreview);
+        }
+        });
+    </script>
+</body>
+</html>

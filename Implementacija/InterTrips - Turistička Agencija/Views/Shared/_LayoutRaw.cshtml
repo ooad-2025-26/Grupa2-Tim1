@@ -1,2 +1,31 @@
-@RenderBody()
-@RenderSection("Scripts", required: false)
+@RenderBody
+<body>
+    @RenderBody()
+
+    <script>
+            window.addEventListener('DOMContentLoaded', function () {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                const role = localStorage.getItem('userRole');
+
+                const authLinks = document.querySelectorAll('#authLink');
+                authLinks.forEach(function (authLink) {
+                    if (!authLink) return;
+
+                    if (isLoggedIn) {
+                        authLink.textContent = 'Profil';
+
+                        let href = '/Korisnik/Login';
+                        if (role === 'admin') href = '/Admin';
+                        else if (role === 'agent') href = '/Agent';
+                        else href = '/';
+                        authLink.setAttribute('href', href);
+                    } else {
+                        authLink.textContent = 'Prijava';
+                        authLink.setAttribute('href', '/Korisnik/Login');
+                    }
+                });
+            });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>

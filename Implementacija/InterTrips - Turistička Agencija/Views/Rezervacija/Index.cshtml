@@ -1,0 +1,392 @@
+@{
+    ViewData["Title"] = "InterTrips - Moje rezervacije";
+    Layout = "_Layout";
+}
+
+<header class="hero hero--reservations">
+    <div class="hero-overlay"></div>
+
+    <nav class="navbar">
+        <a asp-controller="Home" asp-action="Index" class="logo-link">
+            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+        </a>
+
+        <ul class="nav-links">
+            <li><a asp-controller="Home" asp-action="Index">Početna</a></li>
+            <li><a asp-controller="Destinacije" asp-action="Index">Destinacije</a></li>
+            <li><a asp-controller="Home" asp-action="ONama">O nama</a></li>
+            <li><a asp-controller="Home" asp-action="Kontakt">Kontakt</a></li>
+            <a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a>
+            <a id="loginLink" class="btn btn-gold" asp-controller="Korisnik" asp-action="Login">Prijava</a>
+
+            <div id="userArea" style="display:none; align-items:center; gap:10px;">
+                <div id="userAvatar">A</div>
+
+                <a id="profileLink" href="/korisnik" style="color:rgba(36,65,74,0.88); font-weight:600; text-decoration:none;">
+                    <span id="userName">Profil</span>
+                </a>
+
+                <button id="logoutBtn" type="button" class="pill" style="cursor:pointer;">Odjavi se</button>
+            </div>
+        </ul>
+
+        <div id="userArea" style="display:none;">
+            <div id="userAvatar">A</div>
+            <span id="userName">Korisnik</span>
+            <button id="logoutBtn" type="button">Odjavi se</button>
+        </div>
+    </nav>
+
+    <div class="hero-content">
+        <span class="badge">REZERVACIJE</span>
+        <h1 style="letter-spacing:1px;">MOJE REZERVACIJE</h1>
+        <p>Pregledajte Vaše rezervacije, status i po potrebi otkažite rezervaciju.</p>
+    </div>
+</header>
+
+<main>
+    <section class="section">
+        <div class="section-header" style="margin-bottom:14px;">
+            <div>
+                <span class="section-label">PREGLED</span>
+                <h3>Vaših <em>rezervacija !</em></h3>
+            </div>
+        </div>
+
+        <div class="reservations-shell" style="max-width:1140px; margin:0 auto;">
+            <div id="reservationsList" class="reservations-list"></div>
+
+            <p id="emptyMsg" style="display:none; color:var(--muted); font-weight:600; margin-top:10px;">
+                Nemate rezervacija.
+            </p>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="footer-grid">
+        <div>
+            <a asp-controller="Home" asp-action="Index" class="logo-link">
+                <img src="~/assets/logo.png" alt="InterTrips logo" class="logo small-logo">
+            </a>
+            <p>Otkrijte najbolje destinacije na svijetu.</p>
+        </div>
+
+        <div>
+            <h4>Istraži</h4>
+            <a asp-controller="Destinacije" asp-action="Index">Destinacije</a>
+            <a href="#">Putni vodiči</a>
+            <a href="#">Najbolja iskustva</a>
+        </div>
+
+        <div>
+            <h4>Kompanija</h4>
+            <a asp-controller="Home" asp-action="ONama">O nama</a>
+            <a href="#">Karijere</a>
+            <a asp-controller="Home" asp-action="Kontakt">Kontakt</a>
+        </div>
+
+        <div>
+            <h4>Podrška</h4>
+            <a href="#">Centar za pomoć</a>
+            <a asp-controller="Home" asp-action="Privacy">Politika privatnosti</a>
+            <a href="#">Uvjeti korištenja</a>
+        </div>
+    </div>
+    <div class="footer-bottom">© 2026 InterTrips. Sva prava zadržana.</div>
+</footer>
+
+@section Scripts {
+    <style>
+        /* Hero background specifičan za ovu stranicu */
+        .hero--reservations {
+            position: relative;
+            min-height: 360px;
+            background: url('/assets/mojeRezervacije.jpg') center/cover no-repeat;
+        }
+            /* 1) Jači overlay preko slike (da tekst bude čitljiviji) */
+            .hero--reservations .hero-overlay {
+                background: linear-gradient(90deg, rgba(10,34,40,0.78) 0%, rgba(10,34,40,0.55) 55%, rgba(10,34,40,0.25) 100%), radial-gradient(900px 340px at 25% 35%, rgba(106,191,198,0.26), transparent 60%);
+            }
+
+            /* 2) POPRAVI "kvadrat" (hero-content) da bude lijep card i da slova budu jasna */
+            .hero--reservations .hero-content {
+                max-width: 720px;
+                margin: 0 auto;
+                padding: 34px 34px 30px;
+                border-radius: 22px;
+                background: rgba(10, 34, 40, 0.35); /* tamniji glass */
+                border: 1px solid rgba(255,255,255,0.18);
+                backdrop-filter: blur(12px);
+                box-shadow: 0 22px 60px rgba(0,0,0,0.22);
+                text-align: center;
+            }
+
+            /* 3) Badge "REZERVACIJE" da se vidi */
+            .hero--reservations .badge {
+                background: rgba(255,255,255,0.16);
+                border: 1px solid rgba(255,255,255,0.22);
+                color: rgba(255,255,255,0.92);
+            }
+
+            /* 4) Naslov i opis: bolja boja + shadow */
+            .hero--reservations .hero-content h1 {
+                color: #ffffff;
+                text-shadow: 0 18px 40px rgba(0,0,0,0.35);
+            }
+
+            .hero--reservations .hero-content p {
+                color: rgba(255,255,255,0.88);
+                text-shadow: 0 18px 40px rgba(0,0,0,0.25);
+            }
+
+        /* 5) Naslov sekcije dole (Vaše rezervacije) da ne bude previše blijed */
+        .section .section-header h3,
+        .section .center-title h3 {
+            color: var(--text);
+        }
+
+            /* Ako ti "rezervacije" (em) ispadne presvijetlo, pojačaj */
+            .section .section-header h3 em,
+            .section .center-title h3 em {
+                color: var(--primary-dark);
+            }
+
+        /* Kartice rezervacija */
+        .reservations-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .r-card {
+            background: rgba(255,255,255,0.86);
+            border: 1px solid rgba(95,181,187,0.16);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .r-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .r-code {
+            font-weight: 900;
+            color: var(--primary-dark);
+        }
+
+        .r-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            border: 1px solid rgba(95,181,187,0.18);
+            background: rgba(106,191,198,0.10);
+            color: var(--primary-dark);
+        }
+
+            .r-badge.cancel {
+                background: rgba(255,0,0,0.08);
+                border-color: rgba(255,0,0,0.15);
+                color: #b42318;
+            }
+
+        .r-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 18px;
+            margin-top: 6px;
+        }
+
+        .r-line {
+            display: flex;
+            justify-content: space-between;
+            gap: 14px;
+            color: var(--muted);
+            font-size: 13px;
+            border-bottom: 1px solid rgba(95,181,187,0.10);
+            padding: 8px 0;
+        }
+
+            .r-line strong {
+                color: var(--text);
+            }
+
+        .r-actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-cancel {
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 900;
+            padding: 0 14px;
+            background: rgba(255,0,0,0.08);
+            border: 1px solid rgba(255,0,0,0.18);
+            color: #b42318;
+        }
+
+        @@media (max-width: 760px) {
+            .r-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <script>
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        const userName = localStorage.getItem('userName');
+        const userInitial = localStorage.getItem('userInitial');
+
+        const userArea = document.getElementById('userArea');
+        const loginLink = document.getElementById('loginLink');
+        const userAvatar = document.getElementById('userAvatar');
+        const userNameEl = document.getElementById('userName');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        if (isLoggedIn === 'true') {
+            if (loginLink) loginLink.classList.add('hidden');
+            if (userArea) userArea.style.display = 'flex';
+            if (userAvatar) userAvatar.textContent = userInitial || 'U';
+            if (userNameEl) userNameEl.textContent = userName || 'Korisnik';
+        }
+
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function () {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userInitial');
+                localStorage.removeItem('userRole');
+                window.location.reload();
+            });
+        }
+
+        function currentUserKey() {
+            return localStorage.getItem('userName') || 'guest';
+        }
+
+        function getReservationsForCurrentUser() {
+            const all = JSON.parse(localStorage.getItem('reservations') || '[]');
+            const u = currentUserKey();
+            return all.filter(r => (r.userName || 'guest') === u);
+        }
+
+        function saveAllReservations(all) {
+            localStorage.setItem('reservations', JSON.stringify(all));
+        }
+
+        function cancelReservation(id) {
+            if (!confirm('Da li ste sigurni da želite otkazati ovu rezervaciju?')) return;
+
+            const all = JSON.parse(localStorage.getItem('reservations') || '[]');
+            const idx = all.findIndex(r => r.id === id);
+            if (idx === -1) return;
+
+            all[idx].status = 'Otkazana';
+            all[idx].cancelledAt = new Date().toISOString();
+            saveAllReservations(all);
+
+            renderReservations();
+        }
+
+        function badgeHtml(status) {
+            if (status === 'Otkazana') return '<span class="r-badge cancel">OTKAZANA</span>';
+            return '<span class="r-badge">AKTIVNA</span>';
+        }
+
+        function renderReservations() {
+            const listEl = document.getElementById('reservationsList');
+            const emptyMsg = document.getElementById('emptyMsg');
+
+            const items = getReservationsForCurrentUser();
+
+            if (!items.length) {
+                listEl.innerHTML = '';
+                emptyMsg.style.display = 'block';
+                return;
+            }
+
+            emptyMsg.style.display = 'none';
+
+            listEl.innerHTML = items.map(r => {
+                const isCancelled = r.status === 'Otkazana';
+
+                const cancelBtn = isCancelled ? '' :
+                    `<button class="btn-cancel" type="button" onclick="cancelReservation('${r.id}')">Otkaži rezervaciju</button>`;
+
+                return `
+                          <div class="r-card">
+                            <div class="r-top">
+                              <div class="r-code">${r.id || '—'}</div>
+                              ${badgeHtml(r.status)}
+                            </div>
+
+                            <div class="r-grid">
+                              <div class="r-line"><span>Destinacija</span><strong>${r.destination || '—'}</strong></div>
+                              <div class="r-line"><span>Period</span><strong>${(r.departure || '—')} - ${(r.return || '—')}</strong></div>
+                              <div class="r-line"><span>Putnici</span><strong>${r.travelers || '—'}</strong></div>
+                              <div class="r-line"><span>Smještaj</span><strong>${r.room || '—'}</strong></div>
+                              <div class="r-line"><span>Ukupno</span><strong>${r.total || '—'}</strong></div>
+                              <div class="r-line"><span>Način plaćanja</span><strong>${r.paymentType || '—'}</strong></div>
+                            </div>
+
+                            <div class="r-actions">
+                              ${cancelBtn}
+                            </div>
+                          </div>
+                        `;
+            }).join('');
+        }
+
+        window.addEventListener('DOMContentLoaded', renderReservations);
+    </script>
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const userName = localStorage.getItem('displayName') || localStorage.getItem('userName') || 'Profil';
+            const userInitial = localStorage.getItem('userInitial') || (userName ? userName[0].toUpperCase() : 'U');
+
+            const loginLink = document.getElementById('loginLink');
+            const userArea = document.getElementById('userArea');
+            const userAvatar = document.getElementById('userAvatar');
+            const userNameEl = document.getElementById('userName');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            if (isLoggedIn) {
+                if (loginLink) loginLink.style.display = 'none';
+                if (userArea) userArea.style.display = 'flex';
+                if (userAvatar) userAvatar.textContent = userInitial;
+                if (userNameEl) userNameEl.textContent = userName;
+            } else {
+                if (loginLink) loginLink.style.display = 'inline-block';
+                if (userArea) userArea.style.display = 'none';
+            }
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function () {
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('userName');
+                    localStorage.removeItem('displayName');
+                    localStorage.removeItem('userInitial');
+                    localStorage.removeItem('userRole');
+                    localStorage.removeItem('userPassword');
+                    window.location.href = '/';
+                });
+            }
+        });
+    </script>
+}

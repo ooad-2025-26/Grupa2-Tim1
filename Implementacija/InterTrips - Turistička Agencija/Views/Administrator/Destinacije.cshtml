@@ -1,0 +1,67 @@
+@model List<InterTrips___Turistička_Agencija.Models.Destinacija>
+
+@{
+    ViewData["Title"] = "Admin - Destinacije";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <style>
+        .wrap { max-width: 1100px; margin: 28px auto; padding: 0 18px; }
+        .bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+        .card { background: rgba(255,255,255,0.86); border:1px solid rgba(95,181,187,0.16); border-radius:16px; box-shadow: var(--shadow); padding:16px; }
+        .grid { display:grid; grid-template-columns: 120px 1fr auto; gap:14px; align-items:center; padding:12px; border-radius:12px; border:1px solid rgba(95,181,187,0.14); background: rgba(255,255,255,0.72); margin-bottom:10px; }
+        .thumb { width:120px; height:76px; border-radius:12px; background:#eef; object-fit:cover; border:1px solid rgba(95,181,187,0.14); }
+        .actions { display:flex; gap:10px; }
+        .btn { height:40px; padding:0 14px; border-radius:12px; cursor:pointer; font-weight:800; border:1px solid rgba(95,181,187,0.18); background:#fff; }
+        .btn-primary { border:none; color:#fff; background: linear-gradient(135deg, #6abfc6, #86bfe0); }
+        .btn-danger { border:1px solid rgba(255,0,0,0.18); background: rgba(255,0,0,0.06); color:#b42318; }
+        a.btn { display:inline-flex; align-items:center; text-decoration:none; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="bar">
+            <div class="btnrow">
+    <a class="btn" asp-controller="Administrator" asp-action="Index">Nazad na dashboard</a>
+    
+</div>
+            <a class="btn btn-primary" asp-controller="Administrator" asp-action="DestinacijaCreate">+ Dodaj destinaciju</a>
+        </div>
+
+        <div class="card">
+            @if (!Model.Any())
+            {
+                <p style="color:var(--muted); font-weight:700;">Nema destinacija u bazi.</p>
+            }
+            else
+            {
+                foreach (var d in Model)
+                {
+                    <div class="grid">
+                        <img class="thumb" src="@(string.IsNullOrWhiteSpace(d.SlikaUrl) ? "/assets/bali.jpg" : d.SlikaUrl)" alt="slika" />
+                        <div>
+                            <div style="font-weight:900; color:var(--text);">@d.Naziv</div>
+                            <div style="color:var(--muted); font-size:13px;">@d.Drzava • @d.Kategorija</div>
+                        </div>
+                        <div class="actions">
+                            <a class="btn" asp-controller="Administrator" asp-action="DestinacijaEdit" asp-route-id="@d.Id">Uredi</a>
+
+                            <form asp-controller="Administrator" asp-action="DestinacijaDelete" asp-route-id="@d.Id" method="post" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-danger" type="submit" onclick="return confirm('Obrisati destinaciju?')">Obriši</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</body>
+</html>

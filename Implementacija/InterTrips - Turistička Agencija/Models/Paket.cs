@@ -1,3 +1,5 @@
+using InterTrips___Turistička_Agencija.Enums;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -31,4 +33,10 @@ public class Paket
     public List<UslugaPaketa> Usluge { get; set; } = new();
 
     public List<Rezervacija> Rezervacije { get; set; } = new();
+
+    [MaxLength(260)]
+    public string? SlikaUrl { get; set; }
+
+    [MaxLength(800)]
+    public string? Opis { get; set; }
 }

@@ -1,0 +1,535 @@
+@{
+    ViewData["Title"] = "InterTrips - Uspješno plaćanje";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
+    <style>
+            :root {
+                --bg: #eaf7f7;
+                --card: rgba(255,255,255,0.86);
+                --line: rgba(95,181,187,0.16);
+                --primary: #2aa9b0;
+                --primary-dark: #1e7f88;
+                --text: #24414a;
+                --muted: #5f7c86;
+                --shadow: 0 16px 36px rgba(63,116,128,0.10);
+                --success: #36d399;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: 'Poppins',sans-serif;
+                background: linear-gradient(180deg, #edfafa 0%, #e2f4f5 45%, #f8fdfd 100%);
+                color: var(--text);
+                min-height: 100vh;
+            }
+
+            .topbar {
+                height: 56px;
+                background: rgba(255,255,255,0.80);
+                border-bottom: 1px solid rgba(95,181,187,0.12);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 26px;
+                position: sticky;
+                top: 0;
+                z-index: 50;
+                backdrop-filter: blur(10px);
+            }
+
+            .logo {
+                width: 80px;
+                height: 40px;
+                object-fit: contain;
+                display: block;
+            }
+
+            .secure {
+                font-size: 12px;
+                color: var(--muted);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-weight: 600;
+            }
+
+                .secure::before {
+                    content: "✓";
+                    color: var(--success);
+                    font-weight: 800;
+                }
+
+            .page {
+                padding: 34px 24px 56px;
+                min-height: calc(100vh - 56px); /* 56px je topbar */
+                display: flex;
+                align-items: center; /* vertikalno centriranje */
+            }
+
+            .shell {
+                max-width: 980px;
+                margin: 0 auto;
+                width: 100%;
+            }
+
+            .hero {
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 18px;
+                box-shadow: var(--shadow);
+                padding: 22px;
+                display: flex;
+                gap: 18px;
+                align-items: center;
+            }
+
+            .hero-icon {
+                width: 56px;
+                height: 56px;
+                border-radius: 16px;
+                background: rgba(54,211,153,0.14);
+                border: 1px solid rgba(54,211,153,0.25);
+                display: grid;
+                place-items: center;
+                color: #1f8f68;
+                font-weight: 900;
+                font-size: 22px;
+                flex: 0 0 auto;
+            }
+
+            .hero h1 {
+                font-size: 22px;
+                margin-bottom: 4px;
+                color: var(--text);
+            }
+
+            .hero p {
+                font-size: 13px;
+                color: var(--muted);
+                line-height: 1.7;
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 18px;
+                margin-top: 18px;
+                align-items: start;
+            }
+
+            .card {
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 16px;
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+
+            .card-head {
+                padding: 16px 16px 0;
+            }
+
+            .card-title {
+                font-size: 12px;
+                font-weight: 800;
+                color: var(--primary-dark);
+                letter-spacing: .6px;
+            }
+
+            .card-body {
+                padding: 14px 16px 16px;
+            }
+
+            .row {
+                display: flex;
+                justify-content: space-between;
+                gap: 16px;
+                padding: 10px 0;
+                border-bottom: 1px solid rgba(95,181,187,0.10);
+                font-size: 13px;
+                color: var(--muted);
+            }
+
+                .row:last-child {
+                    border-bottom: none;
+                    padding-bottom: 0;
+                }
+
+                .row strong {
+                    color: var(--text);
+                    font-weight: 700;
+                }
+
+            .pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                border-radius: 999px;
+                background: rgba(106,191,198,0.12);
+                border: 1px solid rgba(95,181,187,0.18);
+                color: var(--primary-dark);
+                font-size: 12px;
+                font-weight: 700;
+                width: fit-content;
+            }
+
+            .btn-row {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-top: 16px;
+            }
+
+            .main-btn, .secondary-btn {
+                height: 46px;
+                border-radius: 12px;
+                border: none;
+                cursor: pointer;
+                font-weight: 800;
+                font-size: 14px;
+                padding: 0 16px;
+            }
+
+            .main-btn {
+                background: linear-gradient(135deg, #6abfc6, #86bfe0);
+                color: #fff;
+            }
+
+            .secondary-btn {
+                background: transparent;
+                border: 1px solid rgba(95,181,187,0.25);
+                color: var(--text);
+            }
+
+            .preview {
+                height: 170px;
+                border-bottom: 1px solid rgba(95,181,187,0.12);
+                position: relative;
+                background: #cfeff0;
+            }
+
+                .preview .badge {
+                    position: absolute;
+                    top: 12px;
+                    left: 12px;
+                    padding: 6px 10px;
+                    border-radius: 999px;
+                    background: rgba(255,255,255,0.78);
+                    border: 1px solid rgba(95,181,187,0.18);
+                    font-size: 11px;
+                    font-weight: 800;
+                    color: var(--primary-dark);
+                }
+
+                .preview .place {
+                    position: absolute;
+                    left: 14px;
+                    bottom: 14px;
+                    color: #fff;
+                    font-weight: 800;
+                    font-size: 18px;
+                    text-shadow: 0 12px 26px rgba(0,0,0,0.18);
+                }
+
+                    .preview .place small {
+                        display: block;
+                        font-size: 11px;
+                        font-weight: 500;
+                        opacity: .9;
+                        margin-top: 2px;
+                    }
+
+            @@media (max-width: 900px) {
+                .grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+    </style>
+</head>
+
+<body>
+    <header class="topbar">
+        <a href="/" class="logo-link">
+            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+        </a>
+        <div class="secure">Uspješno plaćanje</div>
+    </header>
+
+    <main class="page">
+        <div class="shell">
+            <section class="hero">
+                <div class="hero-icon">✓</div>
+                <div>
+                    <h1>Uplata je uspješno evidentirana</h1>
+                    <p>Vaša potvrda je spremna. Možete preuzeti PDF dokument ili se vratiti na početnu stranicu.</p>
+                    <div class="btn-row">
+                        <button class="main-btn" type="button" onclick="downloadPDF()">Preuzmi potvrdu (PDF)</button>
+                        <button class="secondary-btn" type="button" onclick="window.location.href='/'">Završi</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="grid">
+                <article class="card">
+                    <div class="preview" id="tripPreview">
+                        <div class="badge" id="paymentBadge">PLAĆANJE</div>
+                        <div class="place" id="placeText">Destinacija <small>—</small></div>
+                    </div>
+
+                    <div class="card-head">
+                        <div class="card-title">DETALJI PUTOVANJA</div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row"><span>Period</span><strong id="periodText">—</strong></div>
+                        <div class="row"><span>Smještaj</span><strong id="roomText">—</strong></div>
+                        <div class="row"><span>Putnici</span><strong id="travelersText">—</strong></div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <div class="card-head">
+                        <div class="card-title">PODACI O REZERVACIJI I UPLATI</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row"><span>Broj rezervacije</span><strong id="codeText">—</strong></div>
+                        <div class="row"><span>Datum</span><strong id="dateText">—</strong></div>
+                        <div class="row"><span>Način plaćanja</span><strong id="methodText">—</strong></div>
+                        <div class="row"><span>Ukupno</span><strong id="totalText">—</strong></div>
+                        <div id="ratesBox" style="margin-top:12px; display:none;">
+                            <div class="pill" id="ratesPill">Rate</div>
+                            <div style="margin-top:8px; font-size:13px; color:var(--muted); line-height:1.7;">
+                                <div>Mjeseci: <strong id="ratesMonthsText">—</strong></div>
+                                <div>Mjesečna rata: <strong id="ratesMonthlyText">—</strong> KM</div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        async function loadFontAsBase64(url) {
+        const res = await fetch(url);
+        const buf = await res.arrayBuffer();
+        let binary = '';
+        const bytes = new Uint8Array(buf);
+        const chunkSize = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+        }
+        return btoa(binary);
+        }
+
+        let fontsReady = false;
+
+        async function ensurePdfFonts(doc) {
+        if (fontsReady) return;
+
+        const regularB64 = await loadFontAsBase64('/fonts/DejaVuSans.ttf');
+        doc.addFileToVFS('DejaVuSans.ttf', regularB64);
+        doc.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal');
+
+        try {
+        const boldB64 = await loadFontAsBase64('/fonts/DejaVuSans-Bold.ttf');
+        doc.addFileToVFS('DejaVuSans-Bold.ttf', boldB64);
+        doc.addFont('DejaVuSans-Bold.ttf', 'DejaVuSans', 'bold');
+        } catch (e) {
+        }
+
+        fontsReady = true;
+        }
+        window.jsPDF = window.jspdf.jsPDF;
+
+        function safe(key, fallback = '—') {
+        const v = localStorage.getItem(key);
+        return (v === null || v === undefined || String(v).trim() === '') ? fallback : v;
+        }
+
+        function getPaymentLabel(type) {
+        if (type === 'bank') return 'BANKOVNI PRENOS';
+        if (type === 'cash') return 'GOTOVINA';
+        if (type === 'rates') return 'RATE';
+        return 'KARTICA';
+        }
+
+        function normalizeUpperBs(s) {
+        return String(s).toUpperCase()
+        .replace(/Č/g, "C")
+        .replace(/Ć/g, "C")
+        .replace(/Š/g, "S")
+        .replace(/Ž/g, "Z")
+        .replace(/Đ/g, "DJ");
+        }
+
+        function loadUi() {
+        const dest = safe('reservationDestination', 'Destinacija');
+        const country = safe('reservationCountry', '—');
+        const image = safe('reservationImage', '/assets/bali.jpg');
+
+        document.getElementById('placeText').innerHTML = `${dest} <small>${country}</small>`;
+        document.getElementById('tripPreview').style.background =
+        `linear-gradient(rgba(0,0,0,0.14), rgba(0,0,0,0.14)), url('${image}') center/cover no-repeat`;
+
+        const dep = safe('reservationDeparture');
+        const ret = safe('reservationReturn');
+        document.getElementById('periodText').textContent = `${dep} - ${ret}`;
+
+        document.getElementById('roomText').textContent = safe('reservationRoom');
+        document.getElementById('travelersText').textContent = safe('reservationTravelers');
+
+        document.getElementById('codeText').textContent = safe('finalReservationCode');
+        document.getElementById('dateText').textContent = safe('reservationDate');
+
+        const pType = safe('paymentType', 'card');
+        const method = getPaymentLabel(pType);
+        document.getElementById('methodText').textContent = method;
+        document.getElementById('paymentBadge').textContent = method;
+
+        document.getElementById('totalText').textContent = safe('reservationTotal', '0');
+
+        if (pType === 'rates') {
+        const m = safe('ratesMonths', '');
+        const r = safe('ratesMonthly', '');
+        if (m && r) {
+        document.getElementById('ratesBox').style.display = 'block';
+        document.getElementById('ratesMonthsText').textContent = m;
+        document.getElementById('ratesMonthlyText').textContent = r;
+        }
+        }
+        }
+        function pdfSafeText(value) {
+        if (value === null || value === undefined) return '';
+
+        let s = String(value);
+
+        s = s.replace(/<[^>]*>/g, '');
+
+        s = s.replace(/&amp;/g, '&')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>');
+
+        s = s.replace(/[\u0000-\u001F\u007F]/g, '');
+
+        s = s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+        s = s.replace(/[^\x20-\x7E]/g, '');
+
+        return s.trim();
+        }
+        async function generatePDF(resCode) {
+        const doc = new jsPDF();
+
+        await ensurePdfFonts(doc);
+
+        doc.setFont('DejaVuSans', 'normal');
+
+        const date = new Date().toLocaleDateString('bs-BA');
+        const selectedPaymentType = safe('paymentType', 'card');
+        const paymentLabel = getPaymentLabel(selectedPaymentType);
+
+        doc.setFillColor(47, 125, 134);
+        doc.rect(0, 0, 210, 40, 'F');
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(24);
+        doc.setFont('DejaVuSans', 'bold');
+        doc.text("INTERTRIPS", 105, 20, { align: "center" });
+
+        doc.setFontSize(10);
+        doc.setFont('DejaVuSans', 'normal');
+        doc.text("Agencija za turizam | Sarajevo, BiH | www.intertrips.ba", 105, 30, { align: "center" });
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(18);
+        doc.setFont('DejaVuSans', 'bold');
+        doc.text("POTVRDA REZERVACIJE", 20, 60);
+
+        doc.setFontSize(10);
+        doc.setFont('DejaVuSans', 'normal');
+        doc.text(`Broj dokumenta: ${resCode}`, 20, 70);
+        doc.text(`Datum izdavanja: ${date}`, 20, 75);
+        doc.line(20, 80, 190, 80);
+
+        console.log('paymentLabel=', paymentLabel);
+        console.log('selectedPaymentType=', selectedPaymentType);
+        doc.setFont(undefined, 'bold');
+        doc.text("DETALJI PUTOVANJA:", 20, 95);
+
+        doc.setFont(undefined, 'normal');
+        doc.text(`Destinacija: ${safe('reservationDestination', '')}`, 20, 105);
+        doc.text(`Period: ${safe('reservationDeparture', '')} - ${safe('reservationReturn', '')}`, 20, 112);
+        doc.text(`Smještaj: ${safe('reservationRoom', '')}`, 20, 119);
+        doc.text(`Broj putnika: ${safe('reservationTravelers', '')}`, 20, 126);
+
+        doc.setFont(undefined, 'bold');
+        doc.text("FINANSIJSKI PODACI:", 120, 95);
+
+        doc.setFont(undefined, 'normal');
+        doc.text(`Način plaćanja: ${normalizeUpperBs(paymentLabel)}`, 120, 105);
+        doc.setFontSize(14);
+        doc.text(`UKUPNO: ${safe('reservationTotal', '')}`, 120, 115);
+
+        if (selectedPaymentType === 'rates') {
+        doc.setFontSize(10);
+        doc.text(`Mjeseci: ${safe('ratesMonths', '')}`, 120, 124);
+        doc.text(`Mjesečna rata: ${safe('ratesMonthly', '')} KM`, 120, 130);
+        }
+
+        const footerY = 200;
+
+        doc.setDrawColor(47, 125, 134);
+        doc.setLineWidth(0.8);
+        doc.circle(50, footerY + 10, 18);
+
+        doc.setFontSize(8);
+        doc.setTextColor(47, 125, 134);
+        doc.text("INTERTRIPS d.o.o.", 50, footerY + 8, { align: "center" });
+        doc.text("SARAJEVO", 50, footerY + 13, { align: "center" });
+        doc.text("ID: 4200000000", 50, footerY + 18, { align: "center" });
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(10);
+        doc.text("__________________________", 130, footerY + 10);
+        doc.text("Ovlašteno lice", 145, footerY + 16);
+
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        doc.text("Ovaj dokument je validan bez pečata i potpisa ukoliko je generisan elektronskim putem.", 105, 285, { align: "center" });
+
+        doc.save(`Potvrda_InterTrips_${resCode}.pdf`);
+        }
+
+        async function downloadPDF() {
+        const resCode = safe('finalReservationCode', 'IT-0000-0000');
+        await generatePDF(resCode);
+        }
+
+        window.addEventListener('DOMContentLoaded', loadUi);
+    </script>
+</body>
+</html>

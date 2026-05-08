@@ -1,0 +1,476 @@
+@{
+    ViewData["Title"] = "InterTrips - Putnici";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
+    <style>
+            .page {
+                padding: 34px 24px 56px;
+            }
+
+            .topbar {
+                height: 56px;
+                background: rgba(255,255,255,0.80);
+                border-bottom: 1px solid rgba(95,181,187,0.12);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 26px;
+                position: sticky;
+                top: 0;
+                z-index: 50;
+                backdrop-filter: blur(10px);
+            }
+
+            .center-shell {
+                max-width: 1140px;
+                margin: 0 auto;
+            }
+
+            .steps {
+                display: flex;
+                justify-content: center;
+                gap: 48px;
+                margin: 16px 0 26px;
+                flex-wrap: wrap;
+            }
+
+            .step {
+                text-align: center;
+                color: var(--muted);
+                font-size: 11px;
+            }
+
+                .step .circle {
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    border: 1px solid rgba(95,181,187,0.35);
+                    display: grid;
+                    place-items: center;
+                    margin: 0 auto 8px;
+                    color: var(--primary-dark);
+                    background: rgba(255,255,255,0.65);
+                }
+
+                .step.active {
+                    color: var(--text);
+                    font-weight: 600;
+                }
+
+                    .step.active .circle {
+                        background: linear-gradient(135deg, #6abfc6, #86bfe0);
+                        color: #ffffff;
+                        border-color: transparent;
+                    }
+
+            .booking-grid {
+                display: grid;
+                grid-template-columns: 1.7fr 1fr;
+                gap: 20px;
+                align-items: start;
+            }
+
+            .panel {
+                background: rgba(255,255,255,0.84);
+                border: 1px solid rgba(95,181,187,0.16);
+                border-radius: 16px;
+                box-shadow: var(--shadow);
+                backdrop-filter: blur(10px);
+            }
+
+            .panel-pad {
+                padding: 24px;
+            }
+
+            .row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+                margin-bottom: 14px;
+            }
+
+            .input, .textarea {
+                width: 100%;
+                background: #fff;
+                border: 1px solid rgba(95,181,187,0.18);
+                border-radius: 10px;
+                height: 42px;
+                padding: 0 14px;
+                font-size: 13px;
+                outline: none;
+            }
+
+            .textarea {
+                height: 80px;
+                padding: 12px;
+                resize: none;
+            }
+
+            /* Summary Card Styles */
+            .summary-photo {
+                height: 170px;
+                position: relative;
+                border-radius: 16px 16px 0 0;
+            }
+
+            .summary-place {
+                position: absolute;
+                left: 14px;
+                bottom: 14px;
+                font-weight: 700;
+                font-size: 18px;
+                color: #fff;
+            }
+
+                .summary-place small {
+                    display: block;
+                    font-size: 11px;
+                    color: #dff4f5;
+                    font-weight: 500;
+                }
+
+            .summary-body {
+                padding: 16px;
+            }
+
+            .summary-row {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+                font-size: 12px;
+                color: var(--muted);
+            }
+
+                .summary-row strong {
+                    color: var(--text);
+                }
+
+            .total {
+                color: var(--primary-dark);
+                font-size: 24px;
+                font-weight: 800;
+            }
+
+            .main-btn {
+                background: linear-gradient(135deg, #6abfc6, #86bfe0);
+                color: #fff;
+                border: none;
+                height: 46px;
+                border-radius: 12px;
+                font-weight: 800;
+                cursor: pointer;
+            }
+
+            .secondary-btn {
+                background: none;
+                border: 1px solid rgba(95,181,187,0.25);
+                padding: 10px 20px;
+                border-radius: 12px;
+                cursor: pointer;
+                color: var(--text);
+                font-weight: 700;
+            }
+
+            .passenger-block {
+                margin-bottom: 25px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid rgba(95,181,187,0.12);
+            }
+
+            .p-title {
+                font-weight: 800;
+                margin-bottom: 15px;
+                color: var(--primary-dark);
+                font-size: 14px;
+                text-transform: uppercase;
+            }
+
+            .field-label {
+                display: block;
+                font-size: 11px;
+                font-weight: 800;
+                color: var(--primary-dark);
+                margin: 10px 0 8px;
+                letter-spacing: .6px;
+            }
+
+            .btn-row {
+                display: flex;
+                justify-content: space-between;
+                gap: 12px;
+                margin-top: 20px;
+                flex-wrap: wrap;
+            }
+
+            .error-note {
+                font-size: 12px;
+                color: #d64545;
+                margin-top: 8px;
+                display: none;
+            }
+
+            @@media (max-width: 980px) {
+                .booking-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+    </style>
+</head>
+
+<body>
+    <div class="topbar">
+        <a href="/" class="logo-link">
+            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo" style="height:40px;">
+        </a>
+        <div class="secure" style="font-size:12px; color:var(--muted);">🛡 Sigurna kupovina</div>
+    </div>
+
+    <div class="page">
+        <div class="center-shell">
+            <div class="steps">
+                <div class="step active"><div class="circle">✓</div>Detalji</div>
+                <div class="step active"><div class="circle">2</div>Putnici</div>
+                <div class="step"><div class="circle">3</div>Plaćanje</div>
+                <div class="step"><div class="circle">4</div>Potvrda</div>
+            </div>
+
+            <div class="booking-grid">
+                <div class="left-col">
+                    <div class="panel panel-pad">
+                        <h3 style="margin-bottom:20px; color:var(--primary-dark);">Podaci o putnicima</h3>
+
+                        <div id="passengerContainer"></div>
+
+                        <div id="formError" class="error-note"></div>
+
+                        <div class="btn-row">
+                            <button class="secondary-btn" type="button" onclick="window.history.back()">← Nazad</button>
+                            <button class="main-btn" style="padding:0 30px;" type="button" onclick="goToPayment()">Nastavi na plaćanje →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-col">
+                    <div class="panel summary-card">
+                        <div class="summary-photo" id="summaryPhoto" style="background: url('/assets/bali.jpg') center/cover;">
+                            <div class="summary-place" id="summaryDest">Destinacija <small id="summaryCountry">—</small></div>
+                        </div>
+                        <div class="summary-body">
+                            <div class="summary-row"><span>Polazak</span><strong id="summaryDeparture">—</strong></div>
+                            <div class="summary-row"><span>Povratak</span><strong id="summaryReturn">—</strong></div>
+                            <div class="summary-row"><span>Putnici</span><strong id="summaryTravelers">—</strong></div>
+                            <div class="summary-row"><span>Smještaj</span><strong id="summaryRoom">—</strong></div>
+                            <div style="border-top:1px solid rgba(95,181,187,0.12); padding-top:15px; margin-top:15px; display:flex; justify-content:space-between; align-items:center;">
+                                <span>Ukupno</span>
+                                <span class="total" id="summaryTotal">$0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <template id="passengerTemplate">
+        <div class="passenger-block">
+            <div class="p-title title"></div>
+
+            <label class="field-label">TIP PUTNIKA</label>
+            <div class="row">
+                <select class="input ptype" style="grid-column: span 2;">
+                    <option value="adult">Odrasli (18+)</option>
+                    <option value="child">Dijete (0-17)</option>
+                </select>
+            </div>
+
+            <div class="row">
+                <input class="input fname" placeholder="Ime">
+                <input class="input lname" placeholder="Prezime">
+            </div>
+
+            <div class="row">
+                <input type="date" class="input birthdate">
+                <input class="input passport" placeholder="Broj pasoša">
+            </div>
+
+            <div class="row">
+                <input class="input nationality" placeholder="Državljanstvo" style="grid-column: span 2;">
+            </div>
+
+            <textarea class="textarea requests" placeholder="Posebni zahtjevi (ishrana, alergije...)"></textarea>
+        </div>
+    </template>
+
+    <script>
+            function calcAgeYears(isoDate) {
+                if (!isoDate) return null;
+                const dob = new Date(isoDate + "T00:00:00");
+                if (isNaN(dob.getTime())) return null;
+
+                const today = new Date();
+                let age = today.getFullYear() - dob.getFullYear();
+                const m = today.getMonth() - dob.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+                return age;
+            }
+
+            function generatePassengers() {
+                const container = document.getElementById('passengerContainer');
+                const template = document.getElementById('passengerTemplate');
+                const count = parseInt(localStorage.getItem('reservationTravelers')) || 1;
+
+                container.innerHTML = '';
+                for (let i = 1; i <= count; i++) {
+                    const clone = template.content.cloneNode(true);
+                    clone.querySelector('.title').textContent = `Putnik ${i}`;
+
+                    const wrapper = document.createElement('div');
+                    wrapper.appendChild(clone);
+
+                    const block = wrapper.querySelector('.passenger-block');
+
+                    const doLiveValidate = () => {
+                        const res = validateBlock(block, i - 1);
+                        if (!res.ok) setFormError(res.msg);
+                        else setFormError('');
+                    };
+
+                    block.querySelector('.ptype')?.addEventListener('change', doLiveValidate);
+                    block.querySelector('.birthdate')?.addEventListener('change', doLiveValidate);
+                    block.querySelector('.birthdate')?.addEventListener('input', doLiveValidate);
+
+                    container.appendChild(block);
+                }
+            }
+
+            function loadSummary() {
+                document.getElementById('summaryDest').innerHTML =
+                    `${localStorage.getItem('reservationDestination') || 'Destinacija'} <small>${localStorage.getItem('reservationCountry') || '—'}</small>`;
+
+                document.getElementById('summaryDeparture').textContent = localStorage.getItem('reservationDeparture') || '—';
+                document.getElementById('summaryReturn').textContent = localStorage.getItem('reservationReturn') || '—';
+                document.getElementById('summaryTravelers').textContent = localStorage.getItem('reservationTravelers') || '1';
+                document.getElementById('summaryRoom').textContent = localStorage.getItem('reservationRoom') || '—';
+                document.getElementById('summaryTotal').textContent = localStorage.getItem('reservationTotal') || '$0';
+
+                const img = localStorage.getItem('reservationImage') || '/assets/bali.jpg';
+                document.getElementById('summaryPhoto').style.backgroundImage =
+                    `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.3)), url('${img}')`;
+            }
+
+            function setFormError(msg) {
+                const el = document.getElementById('formError');
+                if (!el) return;
+                if (!msg) {
+                    el.style.display = 'none';
+                    el.textContent = '';
+                    return;
+                }
+                el.style.display = 'block';
+                el.textContent = msg;
+            }
+            function validateBlock(block, idx) {
+                const type = block.querySelector('.ptype')?.value || 'adult';
+                const birthEl = block.querySelector('.birthdate');
+                const birthDate = birthEl?.value;
+
+                if (birthEl) birthEl.style.borderColor = '';
+
+                if (!birthDate) return { ok: true, msg: '' };
+
+                const age = calcAgeYears(birthDate);
+                if (age === null) return { ok: false, msg: `Datum rođenja za putnika ${idx + 1} nije ispravan.` };
+
+                if (type === 'adult' && age < 18) {
+                    if (birthEl) birthEl.style.borderColor = '#ff6b6b';
+                    return { ok: false, msg: `Putnik ${idx + 1} je označen kao Odrasli (18+), ali ima ${age} godina. Ako nema 18+, mora biti Dijete.` };
+                }
+
+                if (type === 'child' && age >= 18) {
+                    if (birthEl) birthEl.style.borderColor = '#ff6b6b';
+                    return { ok: false, msg: `Putnik ${idx + 1} je označen kao Dijete, ali ima ${age} godina. Ako ima 18+, mora biti Odrasli.` };
+                }
+
+                return { ok: true, msg: '' };
+            }
+
+            function goToPayment() {
+                setFormError('');
+
+                const passengers = [];
+                const blocks = document.querySelectorAll('.passenger-block');
+                let valid = true;
+                let firstError = '';
+
+                blocks.forEach((block, idx) => {
+                    const birthEl = block.querySelector('.birthdate');
+                    if (birthEl) birthEl.style.borderColor = '';
+
+                    const type = block.querySelector('.ptype')?.value || 'adult';
+
+                    const p = {
+                        type,
+                        firstName: block.querySelector('.fname').value.trim(),
+                        lastName: block.querySelector('.lname').value.trim(),
+                        birthDate: block.querySelector('.birthdate').value,
+                        passport: block.querySelector('.passport').value.trim(),
+                        nationality: block.querySelector('.nationality').value.trim(),
+                        requests: block.querySelector('.requests').value.trim()
+                    };
+
+                                        if (!p.firstName || !p.lastName || !p.birthDate) {
+                        valid = false;
+                        if (!firstError) firstError = `Molimo popunite ime, prezime i datum rođenja za putnika ${idx + 1}.`;
+                    }
+
+                    const age = calcAgeYears(p.birthDate);
+                    if (age === null) {
+                        valid = false;
+                        if (!firstError) firstError = `Datum rođenja za putnika ${idx + 1} nije ispravan.`;
+                    } else {
+                        if (p.type === 'adult' && age < 18) {
+                            valid = false;
+                            if (birthEl) birthEl.style.borderColor = '#ff6b6b';
+                            if (!firstError) firstError = `Putnik ${idx + 1} je označen kao Odrasli, ali ima ${age} godina (mora imati 18+).`;
+                        }
+
+                        if (p.type === 'child' && age >= 18) {
+                            valid = false;
+                            if (birthEl) birthEl.style.borderColor = '#ff6b6b';
+                            if (!firstError) firstError = `Putnik ${idx + 1} je označen kao Dijete, ali ima ${age} godina (dijete mora imati manje od 18).`;
+                        }
+                    }
+
+                    passengers.push(p);
+                });
+
+                if (!valid) {
+                    setFormError(firstError || "Provjerite podatke putnika.");
+                    return;
+                }
+
+                localStorage.setItem('savedPassengers', JSON.stringify(passengers));
+                window.location.href = '/Placanje';
+            }
+
+            window.addEventListener('DOMContentLoaded', () => {
+                generatePassengers();
+                loadSummary();
+            });
+    </script>
+</body>
+</html>

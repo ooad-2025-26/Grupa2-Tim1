@@ -1,0 +1,85 @@
+@model InterTrips___Turistička_Agencija.Models.Paket
+
+@{
+    var isEdit = Model != null && Model.Id != 0;
+    ViewData["Title"] = isEdit ? "Uredi paket" : "Novi paket";
+    Layout = null;
+
+    var destinacije = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Destinacije;
+    var statusi = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Statusi;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <style>
+        .wrap { max-width: 900px; margin: 28px auto; padding: 0 18px; }
+        .card { background: rgba(255,255,255,0.86); border:1px solid rgba(95,181,187,0.16); border-radius:16px; box-shadow: var(--shadow); padding:18px; }
+        .row { display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+        .field-label{ display:block; font-size:11px; font-weight:800; color: var(--primary-dark); margin: 10px 0 8px; letter-spacing: .6px; }
+        .input, .select{ width:100%; background:#fff; border:1px solid rgba(95,181,187,0.18); border-radius:10px; height:42px; padding:0 14px; font-size:13px; outline:none; }
+        .btnrow{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap; }
+        .btn{ height:42px; padding:0 14px; border-radius:12px; cursor:pointer; font-weight:900; border:1px solid rgba(95,181,187,0.18); background:#fff; }
+        .btn-primary{ border:none; color:#fff; background: linear-gradient(135deg, #6abfc6, #86bfe0); }
+        a.btn{ display:inline-flex; align-items:center; text-decoration:none; }
+        .err{ color:#b42318; font-size:12px; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h2 style="margin:0 0 14px;">@ViewData["Title"]</h2>
+
+    <div class="card">
+        <form asp-controller="Administrator"
+              asp-action="@(isEdit ? "PaketEdit" : "PaketCreate")"
+              asp-route-id="@(Model.Id)"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div>
+                <label class="field-label">NAZIV PAKETA</label>
+                <input class="input" asp-for="Naziv" placeholder="Npr. Roma paket" />
+                <span class="err" asp-validation-for="Naziv"></span>
+            </div>
+
+            <div class="row">
+                <div>
+                    <label class="field-label">DESTINACIJA</label>
+                    <select class="select" asp-for="DestinacijaId" asp-items="destinacije"></select>
+                    <span class="err" asp-validation-for="DestinacijaId"></span>
+                </div>
+
+                <div>
+                    <label class="field-label">STATUS</label>
+                    <select class="select" asp-for="Status" asp-items="statusi"></select>
+                    <span class="err" asp-validation-for="Status"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div>
+                    <label class="field-label">CIJENA OD</label>
+                    <input class="input" asp-for="CijenaOd" type="number" step="0.01" min="0" />
+                    <span class="err" asp-validation-for="CijenaOd"></span>
+                </div>
+
+                <div>
+                    <label class="field-label">TRAJANJE (NOĆI)</label>
+                    <input class="input" asp-for="TrajanjeNoci" type="number" min="1" max="365" />
+                    <span class="err" asp-validation-for="TrajanjeNoci"></span>
+                </div>
+            </div>
+
+            <div class="btnrow">
+                <a class="btn" asp-controller="Administrator" asp-action="Paketi">Nazad</a>
+                <button class="btn btn-primary" type="submit">Sačuvaj</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>

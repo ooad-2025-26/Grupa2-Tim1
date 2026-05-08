@@ -1,5 +1,6 @@
-namespace InterTrips___Turistička_Agencija.Models;
+namespace InterTrips___Turistička_Agencija.Enums;
 
+using Microsoft.AspNetCore.Mvc;
 public enum Uloga
 {
     Klijent = 0,
