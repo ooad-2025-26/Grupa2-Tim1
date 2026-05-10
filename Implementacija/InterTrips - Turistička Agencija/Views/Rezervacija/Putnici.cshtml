@@ -308,7 +308,9 @@
             </div>
 
             <div class="row">
-                <input class="input nationality" placeholder="Državljanstvo" style="grid-column: span 2;">
+                <select class="input nationality" style="grid-column: span 2;">
+                    <option value="">Odaberite državljanstvo</option>
+                </select>
             </div>
 
             <textarea class="textarea requests" placeholder="Posebni zahtjevi (ishrana, alergije...)"></textarea>
@@ -316,6 +318,22 @@
     </template>
 
     <script>
+            const countries = [
+                { name: "Bosna i Hercegovina", flag: "🇧🇦" },
+                { name: "Hrvatska", flag: "🇭🇷" },
+                { name: "Srbija", flag: "🇷🇸" },
+                { name: "Crna Gora", flag: "🇲🇪" },
+                { name: "Slovenija", flag: "🇸🇮" },
+                { name: "Njemačka", flag: "🇩🇪" },
+                { name: "Austrija", flag: "🇦🇹" },
+                { name: "Italija", flag: "🇮🇹" },
+                { name: "Francuska", flag: "🇫🇷" },
+                { name: "Švicarska", flag: "🇨🇭" },
+                { name: "Švedska", flag: "🇸🇪" },
+                { name: "Turska", flag: "🇹🇷" },
+                { name: "Ujedinjeni Arapski Emirati", flag: "🇦🇪" },
+                { name: "SAD", flag: "🇺🇸" }
+            ].sort((a, b) => a.name.localeCompare(b.name));
             function calcAgeYears(isoDate) {
                 if (!isoDate) return null;
                 const dob = new Date(isoDate + "T00:00:00");
@@ -338,9 +356,16 @@
                     const clone = template.content.cloneNode(true);
                     clone.querySelector('.title').textContent = `Putnik ${i}`;
 
+                    const selectNat = clone.querySelector('.nationality');
+                    countries.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.name;
+                        opt.textContent = `${c.flag} ${c.name}`;
+                        selectNat.appendChild(opt);
+                    });
+
                     const wrapper = document.createElement('div');
                     wrapper.appendChild(clone);
-
                     const block = wrapper.querySelector('.passenger-block');
 
                     const doLiveValidate = () => {
@@ -351,7 +376,6 @@
 
                     block.querySelector('.ptype')?.addEventListener('change', doLiveValidate);
                     block.querySelector('.birthdate')?.addEventListener('change', doLiveValidate);
-                    block.querySelector('.birthdate')?.addEventListener('input', doLiveValidate);
 
                     container.appendChild(block);
                 }
@@ -421,18 +445,21 @@
                     if (birthEl) birthEl.style.borderColor = '';
 
                     const type = block.querySelector('.ptype')?.value || 'adult';
-
+                    const nationalityEl = block.querySelector('.nationality');
                     const p = {
                         type,
                         firstName: block.querySelector('.fname').value.trim(),
                         lastName: block.querySelector('.lname').value.trim(),
                         birthDate: block.querySelector('.birthdate').value,
                         passport: block.querySelector('.passport').value.trim(),
-                        nationality: block.querySelector('.nationality').value.trim(),
+                        nationality: nationalityEl.value,
                         requests: block.querySelector('.requests').value.trim()
                     };
-
-                                        if (!p.firstName || !p.lastName || !p.birthDate) {
+                    if (!p.firstName || !p.lastName || !p.birthDate || !p.nationality) {
+                        valid = false;
+                        if (!firstError) firstError = `Molimo popunite sva polja za putnika ${idx + 1}.`;
+                    }
+                    if (!p.firstName || !p.lastName || !p.birthDate) {
                         valid = false;
                         if (!firstError) firstError = `Molimo popunite ime, prezime i datum rođenja za putnika ${idx + 1}.`;
                     }

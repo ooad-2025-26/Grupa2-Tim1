@@ -17,15 +17,14 @@
 
     <style>
             :root {
-                --bg: #eaf7f7;
-                --card: rgba(255,255,255,0.86);
-                --line: rgba(95,181,187,0.16);
                 --primary: #2aa9b0;
                 --primary-dark: #1e7f88;
-                --text: #24414a;
-                --muted: #5f7c86;
-                --shadow: 0 16px 36px rgba(63,116,128,0.10);
                 --success: #36d399;
+                --text: #1a2e35;
+                --muted: #64828d;
+                --bg: #f0fafa;
+                --card: #ffffff;
+                --shadow: 0 20px 40px rgba(0,0,0,0.06);
             }
 
             * {
@@ -35,32 +34,47 @@
             }
 
             body {
-                font-family: 'Poppins',sans-serif;
-                background: linear-gradient(180deg, #edfafa 0%, #e2f4f5 45%, #f8fdfd 100%);
+                font-family: 'Poppins', sans-serif;
+                background: radial-gradient(circle at top right, #ffffff, #e6f4f5);
                 color: var(--text);
                 min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            @@keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
 
             .topbar {
-                height: 56px;
-                background: rgba(255,255,255,0.80);
-                border-bottom: 1px solid rgba(95,181,187,0.12);
+                height: 70px;
+                background: rgba(255, 255, 255, 0.8);
+                backdrop-filter: blur(12px);
+                border-bottom: 1px solid rgba(95, 181, 187, 0.15);
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 0 26px;
+                padding: 0 40px;
                 position: sticky;
                 top: 0;
-                z-index: 50;
-                backdrop-filter: blur(10px);
+                z-index: 100;
             }
 
             .logo {
-                width: 80px;
-                height: 40px;
-                object-fit: contain;
-                display: block;
+                width: 100px;
+                transition: transform 0.3s;
             }
+
+                .logo:hover {
+                    transform: scale(1.05);
+                }
 
             .secure {
                 font-size: 12px;
@@ -78,94 +92,180 @@
                 }
 
             .page {
-                padding: 34px 24px 56px;
-                min-height: calc(100vh - 56px); /* 56px je topbar */
-                display: flex;
-                align-items: center; /* vertikalno centriranje */
+                padding: 60px 20px;
+                animation: fadeInUp 0.6s ease-out;
             }
 
             .shell {
-                max-width: 980px;
+                max-width: 850px;
                 margin: 0 auto;
-                width: 100%;
             }
 
             .hero {
-                background: var(--card);
-                border: 1px solid var(--line);
-                border-radius: 18px;
-                box-shadow: var(--shadow);
-                padding: 22px;
+                background: url('/assets/placanje.jpg') center/cover no-repeat !important; /* tvoja slika */
+                padding: 60px 20px;
                 display: flex;
-                gap: 18px;
+                justify-content: center;
                 align-items: center;
+                border-radius: 24px;
+                margin-bottom: 30px;
+            }
+
+            .hero-bubble {
+                background: rgba(255, 255, 255, 0.85);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-radius: 30px;
+                padding: 40px;
+                max-width: 650px;
+                display: flex;
+                gap: 25px;
+                align-items: center;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.1); /* Blaga sjena da oblačić "iskoči" */
+                animation: bubbleFloat 0.8s ease-out;
             }
 
             .hero-icon {
-                width: 56px;
-                height: 56px;
-                border-radius: 16px;
-                background: rgba(54,211,153,0.14);
-                border: 1px solid rgba(54,211,153,0.25);
+                width: 70px;
+                height: 70px;
+                background: var(--success);
+                color: white;
+                font-size: 30px;
+                border-radius: 50%;
                 display: grid;
                 place-items: center;
-                color: #1f8f68;
-                font-weight: 900;
-                font-size: 22px;
-                flex: 0 0 auto;
+                flex-shrink: 0;
+                box-shadow: 0 8px 20px rgba(54, 211, 153, 0.3);
+            }
+
+            .hero-content {
+                text-align: left;
+            }
+
+                .hero-content h1 {
+                    font-size: 24px;
+                    margin-bottom: 8px;
+                    color: var(--text);
+                }
+
+                .hero-content p {
+                    font-size: 14px;
+                    color: var(--muted);
+                    margin-bottom: 20px;
+                    line-height: 1.6;
+                }
+
+          
+            @@keyframes bubbleFloat {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px) scale(0.95);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            @@media (max-width: 600px) {
+                .hero-bubble {
+                    flex-direction: column;
+                    text-align: center;
+                    padding: 30px 20px;
+                }
+
+                .hero-content {
+                    text-align: center;
+                }
             }
 
             .hero h1 {
-                font-size: 22px;
-                margin-bottom: 4px;
-                color: var(--text);
+                font-size: 32px;
+                font-weight: 800;
+                margin-bottom: 12px;
+                letter-spacing: -0.5px;
             }
 
             .hero p {
-                font-size: 13px;
                 color: var(--muted);
-                line-height: 1.7;
+                font-size: 16px;
+                max-width: 500px;
+                margin: 0 auto 30px;
             }
 
             .grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 18px;
-                margin-top: 18px;
-                align-items: start;
+                gap: 24px;
             }
 
             .card {
-                background: var(--card);
-                border: 1px solid var(--line);
-                border-radius: 16px;
-                box-shadow: var(--shadow);
-                overflow: hidden;
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.4);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+                border-radius: 24px;
             }
+
+            .preview {
+                height: 200px;
+                position: relative;
+                background: #cfeff0;
+            }
+
+                .preview .badge {
+                    position: absolute;
+                    top: 15px;
+                    right: 15px;
+                    background: rgba(255, 255, 255, 0.9);
+                    padding: 6px 14px;
+                    border-radius: 12px;
+                    font-size: 11px;
+                    font-weight: 800;
+                    color: var(--primary-dark);
+                    backdrop-filter: blur(4px);
+                }
+
+                .preview .place {
+                    position: absolute;
+                    bottom: 20px;
+                    left: 20px;
+                    color: white;
+                    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+                }
+
+                    .preview .place h2 {
+                        font-size: 24px;
+                        font-weight: 800;
+                    }
 
             .card-head {
                 padding: 16px 16px 0;
             }
 
-            .card-title {
-                font-size: 12px;
-                font-weight: 800;
-                color: var(--primary-dark);
-                letter-spacing: .6px;
+            .card-body {
+                padding: 30px;
             }
 
-            .card-body {
-                padding: 14px 16px 16px;
+            .card-title {
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                color: var(--primary);
+                font-weight: 700;
+                margin-bottom: 20px;
+                display: block;
             }
 
             .row {
                 display: flex;
                 justify-content: space-between;
-                gap: 16px;
-                padding: 10px 0;
-                border-bottom: 1px solid rgba(95,181,187,0.10);
-                font-size: 13px;
-                color: var(--muted);
+                margin-bottom: 15px;
+                font-size: 14px;
+                border-bottom: 1px solid #f0f7f8;
+                padding-bottom: 10px;
             }
 
                 .row:last-child {
@@ -173,10 +273,22 @@
                     padding-bottom: 0;
                 }
 
+                .row span {
+                    color: var(--muted);
+                }
+
                 .row strong {
                     color: var(--text);
-                    font-weight: 700;
+                    font-weight: 600;
                 }
+
+            #codeText {
+                font-family: monospace;
+                background: #f1f8f9;
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-size: 15px;
+            }
 
             .pill {
                 display: inline-flex;
@@ -194,38 +306,76 @@
 
             .btn-row {
                 display: flex;
-                gap: 12px;
-                flex-wrap: wrap;
-                margin-top: 16px;
+                gap: 15px;
+                justify-content: center;
+                margin-top: 20px;
             }
 
-            .main-btn, .secondary-btn {
-                height: 46px;
-                border-radius: 12px;
-                border: none;
-                cursor: pointer;
-                font-weight: 800;
-                font-size: 14px;
-                padding: 0 16px;
+            .btn-row {
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                margin-top: 20px;
             }
 
             .main-btn {
-                background: linear-gradient(135deg, #6abfc6, #86bfe0);
-                color: #fff;
+                background: var(--primary);
+                color: white;
+                padding: 14px 28px;
+                border-radius: 16px;
+                border: none;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.3s;
+                box-shadow: 0 8px 20px rgba(42, 169, 176, 0.2);
             }
+
+                .main-btn:hover {
+                    background: var(--primary-dark);
+                    transform: translateY(-2px);
+                }
 
             .secondary-btn {
-                background: transparent;
-                border: 1px solid rgba(95,181,187,0.25);
-                color: var(--text);
+                background: #f1f8f9;
+                color: var(--primary-dark);
+                padding: 14px 28px;
+                border-radius: 16px;
+                border: none;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.3s;
             }
 
+                .secondary-btn:hover {
+                    background: #e2f2f3;
+                }
+
             .preview {
-                height: 170px;
-                border-bottom: 1px solid rgba(95,181,187,0.12);
-                position: relative;
-                background: #cfeff0;
+                height: 250px;
+                background-size: cover !important;
+                background-position: center !important;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
             }
+
+                .preview::after {
+                    content: "";
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 60%;
+                    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
+                    pointer-events: none;
+                }
+
+                .preview .place {
+                    position: absolute;
+                    bottom: 20px;
+                    left: 20px;
+                    color: white;
+                    z-index: 2;
+                    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+                }
 
                 .preview .badge {
                     position: absolute;
@@ -258,9 +408,17 @@
                         margin-top: 2px;
                     }
 
-            @@media (max-width: 900px) {
+            @@media (max-width: 768px) {
                 .grid {
                     grid-template-columns: 1fr;
+                }
+
+                .topbar {
+                    padding: 0 20px;
+                }
+
+                .hero h1 {
+                    font-size: 26px;
                 }
             }
     </style>
@@ -277,13 +435,15 @@
     <main class="page">
         <div class="shell">
             <section class="hero">
-                <div class="hero-icon">✓</div>
-                <div>
-                    <h1>Uplata je uspješno evidentirana</h1>
-                    <p>Vaša potvrda je spremna. Možete preuzeti PDF dokument ili se vratiti na početnu stranicu.</p>
-                    <div class="btn-row">
-                        <button class="main-btn" type="button" onclick="downloadPDF()">Preuzmi potvrdu (PDF)</button>
-                        <button class="secondary-btn" type="button" onclick="window.location.href='/'">Završi</button>
+                <div class="hero-bubble">
+                    <div class="hero-icon">✓</div>
+                    <div class="hero-content">
+                        <h1>Uplata je uspješno evidentirana</h1>
+                        <p>Vaša potvrda je spremna. Možete preuzeti PDF dokument ili se vratiti na početnu stranicu.</p>
+                        <div class="btn-row">
+                            <button class="main-btn" type="button" onclick="downloadPDF()">Preuzmi potvrdu (PDF)</button>
+                            <button class="secondary-btn" type="button" onclick="window.location.href='/'">Završi</button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -389,8 +549,7 @@
         const image = safe('reservationImage', '/assets/bali.jpg');
 
         document.getElementById('placeText').innerHTML = `${dest} <small>${country}</small>`;
-        document.getElementById('tripPreview').style.background =
-        `linear-gradient(rgba(0,0,0,0.14), rgba(0,0,0,0.14)), url('${image}') center/cover no-repeat`;
+        document.getElementById('tripPreview').style.backgroundImage = `url('${image}')`;
 
         const dep = safe('reservationDeparture');
         const ret = safe('reservationReturn');

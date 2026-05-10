@@ -1019,3 +1019,10 @@ main,
     font-size: 12px;
     border: 1px solid rgba(95,181,187,0.18);
 }
+#login-block, #booking-view {
+    display: none;
+}
+
+    #login-block.active, #booking-view.active {
+        display: block !important;
+    }

@@ -23,12 +23,14 @@
 
         <div id="userArea">
             <div id="userAvatar">A</div>
-            <span id="userName">Korisnik</span>
+            <a id="profileLink" href="/Korisnik/Profil" style="color:white; font-weight:600; text-decoration:none;">
+                <span id="userName">Korisnik</span>
+            </a>
             <button id="logoutBtn" type="button">Odjavi se</button>
         </div>
     </nav>
-  
 
+  
     <div class="hero-content">
         <span class="badge">ISTRAŽITE SVIJET</span>
         <h1>REZERVIŠITE PUTOVANJE</h1>
@@ -183,7 +185,7 @@
                 <h3>Spremni za istraživanje svijeta?</h3>
                 <p>Pridružite se hiljadama putnika koji vjeruju InterTripsu za svoja najljepša putovanja.</p>
             </div>
-            <a class="btn btn-gold" href="Login">Počnite besplatno →</a>
+            <a class="btn btn-gold" asp-controller="Korisnik" asp-action="Login">Počnite besplatno →</a>
         </div>
     </section>
 
@@ -194,7 +196,7 @@
         </div>
 
         <form class="newsletter-form" id="newsletterForm">
-            <input type="email" placeholder="Unesite Vašu e-mail adresu" required />
+            <input type="email" id="emailInput" name="email" placeholder="Unesite Vašu e-mail adresu" required />
             <button type="submit" class="btn btn-gold">Pretplatite se</button>
         </form>
 
@@ -237,6 +239,7 @@
 
 @section Scripts {
     <script>
+        // Login UI (demo)
         const isLoggedIn = localStorage.getItem('isLoggedIn');
         const userName = localStorage.getItem('userName');
         const userInitial = localStorage.getItem('userInitial');
@@ -260,7 +263,7 @@
         }
 
         if (logoutBtn) {
-            logoutBtn.addEventListener('click', function() {
+            logoutBtn.addEventListener('click', function () {
                 localStorage.removeItem('isLoggedIn');
                 localStorage.removeItem('userName');
                 localStorage.removeItem('userInitial');
@@ -269,18 +272,18 @@
             });
         }
 
+        // Newsletter
         const newsletterForm = document.getElementById('newsletterForm');
         const newsletterMessage = document.getElementById('newsletterMessage');
 
         if (newsletterForm) {
-            newsletterForm.addEventListener('submit', function(e) {
+            newsletterForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-                console.log("Forma poslana!"); 
 
                 const emailInput = document.getElementById('emailInput');
                 const emailValue = emailInput ? emailInput.value : '';
-        
-                console.log("Email za slanje:", emailValue); 
+
+                console.log("Email koji šaljem:", emailValue);
 
                 fetch('/Newsletter/Subscribe', {
                     method: 'POST',
@@ -291,21 +294,19 @@
                 })
                     .then(async response => {
                         if (response.ok) {
-                            console.log("Server odgovorio sa OK!");
+                            newsletterForm.style.display = 'none';
                             if (newsletterMessage) {
                                 newsletterMessage.style.display = 'block';
-                                newsletterMessage.style.color = 'green';
+                                newsletterMessage.style.color = '#f8be21';
                                 newsletterMessage.textContent = 'Hvala Vam na korištenju usluga InterTripsa. Vaš InterTrips tim <3';
                             }
-                            newsletterForm.style.display = 'none';
                         } else {
                             const errorText = await response.text();
-                            console.error("Server Greška:", errorText);
-                            alert("Greška na serveru: " + errorText);
+                            alert("Greška: " + errorText);
                         }
                     })
                     .catch(error => {
-                        console.error('Mrežna greška (Fetch error):', error);
+                        console.error('Greška:', error);
                         alert("Nije moguće kontaktirati server.");
                     });
             });

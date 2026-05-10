@@ -1,6 +1,7 @@
 @{
     ViewData["Title"] = "InterTrips - Prijava";
-    Layout = null; }
+    Layout = null;
+}
 
 <!DOCTYPE html>
 <html lang="bs">
@@ -370,7 +371,7 @@
 
                 <p class="switch-text">Niste agent? <a href="#" id="back-to-user-from-agent">Vrati se na korisničku prijavu</a></p>
                 <div class="demo-box">Agent login: agent@intertrips.ba / agent123</div>
-           
+
             </div>
 
             <div id="admin-form" class="auth-form">
@@ -501,7 +502,8 @@
             backToUserFromAgent?.addEventListener('click', e => { e.preventDefault(); showLogin(); });
             backToUserFromAdmin?.addEventListener('click', e => { e.preventDefault(); showLogin(); });
 
-            document.getElementById('loginBtn').addEventListener('click', function() {
+            // LOGIN: korisnik
+            document.getElementById('loginBtn').addEventListener('click', function () {
                 const email = document.getElementById('loginEmail').value.trim();
                 const password = document.getElementById('loginPassword').value.trim();
 
@@ -523,35 +525,46 @@
                 }
             });
 
-            document.getElementById('agentBtn').addEventListener('click', function() {
-                const email = document.getElementById('agentEmail').value.trim();
-                const password = document.getElementById('agentPassword').value.trim();
+            // LOGIN: agent
+            document.getElementById('agentBtn').addEventListener('click', function () {
+                const email = document.getElementById('agentEmail').value;
+                const password = document.getElementById('agentPassword').value;
 
                 if (!email || !password) {
-                    alert('Popunite email i lozinku.');
+                    alert('Unesite podatke!');
                     return;
                 }
 
-                const AGENT_EMAIL = 'agent@intertrips.ba';
-                const AGENT_PASSWORD = 'agent123';
+                fetch('/Korisnik/LoginAgent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email, lozinka: password })
+                })
+                    .then(res => {
+                        if (!res.ok) throw new Error('Server error: ' + res.status);
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            localStorage.setItem('isLoggedIn', 'true');
+                            localStorage.setItem('userRole', 'agent');
+                            localStorage.setItem('userId', data.userId);
 
-                if (email !== AGENT_EMAIL || password !== AGENT_PASSWORD) {
-                    alert('Pogrešan agent login.');
-                    return;
-                }
-
-                const letter = email.charAt(0).toUpperCase();
-
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userName', email);
-                localStorage.setItem('userInitial', letter);
-                localStorage.setItem('userRole', 'agent');
-
-                window.location.href = '/Agent';
+                            window.location.href = '/Agent?agentId=' + data.userId;
+                        } else {
+                            alert('Pogrešan email ili lozinka (Agent)!');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Greška:', err);
+                        alert('Došlo je do greške pri povezivanju sa serverom.');
+                    });
             });
 
-           
-            document.getElementById('adminBtn').addEventListener('click', function() {
+            // LOGIN: admin
+            document.getElementById('adminBtn').addEventListener('click', function () {
                 const username = document.getElementById('adminUsername').value.trim();
                 const password = document.getElementById('adminPassword').value.trim();
 
@@ -578,7 +591,8 @@
                 window.location.href = '/Admin';
             });
 
-            document.getElementById('registerBtn').addEventListener('click', function() {
+            // REGISTER (demo)
+            document.getElementById('registerBtn').addEventListener('click', function () {
                 const name = document.getElementById('registerName').value.trim();
                 const email = document.getElementById('registerEmail').value.trim();
                 const password = document.getElementById('registerPassword').value.trim();

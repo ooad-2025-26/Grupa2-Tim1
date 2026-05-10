@@ -1,83 +1,224 @@
-@model List<InterTrips___Turistička_Agencija.Models.Rezervacija>
-
+@model InterTrips___Turistička_Agencija.Models.ViewModels.AgentDashboardVm
 @{
-    ViewData["Title"] = "Agent - Rezervacije";
+    ViewData["Title"] = "Agent - Lista Rezervacija";
     Layout = null;
-    int agentId = (int)ViewBag.AgentId;
 }
 
 <!DOCTYPE html>
 <html lang="bs">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>@ViewData["Title"]</title>
-  <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
 
-  <style>
-    .wrap{ max-width:1150px; margin:28px auto; padding:0 18px; }
-    .top{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
-    .card{ background:rgba(255,255,255,0.84); border:1px solid rgba(95,181,187,0.16); border-radius:16px; box-shadow:var(--shadow); padding:16px; }
-    .row{ display:grid; grid-template-columns: 1.4fr 1.2fr 0.8fr; gap:12px; align-items:center; padding:12px; border-radius:12px; border:1px solid rgba(95,181,187,0.14); background:rgba(255,255,255,0.72); margin-bottom:10px; }
-    .muted{ color:var(--muted); font-size:12px; }
-    .btn{ height:40px; padding:0 14px; border-radius:999px; cursor:pointer; font-weight:800; border:1px solid rgba(95,181,187,0.18); background:#fff; }
-    a.btn{ display:inline-flex; align-items:center; text-decoration:none; }
-    .badge{ display:inline-block; padding:5px 10px; border-radius:999px; font-size:11px; font-weight:900; border:1px solid rgba(95,181,187,0.18); background:rgba(106,191,198,0.10); color:var(--primary-dark); }
-  </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
+    <style>
+            body {
+                background-color: #f8fbfb;
+                font-family: 'Poppins', sans-serif;
+            }
+
+            .dash-page {
+                padding: 40px 24px;
+            }
+
+            .dash-shell {
+                max-width: 1100px;
+                margin: 0 auto;
+            }
+
+            .dash-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+                border-bottom: 1px solid rgba(95,181,187,0.15);
+            }
+
+                .dash-header h1 {
+                    font-size: 28px;
+                    color: var(--text);
+                    font-weight: 700;
+                }
+
+            .res-card {
+                background: rgba(255, 255, 255, 0.85);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(95,181,187,0.16);
+                border-radius: 20px;
+                padding: 20px 24px;
+                margin-bottom: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+                transition: transform 0.2s ease, border-color 0.2s ease;
+            }
+
+                .res-card:hover {
+                    transform: translateY(-3px);
+                    border-color: var(--primary);
+                }
+
+                .res-card.highlight {
+                    background: linear-gradient(to right, rgba(255, 152, 0, 0.05), rgba(255, 255, 255, 0.9));
+                    border-left: 6px solid #ff9800;
+                }
+
+            .res-info h3 {
+                margin: 0;
+                font-size: 17px;
+                color: #333;
+            }
+
+            .res-info p {
+                margin: 4px 0;
+                font-size: 13px;
+                color: var(--muted);
+            }
+
+            .priority-label {
+                background: #fff3e0;
+                color: #ef6c00;
+                padding: 2px 8px;
+                border-radius: 6px;
+                font-size: 11px;
+                font-weight: 700;
+                margin-left: 8px;
+            }
+
+            .status-badge {
+                padding: 6px 14px;
+                border-radius: 999px;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: capitalize;
+            }
+
+            .status-kreirana {
+                background: rgba(25, 118, 210, 0.1);
+                color: #1976d2;
+            }
+
+            .status-potvrdjena {
+                background: rgba(46, 125, 50, 0.1);
+                color: #2e7d32;
+            }
+
+            .status-obrisana {
+                background: rgba(198, 40, 40, 0.1);
+                color: #c62828;
+            }
+
+            .actions-box {
+                display: flex;
+                gap: 10px;
+            }
+
+            .btn-detail {
+                background: var(--primary);
+                color: white;
+                border: none;
+                border-radius: 12px;
+                padding: 10px 20px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+
+                .btn-detail:hover {
+                    background: var(--primary-dark);
+                    box-shadow: 0 4px 12px rgba(95,181,187,0.3);
+                }
+
+            .btn-back {
+                text-decoration: none;
+                color: var(--muted);
+                font-size: 14px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .empty-state {
+                text-align: center;
+                padding: 60px;
+                background: white;
+                border-radius: 20px;
+                border: 1px dashed #ccc;
+            }
+    </style>
 </head>
-<body class="auth-page">
-  <div class="wrap">
-    <div class="top">
-      <div>
-        <h2 style="margin:0;">Aktivne rezervacije</h2>
-        <div class="muted">Prikazuje Kreirana i Potvrdjena (bez Otkazana).</div>
-      </div>
+<body>
 
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <a class="btn" href="/Agent?agentId=@agentId">Dashboard</a>
-        <a class="btn" href="/Agent/Paketi?agentId=@agentId">Paketi</a>
-      </div>
+    <div class="dash-page">
+        <div class="dash-shell">
+
+            <div class="dash-header">
+                <div>
+                    <a href="/Agent?agentId=@Model.AgentId" class="btn-back">← Povratak na panel</a>
+                    <h1>Lista svih rezervacija</h1>
+                </div>
+                <div class="badge">AGENT: @Model.AgentId</div>
+            </div>
+
+            <div class="res-list">
+                @if (Model.AktivneRezervacije == null || !Model.AktivneRezervacije.Any())
+                {
+                    <div class="empty-state">
+                        <h3>Nema aktivnih rezervacija</h3>
+                        <p>Trenutno nema rezervacija za pakete koje vodite.</p>
+                    </div>
+                }
+                else
+                {
+                    foreach (var r in Model.AktivneRezervacije)
+                    {
+                        string email = r.Korisnik?.Email ?? "Nepoznat klijent";
+                        bool isAlex = email == "alex@example.com";
+
+                        <div class="res-card @(isAlex ? "highlight" : "")">
+                            <div class="res-info">
+                                <h3>
+                                    #@r.Id - @(r.Paket?.Naziv ?? "Aranžman")
+                                    @if (isAlex)
+                                    {
+                                        <span class="priority-label">PRIORITET</span>
+                                    }
+                                </h3>
+                                <p>
+                                    <strong>Klijent:</strong> @email •
+                                    <strong>Destinacija:</strong> @(r.Paket?.Destinacija?.Naziv ?? "—")
+                                </p>
+                                <p style="font-size:11px;">
+                                    📅 Polazak: @r.DatumPolaska.ToString("dd. MMM yyyy") |
+                                    👤 Putnika: @r.Putnici.Count
+                                </p>
+                            </div>
+
+                            <div>
+                                <span class="status-badge status-@(r.Status.ToString().ToLower())">
+                                    @r.Status
+                                </span>
+                            </div>
+
+                            <div class="actions-box">
+                                <button class="btn-detail" onclick="location.href='/Agent/Detalji/@r.Id'">
+                                    Detalji
+                                </button>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
     </div>
 
-    <div class="card">
-      @if (!Model.Any())
-      {
-        <div class="muted" style="font-weight:800;">Nema aktivnih rezervacija za tvoje pakete.</div>
-      }
-      else
-      {
-        foreach (var r in Model)
-        {
-          <div class="row">
-            <div>
-              <div style="font-weight:900;">Rezervacija #@r.Id</div>
-              <div class="muted">
-                @(r.Paket?.Naziv ?? "Paket") •
-                @(r.Paket?.Destinacija != null ? $"{r.Paket.Destinacija.Naziv}, {r.Paket.Destinacija.Drzava}" : "—")
-              </div>
-            </div>
-
-            <div class="muted" style="font-weight:800;">
-              Status: <span class="badge">@r.Status</span>
-            </div>
-
-            <div style="text-align:right;">
-              <span class="badge">PaketId: @r.PaketId</span>
-            </div>
-          </div>
-        }
-      }
-    </div>
-  </div>
-
-  <script>
-    window.addEventListener('DOMContentLoaded', function() {
-      const role = localStorage.getItem('userRole');
-      if (role !== 'agent') window.location.href = '/korisnik/login';
-    });
-  </script>
 </body>
 </html>

@@ -17,6 +17,10 @@ public class Korisnik
     [Required, EmailAddress, MaxLength(200)]
     public string Email { get; set; } = string.Empty;
 
+    [Required, MaxLength(100)]
+    public string Lozinka { get; set; } = string.Empty;
+
+
     [Required]
     public Uloga Uloga { get; set; } = Uloga.Klijent;
 
