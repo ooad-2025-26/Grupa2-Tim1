@@ -12,7 +12,7 @@ public class NewsletterController : Controller
         try
         {
             // TVOJI PODACI
-            string mojEmail = "amelaobhodas2@gmail.com"; // Unesi svoj pravi Gmail ovdje
+            string mojEmail = "amelaobhodas2@gmail.com"; 
             string lozinka = "bpryrmvxwohfzodx"; // Tvoj App Password (bez razmaka)
 
             using (var smtpClient = new SmtpClient("smtp.gmail.com"))
@@ -20,7 +20,7 @@ public class NewsletterController : Controller
                 smtpClient.Port = 587;
                 smtpClient.EnableSsl = true;
                 smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                smtpClient.UseDefaultCredentials = false; // MORA BITI OVDJE
+                smtpClient.UseDefaultCredentials = false; 
                 smtpClient.Credentials = new NetworkCredential("amelaobhodas2@gmail.com", "bpryrmvxwohfzodx");
 
                 var mailMessage = new MailMessage
