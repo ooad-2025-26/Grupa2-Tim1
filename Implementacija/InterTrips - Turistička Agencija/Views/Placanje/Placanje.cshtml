@@ -266,7 +266,6 @@
                     color: var(--text);
                 }
 
-            /* početno stanje polja */
             #cardFields {
                 display: block;
             }
@@ -278,7 +277,6 @@
             #ratesFields {
                 display: none;
             }
-            /* DODANO */
 
             @@media (max-width: 980px) {
                 .booking-grid {
@@ -369,6 +367,27 @@
                         <label class="field-label">NA KOLIKO MJESECI PLAĆATE?</label>
                         <input class="input" id="ratesMonths" type="number" min="1" max="60" placeholder="npr. 12">
                         <p id="ratesMessage" style="font-size:12px; color: var(--muted); margin-top:6px;"></p>
+
+           <div id="ratesSubMethod" style="display:none; margin-top:14px;">
+                            <label class="field-label">NAČIN PLAĆANJA RATA</label>
+
+                            <div style="display:flex; flex-direction:column; gap:10px;">
+                                <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:var(--text); font-size:13px; font-weight:600;">
+                                    <input type="radio" name="rateSubMethod" value="Karticom" checked onchange="onRateSubMethodChange()" />
+                                    Karticom
+                                </label>
+
+                                <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:var(--text); font-size:13px; font-weight:600;">
+                                    <input type="radio" name="rateSubMethod" value="Gotovinom" onchange="onRateSubMethodChange()" />
+                                    Gotovinom
+                                </label>
+
+                                <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:var(--text); font-size:13px; font-weight:600;">
+                                    <input type="radio" name="rateSubMethod" value="Bankovni transfer" onchange="onRateSubMethodChange()" />
+                                    Bankovni transfer
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="btn-row">
@@ -412,15 +431,26 @@
         document.querySelectorAll('.payment-option').forEach(x => x.classList.remove('active'));
         el.classList.add('active');
 
-        document.getElementById('cardFields').style.display = (type === 'card') ? 'block' : 'none';
-        document.getElementById('bankFields').style.display = (type === 'bank') ? 'block' : 'none';
         document.getElementById('ratesFields').style.display = (type === 'rates') ? 'block' : 'none';
 
+        if (type === 'card') {
+        document.getElementById('cardFields').style.display = 'block';
+        document.getElementById('bankFields').style.display = 'none';
+        } else if (type === 'bank') {
+        document.getElementById('cardFields').style.display = 'none';
+        document.getElementById('bankFields').style.display = 'block';
+        } else if (type === 'cash') {
+        document.getElementById('cardFields').style.display = 'none';
+        document.getElementById('bankFields').style.display = 'none';
+        } else if (type === 'rates') {
         const msg = document.getElementById('ratesMessage');
         if (msg) msg.textContent = '';
-
-        if (type === 'rates') {
         updateRatesPreview();
+        }
+
+        if (type !== 'rates') {
+        const subWrap = document.getElementById('ratesSubMethod');
+        if (subWrap) subWrap.style.display = 'none';
         }
         }
 
@@ -450,19 +480,20 @@
         const n = parseFloat(s);
         return isNaN(n) ? 0 : n;
         }
+
         function updateRatesPreview() {
         const monthsEl = document.getElementById('ratesMonths');
         const msgEl = document.getElementById('ratesMessage');
+        const subWrap = document.getElementById('ratesSubMethod');
+
         if (!monthsEl || !msgEl) return;
+        if (subWrap) subWrap.style.display = 'none';
 
         const months = parseInt(monthsEl.value, 10);
         const totalRaw = localStorage.getItem('reservationTotal') || '0';
         const total = parseTotalKM(totalRaw);
 
-        if (!monthsEl.value) {
-        msgEl.textContent = '';
-        return;
-        }
+        if (!monthsEl.value) { msgEl.textContent = ''; return; }
 
         if (isNaN(months) || months < 1 || months > 60) {
         msgEl.textContent = 'Unesite broj mjeseci od 1 do 60.';
@@ -476,6 +507,8 @@
 
         const rata = (total / months).toFixed(2);
         msgEl.textContent = `Vaša rata iznosi: ${rata} KM mjesečno za ${months} mjeseci.`;
+
+        if (subWrap) subWrap.style.display = 'block';
 
         localStorage.setItem('ratesMonths', String(months));
         localStorage.setItem('ratesMonthly', String(rata));
@@ -530,56 +563,80 @@
 
         localStorage.setItem('reservations', JSON.stringify(reservations));
         }
-        function payNow() {
-        if (selectedPaymentType === 'card') {
+        function onRateSubMethodChange() {
+        if (selectedPaymentType !== 'rates') return;
+
+        const checked = document.querySelector('input[name="rateSubMethod"]:checked');
+        const subMethod = checked ? checked.value : 'Karticom';
+
+        const showCard = (subMethod === 'Karticom');
+        const showBank = (subMethod === 'Bankovni transfer');
+
+        document.getElementById('cardFields').style.display = showCard ? 'block' : 'none';
+        document.getElementById('bankFields').style.display = showBank ? 'block' : 'none';
+
+        if (!showCard && !showBank) {
+        document.getElementById('cardFields').style.display = 'none';
+        document.getElementById('bankFields').style.display = 'none';
+        }
+        }
+
+       function payNow() {
+    if (selectedPaymentType === 'card') {
         const cardName = document.getElementById('cardName').value.trim();
         const cardNumber = document.getElementById('cardNumber').value.trim();
-
         if (!cardName || !cardNumber) {
-        window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Kartica je odbijena.");
-        return;
+            window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Kartica je odbijena.");
+            return;
         }
-        }
+    }
 
-        if (selectedPaymentType === 'bank') {
+    if (selectedPaymentType === 'bank') {
         const day = new Date().getDay();
         if (day === 0 || day === 6) {
-        window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Banka ne radi subotom i nedjeljom.");
-        return;
+            window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Banka ne radi subotom i nedjeljom.");
+            return;
         }
-        }
+    }
 
         if (selectedPaymentType === 'rates') {
-        const months = parseInt(document.getElementById('ratesMonths').value, 10);
-        const totalRaw = localStorage.getItem('reservationTotal') || '0';
-        const total = parseTotalKM(totalRaw);
+  const months = parseInt(document.getElementById('ratesMonths').value, 10);
+  const checked = document.querySelector('input[name="rateSubMethod"]:checked');
+  const subMethod = checked ? checked.value : 'Karticom';
 
-        if (!months || months < 1 || months > 60) {
-        alert("Unesite validan broj mjeseci (1-60).");
-        return;
-        }
-        if (!total || total <= 0) {
-        alert("Ukupan iznos nije ispravno postavljen. Vratite se na rezervaciju i pokušajte ponovo.");
-        return;
-        }
+  if (!months || months < 1 || months > 60) {
+    alert("Unesite validan broj mjeseci (1-60).");
+    return;
+  }
 
-        const rata = (total / months).toFixed(2);
-        document.getElementById('ratesMessage').textContent =
-        `Vaša rata iznosi: ${rata} KM mjesečno za ${months} mjeseci.`;
+  if (subMethod === 'Karticom') {
+    const cardName = document.getElementById('cardName').value.trim();
+    const cardNumber = document.getElementById('cardNumber').value.trim();
+    if (!cardName || !cardNumber) {
+      window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Unesite podatke kartice za plaćanje na rate.");
+      return;
+    }
+  }
 
-        localStorage.setItem('ratesMonths', String(months));
-        localStorage.setItem('ratesMonthly', String(rata));
-        } else {
+  if (subMethod === 'Bankovni transfer') {
+    const day = new Date().getDay();
+    if (day === 0 || day === 6) {
+      window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Banka ne radi subotom i nedjeljom.");
+      return;
+    }
+  }
+
+  localStorage.setItem('paymentType', 'Na rate (' + subMethod + ')');
+}
+        
+        else {
+        localStorage.setItem('paymentType', selectedPaymentType === 'card' ? 'Kartica' : 'Bankovni prenos');
         localStorage.removeItem('ratesMonths');
         localStorage.removeItem('ratesMonthly');
-        }
+    }
 
         const resCode = 'IT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
-
         localStorage.setItem('finalReservationCode', resCode);
-        localStorage.setItem('reservationDate', new Date().toLocaleDateString('bs-BA'));
-        localStorage.setItem('paymentType', selectedPaymentType);
-
         saveReservationToHistory(resCode);
 
         window.location.href = "/Placanje/Uspjeh";
@@ -597,7 +654,52 @@
         monthsEl.addEventListener('input', updateRatesPreview);
         monthsEl.addEventListener('change', updateRatesPreview);
         }
+
+        const cardNumberEl = document.getElementById('cardNumber');
+        const expiryEl = document.getElementById('cardExpiry');
+
+        if (cardNumberEl) {
+        cardNumberEl.setAttribute('inputmode', 'numeric');
+        cardNumberEl.setAttribute('autocomplete', 'cc-number');
+        cardNumberEl.maxLength = 19; 
+
+
+        cardNumberEl.addEventListener('input', () => {
+        let digits = cardNumberEl.value.replace(/\D/g, '').slice(0, 16);
+        const parts = digits.match(/.{1,4}/g) || [];
+        cardNumberEl.value = parts.join(' ');
+
+
+        if (digits.length === 16 && expiryEl) {
+        expiryEl.focus();
+        }
+        });
+        }
+
+        if (expiryEl) {
+        expiryEl.setAttribute('inputmode', 'numeric');
+        expiryEl.setAttribute('autocomplete', 'cc-exp');
+        expiryEl.maxLength = 5; 
+
+        expiryEl.addEventListener('input', () => {
+        let digits = expiryEl.value.replace(/\D/g, '').slice(0, 4);
+
+        if (digits.length >= 2) {
+        let mm = parseInt(digits.slice(0, 2), 10);
+        if (isNaN(mm) || mm <= 0) mm = 1;
+        if (mm > 12) mm = 12;
+
+        const mmStr = String(mm).padStart(2, '0');
+        const rest = digits.slice(2);
+
+        expiryEl.value = rest ? `${mmStr}/${rest}` : mmStr;
+        } else {
+        expiryEl.value = digits;
+        }
+        });
+        }
         });
     </script>
+
 </body>
 </html>

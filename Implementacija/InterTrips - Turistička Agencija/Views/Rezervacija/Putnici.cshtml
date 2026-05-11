@@ -302,9 +302,13 @@
                 <input class="input lname" placeholder="Prezime">
             </div>
 
-            <div class="row">
+            <div>
+                <label class="field-label">DATUM ROĐENJA</label>
                 <input type="date" class="input birthdate">
-                <input class="input passport" placeholder="Broj pasoša">
+            </div>
+            <div>
+                <label class="field-label">BROJ PASOŠA</label>
+                <input class="input passport" placeholder="npr. C1234567" maxlength="9" autocomplete="off">
             </div>
 
             <div class="row">
@@ -367,7 +371,15 @@
                     const wrapper = document.createElement('div');
                     wrapper.appendChild(clone);
                     const block = wrapper.querySelector('.passenger-block');
-
+                    const passportEl = block.querySelector('.passport');
+                    if (passportEl) {
+                        passportEl.addEventListener('input', () => {
+                            passportEl.value = passportEl.value
+                                .toUpperCase()
+                                .replace(/[^A-Z0-9]/g, '')
+                                .slice(0, 9);
+                        });
+                    }
                     const doLiveValidate = () => {
                         const res = validateBlock(block, i - 1);
                         if (!res.ok) setFormError(res.msg);

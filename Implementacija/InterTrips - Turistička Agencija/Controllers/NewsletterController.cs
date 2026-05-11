@@ -32,22 +32,55 @@ public class NewsletterController : Controller
                 smtpClient.Credentials = new NetworkCredential(senderEmail, appPassword);
 
                 var mailMessage = new MailMessage
+
                 {
+
                     From = new MailAddress(senderEmail, senderName),
                     Subject = "InterTrips - prijava na newsletter",
-                    Body = "<h2>Pozdrav!</h2><p>Zahvaljujemo se na prijavi.</p>", 
+                    Body = $@"
+    <div style='font-family: Arial, sans-serif; color: #333;'>
+        <h2>Pozdrav!</h2>
+        <p>Zahvaljujemo se na ispunjenoj newsletter formi.</p>
+        <hr>
+        <p><strong>Zapratite nas:</strong></p>
+        <p>Ukoliko imate pitanja ili trebate dodatne informacije, kontaktirajte naš ured:</p>
+        <p>
+            <strong>InterTrips d.o.o.</strong><br>
+            Ferhadija 12<br>
+            71000 Sarajevo, BiH<br>
+            <a href='https://intertrips.ba' style='color: #2f7d86;'>intertrips.ba</a><br>
+            info@intertrips.ba
+        </p>
+    </div>",
                     IsBodyHtml = true
                 };
 
+
+
                 mailMessage.To.Add(email);
+
+
+
                 await smtpClient.SendMailAsync(mailMessage);
+
             }
 
+
+
             return Ok(new { success = true });
+
         }
+
         catch (Exception ex)
+
         {
-            return StatusCode(500, "Došlo je do greške pri slanju.");
+
+            System.Diagnostics.Debug.WriteLine("GREŠKA: " + ex.Message);
+
+            return StatusCode(500, ex.Message);
+
         }
+
     }
+
 }
