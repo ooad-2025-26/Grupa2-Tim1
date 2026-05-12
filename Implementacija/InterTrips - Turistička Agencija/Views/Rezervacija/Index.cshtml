@@ -98,38 +98,33 @@
 
 @section Scripts {
     <style>
-        /* Hero background specifičan za ovu stranicu */
         .hero--reservations {
             position: relative;
             min-height: 360px;
             background: url('/assets/mojeRezervacije.jpg') center/cover no-repeat;
         }
-            /* 1) Jači overlay preko slike (da tekst bude čitljiviji) */
             .hero--reservations .hero-overlay {
                 background: linear-gradient(90deg, rgba(10,34,40,0.78) 0%, rgba(10,34,40,0.55) 55%, rgba(10,34,40,0.25) 100%), radial-gradient(900px 340px at 25% 35%, rgba(106,191,198,0.26), transparent 60%);
             }
 
-            /* 2) POPRAVI "kvadrat" (hero-content) da bude lijep card i da slova budu jasna */
             .hero--reservations .hero-content {
                 max-width: 720px;
                 margin: 0 auto;
                 padding: 34px 34px 30px;
                 border-radius: 22px;
-                background: rgba(10, 34, 40, 0.35); /* tamniji glass */
+                background: rgba(10, 34, 40, 0.35);
                 border: 1px solid rgba(255,255,255,0.18);
                 backdrop-filter: blur(12px);
                 box-shadow: 0 22px 60px rgba(0,0,0,0.22);
                 text-align: center;
             }
 
-            /* 3) Badge "REZERVACIJE" da se vidi */
             .hero--reservations .badge {
                 background: rgba(255,255,255,0.16);
                 border: 1px solid rgba(255,255,255,0.22);
                 color: rgba(255,255,255,0.92);
             }
 
-            /* 4) Naslov i opis: bolja boja + shadow */
             .hero--reservations .hero-content h1 {
                 color: #ffffff;
                 text-shadow: 0 18px 40px rgba(0,0,0,0.35);
@@ -140,19 +135,16 @@
                 text-shadow: 0 18px 40px rgba(0,0,0,0.25);
             }
 
-        /* 5) Naslov sekcije dole (Vaše rezervacije) da ne bude previše blijed */
         .section .section-header h3,
         .section .center-title h3 {
             color: var(--text);
         }
 
-            /* Ako ti "rezervacije" (em) ispadne presvijetlo, pojačaj */
             .section .section-header h3 em,
             .section .center-title h3 em {
                 color: var(--primary-dark);
             }
 
-        /* Kartice rezervacija */
         .reservations-list {
             display: grid;
             grid-template-columns: 1fr;

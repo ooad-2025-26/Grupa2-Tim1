@@ -10,6 +10,6 @@ public class DestinacijaEditVm
     [Required] public string Drzava { get; set; } = "";
     public string? Opis { get; set; }
 
-    public IFormFile? Slika { get; set; }  // upload
+    public IFormFile? Slika { get; set; }  
     public string? PostojecaSlikaUrl { get; set; }
 }

@@ -308,7 +308,6 @@
 </head>
 <body class="auth-page">
     <header class="auth-topbar">
-        <!-- MVC: umjesto index.html -->
         <a href="/" class="logo-link">
             <img src="~/assets/logo.png" alt="InterTrips logo" class="auth-logo">
         </a>
@@ -503,26 +502,22 @@
             backToUserFromAdmin?.addEventListener('click', e => { e.preventDefault(); showLogin(); });
 
             // LOGIN: korisnik
-            document.getElementById('loginBtn').addEventListener('click', function () {
+            document.getElementById('loginBtn').addEventListener('click', async function () {
                 const email = document.getElementById('loginEmail').value.trim();
                 const password = document.getElementById('loginPassword').value.trim();
 
-                if (!email || !password) {
-                    alert('Popunite email i lozinku.');
-                    return;
-                }
+                if (!email || !password) { alert('Popunite email i lozinku.'); return; }
 
-                if (email === 'test@intertrips.ba' && password === 'password123') {
-                    localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('userName', email);
-                    localStorage.setItem('userInitial', 'A');
-                    localStorage.setItem('userRole', 'client');
-                    localStorage.setItem('agentId', '1');
+                const res = await fetch('/Account/Login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
 
-                    window.location.href = '/';
-                } else {
-                    alert('Pogrešan login.');
-                }
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) { alert(data.message || 'Pogrešan login.'); return; }
+
+                window.location.href = '/';
             });
 
             // LOGIN: agent
@@ -592,39 +587,25 @@
             });
 
             // REGISTER (demo)
-            document.getElementById('registerBtn').addEventListener('click', function () {
+            document.getElementById('registerBtn').addEventListener('click', async function () {
                 const name = document.getElementById('registerName').value.trim();
                 const email = document.getElementById('registerEmail').value.trim();
                 const password = document.getElementById('registerPassword').value.trim();
                 const confirm = document.getElementById('registerConfirm').value.trim();
 
-                if (!name || !email || !password || !confirm) {
-                    alert('Popunite sva polja.');
-                    return;
-                }
+                if (!name || !email || !password || !confirm) { alert('Popunite sva polja.'); return; }
+                if (password !== confirm) { alert('Lozinke se ne poklapaju.'); return; }
 
-                if (password !== confirm) {
-                    alert('Lozinke se ne poklapaju.');
-                    return;
-                }
+                const res = await fetch('/Account/Register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
 
-                const letter = name.charAt(0).toUpperCase();
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) { alert(data.message || 'Registracija nije uspjela.'); return; }
 
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userName', name);
-                localStorage.setItem('userInitial', letter);
-                localStorage.setItem('userRole', 'client');
-
-                authCard.classList.add('hidden');
-                successBox.classList.add('active');
-                topUser.classList.add('active');
-
-                smallAvatar.textContent = letter;
-                bigAvatar.textContent = letter;
-                userNameTop.textContent = name;
-                successText.textContent = 'Račun je kreiran za ' + name + '.';
-
-                alert('Uspješno ste kreirali račun!');
+                window.location.href = '/';
             });
 
             const savedLogin = localStorage.getItem('isLoggedIn');
