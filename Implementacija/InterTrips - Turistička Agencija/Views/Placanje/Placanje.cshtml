@@ -542,6 +542,9 @@
         createdAt: new Date().toISOString(),
         status: 'Aktivna',
 
+        paketId: localStorage.getItem('reservationPaketId') || '',
+        paketNaziv: localStorage.getItem('reservationPaketNaziv') || localStorage.getItem('reservationDestination') || '',
+
         destination: localStorage.getItem('reservationDestination'),
         country: localStorage.getItem('reservationCountry'),
         departure: localStorage.getItem('reservationDeparture'),
@@ -562,23 +565,6 @@
         else reservations.unshift(reservation);
 
         localStorage.setItem('reservations', JSON.stringify(reservations));
-        }
-        function onRateSubMethodChange() {
-        if (selectedPaymentType !== 'rates') return;
-
-        const checked = document.querySelector('input[name="rateSubMethod"]:checked');
-        const subMethod = checked ? checked.value : 'Karticom';
-
-        const showCard = (subMethod === 'Karticom');
-        const showBank = (subMethod === 'Bankovni transfer');
-
-        document.getElementById('cardFields').style.display = showCard ? 'block' : 'none';
-        document.getElementById('bankFields').style.display = showBank ? 'block' : 'none';
-
-        if (!showCard && !showBank) {
-        document.getElementById('cardFields').style.display = 'none';
-        document.getElementById('bankFields').style.display = 'none';
-        }
         }
 
        function payNow() {

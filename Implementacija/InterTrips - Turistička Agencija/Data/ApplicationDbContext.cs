@@ -21,7 +21,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Notifikacija> Notifikacije => Set<Notifikacija>();
     public DbSet<PlanPutovanja> PlanoviPutovanja => Set<PlanPutovanja>();
     public DbSet<StavkaPlana> StavkePlana => Set<StavkaPlana>();
-
+    public DbSet<PlanPutovanjaTemplate> PlanoviPutovanjaTemplate => Set<PlanPutovanjaTemplate>();
+    public DbSet<StavkaPlanaTemplate> StavkePlanaTemplate => Set<StavkaPlanaTemplate>();
     public DbSet<AgentPaket> AgentPaketi { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,6 +36,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<Notifikacija>().ToTable("Notifikacija");
         modelBuilder.Entity<PlanPutovanja>().ToTable("PlanPutovanja");
         modelBuilder.Entity<StavkaPlana>().ToTable("StavkaPlana");
+        modelBuilder.Entity<PlanPutovanjaTemplate>()
+                  .HasMany(p => p.Stavke)
+                  .WithOne(s => s.PlanPutovanjaTemplate!)
+                  .HasForeignKey(s => s.PlanPutovanjaTemplateId)
+                  .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Rezervacija>()
             .HasOne(r => r.Placanje)
@@ -47,7 +53,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .WithOne(p => p.Rezervacija!)
             .HasForeignKey<PlanPutovanja>(p => p.RezervacijaId)
             .OnDelete(DeleteBehavior.Cascade);
-
+        modelBuilder.Entity<PlanPutovanja>()
+    .HasMany(p => p.StavkePlana)
+    .WithOne(s => s.PlanPutovanja!)
+    .HasForeignKey(s => s.PlanPutovanjaId)
+    .OnDelete(DeleteBehavior.Cascade);
         base.OnModelCreating(modelBuilder);
     }
 }

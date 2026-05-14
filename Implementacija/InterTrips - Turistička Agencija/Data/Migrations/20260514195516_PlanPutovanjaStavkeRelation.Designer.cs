@@ -4,6 +4,7 @@ using InterTrips___Turistička_Agencija.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InterTrips___Turistička_Agencija.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260514195516_PlanPutovanjaStavkeRelation")]
+    partial class PlanPutovanjaStavkeRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -305,28 +308,6 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                     b.ToTable("PlanPutovanja", (string)null);
                 });
 
-            modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.PlanPutovanjaTemplate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Napomena")
-                        .HasMaxLength(800)
-                        .HasColumnType("nvarchar(800)");
-
-                    b.Property<int>("PaketId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PaketId");
-
-                    b.ToTable("PlanoviPutovanjaTemplate");
-                });
-
             modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.Putnik", b =>
                 {
                     b.Property<int>("Id")
@@ -443,39 +424,6 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                     b.HasIndex("PlanPutovanjaId");
 
                     b.ToTable("StavkaPlana", (string)null);
-                });
-
-            modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.StavkaPlanaTemplate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Naziv")
-                        .IsRequired()
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<string>("Opis")
-                        .HasMaxLength(600)
-                        .HasColumnType("nvarchar(600)");
-
-                    b.Property<int>("PlanPutovanjaTemplateId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RedniBroj")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan?>("Vrijeme")
-                        .HasColumnType("time");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlanPutovanjaTemplateId");
-
-                    b.ToTable("StavkePlanaTemplate");
                 });
 
             modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.UslugaPaketa", b =>
@@ -701,17 +649,6 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                     b.Navigation("Rezervacija");
                 });
 
-            modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.PlanPutovanjaTemplate", b =>
-                {
-                    b.HasOne("InterTrips___Turistička_Agencija.Models.Paket", "Paket")
-                        .WithMany()
-                        .HasForeignKey("PaketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Paket");
-                });
-
             modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.Putnik", b =>
                 {
                     b.HasOne("InterTrips___Turistička_Agencija.Models.Korisnik", "Korisnik")
@@ -757,17 +694,6 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("PlanPutovanja");
-                });
-
-            modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.StavkaPlanaTemplate", b =>
-                {
-                    b.HasOne("InterTrips___Turistička_Agencija.Models.PlanPutovanjaTemplate", "PlanPutovanjaTemplate")
-                        .WithMany("Stavke")
-                        .HasForeignKey("PlanPutovanjaTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PlanPutovanjaTemplate");
                 });
 
             modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.UslugaPaketa", b =>
@@ -852,11 +778,6 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
             modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.PlanPutovanja", b =>
                 {
                     b.Navigation("StavkePlana");
-                });
-
-            modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.PlanPutovanjaTemplate", b =>
-                {
-                    b.Navigation("Stavke");
                 });
 
             modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.Rezervacija", b =>

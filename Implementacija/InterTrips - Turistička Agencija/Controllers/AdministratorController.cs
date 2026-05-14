@@ -250,4 +250,81 @@ public class AdministratorController : Controller
             })
             .ToList();
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<IActionResult> PlanTemplate(int paketId)
+    {
+        var plan = await _db.PlanoviPutovanjaTemplate
+            .Include(p => p.Paket)
+                .ThenInclude(pk => pk!.Destinacija)
+            .Include(p => p.Stavke)
+            .FirstOrDefaultAsync(p => p.PaketId == paketId);
+
+        if (plan == null)
+        {
+            plan = new PlanPutovanjaTemplate { PaketId = paketId };
+            _db.PlanoviPutovanjaTemplate.Add(plan);
+            await _db.SaveChangesAsync();
+
+            plan = await _db.PlanoviPutovanjaTemplate
+                .Include(p => p.Paket)
+                    .ThenInclude(pk => pk!.Destinacija)
+                .Include(p => p.Stavke)
+                .FirstAsync(p => p.Id == plan.Id);
+        }
+
+        return View("~/Views/Administrator/PlanTemplate.cshtml", plan);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PlanTemplateSaveNapomena(int id, string? napomena)
+    {
+        var plan = await _db.PlanoviPutovanjaTemplate.FirstOrDefaultAsync(p => p.Id == id);
+        if (plan == null) return NotFound();
+
+        plan.Napomena = napomena;
+        await _db.SaveChangesAsync();
+
+        return RedirectToAction(nameof(PlanTemplate), new { paketId = plan.PaketId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PlanTemplateDodajStavku(int planId, int redniBroj, string naziv, string? opis, TimeSpan? vrijeme)
+    {
+        var plan = await _db.PlanoviPutovanjaTemplate.FirstOrDefaultAsync(p => p.Id == planId);
+        if (plan == null) return NotFound();
+
+        _db.StavkePlanaTemplate.Add(new StavkaPlanaTemplate
+        {
+            PlanPutovanjaTemplateId = planId,
+            RedniBroj = redniBroj,
+            Naziv = naziv,
+            Opis = opis,
+            Vrijeme = vrijeme
+        });
+
+        await _db.SaveChangesAsync();
+        return RedirectToAction(nameof(PlanTemplate), new { paketId = plan.PaketId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PlanTemplateObrisiStavku(int id)
+    {
+        var stavka = await _db.StavkePlanaTemplate
+            .Include(s => s.PlanPutovanjaTemplate)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
+        if (stavka == null) return NotFound();
+
+        var paketId = stavka.PlanPutovanjaTemplate!.PaketId;
+
+        _db.StavkePlanaTemplate.Remove(stavka);
+        await _db.SaveChangesAsync();
+
+        return RedirectToAction(nameof(PlanTemplate), new { paketId });
+    }
 }

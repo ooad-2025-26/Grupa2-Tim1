@@ -1,10 +1,10 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace InterTrips___Turistička_Agencija.Models;
 
 public class PlanPutovanja
 {
-
     public PlanPutovanja() { }
 
     [Key]
@@ -17,5 +17,6 @@ public class PlanPutovanja
     public int RezervacijaId { get; set; }
     public Rezervacija? Rezervacija { get; set; }
 
+    public List<StavkaPlana> StavkePlana { get; set; } = new();
 }
 

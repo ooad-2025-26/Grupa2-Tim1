@@ -16,29 +16,28 @@
             <li><a asp-controller="Destinacije" asp-action="Index">Destinacije</a></li>
             <li><a asp-controller="Home" asp-action="ONama">O nama</a></li>
             <li><a asp-controller="Home" asp-action="Kontakt">Kontakt</a></li>
-            <li><a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a></li>@if (User?.Identity?.IsAuthenticated == true)
-{
-    var profileHref = User.IsInRole("Admin") ? "/Administrator"
-                    : User.IsInRole("Agent") ? "/Agent"
-                    : "/Korisnik/Profil";
+            <li><a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a></li>
 
-    <li style="display:flex; align-items:center; gap:10px;">
-        <a id="profileLink" class="btn btn-gold" href="@profileHref">
-            Profil (@User.Identity.Name)
-        </a>
+            @if (User?.Identity?.IsAuthenticated == true)
+            {
+                var profileHref = User.IsInRole("Admin") ? "/Administrator"
+                                : User.IsInRole("Agent") ? "/Agent"
+                                : "/Korisnik/Profil";
 
-        <form method="post" action="/Account/Logout" style="display:inline;">
-            <button type="submit" class="pill" style="cursor:pointer;">Odjavi se</button>
-        </form>
-    </li>
-}
-else
-{
-    <li>
-        <a class="btn btn-gold" asp-controller="Account" asp-action="Login">Prijava</a>
-    </li>
-}
-</ul>
+                <li style="display:flex; align-items:center; gap:10px;">
+                    <a class="btn btn-gold" href="@profileHref">Profil (@User.Identity.Name)</a>
+
+                    <form method="post" action="/Account/Logout" style="display:inline;">
+                        <button type="submit" class="pill" style="cursor:pointer;">Odjavi se</button>
+                    </form>
+                </li>
+            }
+            else
+            {
+                <li><a class="btn btn-gold" asp-controller="Account" asp-action="Login">Prijava</a></li>
+            }
+        </ul>
+    </nav>
    
 
     <div class="hero-content">
@@ -244,27 +243,6 @@ else
     </style>
 
     <script>
-       
-        const userArea = document.getElementById('userArea');
-        const loginLink = document.getElementById('loginLink');
-        const userAvatar = document.getElementById('userAvatar');
-        const userNameEl = document.getElementById('userName');
-        const logoutBtn = document.getElementById('logoutBtn');
-
-        if (isLoggedIn === 'true') {
-            if (loginLink) loginLink.classList.add('hidden');
-            if (userArea) userArea.style.display = 'flex';
-            if (userAvatar) userAvatar.textContent = userInitial || 'U';
-            if (userNameEl) userNameEl.textContent = userName || 'Korisnik';
-        }
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', function () {
-                
-                window.location.reload();
-            });
-        }
-
         async function currentUserKey() {
             const res = await fetch('/Account/Me', { credentials: 'same-origin' });
             if (!res.ok) return 'guest';
@@ -300,6 +278,22 @@ else
             if (status === 'Otkazana') return '<span class="r-badge cancel">OTKAZANA</span>';
             return '<span class="r-badge">AKTIVNA</span>';
         }
+        function planButtonHtml(r) {
+            if (!r || !r.paketId) return '';
+
+            return `<a class="pill" style="text-decoration:none;"
+                        href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(r.paketId)}">
+                        Plan putovanja
+                    </a>`;
+        }
+        function planButtonHtml(r) {
+            if (!r.paketId) return '';
+
+            return `<a class="pill" style="text-decoration:none;"
+                            href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(r.paketId)}">
+                            Plan putovanja
+                        </a>`;
+        }
 
         async function renderReservations() {
             const listEl = document.getElementById('reservationsList');
@@ -319,67 +313,38 @@ else
                 const isCancelled = r.status === 'Otkazana';
 
                 const cancelBtn = isCancelled ? '' :
-                    `<button class="btn-cancel" type="button" onclick="cancelReservation('${r.id}')">Otkaži rezervaciju</button>`;
+                    `<button class="btn-cancel" type="button" onclick="cancelReservation('${r.id}')">
+                            Otkaži rezervaciju
+                         </button>`;
+
+                const planBtn = planButtonHtml(r);
 
                 return `
-                          <div class="r-card">
+                        <div class="r-card">
                             <div class="r-top">
-                              <div class="r-code">${r.id || '—'}</div>
-                              ${badgeHtml(r.status)}
+                                <div class="r-code">${r.id || '—'}</div>
+                                ${badgeHtml(r.status)}
                             </div>
 
                             <div class="r-grid">
-                              <div class="r-line"><span>Destinacija</span><strong>${r.destination || '—'}</strong></div>
-                              <div class="r-line"><span>Period</span><strong>${(r.departure || '—')} - ${(r.return || '—')}</strong></div>
-                              <div class="r-line"><span>Putnici</span><strong>${r.travelers || '—'}</strong></div>
-                              <div class="r-line"><span>Smještaj</span><strong>${r.room || '—'}</strong></div>
-                              <div class="r-line"><span>Ukupno</span><strong>${r.total || '—'}</strong></div>
-                              <div class="r-line"><span>Način plaćanja</span><strong>${r.paymentType || '—'}</strong></div>
+                                <div class="r-line"><span>Destinacija</span><strong>${r.destination || '—'}</strong></div>
+                                <div class="r-line"><span>Period</span><strong>${(r.departure || '—')} - ${(r.return || '—')}</strong></div>
+                                <div class="r-line"><span>Putnici</span><strong>${r.travelers || '—'}</strong></div>
+                                <div class="r-line"><span>Smještaj</span><strong>${r.room || '—'}</strong></div>
+                                <div class="r-line"><span>Ukupno</span><strong>${r.total || '—'}</strong></div>
+                                <div class="r-line"><span>Način plaćanja</span><strong>${r.paymentType || '—'}</strong></div>
                             </div>
 
                             <div class="r-actions">
-                              ${cancelBtn}
+                                ${planBtn}
+                                ${cancelBtn}
                             </div>
-                          </div>
-                        `;
+                        </div>
+                    `;
             }).join('');
         }
 
         window.addEventListener('DOMContentLoaded', renderReservations);
     </script>
-    <script>
-        window.addEventListener('DOMContentLoaded', function () {
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-            const userName = localStorage.getItem('displayName') || localStorage.getItem('userName') || 'Profil';
-            const userInitial = localStorage.getItem('userInitial') || (userName ? userName[0].toUpperCase() : 'U');
-
-            const loginLink = document.getElementById('loginLink');
-            const userArea = document.getElementById('userArea');
-            const userAvatar = document.getElementById('userAvatar');
-            const userNameEl = document.getElementById('userName');
-            const logoutBtn = document.getElementById('logoutBtn');
-
-            if (isLoggedIn) {
-                if (loginLink) loginLink.style.display = 'none';
-                if (userArea) userArea.style.display = 'flex';
-                if (userAvatar) userAvatar.textContent = userInitial;
-                if (userNameEl) userNameEl.textContent = userName;
-            } else {
-                if (loginLink) loginLink.style.display = 'inline-block';
-                if (userArea) userArea.style.display = 'none';
-            }
-
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', function () {
-                    localStorage.removeItem('isLoggedIn');
-                    localStorage.removeItem('userName');
-                    localStorage.removeItem('displayName');
-                    localStorage.removeItem('userInitial');
-                    localStorage.removeItem('userRole');
-                    localStorage.removeItem('userPassword');
-                    window.location.href = '/';
-                });
-            }
-        });
-    </script>
+  
 }

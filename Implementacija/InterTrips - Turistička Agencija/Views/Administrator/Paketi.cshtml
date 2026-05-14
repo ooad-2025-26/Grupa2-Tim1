@@ -79,6 +79,9 @@
                             @Html.AntiForgeryToken()
                             <button class="btn btn-danger" type="submit" onclick="return confirm('Obrisati paket?')">Obriši</button>
                         </form>
+                            <a class="btn" asp-controller="Administrator" asp-action="PlanTemplate" asp-route-paketId="@p.Id">
+                                Plan putovanja
+                            </a>
                     </div>
                 </div>
             }

@@ -1,0 +1,256 @@
+﻿@model InterTrips___Turistička_Agencija.Models.PlanPutovanjaTemplate
+@{
+    ViewData["Title"] = "Admin - Plan putovanja (template)";
+    Layout = null;
+    var paketNaziv = Model.Paket?.Naziv ?? $"Paket #{Model.PaketId}";
+    var dest = Model.Paket?.Destinacija;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <style>
+            .wrap {
+                max-width: 1100px;
+                margin: 28px auto;
+                padding: 0 18px;
+            }
+
+            .bar {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-bottom: 14px;
+            }
+
+            .card {
+                background: rgba(255,255,255,0.86);
+                border: 1px solid rgba(95,181,187,0.16);
+                border-radius: 16px;
+                box-shadow: var(--shadow);
+                padding: 16px;
+            }
+
+            .muted {
+                color: var(--muted);
+                font-size: 12px;
+            }
+
+            .btn {
+                height: 40px;
+                padding: 0 14px;
+                border-radius: 12px;
+                cursor: pointer;
+                font-weight: 800;
+                border: 1px solid rgba(95,181,187,0.18);
+                background: #fff;
+            }
+
+            .btn-primary {
+                border: none;
+                color: #fff;
+                background: linear-gradient(135deg, #6abfc6, #86bfe0);
+            }
+
+            .btn-danger {
+                border: 1px solid rgba(255,0,0,0.18);
+                background: rgba(255,0,0,0.06);
+                color: #b42318;
+            }
+
+            a.btn {
+                display: inline-flex;
+                align-items: center;
+                text-decoration: none;
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: 0.7fr 1.4fr 2fr 0.9fr auto;
+                gap: 12px;
+                align-items: center;
+                padding: 12px;
+                border-radius: 12px;
+                border: 1px solid rgba(95,181,187,0.14);
+                background: rgba(255,255,255,0.72);
+                margin-bottom: 10px;
+            }
+
+            .field-label {
+                display: block;
+                font-size: 11px;
+                font-weight: 800;
+                color: var(--primary-dark);
+                margin: 10px 0 8px;
+                letter-spacing: .6px;
+            }
+
+            .input, .textarea {
+                width: 100%;
+                background: #fff;
+                border: 1px solid rgba(95,181,187,0.18);
+                border-radius: 10px;
+                height: 40px;
+                padding: 0 14px;
+                font-size: 13px;
+                outline: none;
+            }
+
+            .textarea {
+                height: 90px;
+                padding: 12px 14px;
+                resize: none;
+            }
+
+            .row2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .actions {
+                display: flex;
+                gap: 10px;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+            }
+
+            .badge {
+                display: inline-block;
+                padding: 4px 10px;
+                border-radius: 999px;
+                font-size: 11px;
+                font-weight: 800;
+                border: 1px solid rgba(95,181,187,0.18);
+                background: rgba(106,191,198,0.10);
+                color: var(--primary-dark);
+            }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="bar">
+            <div>
+                <h2 style="margin:0;">Plan putovanja (template)</h2>
+                <div class="muted" style="margin-top:4px;">
+                    <strong>@paketNaziv</strong>
+                    @if (dest != null)
+                    {
+                        <span> • @dest.Naziv (@dest.Drzava)</span>
+                    }
+                </div>
+            </div>
+
+            <div class="actions">
+                <a class="btn" href="/Administrator">Dashboard</a>
+                <a class="btn" href="/Administrator/Paketi">Paketi</a>
+                <a class="btn" href="/Destinacije" target="_blank">Pregled na sajtu</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+                <div style="flex:1; min-width:260px;">
+                    <div class="field-label">NAPOMENA (opciono)</div>
+                    <form asp-controller="Administrator" asp-action="PlanTemplateSaveNapomena" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input class="input" name="napomena" value="@Model.Napomena" placeholder="Npr. Uključeni transferi, vodič, slobodni dan..." />
+                        <div style="margin-top:10px;">
+                            <button class="btn btn-primary" type="submit">Sačuvaj napomenu</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div style="min-width:260px;">
+                    <div class="badge">Ukupno stavki: @Model.Stavke.Count</div>
+                </div>
+            </div>
+
+            <hr style="margin:16px 0; border:none; border-top:1px solid rgba(95,181,187,0.12);" />
+
+            <h3 style="margin:0 0 10px;">Dodaj novu stavku</h3>
+
+            <form asp-controller="Administrator" asp-action="PlanTemplateDodajStavku" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="planId" value="@Model.Id" />
+
+                <div class="row2">
+                    <div>
+                        <label class="field-label">REDNI BROJ</label>
+                        <input class="input" type="number" name="redniBroj" min="1" value="@(Model.Stavke.Any() ? Model.Stavke.Max(s => s.RedniBroj) + 1 : 1)" required />
+                    </div>
+
+                    <div>
+                        <label class="field-label">VRIJEME (opciono)</label>
+                        <input class="input" type="time" name="vrijeme" />
+                    </div>
+                </div>
+
+                <div>
+                    <label class="field-label">NAZIV</label>
+                    <input class="input" name="naziv" maxlength="160" required placeholder="Npr. Dan 1 - Dolazak / Check-in" />
+                </div>
+
+                <div>
+                    <label class="field-label">OPIS</label>
+                    <textarea class="textarea" name="opis" maxlength="600" placeholder="Kratak opis aktivnosti..."></textarea>
+                </div>
+
+                <div class="actions" style="margin-top:12px;">
+                    <button class="btn btn-primary" type="submit">+ Dodaj stavku</button>
+                </div>
+            </form>
+
+            <hr style="margin:16px 0; border:none; border-top:1px solid rgba(95,181,187,0.12);" />
+
+            <h3 style="margin:0 0 10px;">Postojeće stavke</h3>
+
+            @if (!Model.Stavke.Any())
+            {
+                <div class="muted" style="font-weight:800;">Nema stavki. Dodaj prvu stavku iz forme iznad.</div>
+            }
+            else
+            {
+                foreach (var s in Model.Stavke.OrderBy(x => x.RedniBroj))
+                {
+                    <div class="grid">
+                        <div>
+                            <div class="muted">Broj</div>
+                            <div style="font-weight:900;">@s.RedniBroj</div>
+                        </div>
+
+                        <div>
+                            <div class="muted">Vrijeme</div>
+                            <div style="font-weight:900;">@(s.Vrijeme.HasValue ? s.Vrijeme.Value.ToString(@"hh\:mm") : "—")</div>
+                        </div>
+
+                        <div>
+                            <div style="font-weight:900;">@s.Naziv</div>
+                            <div class="muted">@s.Opis</div>
+                        </div>
+
+                        <div>
+                            <span class="badge">Template</span>
+                        </div>
+
+                        <div class="actions">
+                            <form asp-controller="Administrator" asp-action="PlanTemplateObrisiStavku" method="post" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@s.Id" />
+                                <button class="btn btn-danger" type="submit" onclick="return confirm('Obrisati stavku?')">Obriši</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</body>
+</html>

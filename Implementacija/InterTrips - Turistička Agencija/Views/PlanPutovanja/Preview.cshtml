@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Plan putovanja (preview)";
+    Layout = "_Layout";
+}
+
+<section class="section">
+    <div class="section-header">
+        <div>
+            <span class="section-label">PLAN PUTOVANJA</span>
+            <h3>Pregled <em>plana</em></h3>
+        </div>
+    </div>
+
+    <div class="panel" style="max-width:900px;margin:0 auto;padding:18px;border-radius:16px;background:rgba(255,255,255,0.86);border:1px solid rgba(95,181,187,0.16);box-shadow:var(--shadow);">
+        <p style="color:var(--muted);font-weight:600;">
+            Ovo je preview plana putovanja za paket ID: <strong>@ViewBag.PaketId</strong>.
+        </p>
+
+        <div style="margin-top:12px;">
+            <div style="padding:12px;border-radius:12px;background:rgba(106,191,198,0.10);border:1px solid rgba(95,181,187,0.16);margin-bottom:10px;">
+                <strong>Dan 1</strong> — Dolazak i smještaj
+            </div>
+            <div style="padding:12px;border-radius:12px;background:rgba(106,191,198,0.10);border:1px solid rgba(95,181,187,0.16);margin-bottom:10px;">
+                <strong>Dan 2</strong> — Obilazak / izlet
+            </div>
+            <div style="padding:12px;border-radius:12px;background:rgba(106,191,198,0.10);border:1px solid rgba(95,181,187,0.16);">
+                <strong>Dan 3</strong> — Slobodno vrijeme i povratak
+            </div>
+        </div>
+
+        <p style="margin-top:14px;color:var(--muted);font-size:12px;">
+            Pravi plan putovanja (sa detaljima) postaje dostupan nakon kreiranja rezervacije.
+        </p>
+    </div>
+</section>

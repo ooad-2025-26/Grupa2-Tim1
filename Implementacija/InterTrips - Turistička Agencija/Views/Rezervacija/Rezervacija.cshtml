@@ -598,6 +598,11 @@
                                 }
                             }
                         </select>
+                        <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+                            <a id="planLink" class="secondary-btn" href="#" style="text-decoration:none; padding:12px 14px; border-radius:12px;">
+                                Pogledaj plan putovanja
+                            </a>
+                        </div>
 
                         <div class="row" style="margin-top:20px;">
                             <div>
@@ -761,6 +766,17 @@
             const finalTotal = (basePrice + extraPerPerson) * totalTravelers * nights;
 
             summaryTotal.innerText = finalTotal.toFixed(2) + " BAM";
+        const planLink = document.getElementById('planLink');
+if (planLink) {
+    const paketId = destinationSelect.value;
+    if (!paketId) {
+        planLink.style.display = 'none';
+    } else {
+        planLink.style.display = 'inline-flex';
+        planLink.href = `/PlanPutovanja/Preview?paketId=${encodeURIComponent(paketId)}`;
+    }
+}
+        
         }
 
         function changeCount(type, delta) {
@@ -780,9 +796,12 @@
                 alert("Molimo popunite sve podatke (paket i datume)!");
                 return;
             }
-
+            localStorage.setItem('reservationPaketId', destinationSelect.value);
             localStorage.setItem('reservationTotal', summaryTotal.innerText);
             localStorage.setItem('reservationRoom', summaryRoom.innerText);
+            const adults = parseInt(document.getElementById('adultsCount').innerText || '0', 10);
+            const children = parseInt(document.getElementById('childrenCount').innerText || '0', 10);
+            localStorage.setItem('reservationTravelers', String(adults + children));
 
             window.location.href = "/rezervacija/putnici";
         }
