@@ -16,26 +16,30 @@
             <li><a asp-controller="Destinacije" asp-action="Index">Destinacije</a></li>
             <li><a asp-controller="Home" asp-action="ONama">O nama</a></li>
             <li><a asp-controller="Home" asp-action="Kontakt">Kontakt</a></li>
-            <a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a>
-            <a id="loginLink" class="btn btn-gold" asp-controller="Korisnik" asp-action="Login">Prijava</a>
+            <li><a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a></li>@if (User?.Identity?.IsAuthenticated == true)
+{
+    var profileHref = User.IsInRole("Admin") ? "/Administrator"
+                    : User.IsInRole("Agent") ? "/Agent"
+                    : "/Korisnik/Profil";
 
-            <div id="userArea" style="display:none; align-items:center; gap:10px;">
-                <div id="userAvatar">A</div>
+    <li style="display:flex; align-items:center; gap:10px;">
+        <a id="profileLink" class="btn btn-gold" href="@profileHref">
+            Profil (@User.Identity.Name)
+        </a>
 
-                <a id="profileLink" href="/korisnik" style="color:rgba(36,65,74,0.88); font-weight:600; text-decoration:none;">
-                    <span id="userName">Profil</span>
-                </a>
-
-                <button id="logoutBtn" type="button" class="pill" style="cursor:pointer;">Odjavi se</button>
-            </div>
-        </ul>
-
-        <div id="userArea" style="display:none;">
-            <div id="userAvatar">A</div>
-            <span id="userName">Korisnik</span>
-            <button id="logoutBtn" type="button">Odjavi se</button>
-        </div>
-    </nav>
+        <form method="post" action="/Account/Logout" style="display:inline;">
+            <button type="submit" class="pill" style="cursor:pointer;">Odjavi se</button>
+        </form>
+    </li>
+}
+else
+{
+    <li>
+        <a class="btn btn-gold" asp-controller="Account" asp-action="Login">Prijava</a>
+    </li>
+}
+</ul>
+   
 
     <div class="hero-content">
         <span class="badge">REZERVACIJE</span>
@@ -240,10 +244,7 @@
     </style>
 
     <script>
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        const userName = localStorage.getItem('userName');
-        const userInitial = localStorage.getItem('userInitial');
-
+       
         const userArea = document.getElementById('userArea');
         const loginLink = document.getElementById('loginLink');
         const userAvatar = document.getElementById('userAvatar');
@@ -259,21 +260,21 @@
 
         if (logoutBtn) {
             logoutBtn.addEventListener('click', function () {
-                localStorage.removeItem('isLoggedIn');
-                localStorage.removeItem('userName');
-                localStorage.removeItem('userInitial');
-                localStorage.removeItem('userRole');
+                
                 window.location.reload();
             });
         }
 
-        function currentUserKey() {
-            return localStorage.getItem('userName') || 'guest';
+        async function currentUserKey() {
+            const res = await fetch('/Account/Me', { credentials: 'same-origin' });
+            if (!res.ok) return 'guest';
+            const me = await res.json();
+            return me.userName || 'guest';
         }
 
-        function getReservationsForCurrentUser() {
+        async function getReservationsForCurrentUser() {
             const all = JSON.parse(localStorage.getItem('reservations') || '[]');
-            const u = currentUserKey();
+            const u = await currentUserKey();
             return all.filter(r => (r.userName || 'guest') === u);
         }
 
@@ -300,11 +301,11 @@
             return '<span class="r-badge">AKTIVNA</span>';
         }
 
-        function renderReservations() {
+        async function renderReservations() {
             const listEl = document.getElementById('reservationsList');
             const emptyMsg = document.getElementById('emptyMsg');
 
-            const items = getReservationsForCurrentUser();
+            const items = await getReservationsForCurrentUser();
 
             if (!items.length) {
                 listEl.innerHTML = '';

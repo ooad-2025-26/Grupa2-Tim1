@@ -17,17 +17,29 @@
             <li><a asp-controller="Home" asp-action="ONama">O nama</a></li>
             <li><a asp-controller="Home" asp-action="Kontakt">Kontakt</a></li>
             <a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a>
-            <li><a id="myReservationsLink" asp-controller="Rezervacija" asp-action="Index" style="display:none;">Moje rezervacije</a></li>
-            <li><a id="loginLink" class="btn btn-gold" asp-controller="Korisnik" asp-action="Login">Prijava</a></li>
-        </ul>
+@if (User?.Identity?.IsAuthenticated == true)
+{
+    <li><a asp-controller="Rezervacija" asp-action="Index">Moje rezervacije</a></li>
+}           @if (User?.Identity?.IsAuthenticated == true)
+{
+                var profileHref = User.IsInRole("Admin") ? "/Administrator"
+                            : User.IsInRole("Agent") ? "/Agent"
+                            : "/Korisnik/Profil";
 
-        <div id="userArea">
-            <div id="userAvatar">A</div>
-            <a id="profileLink" href="/Korisnik/Profil" style="color:white; font-weight:600; text-decoration:none;">
-                <span id="userName">Korisnik</span>
-            </a>
-            <button id="logoutBtn" type="button">Odjavi se</button>
-        </div>
+    <li>
+        <a class="btn btn-gold" href="@profileHref">Profil (@User.Identity.Name)</a>
+    </li>
+    <li>
+        <form method="post" action="/Account/Logout" style="display:inline;">
+            <button class="btn btn-gold" type="submit">Odjava</button>
+        </form>
+    </li>
+}
+else
+{
+    <li><a class="btn btn-gold" asp-controller="Account" asp-action="Login">Prijava</a></li>
+}
+</ul>
     </nav>
 
   
@@ -185,7 +197,7 @@
                 <h3>Spremni za istraživanje svijeta?</h3>
                 <p>Pridružite se hiljadama putnika koji vjeruju InterTripsu za svoja najljepša putovanja.</p>
             </div>
-            <a class="btn btn-gold" asp-controller="Korisnik" asp-action="Login">Počnite besplatno →</a>
+            <a href="/Account/Login">Prijava</a><a href="/Account/Login" class="btn btn-gold">Počnite besplatno →</a>
         </div>
     </section>
 
@@ -240,10 +252,7 @@
 @section Scripts {
     <script>
         // Login UI (demo)
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        const userName = localStorage.getItem('userName');
-        const userInitial = localStorage.getItem('userInitial');
-
+       
         const userArea = document.getElementById('userArea');
         const loginLink = document.getElementById('loginLink');
         const myReservationsLink = document.getElementById('myReservationsLink');
@@ -264,10 +273,7 @@
 
         if (logoutBtn) {
             logoutBtn.addEventListener('click', function () {
-                localStorage.removeItem('isLoggedIn');
-                localStorage.removeItem('userName');
-                localStorage.removeItem('userInitial');
-                localStorage.removeItem('userRole');
+               
                 window.location.reload();
             });
         }

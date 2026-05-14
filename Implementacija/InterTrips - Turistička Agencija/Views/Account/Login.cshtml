@@ -307,6 +307,10 @@
     </style>
 </head>
 <body class="auth-page">
+    @if (User?.Identity?.IsAuthenticated == true)
+    {
+        <script>window.location.href = data.redirectUrl || '/';</script>
+    }
     <header class="auth-topbar">
         <a href="/" class="logo-link">
             <img src="~/assets/logo.png" alt="InterTrips logo" class="auth-logo">
@@ -377,8 +381,8 @@
                 <h1>Prijava administratora</h1>
                 <p>Administratorski pristup sistemu InterTrips.</p>
 
-                <label>KORISNIČKO IME</label>
-                <input id="adminUsername" type="text" placeholder="admin" />
+                <label>E-MAIL ADRESA</label>
+                <input id="adminUsername" type="text" placeholder="admin@intertrips.ba" />
 
                 <label>LOZINKA</label>
                 <div class="password-field">
@@ -389,7 +393,7 @@
                 <button class="submit-btn" id="adminBtn" type="button">Prijava administratora</button>
 
                 <p class="switch-text">Niste administrator? <a href="#" id="back-to-user-from-admin">Vrati se na korisničku prijavu</a></p>
-                <div class="demo-box">Admin login: admin / admin123</div>
+                <div class="demo-box">Admin login: admin@intertrips.ba / admin123</div>
             </div>
 
             <div id="register-form" class="auth-form">
@@ -508,82 +512,75 @@
 
                 if (!email || !password) { alert('Popunite email i lozinku.'); return; }
 
-                const res = await fetch('/Account/Login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
+                try {
+                    const res = await fetch('/Account/Login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ Email: email, Password: password })
+                    });
 
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok) { alert(data.message || 'Pogrešan login.'); return; }
+                    const data = await res.json().catch(() => ({}));
 
-                window.location.href = '/';
+                    if (res.ok && data.success) {
+                      
+                        window.location.href = data.redirectUrl || '/';
+                        return;
+                    }
+
+                    alert(data.message || 'Prijava nije uspjela');
+                } catch {
+                    alert('Greška pri prijavi. Provjerite konekciju i pokušajte ponovo.');
+                }
             });
 
             // LOGIN: agent
-            document.getElementById('agentBtn').addEventListener('click', function () {
-                const email = document.getElementById('agentEmail').value;
-                const password = document.getElementById('agentPassword').value;
+            document.getElementById('agentBtn').addEventListener('click', async function () {
+                const email = document.getElementById('agentEmail').value.trim();
+                const password = document.getElementById('agentPassword').value.trim();
 
-                if (!email || !password) {
-                    alert('Unesite podatke!');
-                    return;
-                }
+                if (!email || !password) { alert('Unesite podatke!'); return; }
 
-                fetch('/Korisnik/LoginAgent', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email: email, lozinka: password })
-                })
-                    .then(res => {
-                        if (!res.ok) throw new Error('Server error: ' + res.status);
-                        return res.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            localStorage.setItem('isLoggedIn', 'true');
-                            localStorage.setItem('userRole', 'agent');
-                            localStorage.setItem('userId', data.userId);
-
-                            window.location.href = '/Agent?agentId=' + data.userId;
-                        } else {
-                            alert('Pogrešan email ili lozinka (Agent)!');
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Greška:', err);
-                        alert('Došlo je do greške pri povezivanju sa serverom.');
+                try {
+                    const res = await fetch('/Account/Login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ Email: email, Password: password })
                     });
+
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok || !data.success) { alert(data.message || 'Pogrešan email ili lozinka (Agent)!'); return; }
+
+                    window.location.href = data.redirectUrl || '/';
+                } catch {
+                    alert('Greška pri prijavi. Provjerite konekciju i pokušajte ponovo.');
+                }
             });
 
             // LOGIN: admin
-            document.getElementById('adminBtn').addEventListener('click', function () {
-                const username = document.getElementById('adminUsername').value.trim();
+            document.getElementById('adminBtn').addEventListener('click', async function () {
+                const email = document.getElementById('adminUsername').value.trim();  
                 const password = document.getElementById('adminPassword').value.trim();
 
-                if (!username || !password) {
-                    alert('Popunite korisničko ime i lozinku.');
-                    return;
+                if (!email || !password) { alert('Popunite korisničko ime/email i lozinku.'); return; }
+
+                try {
+                    const res = await fetch('/Account/Login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ Email: email, Password: password })
+                    });
+
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok || !data.success) { alert(data.message || 'Pogrešan administratorski login.'); return; }
+
+                  
+                    window.location.href = data.redirectUrl || '/';           
+                } catch {
+                    alert('Greška pri prijavi. Provjerite konekciju i pokušajte ponovo.');
                 }
-
-                const ADMIN_USERNAME = 'admin';
-                const ADMIN_PASSWORD = 'admin123';
-
-                if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
-                    alert('Pogrešan administratorski login.');
-                    return;
-                }
-
-                const letter = username.charAt(0).toUpperCase();
-
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userName', username);
-                localStorage.setItem('userInitial', letter);
-                localStorage.setItem('userRole', 'admin');
-
-                window.location.href = '/Admin';
             });
 
             // REGISTER (demo)
@@ -596,32 +593,25 @@
                 if (!name || !email || !password || !confirm) { alert('Popunite sva polja.'); return; }
                 if (password !== confirm) { alert('Lozinke se ne poklapaju.'); return; }
 
-                const res = await fetch('/Account/Register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, password })
-                });
+                try {
+                    const res = await fetch('/Account/Register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ Name: name, Email: email, Password: password })
+                    });
 
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok) { alert(data.message || 'Registracija nije uspjela.'); return; }
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok || !data.success) { alert(data.message || 'Registracija nije uspjela.'); return; }
 
-                window.location.href = '/';
+                   window.location.href = data.redirectUrl || '/';
+                } catch {
+                    alert('Greška pri registraciji. Provjerite konekciju i pokušajte ponovo.');
+                }
             });
 
-            const savedLogin = localStorage.getItem('isLoggedIn');
-            const savedName = localStorage.getItem('userName');
-            const savedInitial = localStorage.getItem('userInitial');
-
-            if (savedLogin === 'true' && savedName) {
-                authCard.classList.add('hidden');
-                successBox.classList.add('active');
-                topUser.classList.add('active');
-                smallAvatar.textContent = savedInitial || 'U';
-                bigAvatar.textContent = savedInitial || 'U';
-                userNameTop.textContent = savedName;
-                successText.textContent = 'Uspješno ste prijavljeni kao ' + savedName + '.';
-            }
-
+         
+          
             function togglePassword(inputId, iconEl) {
                 const input = document.getElementById(inputId);
 
@@ -634,5 +624,6 @@
                 }
             }
     </script>
+  
 </body>
 </html>

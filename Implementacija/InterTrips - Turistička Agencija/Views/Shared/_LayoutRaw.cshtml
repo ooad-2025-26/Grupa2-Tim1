@@ -1,30 +1,25 @@
 <body>
     @RenderBody()
 
-    <script>
-            window.addEventListener('DOMContentLoaded', function () {
-                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-                const role = localStorage.getItem('userRole');
+    @if (User?.Identity?.IsAuthenticated == true)
+    {
+        var profileHref = User.IsInRole("Admin") ? "/Admin"
+                        : User.IsInRole("Agent") ? "/Agent"
+                        : "/";
 
-                const authLinks = document.querySelectorAll('#authLink');
-                authLinks.forEach(function (authLink) {
-                    if (!authLink) return;
-
-                    if (isLoggedIn) {
-                        authLink.textContent = 'Profil';
-
-                        let href = '/Korisnik/Login';
-                        if (role === 'admin') href = '/Admin';
-                        else if (role === 'agent') href = '/Agent';
-                        else href = '/';
-                        authLink.setAttribute('href', href);
-                    } else {
-                        authLink.textContent = 'Prijava';
-                        authLink.setAttribute('href', '/Korisnik/Login');
-                    }
-                });
-            });
-    </script>
-
+        <a id="authLink" href="@profileHref">Profil (@User.Identity.Name)</a>
+        <form method="post" action="/Account/Logout" style="display:inline;">
+            <button type="submit">Odjava</button>
+        </form>
+    }
+    else
+    {
+        <a id="authLink" href="/Korisnik/Login">Prijava</a>
+    }
+    <form method="post" action="/Account/Logout" style="display:inline;">
+        <button type="submit" style="background:none;border:none;color:inherit;cursor:pointer;padding:0;">
+            Odjava
+        </button>
+    </form>
     @RenderSection("Scripts", required: false)
 </body>

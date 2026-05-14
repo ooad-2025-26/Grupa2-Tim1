@@ -231,7 +231,9 @@
         <div style="display:flex; gap:10px; align-items:center;">
             <a href="/Administrator/Paketi" class="logout-btn" style="text-decoration:none;">Paketi</a>
             <a href="/Destinacije" class="logout-btn" style="text-decoration:none;">Pregled na sajtu</a>
-            <button class="logout-btn" type="button" onclick="logout()">Odjavi se</button>
+            <form method="post" action="/Account/Logout" style="display:inline;">
+    <button class="logout-btn" type="submit">Odjavi se</button>
+</form>
         </div>
   </header>
 
@@ -325,26 +327,5 @@
       </div>
     </div>
   </main>
-
-  <script>
-    
-
-    function logout() {
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('userName');
-      localStorage.removeItem('userInitial');
-      localStorage.removeItem('userRole');
-
-      window.location.href = '/';
-    }
-
-    window.addEventListener('DOMContentLoaded', function () {
-      const role = localStorage.getItem('userRole');
-
-      if (role !== 'admin') {
-        window.location.href = '/korisnik/login';
-      }
-    });
-  </script>
 </body>
 </html>

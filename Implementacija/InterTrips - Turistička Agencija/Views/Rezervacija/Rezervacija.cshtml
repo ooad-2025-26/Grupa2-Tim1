@@ -549,8 +549,7 @@
 
   <div class="page">
     <div class="center-shell">
-      <section id="login-block" class="login-block active">
-        <div class="login-hero">🔒</div>
+<section id="login-block" class="login-block @(User?.Identity?.IsAuthenticated == true ? "" : "active")">        <div class="login-hero">🔒</div>
         <h2>Prijava je obavezna</h2>
         <p>Da biste rezervisali putovanje i pristupili procesu plaćanja, morate biti prijavljeni na vaš InterTrips račun.</p>
 
@@ -565,14 +564,13 @@
         </div>
 
         <div class="login-actions">
-          <a class="main-btn login-btn" href="/korisnik/login">Prijavite se</a>
-          <button class="secondary-btn login-btn" type="button" onclick="window.location.href='/korisnik/login'">Registrujte se</button>
+          <a class="main-btn login-btn" href="/Account/Login">Prijavite se</a>
+          <button class="secondary-btn login-btn" type="button" onclick="window.location.href='/Account/Register'">Registrujte se</button>
         </div>
 
         <a class="back-link" href="/">← Povratak na početnu</a>
       </section>
-            <section id="booking-view" class="booking-view">
-                <div class="intro">
+<section id="booking-view" class="booking-view @(User?.Identity?.IsAuthenticated == true ? "active" : "")">                <div class="intro">
                     <div class="badge">REZERVACIJA PUTOVANJA</div>
                     <h1>Kreiranje <span>rezervacije</span></h1>
                     <p>Unesite podatke za odabrani turistički paket i nastavite na unos podataka putnika.</p>
@@ -700,18 +698,7 @@
 
 
         window.addEventListener('DOMContentLoaded', function () {
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            const loginBlock = document.getElementById('login-block');
-            const bookingView = document.getElementById('booking-view');
-
-            if (isLoggedIn === 'true') {
-                bookingView.classList.add('active');
-                loginBlock.classList.remove('active');
-            } else {
-                loginBlock.classList.add('active');
-                bookingView.classList.remove('active');
-            }
-
+            
             const danas = new Date().toISOString().split('T')[0];
             if (departureDate) departureDate.min = danas;
             if (returnDate) returnDate.min = danas;

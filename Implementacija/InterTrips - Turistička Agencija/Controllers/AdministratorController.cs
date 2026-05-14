@@ -10,18 +10,24 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace InterTrips___Turistička_Agencija.Controllers;
 
+[Authorize(Roles = "Admin")]
 public class AdministratorController : Controller
 {
     private readonly ApplicationDbContext _db;
     private readonly IWebHostEnvironment _env;
 
-    public AdministratorController(ApplicationDbContext db, IWebHostEnvironment env)
+    private readonly UserManager<ApplicationUser> _userManager;
+
+    public AdministratorController(ApplicationDbContext db, IWebHostEnvironment env, UserManager<ApplicationUser> userManager)
     {
         _db = db;
         _env = env;
+        _userManager = userManager;
     }
     [HttpGet]
     public async Task<IActionResult> Index()
@@ -29,7 +35,7 @@ public class AdministratorController : Controller
         var vm = new AdminDashboardVm
         {
             DestinacijeCount = await _db.Destinacije.CountAsync(),
-            KorisniciCount = await _db.Korisnici.CountAsync(),
+            KorisniciCount = _userManager.Users.Count(),
             RezervacijeCount = await _db.Rezervacije.CountAsync(),
             Destinacije = await _db.Destinacije.OrderByDescending(d => d.Id).ToListAsync()
         };

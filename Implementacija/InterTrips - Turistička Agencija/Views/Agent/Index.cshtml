@@ -229,7 +229,9 @@
         </a>
         <div style="display:flex; gap:10px;">
             <a href="/Agent/Rezervacije?agentId=@Model.AgentId" class="pill-link">Pregled svih rezervacija</a>
-            <button class="pill-link logout-btn" onclick="logout()">Odjavi se</button>
+            <form method="post" action="/Account/Logout" style="display:inline;">
+                <button class="pill-link logout-btn" type="submit">Odjavi se</button>
+            </form>
         </div>
     </header>
 
@@ -315,18 +317,5 @@
         </div>
     </main>
 
-    <script>
-            function logout() {
-                localStorage.removeItem('isLoggedIn');
-                localStorage.removeItem('userRole');
-                window.location.href = '/korisnik/login';
-            }
-
-            window.addEventListener('DOMContentLoaded', function () {
-                if (localStorage.getItem('userRole') !== 'agent') {
-                    window.location.href = '/korisnik/login';
-                }
-            });
-    </script>
 </body>
 </html>
