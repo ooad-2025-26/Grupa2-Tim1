@@ -1,35 +1,192 @@
-﻿@{
-    ViewData["Title"] = "Plan putovanja (preview)";
+﻿@model InterTrips___Turistička_Agencija.Models.PlanPutovanjaTemplate
+@{
+    ViewData["Title"] = "Plan putovanja";
     Layout = "_Layout";
 }
 
-<section class="section">
-    <div class="section-header">
-        <div>
-            <span class="section-label">PLAN PUTOVANJA</span>
-            <h3>Pregled <em>plana</em></h3>
-        </div>
+<style>
+    .hero-banner {
+        background: url('/assets/world-map-bg.jpg') center/cover no-repeat; /* Zamijenite putanju do vaše slike mape ako je drugačija */
+        position: relative;
+        padding: 60px 18px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .hero-glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 32px;
+        padding: 40px 60px;
+        max-width: 800px;
+        width: 100%;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    .package-badge {
+        display: inline-block;
+        background: rgba(106, 191, 198, 0.15);
+        color: #1a3f42;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(106, 191, 198, 0.25);
+    }
+
+    .main-title {
+        font-size: 42px;
+        font-weight: 900;
+        color: #1a3f42;
+        margin: 0 0 12px 0;
+        letter-spacing: -0.5px;
+        text-transform: none;
+    }
+
+    .subtitle-info {
+        font-size: 15px;
+        color: #555;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .note-box {
+        margin: 24px 0;
+        padding: 18px 20px;
+        border-radius: 16px;
+        border-left: 5px solid #6abfc6;
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    }
+
+    .note-text {
+        font-size: 14px;
+        color: #444;
+        line-height: 1.6;
+        white-space: pre-line; 
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 44px;
+        padding: 0 24px;
+        border-radius: 30px;
+        background: linear-gradient(135deg, #6abfc6, #86bfe0);
+        color: #fff !important;
+        font-weight: 800;
+        font-size: 14px;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(106, 191, 198, 0.25);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(106, 191, 198, 0.35);
+        }
+</style>
+
+<header class="hero-banner">
+    <div class="hero-glass-card">
+        @if (Model != null)
+        {
+            <span class="package-badge">
+                @{
+                    var nazivPaketa = Model.Paket?.Naziv ?? $"Paket #{Model.PaketId}";
+                }
+                @nazivPaketa.ToUpper()
+            </span>
+        }
+        else
+        {
+            <span class="package-badge">GRESKA</span>
+        }
+
+        <h1 class="main-title">Plan putovanja</h1>
+
+        <p class="subtitle-info">
+            @if (Model?.Paket?.Destinacija != null)
+            {
+                <span>Pogledajte detaljan pregled aktivnosti i plan putovanja za destinaciju @Model.Paket.Destinacija.Naziv (@Model.Paket.Destinacija.Drzava).</span>
+            }
+            else
+            {
+                <span>Odaberite destinaciju putovanja, pogledajte plan i aktivnosti po danima.</span>
+            }
+        </p>
     </div>
+</header>
 
-    <div class="panel" style="max-width:900px;margin:0 auto;padding:18px;border-radius:16px;background:rgba(255,255,255,0.86);border:1px solid rgba(95,181,187,0.16);box-shadow:var(--shadow);">
-        <p style="color:var(--muted);font-weight:600;">
-            Ovo je preview plana putovanja za paket ID: <strong>@ViewBag.PaketId</strong>.
-        </p>
+<section class="section" style="padding-top: 30px; padding-bottom: 50px;">
+    <div style="max-width:900px; margin:0 auto; padding:0 18px;">
 
-        <div style="margin-top:12px;">
-            <div style="padding:12px;border-radius:12px;background:rgba(106,191,198,0.10);border:1px solid rgba(95,181,187,0.16);margin-bottom:10px;">
-                <strong>Dan 1</strong> — Dolazak i smještaj
+        @if (Model == null)
+        {
+            <div style="text-align: center; padding: 40px 20px; color: var(--muted); font-weight: 700;">
+                Nema definisanog plana putovanja za ovaj paket.
             </div>
-            <div style="padding:12px;border-radius:12px;background:rgba(106,191,198,0.10);border:1px solid rgba(95,181,187,0.16);margin-bottom:10px;">
-                <strong>Dan 2</strong> — Obilazak / izlet
-            </div>
-            <div style="padding:12px;border-radius:12px;background:rgba(106,191,198,0.10);border:1px solid rgba(95,181,187,0.16);">
-                <strong>Dan 3</strong> — Slobodno vrijeme i povratak
-            </div>
+        }
+        else
+        {
+            @if (!string.IsNullOrWhiteSpace(Model.Napomena))
+            {
+                <div class="note-box">
+                    <strong style="color: #1a3f42; font-size: 14px; display: block; margin-bottom: 6px;">📌 Važne napomene:</strong>
+                    <div class="note-text">@Model.Napomena</div>
+                </div>
+            }
+
+            @if (Model.Stavke == null || !Model.Stavke.Any())
+            {
+                <div style="color:var(--muted); font-weight:700; padding: 40px; text-align: center;">
+                    Plan i program putovanja će uskoro biti objavljen.
+                </div>
+            }
+            else
+            {
+                <div style="margin-top: 20px;">
+                    @foreach (var s in Model.Stavke.OrderBy(x => x.RedniBroj))
+                    {
+                        <div style="margin-bottom:14px; padding:20px; border-radius:16px;
+                            border:1px solid rgba(95,181,187,0.16);
+                            background: rgba(255,255,255,0.92);
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+
+                            <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items: center;">
+                                <div style="font-size: 17px; font-weight:900; color:#1a3f42;">
+                                    Dan @s.RedniBroj: @s.Naziv
+                                </div>
+                                @if (s.Vrijeme.HasValue)
+                                {
+                                    <div style="color:var(--muted); font-weight:800; background: rgba(0,0,0,0.04); padding: 4px 12px; border-radius: 8px; font-size: 13px;">
+                                        🕒 @s.Vrijeme.Value.ToString(@"hh\:mm")
+                                    </div>
+                                }
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(s.Opis))
+                            {
+                                <div style="margin-top:10px; color:#555; line-height: 1.6; font-size: 14.5px;">
+                                    @s.Opis
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        }
+
+        <div style="margin-top:30px;">
+            <a class="btn-back" href="javascript:history.back()">← Nazad na paket</a>
         </div>
-
-        <p style="margin-top:14px;color:var(--muted);font-size:12px;">
-            Pravi plan putovanja (sa detaljima) postaje dostupan nakon kreiranja rezervacije.
-        </p>
     </div>
 </section>

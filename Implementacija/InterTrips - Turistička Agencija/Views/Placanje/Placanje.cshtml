@@ -533,18 +533,23 @@
         `linear-gradient(rgba(0,0,0,0.12), rgba(0,0,0,0.12)), url('${image}') center/cover no-repeat`;
         }
 
-        function saveReservationToHistory(resCode) {
+        async function currentUserKey() {
+        const res = await fetch('/Account/Me', { credentials: 'same-origin' });
+        if (!res.ok) return 'guest';
+        const me = await res.json();
+        return me.userName || 'guest';
+        }
+
+        async function saveReservationToHistory(resCode) {
         const reservations = JSON.parse(localStorage.getItem('reservations') || '[]');
+        const u = await currentUserKey();
 
         const reservation = {
         id: resCode,
-        userName: localStorage.getItem('userName') || 'guest',
+        userName: u, 
         createdAt: new Date().toISOString(),
         status: 'Aktivna',
-
         paketId: localStorage.getItem('reservationPaketId') || '',
-        paketNaziv: localStorage.getItem('reservationPaketNaziv') || localStorage.getItem('reservationDestination') || '',
-
         destination: localStorage.getItem('reservationDestination'),
         country: localStorage.getItem('reservationCountry'),
         departure: localStorage.getItem('reservationDeparture'),
@@ -559,15 +564,12 @@
         ratesMonths: localStorage.getItem('ratesMonths'),
         ratesMonthly: localStorage.getItem('ratesMonthly')
         };
-
-        const idx = reservations.findIndex(r => r.id === reservation.id);
-        if (idx >= 0) reservations[idx] = reservation;
-        else reservations.unshift(reservation);
-
+        reservations.unshift(reservation);
         localStorage.setItem('reservations', JSON.stringify(reservations));
         }
 
-       function payNow() {
+       async function payNow() {
+
     if (selectedPaymentType === 'card') {
         const cardName = document.getElementById('cardName').value.trim();
         const cardNumber = document.getElementById('cardNumber').value.trim();
@@ -623,7 +625,7 @@
 
         const resCode = 'IT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
         localStorage.setItem('finalReservationCode', resCode);
-        saveReservationToHistory(resCode);
+        await saveReservationToHistory(resCode);
 
         window.location.href = "/Placanje/Uspjeh";
         }

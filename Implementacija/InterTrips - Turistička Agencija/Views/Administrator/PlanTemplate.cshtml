@@ -150,7 +150,14 @@
             <div class="actions">
                 <a class="btn" href="/Administrator">Dashboard</a>
                 <a class="btn" href="/Administrator/Paketi">Paketi</a>
-                <a class="btn" href="/Destinacije" target="_blank">Pregled na sajtu</a>
+                @if (Model.PaketId != null)
+                {
+                    <a class="btn" href="/PlanPutovanja/Preview?paketId=@Model.PaketId" target="_blank">Pregled na sajtu</a>
+                }
+                else
+                {
+                    <a class="btn" href="/Destinacije" target="_blank">Pregled na sajtu</a>
+                }
             </div>
         </div>
 
@@ -158,13 +165,15 @@
             <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;">
                 <div style="flex:1; min-width:260px;">
                     <div class="field-label">NAPOMENA (opciono)</div>
-                    <form asp-controller="Administrator" asp-action="PlanTemplateSaveNapomena" method="post">
+                    <form asp-controller="Administrator"
+                          asp-action="PlanTemplateSaveNapomena"
+                          method="post">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="id" value="@Model.Id" />
-                        <input class="input" name="napomena" value="@Model.Napomena" placeholder="Npr. Uključeni transferi, vodič, slobodni dan..." />
-                        <div style="margin-top:10px;">
-                            <button class="btn btn-primary" type="submit">Sačuvaj napomenu</button>
-                        </div>
+
+                        <textarea name="napomena">@Model.Napomena</textarea>
+
+                        <button type="submit">Sačuvaj</button>
                     </form>
                 </div>
 

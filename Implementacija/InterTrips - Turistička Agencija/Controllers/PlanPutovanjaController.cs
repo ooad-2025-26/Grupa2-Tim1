@@ -60,12 +60,16 @@ public class PlanPutovanjaController : Controller
         await _db.SaveChangesAsync();
         return RedirectToAction(nameof(Index), new { rezervacijaId = plan.RezervacijaId });
     }
-    [HttpGet("Preview")]
+
+    [HttpGet("Preview")] 
     public async Task<IActionResult> Preview(int paketId)
     {
+        var plan = await _db.PlanoviPutovanjaTemplate
+            .Include(p => p.Paket)
+                .ThenInclude(pk => pk!.Destinacija)
+            .Include(p => p.Stavke)
+            .FirstOrDefaultAsync(p => p.PaketId == paketId);
 
-
-        ViewBag.PaketId = paketId;
-        return View(); 
+        return View(plan);
     }
 }

@@ -240,6 +240,20 @@
                 grid-template-columns: 1fr;
             }
         }
+        .pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-weight: 900;
+  text-decoration: none;
+  border: 1px solid rgba(95,181,187,0.18);
+  background: rgba(106,191,198,0.12);
+  color: var(--primary-dark);
+}
+.pill:hover { filter: brightness(1.02); }
     </style>
 
     <script>
@@ -253,7 +267,7 @@
         async function getReservationsForCurrentUser() {
             const all = JSON.parse(localStorage.getItem('reservations') || '[]');
             const u = await currentUserKey();
-            return all.filter(r => (r.userName || 'guest') === u);
+            return all;
         }
 
         function saveAllReservations(all) {
@@ -278,22 +292,14 @@
             if (status === 'Otkazana') return '<span class="r-badge cancel">OTKAZANA</span>';
             return '<span class="r-badge">AKTIVNA</span>';
         }
+        
         function planButtonHtml(r) {
-            if (!r || !r.paketId) return '';
-
-            return `<a class="pill" style="text-decoration:none;"
-                        href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(r.paketId)}">
-                        Plan putovanja
-                    </a>`;
-        }
-        function planButtonHtml(r) {
-            if (!r.paketId) return '';
-
-            return `<a class="pill" style="text-decoration:none;"
-                            href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(r.paketId)}">
-                            Plan putovanja
-                        </a>`;
-        }
+    if (!r || !r.paketId) return '';
+    return `<a class="pill" style="text-decoration:none;"
+              href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(r.paketId)}">
+              Plan putovanja
+            </a>`;
+}
 
         async function renderReservations() {
             const listEl = document.getElementById('reservationsList');
@@ -342,6 +348,7 @@
                         </div>
                     `;
             }).join('');
+            console.log('rezervacije:', items);
         }
 
         window.addEventListener('DOMContentLoaded', renderReservations);

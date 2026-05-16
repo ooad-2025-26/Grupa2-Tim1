@@ -592,7 +592,12 @@
                             {
                                 foreach (var p in Model)
                                 {
-                                    <option value="@p.Id" data-img="@p.Destinacija?.SlikaUrl" data-price="@p.CijenaOd">
+                                    <option value="@p.Id"
+                                            data-img="@p.Destinacija?.SlikaUrl"
+                                            data-price="@p.CijenaOd"
+                                            data-nights="@p.TrajanjeNoci"
+                                            data-destinacija="@p.Destinacija?.Naziv"
+                                            data-drzava="@p.Destinacija?.Drzava">
                                         @p.Naziv (@p.Destinacija?.Naziv)
                                     </option>
                                 }
@@ -611,7 +616,7 @@
                             </div>
                             <div>
                                 <label class="field-label">DATUM POVRATKA</label>
-                                <input class="input" type="date" id="returnDate" />
+                                <input class="input" type="date" id="returnDate" readonly />
                             </div>
                         </div>
 
@@ -663,6 +668,7 @@
                             <div class="summary-row">Polazak: <span id="summaryDeparture">—</span></div>
                             <div class="summary-row">Povratak: <span id="summaryReturn">—</span></div>
                             <div class="summary-row">Putnici: <span id="summaryTravelers">2 odraslih</span></div>
+                        <div class="summary-row">Trajanje: <span id="summaryNights">—</span></div>
                             <div class="summary-row"><span>Smještaj</span><strong id="summaryRoom">Standardna soba</strong></div>
 
                             <hr>
@@ -711,17 +717,8 @@
             updateSummary();
         });
 
-        departureDate.addEventListener('change', function () {
-            if (departureDate.value) {
-                returnDate.min = departureDate.value;
-                if (returnDate.value && returnDate.value < departureDate.value) {
-                    returnDate.value = "";
-                }
-            }
-            updateSummary();
-        });
-
-        returnDate.addEventListener('change', updateSummary);
+        
+        departureDate.addEventListener('change', updateSummary);
         destinationSelect.addEventListener('change', updateSummary);
 
         function selectRoom(el) {
@@ -733,50 +730,71 @@
 
             updateSummary();
         }
+        function addDays(isoDate, days) {
+            const d = new Date(isoDate + "T00:00:00");
+            d.setDate(d.getDate() + days);
+            return d.toISOString().split('T')[0];
+        }
 
         function updateSummary() {
-            if (!destinationSelect || destinationSelect.selectedIndex <= 0) return;
+            if (!destinationSelect || destinationSelect.selectedIndex <= 0) {
+                document.getElementById('summaryDestination').innerText = 'Odaberite destinaciju';
+                document.getElementById('summaryDeparture').innerText = '—';
+                document.getElementById('summaryReturn').innerText = '—';
+                document.getElementById('summaryNights').innerText = '—';
+                summaryTotal.innerText = '0.00 BAM';
+                return;
+            }
 
             const opt = destinationSelect.options[destinationSelect.selectedIndex];
+
+            const nights = parseInt(opt.getAttribute('data-nights') || '1', 10) || 1;
             const basePrice = parseFloat(opt.getAttribute('data-price')) || 0;
             const img = opt.getAttribute('data-img');
 
+            // Trajanje
+            const nightsEl = document.getElementById('summaryNights');
+            if (nightsEl) nightsEl.innerText = `${nights} noći`;
+
+            // Destinacija + slika
             document.getElementById('summaryDestination').innerText = opt.text;
             if (img) document.getElementById('summaryPhoto').style.backgroundImage = `url('${img}')`;
 
-            const adults = parseInt(document.getElementById('adultsCount').innerText) || 0;
-            const children = parseInt(document.getElementById('childrenCount').innerText) || 0;
+            // Putnici
+            const adults = parseInt(adultsCount?.innerText || '0', 10) || 0;
+            const children = parseInt(childrenCount?.innerText || '0', 10) || 0;
             const totalTravelers = adults + children;
 
-            document.getElementById('summaryDeparture').innerText = departureDate.value || "—";
-            document.getElementById('summaryReturn').innerText = returnDate.value || "—";
             document.getElementById('summaryTravelers').innerText = `${adults} odraslih, ${children} djece`;
 
-            let nights = 1;
-            if (departureDate.value && returnDate.value) {
-                const d1 = new Date(departureDate.value);
-                const d2 = new Date(returnDate.value);
-                const diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
-                nights = diff > 0 ? diff : 1;
+            document.getElementById('summaryDeparture').innerText = departureDate.value || "—";
+
+            if (departureDate.value) {
+                returnDate.value = addDays(departureDate.value, nights);
+                returnDate.setAttribute('readonly', 'readonly');
+            } else {
+                returnDate.value = '';
+                returnDate.setAttribute('readonly', 'readonly');
             }
 
-            const currentRoomName = summaryRoom.innerText.toLowerCase();
+            document.getElementById('summaryReturn').innerText = returnDate.value || "—";
+
+            const currentRoomName = (summaryRoom?.innerText || '').toLowerCase();
             const extraPerPerson = ROOM_EXTRAS[currentRoomName] || 0;
 
             const finalTotal = (basePrice + extraPerPerson) * totalTravelers * nights;
-
             summaryTotal.innerText = finalTotal.toFixed(2) + " BAM";
-        const planLink = document.getElementById('planLink');
-if (planLink) {
-    const paketId = destinationSelect.value;
-    if (!paketId) {
-        planLink.style.display = 'none';
-    } else {
-        planLink.style.display = 'inline-flex';
-        planLink.href = `/PlanPutovanja/Preview?paketId=${encodeURIComponent(paketId)}`;
-    }
-}
-        
+
+             const planLink = document.getElementById('planLink');
+            if (planLink) {
+                const paketId = destinationSelect.value;
+                if (!paketId) {
+                    planLink.style.display = 'none';
+                } else {
+                    planLink.style.display = 'inline-flex';
+                    planLink.href = `/PlanPutovanja/Preview?paketId=${encodeURIComponent(paketId)}`;
+                }
+            }
         }
 
         function changeCount(type, delta) {
@@ -792,16 +810,39 @@ if (planLink) {
         }
 
         function goToPassengers() {
-            if (!destinationSelect.value || !departureDate.value || !returnDate.value) {
-                alert("Molimo popunite sve podatke (paket i datume)!");
+            if (!destinationSelect.value || !departureDate.value) {
+                alert("Molimo popunite sve podatke (paket i datum polaska)!");
                 return;
             }
+
+            const opt = destinationSelect.options[destinationSelect.selectedIndex];
+            const nights = parseInt(opt.getAttribute('data-nights') || '1', 10) || 1;
+
+            returnDate.value = addDays(departureDate.value, nights);
+
+            // Spremi paket + destinaciju
             localStorage.setItem('reservationPaketId', destinationSelect.value);
-            localStorage.setItem('reservationTotal', summaryTotal.innerText);
-            localStorage.setItem('reservationRoom', summaryRoom.innerText);
-            const adults = parseInt(document.getElementById('adultsCount').innerText || '0', 10);
-            const children = parseInt(document.getElementById('childrenCount').innerText || '0', 10);
+            localStorage.setItem('reservationPaketNaziv', opt ? opt.text : '');
+
+            localStorage.setItem('reservationDestination', opt.getAttribute('data-destinacija') || '');
+            localStorage.setItem('reservationCountry', opt.getAttribute('data-drzava') || '');
+
+            // Slika
+            localStorage.setItem('reservationImage', opt.getAttribute('data-img') || '/assets/bali.jpg');
+
+            // Datumi + trajanje
+            localStorage.setItem('reservationDeparture', departureDate.value);
+            localStorage.setItem('reservationReturn', returnDate.value);
+            localStorage.setItem('reservationDuration', `${nights} noći`);
+
+            // Putnici
+            const adults = parseInt(adultsCount.innerText || '0', 10);
+            const children = parseInt(childrenCount.innerText || '0', 10);
             localStorage.setItem('reservationTravelers', String(adults + children));
+
+            // Smještaj + total
+            localStorage.setItem('reservationRoom', summaryRoom.innerText);
+            localStorage.setItem('reservationTotal', summaryTotal.innerText);
 
             window.location.href = "/rezervacija/putnici";
         }
