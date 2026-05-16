@@ -27,7 +27,7 @@ Za potrebe testiranja funkcionalnosti sistema:
 
 | Uloga | E-mail adresa | Lozinka |
 | :--- | :--- | :--- |
-| **Administrator** | `agent@intertrips.ba` | `admin123` |
+| **Administrator** | `admin@intertrips.ba` | `admin123` |
 | **Turistički Agent** | `agent@intertrips.ba` | `agent123` |
 | **Klijent / Turist** | `test@intertrips.ba` | `password123` |
 
