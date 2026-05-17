@@ -7,19 +7,19 @@
                         : User.IsInRole("Agent") ? "/Agent"
                         : "/";
 
-        <a id="authLink" href="@profileHref">Profil (@User.Identity.Name)</a>
-        <form method="post" action="/Account/Logout" style="display:inline;">
-            <button type="submit">Odjava</button>
-        </form>
+        <div class="footer-auth-nav" style="text-align: center; padding: 20px; font-size: 14px;">
+            <a id="authLink" href="@profileHref" style="margin-right: 15px;">Profil (@User.Identity.Name)</a>
+            <form method="post" action="/Account/Logout" style="display:inline;">
+                <button type="submit" style="cursor:pointer;">Odjava</button>
+            </form>
+        </div>
     }
     else
     {
-        <a id="authLink" href="/Korisnik/Login">Prijava</a>
+        <div class="footer-auth-nav" style="text-align: center; padding: 20px;">
+            <a id="authLink" href="/Korisnik/Login">Prijava</a>
+        </div>
     }
-    <form method="post" action="/Account/Logout" style="display:inline;">
-        <button type="submit" style="background:none;border:none;color:inherit;cursor:pointer;padding:0;">
-            Odjava
-        </button>
-    </form>
+
     @RenderSection("Scripts", required: false)
 </body>

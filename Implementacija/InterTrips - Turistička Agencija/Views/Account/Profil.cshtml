@@ -231,12 +231,25 @@
             grid-template-columns: 1fr;
         }
     }
+
+    body > a[href*="Account/Login"],
+    body > a[href*="Profil"],
+    body > button,
+
+    #profileForm ~ a,
+    main ~ a {
+        display: none !important;
+    }
+
+    body > [href*="test@intertrips.ba"] {
+        display: none !important;
+    }
 </style>
 
 <section class="profile-hero">
     <div class="inner">
         <div class="tag">KORISNIČKI PROFIL</div>
-        <h1>Moj <span style="color:var(--primary-dark);">profil</span></h1>
+        <h1>MOJ <span style="color:var(--primary-dark);">PROFIL</span></h1>
         <p>Uredite svoje podatke i upravljajte pristupom računu.</p>
     </div>
 </section>

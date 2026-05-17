@@ -337,6 +337,7 @@
                 { name: "Ujedinjeni Arapski Emirati", flag: "🇦🇪" },
                 { name: "SAD", flag: "🇺🇸" }
             ].sort((a, b) => a.name.localeCompare(b.name));
+
             function calcAgeYears(isoDate) {
                 if (!isoDate) return null;
                 const dob = new Date(isoDate + "T00:00:00");
@@ -423,6 +424,7 @@
                 el.style.display = 'block';
                 el.textContent = msg;
             }
+
             function validateBlock(block, idx) {
                 const type = block.querySelector('.ptype')?.value || 'adult';
                 const birthEl = block.querySelector('.birthdate');
@@ -456,11 +458,18 @@
                 let valid = true;
                 let firstError = '';
 
+                let countAdultsForm = 0;
+                let countChildrenForm = 0;
+
                 blocks.forEach((block, idx) => {
                     const birthEl = block.querySelector('.birthdate');
                     if (birthEl) birthEl.style.borderColor = '';
 
                     const type = block.querySelector('.ptype')?.value || 'adult';
+
+                    if (type === 'adult') countAdultsForm++;
+                    if (type === 'child') countChildrenForm++;
+
                     const nationalityEl = block.querySelector('.nationality');
                     const p = {
                         type,
@@ -471,6 +480,7 @@
                         nationality: nationalityEl.value,
                         requests: block.querySelector('.requests').value.trim()
                     };
+
                     if (!p.firstName || !p.lastName || !p.birthDate || !p.nationality) {
                         valid = false;
                         if (!firstError) firstError = `Molimo popunite sva polja za putnika ${idx + 1}.`;
@@ -505,11 +515,22 @@
                     setFormError(firstError || "Provjerite podatke putnika.");
                     return;
                 }
-                const paketId = localStorage.getItem('reservationPaketId'); 
+
+                const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '0', 10);
+                const expectedChildren = parseInt(localStorage.getItem('reservationChildren') || '0', 10);
+
+                if (localStorage.getItem('reservationAdults') !== null || localStorage.getItem('reservationChildren') !== null) {
+                    if (countAdultsForm !== expectedAdults || countChildrenForm !== expectedChildren) {
+                        setFormError(`Struktura putnika se ne poklapa sa rezervacijom! Rezervisali ste za: ${expectedAdults} odraslih i ${expectedChildren} djece. Molimo prilagodite tip putnika.`);
+                        return;
+                    }
+                }
+
+                const paketId = localStorage.getItem('reservationPaketId');
                 const destination = localStorage.getItem('reservationDestination') || '';
                 const country = localStorage.getItem('reservationCountry') || '';
 
-                localStorage.setItem('reservationPaketId', paketId || '');        
+                localStorage.setItem('reservationPaketId', paketId || '');
                 localStorage.setItem('reservationDestination', destination);
                 localStorage.setItem('reservationCountry', country);
                 localStorage.setItem('savedPassengers', JSON.stringify(passengers));

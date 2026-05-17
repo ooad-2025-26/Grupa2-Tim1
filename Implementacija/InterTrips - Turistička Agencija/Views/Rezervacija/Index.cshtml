@@ -3,50 +3,216 @@
     Layout = "_Layout";
 }
 
+<style>
+    :root {
+        --primary: #2aa9b0;
+        --primary-dark: #1e7f88;
+        --text: #24414a;
+        --muted: #5f7c86;
+        --shadow: 0 16px 36px rgba(63,116,128,0.10);
+    }
+
+    .navbar {
+        height: 65px;
+        background: rgba(255, 255, 255, 0.95); 
+        border-bottom: 1px solid rgba(95, 181, 187, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 40px;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+
+    .logo-link {
+        display: flex;
+        align-items: center;
+    }
+
+    .logo {
+        width: 90px;
+        height: 45px;
+        object-fit: contain;
+        display: block;
+    }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        font-size: 13px;
+        font-weight: 600;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+        .nav-links a {
+            color: rgba(36, 65, 74, 0.8);
+            transition: color 0.2s ease;
+            text-decoration: none;
+        }
+
+            .nav-links a:hover,
+            .nav-links a.active {
+                color: var(--primary-dark);
+            }
+
+        .nav-links .pill {
+            padding: 8px 18px;
+            border-radius: 999px;
+            border: 1px solid var(--primary);
+            color: var(--primary-dark) !important;
+            background: rgba(42, 169, 176, 0.05);
+            transition: all 0.2s ease;
+        }
+
+            .nav-links .pill:hover {
+                background: var(--primary);
+                color: #fff !important;
+            }
+
+    .btn-gold {
+        padding: 8px 18px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #2aa9b0, #86d9ff);
+        color: #fff !important;
+        border: none;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s ease, filter 0.2s ease;
+        display: inline-block;
+        text-decoration: none;
+    }
+
+        .btn-gold:hover {
+            filter: brightness(1.05);
+            transform: translateY(-1px);
+        }
+
+    .btn-logout {
+        padding: 8px 18px;
+        border-radius: 999px;
+        background: rgba(30, 127, 136, 0.15);
+        color: #1e7f88 !important; 
+        border: 1px solid rgba(30, 127, 136, 0.35);
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-block;
+    }
+
+        .btn-logout:hover {
+            background: #1e7f88; 
+            color: #fff !important; 
+            border-color: transparent;
+            transform: translateY(-1px);
+        }
+
+   
+
+    #userArea {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    #userAvatar {
+        width: 30px;
+        height: 30px;
+        background: #e67e22;
+        color: #fff;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-weight: bold;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .nav-links form {
+        display: flex;
+        align-items: center;
+    }
+
+    @@media (max-width: 700px) {
+        .navbar {
+            padding: 10px 14px;
+            flex-direction: column;
+            height: auto;
+            gap: 14px;
+        }
+
+        .nav-links {
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+            text-align: center;
+        }
+
+        #userArea {
+            flex-direction: column;
+            gap: 5px;
+        }
+    }
+</style>
+
+<nav class="navbar">
+    <a asp-controller="Home" asp-action="Index" class="logo-link">
+        <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+    </a>
+
+    <ul class="nav-links">
+        <li><a asp-controller="Home" asp-action="Index">Početna</a></li>
+        <li><a asp-controller="Destinacije" asp-action="Index">Destinacije</a></li>
+        <li><a asp-controller="Home" asp-action="ONama">O nama</a></li>
+        <li><a asp-controller="Home" asp-action="Kontakt">Kontakt</a></li>
+
+        @if (User?.Identity?.IsAuthenticated == true)
+        {
+            <li><a class="active" asp-controller="Rezervacija" asp-action="Index">Moje rezervacije</a></li>
+        }
+
+        <li><a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a></li>
+
+        @if (User?.Identity?.IsAuthenticated == true)
+        {
+            var profileHref = User.IsInRole("Admin") ? "/Administrator"
+                            : User.IsInRole("Agent") ? "/Agent"
+                            : "/Korisnik/Profil";
+
+            <li id="userArea">
+                <div id="userAvatar">
+                    @(!string.IsNullOrEmpty(User.Identity.Name) ? User.Identity.Name[0].ToString().ToUpper() : "U")
+                </div>
+                <a class="btn btn-gold" id="userName" href="@profileHref">Profil (@User.Identity.Name)</a>
+            </li>
+            <li>
+                <form method="post" action="/Account/Logout" style="display:inline;">
+                    <button class="btn-logout" id="logoutBtn" type="submit">Odjava</button>
+                </form>
+            </li>
+        }
+        else
+        {
+            <li><a class="btn btn-gold" id="loginLink" asp-controller="Account" asp-action="Login">Prijava</a></li>
+        }
+    </ul>
+</nav>
+
 <header class="hero hero--reservations">
     <div class="hero-overlay"></div>
-
-    <nav class="navbar">
-        <a asp-controller="Home" asp-action="Index" class="logo-link">
-            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
-        </a>
-
-        <ul class="nav-links">
-            <li><a asp-controller="Home" asp-action="Index">Početna</a></li>
-            <li><a asp-controller="Destinacije" asp-action="Index">Destinacije</a></li>
-            <li><a asp-controller="Home" asp-action="ONama">O nama</a></li>
-            <li><a asp-controller="Home" asp-action="Kontakt">Kontakt</a></li>
-            <li><a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a></li>
-
-            @if (User?.Identity?.IsAuthenticated == true)
-            {
-                var profileHref = User.IsInRole("Admin") ? "/Administrator"
-                                : User.IsInRole("Agent") ? "/Agent"
-                                : "/Korisnik/Profil";
-
-                <li style="display:flex; align-items:center; gap:10px;">
-                    <a class="btn btn-gold" href="@profileHref">Profil (@User.Identity.Name)</a>
-
-                    <form method="post" action="/Account/Logout" style="display:inline;">
-                        <button type="submit" class="pill" style="cursor:pointer;">Odjavi se</button>
-                    </form>
-                </li>
-            }
-            else
-            {
-                <li><a class="btn btn-gold" asp-controller="Account" asp-action="Login">Prijava</a></li>
-            }
-        </ul>
-    </nav>
-
-    
     <div class="hero-content">
         <span class="badge">REZERVACIJE</span>
         <h1 style="letter-spacing:1px;">MOJE REZERVACIJE</h1>
         <p>Pregledajte Vaše rezervacije, status i po potrebi otkažite rezervaciju.</p>
     </div>
 </header>
-
 <main>
     <section class="section">
         <div class="section-header" style="margin-bottom:14px;">
@@ -100,7 +266,7 @@
 </footer>
 
 @section Scripts {
-    <script src="~/js/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
         .hero--reservations {
@@ -265,7 +431,14 @@
 
     <script>
         let ucitaneRezervacije = [];
-
+        function ukloniKvacice(tekst) {
+        if (!tekst) return '—';
+        return String(tekst)
+        .replace(/[ČĆčć]/g, 'C')
+        .replace(/[Žž]/g, 'Z')
+        .replace(/[Šš]/g, 'S')
+        .replace(/[Đđ]/g, 'Dj');
+        }
         async function getReservationsForCurrentUser() {
         try {
         const response = await fetch('/Rezervacija/GetMojeRezervacije', {
@@ -335,6 +508,15 @@
         return;
         }
 
+        function ukloniKvacice(tekst) {
+        if (!tekst) return '—';
+        return String(tekst)
+        .replace(/[ČĆčć]/g, 'C')
+        .replace(/[Žž]/g, 'Z')
+        .replace(/[Šš]/g, 'S')
+        .replace(/[Đđ]/g, 'Dj');
+        }
+
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
@@ -355,11 +537,13 @@
         doc.setLineWidth(0.5);
         doc.line(15, 55, 195, 55);
 
+        const brPutnika = r.brojPutnika || r.BrojPutnika || (r.putnici ? r.putnici.length : 1);
+
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(10, 34, 40);
         doc.text(`Rezervacija koda: #${r.id}`, 15, 68);
-        doc.text(`Status: ${(r.status || 'Aktivna').toUpperCase()}`, 130, 68);
+        doc.text(`Status: ${ukloniKvacice(r.status || 'Aktivna').toUpperCase()}`, 130, 68);
 
         doc.setFontSize(12);
         doc.setFont("helvetica", "normal");
@@ -367,11 +551,11 @@
 
         let y = 85;
         const stavke = [
-        { label: "Destinacija:", info: `${r.destinacija || '—'} ${r.drzava ? '(' + r.drzava + ')' : ''}` },
-        { label: "Naziv paketa:", info: r.paketNaziv || '—' },
-        { label: "Datum polaska:", info: r.datumPolaska || '—' },
-        { label: "Datum povratka:", info: r.datumPovratka || '—' },
-        { label: "Ukupan broj putnika:", info: r.brojPutnika || '1' }
+        { label: "Destinacija:", info: `${ukloniKvacice(r.destinacija || r.Destinacija)} ${r.drzava ? '(' + ukloniKvacice(r.drzava) + ')' : ''}` },
+        { label: "Naziv paketa:", info: ukloniKvacice(r.paketNaziv || r.PaketNaziv) },
+        { label: "Datum polaska:", info: r.datumPolaska || r.DatumPolaska || '—' },
+        { label: "Datum povratka:", info: r.datumPovratka || r.DatumPovratka || '—' },
+        { label: "Ukupan broj putnika:", info: brPutnika }
         ];
 
         stavke.forEach(item => {
@@ -382,21 +566,63 @@
         y += 10;
         });
 
-        const listaPutnika = r.putnici || r.putniciRezervacije;
+        const listaPutnika = r.putnici || r.putniciRezervacije || r.Putnici;
         if (listaPutnika && listaPutnika.length > 0) {
         y += 10;
         doc.setFont("helvetica", "bold");
         doc.setFontSize(13);
+        doc.setTextColor(10, 34, 40);
         doc.text("Spisak putnika na rezervaciji:", 15, y);
-        doc.line(15, y + 2, 195, y + 2);
-        y += 10;
+        y += 5;
 
-        doc.setFontSize(11);
-        listaPutnika.forEach((p, i) => {
+        const colX = {
+        rb: 15,       
+        ime: 30,      
+        pasos: 95,    
+        drz: 140      
+        };
+        const tableWidth = 180;
+
+        doc.setFillColor(40, 55, 60);
+        doc.rect(colX.rb, y, tableWidth, 8, 'F');
+
         doc.setFont("helvetica", "bold");
-        doc.text(`${i + 1}. ${p.ime} ${p.prezime}`, 15, y);
+        doc.setFontSize(10);
+        doc.setTextColor(255, 255, 255);
+
+        doc.text("R.b.", colX.rb + 2, y + 5.5);
+        doc.text("Ime i Prezime", colX.ime + 2, y + 5.5);
+        doc.text("Broj pasosa", colX.pasos + 2, y + 5.5);
+        doc.text("Drzavljanstvo", colX.drz + 2, y + 5.5);
+
+        y += 8; 
+
+        doc.setTextColor(40, 40, 40);
+
+        listaPutnika.forEach((p, i) => {
+        const imePrezime = ukloniKvacice(`${p.ime || p.Ime || ''} ${p.prezime || p.Prezime || ''}`);
+        const pasos = p.brojPasosa || p.BrojPasosa || '—';
+        const drzavljanstvo = ukloniKvacice(p.drzavljanstvo || p.Drzavljanstvo || '—');
+
+        if (i % 2 === 0) {
+        doc.setFillColor(245, 248, 248);
+        } else {
+        doc.setFillColor(255, 255, 255);
+        }
+        doc.rect(colX.rb, y, tableWidth, 8, 'F');
+
+        doc.setDrawColor(210, 225, 225);
+        doc.setLineWidth(0.2);
+        doc.rect(colX.rb, y, tableWidth, 8, 'D');
+
         doc.setFont("helvetica", "normal");
-        doc.text(`Pasos: ${p.brojPasosa || '—'} | Drzavljanstvo: ${p.drzavljanstvo || '—'}`, 75, y);
+        doc.text(`${i + 1}.`, colX.rb + 2, y + 5.5);
+        doc.setFont("helvetica", "bold"); 
+        doc.text(imePrezime, colX.ime + 2, y + 5.5);
+        doc.setFont("helvetica", "normal");
+        doc.text(pasos, colX.pasos + 2, y + 5.5);
+        doc.text(drzavljanstvo, colX.drz + 2, y + 5.5);
+
         y += 8;
         });
         }
@@ -405,7 +631,7 @@
         doc.setFont("helvetica", "italic");
         doc.setFontSize(10);
         doc.setTextColor(120, 120, 120);
-        doc.text("Hvala Vam na povjerenju! Vaš InterTrips tim.", 15, y);
+        doc.text("Hvala Vam na povjerenju! Vas InterTrips tim.", 15, y);
 
         doc.save(`Rezervacija_InterTrips_${r.id}.pdf`);
         }
@@ -441,7 +667,7 @@
         `;
 
         const planBtn = planButtonHtml(r);
-
+        const stvarniBrojPutnika = r.brojPutnika || r.BrojPutnika || (r.putnici ? r.putnici.length : 1);
         const pdfBtn = `
         <button
         class="pill"
@@ -461,23 +687,23 @@
         <div class="r-grid">
         <div class="r-line">
         <span>Destinacija</span>
-        <strong>${r.destinacija || '—'} ${r.drzava ? '(' + r.drzava + ')' : ''}</strong>
+        <strong>${r.destinacija || r.Destinacija || '—'} ${r.drzava ? '(' + r.drzava + ')' : ''}</strong>
         </div>
         <div class="r-line">
         <span>Paket</span>
-        <strong>${r.paketNaziv || '—'}</strong>
+        <strong>${r.paketNaziv || r.PaketNaziv || '—'}</strong>
         </div>
         <div class="r-line">
         <span>Period</span>
-        <strong>${r.datumPolaska || '—'} - ${r.datumPovratka || '—'}</strong>
+        <strong>${r.datumPolaska || r.DatumPolaska || '—'} - ${r.datumPovratka || r.DatumPovratka || '—'}</strong>
         </div>
         <div class="r-line">
         <span>Broj putnika</span>
-        <strong>${r.brojPutnika || '1'}</strong>
+        <strong>${stvarniBrojPutnika}</strong>
         </div>
         <div class="r-line">
         <span>Status</span>
-        <strong>${r.status || 'Aktivna'}</strong>
+        <strong>${r.status || r.Status || 'Aktivna'}</strong>
         </div>
         </div>
         <div class="r-actions">
