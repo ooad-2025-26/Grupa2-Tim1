@@ -228,8 +228,8 @@ else
         <div>
             <h4>Istraži</h4>
             <a asp-controller="Destinacije" asp-action="Index">Destinacije</a>
-            <a href="#">Putni vodiči</a>
-            <a href="#">Najbolja iskustva</a>
+            <a asp-controller="Destinacije" asp-action="Index">Putni vodiči</a>
+            <a asp-controller="Destinacije" asp-action="Index">Najbolja iskustva</a>
         </div>
 
         <div>
@@ -243,7 +243,7 @@ else
             <h4>Podrška</h4>
             <a href="#">Centar za pomoć</a>
             <a asp-controller="Home" asp-action="Privacy">Politika privatnosti</a>
-            <a href="#">Uvjeti korištenja</a>
+            <a asp-controller="Home" asp-action="Privacy">Uvjeti korištenja</a>
         </div>
     </div>
     <div class="footer-bottom">© 2026 InterTrips. Sva prava zadržana.</div>
@@ -251,72 +251,45 @@ else
 
 @section Scripts {
     <script>
-        // Login UI (demo)
-       
-        const userArea = document.getElementById('userArea');
-        const loginLink = document.getElementById('loginLink');
-        const myReservationsLink = document.getElementById('myReservationsLink');
+        document.addEventListener('DOMContentLoaded', function () {
+            const newsletterForm = document.getElementById('newsletterForm');
+            const newsletterMessage = document.getElementById('newsletterMessage');
 
-        if (isLoggedIn === 'true') {
-            if (myReservationsLink) myReservationsLink.style.display = 'inline-block';
-        }
-        const userAvatar = document.getElementById('userAvatar');
-        const userNameEl = document.getElementById('userName');
-        const logoutBtn = document.getElementById('logoutBtn');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
 
-        if (isLoggedIn === 'true') {
-            if (loginLink) loginLink.classList.add('hidden');
-            if (userArea) userArea.style.display = 'flex';
-            if (userAvatar) userAvatar.textContent = userInitial || 'U';
-            if (userNameEl) userNameEl.textContent = userName || 'Korisnik';
-        }
+                    const emailInput = document.getElementById('emailInput');
+                    const emailValue = emailInput ? emailInput.value : '';
 
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', function () {
-               
-                window.location.reload();
-            });
-        }
+                    console.log("Email koji šaljem:", emailValue);
 
-        // Newsletter
-        const newsletterForm = document.getElementById('newsletterForm');
-        const newsletterMessage = document.getElementById('newsletterMessage');
-
-        if (newsletterForm) {
-            newsletterForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-
-                const emailInput = document.getElementById('emailInput');
-                const emailValue = emailInput ? emailInput.value : '';
-
-                console.log("Email koji šaljem:", emailValue);
-
-                fetch('/Newsletter/Subscribe', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'email=' + encodeURIComponent(emailValue)
-                })
-                    .then(async response => {
-                        if (response.ok) {
-                            newsletterForm.style.display = 'none';
-                            if (newsletterMessage) {
-                                newsletterMessage.style.display = 'block';
-                                newsletterMessage.style.color = '#f8be21';
-                                newsletterMessage.textContent = 'Hvala Vam na korištenju usluga InterTripsa. Vaš InterTrips tim <3';
-                            }
-                        } else {
-                            const errorText = await response.text();
-                            alert("Greška: " + errorText);
-                        }
+                    fetch('/Newsletter/Subscribe', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'email=' + encodeURIComponent(emailValue)
                     })
-                    .catch(error => {
-                        console.error('Greška:', error);
-                        alert("Nije moguće kontaktirati server.");
-                    });
-            });
-        }
-
+                        .then(async response => {
+                            if (response.ok) {
+                                newsletterForm.style.display = 'none';
+                                if (newsletterMessage) {
+                                    newsletterMessage.style.display = 'block';
+                                    newsletterMessage.style.color = '#f8be21';
+                                    newsletterMessage.textContent = 'Hvala Vam na korištenju usluga InterTripsa. Vaš InterTrips tim <3';
+                                }
+                            } else {
+                                const errorText = await response.text();
+                                alert("Greška: " + errorText);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Greška:', error);
+                            alert("Nije moguće kontaktirati server.");
+                        });
+                });
+            }
+        });
     </script>
 }

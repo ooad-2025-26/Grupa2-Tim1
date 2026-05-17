@@ -509,12 +509,12 @@
 
         const regularB64 = await loadFontAsBase64('/fonts/DejaVuSans.ttf');
         doc.addFileToVFS('DejaVuSans.ttf', regularB64);
-        doc.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal');
+        doc.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal', 'Identity-H');
 
         try {
         const boldB64 = await loadFontAsBase64('/fonts/DejaVuSans-Bold.ttf');
         doc.addFileToVFS('DejaVuSans-Bold.ttf', boldB64);
-        doc.addFont('DejaVuSans-Bold.ttf', 'DejaVuSans', 'bold');
+        doc.addFont('DejaVuSans-Bold.ttf', 'DejaVuSans', 'bold', 'Identity-H');
         } catch (e) {
         }
 
@@ -543,7 +543,7 @@
         .replace(/Đ/g, "DJ");
         }
 
-        function loadUi() {
+        async function loadUi() {
         const dest = safe('reservationDestination', 'Destinacija');
         const country = safe('reservationCountry', '—');
         const image = safe('reservationImage', '/assets/bali.jpg');
@@ -577,7 +577,66 @@
         document.getElementById('ratesMonthlyText').textContent = r;
         }
         }
+        try {
+       const paketIdIzMemorije = safe('selectedPackageId', '0');
+
+       const datumPolaskaRaw = safe('reservationDeparture', '');
+        const datumPovratkaRaw = safe('reservationReturn', '');
+
+        const formatirajZaBazu = (dateStr) => {
+        if (!dateStr || dateStr === '—') return new Date().toISOString().split('T')[0];
+        if (dateStr.includes('.')) {
+        const dijelovi = dateStr.split('.');
+        if (dijelovi.length >= 3) {
+        return `${dijelovi[2]}-${dijelovi[1]}-${dijelovi[0]}`;
         }
+        }
+        return dateStr;
+        };
+
+        const savedPassengers = JSON.parse(localStorage.getItem('savedPassengers') || '[]');
+
+        const podaciZaBazu = {
+        paketId: parseInt(paketIdIzMemorije) || 1,
+
+        datumPolaska: formatirajZaBazu(datumPolaskaRaw),
+
+        datumPovratka: formatirajZaBazu(datumPovratkaRaw),
+
+        putnici: savedPassengers.map(p => ({
+        ime: p.firstName,
+        prezime: p.lastName,
+        brojPasosa: p.passport,
+        drzavljanstvo: p.nationality,
+
+        datumRodjenja: p.birthDate
+        ? p.birthDate
+        : null,
+
+        posebniZahtjevi: p.requests || ""
+        }))
+        };
+
+        const response = await fetch('/Rezervacija/KreirajRezervaciju', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(podaciZaBazu)
+        });
+
+        if (response.ok) {
+        console.log("Rezervacija je uspješno sinhronizovana i upisana u bazu podataka.");
+        } else {
+        console.error("Server je vratio grešku prilikom upisivanja rezervacije.");
+        }
+        } catch (error) {
+        console.error("Došlo je do greške u komunikaciji sa serverom:", error);
+        }
+        
+        }
+
+
         function pdfSafeText(value) {
         if (value === null || value === undefined) return '';
 
@@ -604,7 +663,6 @@
         const doc = new jsPDF();
 
         await ensurePdfFonts(doc);
-
         doc.setFont('DejaVuSans', 'normal');
 
         const date = new Date().toLocaleDateString('bs-BA');
@@ -634,38 +692,134 @@
         doc.text(`Datum izdavanja: ${date}`, 20, 75);
         doc.line(20, 80, 190, 80);
 
-        console.log('paymentLabel=', paymentLabel);
-        console.log('selectedPaymentType=', selectedPaymentType);
-        doc.setFont(undefined, 'bold');
+        doc.setFont('DejaVuSans', 'bold');
         doc.text("DETALJI PUTOVANJA:", 20, 95);
 
-        doc.setFont(undefined, 'normal');
+        doc.setFont('DejaVuSans', 'normal');
         doc.text(`Destinacija: ${safe('reservationDestination', '')}`, 20, 105);
         doc.text(`Period: ${safe('reservationDeparture', '')} - ${safe('reservationReturn', '')}`, 20, 112);
         doc.text(`Smještaj: ${safe('reservationRoom', '')}`, 20, 119);
         doc.text(`Broj putnika: ${safe('reservationTravelers', '')}`, 20, 126);
 
-        doc.setFont(undefined, 'bold');
+        doc.setFont('DejaVuSans', 'bold');
         doc.text("FINANSIJSKI PODACI:", 120, 95);
 
-        doc.setFont(undefined, 'normal');
+        doc.setFont('DejaVuSans', 'normal');
         doc.text(`Način plaćanja: ${normalizeUpperBs(paymentLabel)}`, 120, 105);
         doc.setFontSize(14);
+        doc.setFont('DejaVuSans', 'bold');
         doc.text(`UKUPNO: ${safe('reservationTotal', '')}`, 120, 115);
 
         if (selectedPaymentType === 'rates') {
         doc.setFontSize(10);
+        doc.setFont('DejaVuSans', 'normal');
         doc.text(`Mjeseci: ${safe('ratesMonths', '')}`, 120, 124);
         doc.text(`Mjesečna rata: ${safe('ratesMonthly', '')} KM`, 120, 130);
         }
 
-        const footerY = 200;
+        doc.line(20, 138, 190, 138);
+doc.setFontSize(12);
+        doc.setFont('DejaVuSans', 'bold');
+        doc.text("PODACI O PUTNICIMA:", 20, 148);
+
+        let passengers = [];
+        try {
+        const rawPassengers = localStorage.getItem('savedPassengers');
+        if (rawPassengers) {
+        passengers = JSON.parse(rawPassengers);
+        }
+        } catch (e) {
+        console.error("Greška pri čitanju putnika iz localStorage", e);
+        }
+
+        let currentY = 158; 
+
+        if (passengers.length === 0) {
+        doc.setFontSize(10);
+        doc.setFont('DejaVuSans', 'normal');
+        doc.text("Nema sačuvanih podataka o putnicima.", 20, currentY);
+        currentY += 10;
+        } else {
+        doc.setFontSize(9);
+        doc.setFont('DejaVuSans', 'bold');
+        doc.setFillColor(240, 248, 248); 
+        doc.rect(20, currentY - 5, 170, 7, 'F');
+
+        doc.text("#", 22, currentY);
+        doc.text("Ime i Prezime", 32, currentY);
+        doc.text("Tip", 82, currentY);
+        doc.text("Datum rođ.", 102, currentY);
+        doc.text("Broj pasoša", 132, currentY);
+        doc.text("Državljanstvo", 162, currentY);
+
+        currentY += 8;
+
+        passengers.forEach((p, index) => {
+        if (currentY > 250) {
+        doc.addPage();
+        doc.setFont('DejaVuSans', 'normal');
+        currentY = 30; 
+
+        doc.setFontSize(9);
+        doc.setFont('DejaVuSans', 'bold');
+        doc.setFillColor(240, 248, 248);
+        doc.rect(20, currentY - 5, 170, 7, 'F');
+        doc.text("#", 22, currentY);
+        doc.text("Ime i Prezime", 32, currentY);
+        doc.text("Tip", 82, currentY);
+        doc.text("Datum rođ.", 102, currentY);
+        doc.text("Broj pasoša", 132, currentY);
+        doc.text("Državljanstvo", 162, currentY);
+        currentY += 8;
+        }
+
+        doc.setFontSize(9);
+        doc.setFont('DejaVuSans', 'normal');
+
+        const pTypeFormatted = p.type === 'adult' ? 'Odrasli' : 'Dijete';
+        const fullName = `${p.firstName} ${p.lastName}`;
+
+        let formattedDate = p.birthDate || '—';
+        if (p.birthDate && p.birthDate.includes('-')) {
+        const parts = p.birthDate.split('-');
+        if (parts.length === 3) formattedDate = `${parts[2]}.${parts[1]}.${parts[0]}.`;
+        }
+
+        doc.text(`${index + 1}.`, 22, currentY);
+        doc.text(normalizeUpperBs(fullName), 32, currentY);
+        doc.text(normalizeUpperBs(pTypeFormatted), 82, currentY);
+        doc.text(formattedDate, 102, currentY);
+        doc.text(normalizeUpperBs(p.passport || '—'), 132, currentY);
+        doc.text(normalizeUpperBs(p.nationality || '—'), 162, currentY);
+
+        if (p.requests && p.requests.trim() !== "") {
+        currentY += 5;
+        doc.setFontSize(8);
+        doc.setFont('DejaVuSans', 'italic');
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Napomena za putnika ${index + 1}: ${p.requests}`, 32, currentY);
+        doc.setTextColor(0, 0, 0); 
+        }
+
+        doc.setDrawColor(220, 235, 235);
+        doc.setLineWidth(0.2);
+        doc.line(20, currentY + 2, 190, currentY + 2);
+
+        currentY += 8; 
+        });
+        }
+        let footerY = currentY + 15;
+        if (footerY > 230) {
+        doc.addPage();
+        footerY = 40;
+        }
 
         doc.setDrawColor(47, 125, 134);
         doc.setLineWidth(0.8);
         doc.circle(50, footerY + 10, 18);
 
         doc.setFontSize(8);
+        doc.setFont('DejaVuSans', 'normal');
         doc.setTextColor(47, 125, 134);
         doc.text("INTERTRIPS d.o.o.", 50, footerY + 8, { align: "center" });
         doc.text("SARAJEVO", 50, footerY + 13, { align: "center" });

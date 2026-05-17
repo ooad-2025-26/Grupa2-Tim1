@@ -319,96 +319,110 @@
 
 @section Scripts {
     <script>
-        function loadProfileFromStorage() {
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-            if (!isLoggedIn) {
-                window.location.href = '/korisnik/login';
-                return;
+        async function loadProfile() {
+            try {
+                const response = await fetch('/Account/Me', {
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) {
+                    window.location.href = '/Account/Login';
+                    return;
+                }
+
+                const user = await response.json();
+
+                document.getElementById('displayName').value =
+                    user.fullName || user.userName || '';
+
+                document.getElementById('usernameOrEmail').value =
+                    user.email || user.userName || '';
+
+                document.getElementById('role').value =
+                    user.role || 'Korisnik';
+
+                document.getElementById('initial').value =
+                    (user.userName || 'U').charAt(0).toUpperCase();
+
+            } catch (err) {
+                console.error(err);
+                window.location.href = '/Account/Login';
             }
-
-            const userName = localStorage.getItem('userName') || '';
-            const role = localStorage.getItem('userRole') || '';
-            const initial = localStorage.getItem('userInitial') || (userName ? userName[0].toUpperCase() : 'U');
-            const displayName = localStorage.getItem('displayName') || userName;
-
-            document.getElementById('displayName').value = displayName;
-            document.getElementById('usernameOrEmail').value = userName;
-            document.getElementById('role').value = role;
-            document.getElementById('initial').value = initial;
         }
 
         function showMsg(text) {
             const el = document.getElementById('saveMsg');
             el.style.display = 'block';
             el.textContent = text;
-            setTimeout(() => { el.style.display = 'none'; }, 3200);
+
+            setTimeout(() => {
+                el.style.display = 'none';
+            }, 3000);
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            loadProfileFromStorage();
+        document.addEventListener('DOMContentLoaded', function () {
 
-            document.getElementById('logoutBtnProfile').addEventListener('click', function() {
-                localStorage.removeItem('isLoggedIn');
-                localStorage.removeItem('userName');
-                localStorage.removeItem('userInitial');
-                localStorage.removeItem('userRole');
-                localStorage.removeItem('displayName');
-                localStorage.removeItem('userPassword');
-                window.location.href = '/';
-            });
+            loadProfile();
 
-            document.getElementById('resetBtn').addEventListener('click', function() {
-                document.getElementById('currentPassword').value = '';
-                document.getElementById('newPassword').value = '';
-                document.getElementById('confirmPassword').value = '';
-                loadProfileFromStorage();
-                showMsg('Poništene izmjene.');
-            });
+            document.getElementById('logoutBtnProfile')
+                .addEventListener('click', async function () {
 
-            document.getElementById('profileForm').addEventListener('submit', function(e) {
-                e.preventDefault();
+                    await fetch('/Account/Logout', {
+                        method: 'POST',
+                        credentials: 'same-origin'
+                    });
 
-                const displayName = document.getElementById('displayName').value.trim();
-                const usernameOrEmail = document.getElementById('usernameOrEmail').value.trim();
+                    window.location.href = '/';
+                });
 
-                if (!displayName || !usernameOrEmail) {
-                    alert('Unesite ime i username/email.');
-                    return;
-                }
+            document.getElementById('resetBtn')
+                .addEventListener('click', function () {
 
-                localStorage.setItem('displayName', displayName);
-                localStorage.setItem('userName', usernameOrEmail);
-                localStorage.setItem('userInitial', displayName.charAt(0).toUpperCase());
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
 
-                const current = document.getElementById('currentPassword').value.trim();
-                const next = document.getElementById('newPassword').value.trim();
-                const confirm = document.getElementById('confirmPassword').value.trim();
+                    loadProfile();
 
-                if (current || next || confirm) {
-                    if (!next || !confirm) {
-                        alert('Unesite novu lozinku i potvrdu.');
-                        return;
+                    showMsg('Poništene izmjene.');
+                });
+
+            document.getElementById('profileForm')
+                .addEventListener('submit', async function (e) {
+
+                    e.preventDefault();
+
+                    const data = {
+                        fullName: document.getElementById('displayName').value,
+                        email: document.getElementById('usernameOrEmail').value,
+                        currentPassword: document.getElementById('currentPassword').value,
+                        newPassword: document.getElementById('newPassword').value,
+                        confirmPassword: document.getElementById('confirmPassword').value
+                    };
+
+                    try {
+
+                        const response = await fetch('/Account/UpdateProfile', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            credentials: 'same-origin',
+                            body: JSON.stringify(data)
+                        });
+
+                        if (response.ok) {
+                            showMsg('Profil uspješno ažuriran.');
+                        }
+                        else {
+                            alert('Greška pri spremanju profila.');
+                        }
+
+                    } catch (err) {
+                        console.error(err);
+                        alert('Greška u komunikaciji sa serverom.');
                     }
-                    if (next.length < 6) {
-                        alert('Nova lozinka mora imati najmanje 6 znakova.');
-                        return;
-                    }
-                    if (next !== confirm) {
-                        alert('Nova lozinka i potvrda se ne poklapaju.');
-                        return;
-                    }
-
-                    const savedPass = localStorage.getItem('userPassword');
-                    if (savedPass && current !== savedPass) {
-                        alert('Trenutna lozinka nije tačna.');
-                        return;
-                    }
-
-                    localStorage.setItem('userPassword', next);
-                }
-
-                showMsg('Sačuvano.');
-            });
+                });
         });
     </script>
 }

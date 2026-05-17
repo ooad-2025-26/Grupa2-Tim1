@@ -688,8 +688,10 @@
         <<div>
   <h4>Istraži</h4>
   <p><a asp-controller="Destinacije" asp-action="Index">Destinacije</a></p>
-  <p><a href="#">Putni vodiči</a></p>
-  <p><a href="#">Najbolja iskustva</a></p>
+                        <p><a asp-controller="Destinacije" asp-action="Index">Putni vodiči</a></p>
+                        <p>
+                            <a asp-controller="Destinacije" asp-action="Index">Najbolja iskustva</a>
+                        </p>
 </div>
 
 <div>
@@ -700,8 +702,12 @@
         <div>
           <h4>Podrška</h4>
           <p><a href="#">Centar za pomoć</a></p>
-          <p><a href="#">Politika privatnosti</a></p>
-          <p><a href="#">Uvjeti korištenja</a></p>
+                        <p>
+                            <a asp-controller="Home" asp-action="Privacy">Politika privatnosti</a>
+                        </p>
+                        <p>
+                            <a asp-controller="Home" asp-action="Privacy">Uvjeti korištenja</a>
+                        </p>
         </div>
       </div>
 

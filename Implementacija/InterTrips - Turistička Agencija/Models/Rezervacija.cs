@@ -24,7 +24,8 @@ public class Rezervacija
     public Paket? Paket { get; set; }
 
     [Required]
-    public int KorisnikId { get; set; }
+    public int KorisnikId { get; set; } 
+
     public Korisnik? Korisnik { get; set; }
 
     public List<Putnik> Putnici { get; set; } = new();

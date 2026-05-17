@@ -353,7 +353,6 @@
                 const container = document.getElementById('passengerContainer');
                 const template = document.getElementById('passengerTemplate');
 
-                // broj putnika mora doći iz localStorage (postavi se na prethodnoj stranici)
                 const count = parseInt(localStorage.getItem('reservationTravelers') || '1', 10) || 1;
 
                 container.innerHTML = '';

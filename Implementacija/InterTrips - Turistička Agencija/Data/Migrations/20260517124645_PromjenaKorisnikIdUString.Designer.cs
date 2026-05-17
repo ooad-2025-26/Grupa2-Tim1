@@ -4,6 +4,7 @@ using InterTrips___Turistička_Agencija.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InterTrips___Turistička_Agencija.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260517124645_PromjenaKorisnikIdUString")]
+    partial class PromjenaKorisnikIdUString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -339,9 +342,6 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<DateTime?>("DatumRodjenja")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Drzavljanstvo")
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
@@ -397,7 +397,11 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                     b.Property<DateOnly>("DatumPovratka")
                         .HasColumnType("date");
 
-                    b.Property<int>("KorisnikId")
+                    b.Property<string>("KorisnikId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("KorisnikId1")
                         .HasColumnType("int");
 
                     b.Property<int>("PaketId")
@@ -408,7 +412,7 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("KorisnikId");
+                    b.HasIndex("KorisnikId1");
 
                     b.HasIndex("PaketId");
 
@@ -736,9 +740,7 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                 {
                     b.HasOne("InterTrips___Turistička_Agencija.Models.Korisnik", "Korisnik")
                         .WithMany("Rezervacije")
-                        .HasForeignKey("KorisnikId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("KorisnikId1");
 
                     b.HasOne("InterTrips___Turistička_Agencija.Models.Paket", "Paket")
                         .WithMany("Rezervacije")

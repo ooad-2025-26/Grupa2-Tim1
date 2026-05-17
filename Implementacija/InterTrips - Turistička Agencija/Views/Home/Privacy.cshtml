@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Politika privatnosti";
-    Layout = null; 
+    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -28,22 +28,40 @@
                 border: 1px solid rgba(95,181,187,0.16);
                 border-radius: 18px;
                 box-shadow: var(--shadow);
-                padding: 22px;
+                padding: 32px;
             }
 
             h1 {
+                color: var(--primary-dark);
+                margin-bottom: 16px;
+                font-size: 26px;
+                font-weight: 700;
+            }
+
+            h2 {
+                margin-top: 24px;
                 color: var(--text);
-                margin-bottom: 10px;
+                font-size: 16px;
+                font-weight: 600;
+                border-bottom: 1px solid rgba(95,181,187,0.14);
+                padding-bottom: 6px;
             }
 
             p, li {
                 color: var(--muted);
                 line-height: 1.8;
-                font-size: 13px;
+                font-size: 13.5px;
+                margin-top: 8px;
             }
 
             ul {
-                padding-left: 18px;
+                padding-left: 20px;
+                margin-top: 8px;
+            }
+
+            .back-link {
+                margin-top: 28px;
+                display: inline-block;
             }
     </style>
 </head>
@@ -53,24 +71,51 @@
             <h1>@ViewData["Title"]</h1>
 
             <p>
-                Ova stranica opisuje kako InterTrips prikuplja i koristi osnovne podatke korisnika
-                u okviru prototipa aplikacije.
+                Turistička agencija <strong>InterTrips d.o.o.</strong> izuzetno poštuje Vašu privatnost i posvećena je zaštiti Vaših ličnih podataka.
+                Ova Politika privatnosti objašnjava kako prikupljamo, koristimo, čuvamo i štitimo podatke koje nam povjerite prilikom korištenja naše platforme,
+                rezervacije aranžmana ili prijave na naš newsletter.
             </p>
 
-            <h2 style="margin-top:16px; color: var(--primary-dark); font-size: 16px;">Podaci</h2>
+            <h2>1. Podaci koje prikupljamo</h2>
+            <p>U svrhu pružanja turističkih usluga i organizacije putovanja, prikupljamo sljedeće kategorije podataka:</p>
             <ul>
-                <li>Podaci za prijavu (npr. korisničko ime/e-mail) — samo u svrhu demonstracije.</li>
-                <li>Podaci o rezervaciji (destinacija, putnici, datumi) — u svrhu kreiranja rezervacije.</li>
+                <li><strong>Osnovni identifikacijski podaci:</strong> Ime i prezime, adresa e-pošte i lozinka koje unosite prilikom registracije Vašeg korisničkog profila.</li>
+                <li><strong>Podaci o rezervacijama:</strong> Odabrana destinacija, paket aranžman, datum polaska i povratka, tip smještaja, te specifični zahtjevi vezani za putovanje.</li>
             </ul>
 
-            <h2 style="margin-top:16px; color: var(--primary-dark); font-size: 16px;">Kontakt</h2>
+            <h2>2. Svrha obrade podataka</h2>
+            <p>Vaše lične podatke obrađujemo isključivo u sljedeće svrhe:</p>
+            <ul>
+                <li>Uspješno kreiranje, obrada, praćenje i upravljanje Vašim rezervacijama turističkih aranžmana.</li>
+                <li>Autentifikacija korisnika i omogućavanje pristupa panelu "Moje rezervacije" i korisničkom profilu.</li>
+            </ul>
+
+            <h2>3. Dijeljenje podataka sa trećim stranama</h2>
             <p>
-                Za pitanja možete koristiti stranicu <a href="/home/kontakt">Kontakt</a>.
+                InterTrips Vaše podatke ne prodaje niti neovlašteno ustupa trećim licima. Prosljeđivanje podataka vrši se isključivo onim partnerima čije je učešće neophodno za realizaciju Vašeg putovanja:
+            </p>
+            <ul>
+                <li>Hotelskim operaterima i pružaocima smještajnih usluga radi rezervacije soba.</li>
+                <li>Prevoznicima (aviokompanije, autobuski prevoznici) radi izdavanja karata.</li>
+            </ul>
+
+            <h2>4. Sigurnost i čuvanje podataka</h2>
+            <p>
+                Primjenjujemo savremene tehničke i organizacijske mjere zaštite kako bismo osigurali da Vaši podaci budu zaštićeni od gubitka, zloupotrebe ili neovlaštenog pristupa. Vaši povjerljivi podaci za komunikaciju sa email serverima skladište se na sigurnim unutrašnjim lokacijama u sistemu (User Secrets).
             </p>
 
-            <p style="margin-top:18px;">
-                <a href="/" style="color: var(--primary-dark); font-weight:700; text-decoration: underline;">
-                    Nazad na početnu
+            <h2>5. Vaša prava</h2>
+            <p>U skladu sa važećim propisima o zaštiti ličnih podataka, imate pravo da zatražite uvid u Vaše podatke, ispravku ili brisanje profila i povlačenje pristanka za newsletter.</p>
+
+            <h2>6. Kontakt i podrška</h2>
+            <p>
+                Za sva pitanja možete nas kontaktirati direktno putem naše zvanične forme na stranici
+                <a asp-controller="Home" asp-action="Kontakt" style="color: var(--primary-dark); font-weight: 600; text-decoration: underline;">Kontakt</a>.
+            </p>
+
+            <p class="back-link">
+                <a asp-controller="Home" asp-action="Index" style="color: var(--primary-dark); font-weight:700; text-decoration: underline;">
+                    ← Nazad na početnu
                 </a>
             </p>
         </div>

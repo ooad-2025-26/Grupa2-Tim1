@@ -1,0 +1,201 @@
+@model InterTrips___Turistička_Agencija.Models.ViewModels.AdminRezervacijeVm
+@{
+    ViewData["Title"] = "Admin - Rezervacije korisnika";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
+    <style>
+            .dash-page {
+                padding: 28px 24px 56px;
+            }
+
+            .dash-topbar {
+                height: 58px;
+                padding: 0 28px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: rgba(255,255,255,0.78);
+                border-bottom: 1px solid rgba(95,181,187,0.12);
+                backdrop-filter: blur(10px);
+                position: sticky;
+                top: 0;
+                z-index: 50;
+            }
+
+                .dash-topbar .logo {
+                    width: 80px;
+                    height: 40px;
+                    object-fit: contain;
+                }
+
+            .dash-shell {
+                max-width: 1180px;
+                margin: 0 auto;
+            }
+
+            .dash-hero {
+                margin: 22px 0 24px;
+                padding: 24px;
+                background: rgba(255,255,255,0.82);
+                border: 1px solid rgba(95,181,187,0.16);
+                border-radius: 18px;
+                box-shadow: var(--shadow);
+            }
+
+                .dash-hero h1 {
+                    font-size: 24px;
+                    margin-bottom: 8px;
+                    color: var(--text);
+                }
+
+            .logout-btn {
+                border: 1px solid rgba(95,181,187,0.25);
+                background: transparent;
+                color: var(--text);
+                border-radius: 999px;
+                padding: 8px 14px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 12px;
+                text-decoration: none;
+            }
+
+            .badge {
+                display: inline-block;
+                padding: 4px 10px;
+                border-radius: 999px;
+                font-size: 11px;
+                font-weight: 800;
+                border: 1px solid rgba(95,181,187,0.18);
+                background: rgba(106,191,198,0.10);
+                color: var(--primary-dark);
+                margin-bottom: 8px;
+            }
+            .table-card {
+                background: rgba(255,255,255,0.84);
+                border: 1px solid rgba(95,181,187,0.16);
+                border-radius: 16px;
+                box-shadow: var(--shadow);
+                padding: 20px;
+                overflow-x: auto;
+            }
+
+            .custom-table {
+                width: 100%;
+                border-collapse: collapse;
+                text-align: left;
+                font-size: 13px;
+            }
+
+                .custom-table th {
+                    padding: 12px;
+                    font-weight: 700;
+                    color: var(--primary-dark);
+                    border-bottom: 2px solid rgba(95,181,187,0.16);
+                    text-transform: uppercase;
+                    font-size: 11px;
+                    letter-spacing: 0.5px;
+                }
+
+                .custom-table td {
+                    padding: 14px 12px;
+                    color: var(--text);
+                    border-bottom: 1px solid rgba(95,181,187,0.08);
+                }
+
+                .custom-table tr:hover {
+                    background: rgba(106,191,198,0.03);
+                }
+
+            .status-pill {
+                padding: 4px 10px;
+                border-radius: 20px;
+                font-size: 11px;
+                font-weight: 700;
+                background: rgba(54, 211, 153, 0.15);
+                color: #15803d;
+                border: 1px solid rgba(54, 211, 153, 0.3);
+            }
+    </style>
+</head>
+<body class="auth-page">
+
+    <header class="dash-topbar">
+        <a href="/" class="logo-link">
+            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+        </a>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <a href="/Administrator" class="logout-btn">Nazad na Dashboard</a>
+            <a href="/Administrator/Paketi" class="logout-btn">Paketi</a>
+            <form method="post" action="/Account/Logout" style="display:inline;">
+                <button class="logout-btn" type="submit">Odjavi se</button>
+            </form>
+        </div>
+    </header>
+
+    <main class="dash-page">
+        <div class="dash-shell">
+            <div class="dash-hero">
+                <span class="badge">FILTER KORISNIKA</span>
+                <h1>Rezervacije korisnika: @Model.KorisnikEmail</h1>
+                <p>Ispod se nalazi detaljan uvid u sve aktivne rezervacije koje je napravio odabrani testni profil.</p>
+            </div>
+
+            <div class="table-card">
+                @if (Model.Rezervacije == null || !Model.Rezervacije.Any())
+                {
+                    <div style="text-align:center; padding:30px; color:var(--muted); font-weight:600;">
+                        Korisnik @Model.KorisnikEmail trenutno nema evidentiranih rezervacija u bazi podataka.
+                    </div>
+                }
+                else
+                {
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>ID rez (Baza)</th>
+                                <th>Korisnik u bazi</th>
+                                <th>Paket / Aranžman</th>
+                                <th>Destinacija</th>
+                                <th>Broj putnika</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in Model.Rezervacije)
+                            {
+                                <tr>
+                                    <td><strong>#@r.Id</strong></td>
+                                    <td>
+                                        <span style="color: #1e7f88; font-weight:600;">
+                                            @(r.Korisnik != null ? r.Korisnik.Email : "KorisnikId: " + r.KorisnikId)
+                                        </span>
+                                    </td>
+                                    <td><span style="font-weight:600;">@(r.Paket?.Naziv ?? "Neznatno")</span></td>
+                                    <td>@(r.Paket?.Destinacija != null ? $"{r.Paket.Destinacija.Naziv} ({r.Paket.Destinacija.Drzava})" : "—")</td>
+                                    <td>@(r.Putnici != null && r.Putnici.Any() ? r.Putnici.Count : 1)</td>
+                                    <td><span class="status-pill">@r.Status.ToString()</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

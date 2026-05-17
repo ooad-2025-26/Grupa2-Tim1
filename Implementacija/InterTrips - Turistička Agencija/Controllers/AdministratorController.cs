@@ -327,4 +327,27 @@ public class AdministratorController : Controller
 
         return RedirectToAction(nameof(PlanTemplate), new { paketId });
     }
+
+    [HttpGet("Administrator/Rezervacije")]
+    public async Task<IActionResult> Rezervacije()
+    {
+        var ciljaniEmail = "test@intertrips.ba";
+
+         var sveRezervacije = await _db.Rezervacije
+            .Include(r => r.Paket)
+                .ThenInclude(p => p!.Destinacija)
+            .Include(r => r.Korisnik)
+            .Include(r => r.Putnici)
+            .Include(r => r.Placanje)
+            .OrderByDescending(r => r.Id)
+            .ToListAsync();
+
+        var viewModel = new AdminRezervacijeVm
+        {
+            KorisnikEmail = ciljaniEmail,
+            Rezervacije = sveRezervacije 
+        };
+
+        return View(viewModel);
+    }
 }

@@ -27,6 +27,8 @@ public class Putnik
     [MaxLength(40)]
     public string? Telefon { get; set; }
 
+    public DateTime? DatumRodjenja { get; set; }
+
     [MaxLength(600)]
     public string? PosebniZahtjevi { get; set; }
 

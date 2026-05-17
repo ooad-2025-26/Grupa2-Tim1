@@ -334,7 +334,7 @@
                             </div>
                             <div>
                                 <label class="field-label">CVV</label>
-                                <input class="input" id="cvv" placeholder="123">
+                                <input class="input" id="cardCvv" placeholder="123">
                             </div>
                         </div>
                         <div class="row">
@@ -344,7 +344,7 @@
                             </div>
                             <div>
                                 <label class="field-label">POŠTANSKI BROJ</label>
-                                <input class="input" id="zip" placeholder="71000">
+                                <input class="input" id="billingZip" placeholder="71000">
                             </div>
                         </div>
                     </div>
@@ -458,17 +458,14 @@
         if (!raw) return 0;
 
         let s = String(raw).trim();
-
         s = s.replace(/KM/gi, '').replace(/\$/g, '').replace(/\s/g, '');
 
         if (s.includes('.') && s.includes(',')) {
         s = s.replace(/\./g, '');
         s = s.replace(',', '.');
-        }
-        else if (s.includes(',')) {
+        } else if (s.includes(',')) {
         s = s.replace(/,/g, '');
-        }
-        else if (s.includes('.')) {
+        } else if (s.includes('.')) {
         const parts = s.split('.');
         if (parts.length > 1 && parts[parts.length - 1].length === 3) {
         s = s.replace(/\./g, '');
@@ -476,7 +473,6 @@
         }
 
         s = s.replace(/[^0-9.]/g, '');
-
         const n = parseFloat(s);
         return isNaN(n) ? 0 : n;
         }
@@ -517,7 +513,6 @@
         function loadPaymentSummary() {
         const dest = localStorage.getItem('reservationDestination') || 'Destinacija';
         const country = localStorage.getItem('reservationCountry') || '—';
-
         const image = localStorage.getItem('reservationImage') || '/assets/bali.jpg';
 
         document.getElementById('summaryDest').innerHTML = `${dest} <small>${country}</small>`;
@@ -529,8 +524,7 @@
         document.getElementById('summaryTotal').textContent = localStorage.getItem('reservationTotal') || '$0';
 
         const photo = document.getElementById('summaryPhoto');
-        photo.style.background =
-        `linear-gradient(rgba(0,0,0,0.12), rgba(0,0,0,0.12)), url('${image}') center/cover no-repeat`;
+        photo.style.background = `linear-gradient(rgba(0,0,0,0.12), rgba(0,0,0,0.12)), url('${image}') center/cover no-repeat`;
         }
 
         async function currentUserKey() {
@@ -546,7 +540,7 @@
 
         const reservation = {
         id: resCode,
-        userName: u, 
+        userName: u,
         createdAt: new Date().toISOString(),
         status: 'Aktivna',
         paketId: localStorage.getItem('reservationPaketId') || '',
@@ -558,9 +552,7 @@
         room: localStorage.getItem('reservationRoom'),
         total: localStorage.getItem('reservationTotal'),
         paymentType: localStorage.getItem('paymentType'),
-
         passengers: JSON.parse(localStorage.getItem('savedPassengers') || '[]'),
-
         ratesMonths: localStorage.getItem('ratesMonths'),
         ratesMonthly: localStorage.getItem('ratesMonthly')
         };
@@ -568,60 +560,96 @@
         localStorage.setItem('reservations', JSON.stringify(reservations));
         }
 
-       async function payNow() {
+        async function payNow() {
+        function isCardExpired(expiryString) {
+        if (!expiryString || !expiryString.includes('/')) return true;
 
-    if (selectedPaymentType === 'card') {
+        const parts = expiryString.split('/');
+        if (parts.length !== 2) return true;
+
+        const inputMonth = parseInt(parts[0], 10);
+        const inputYear = parseInt('20' + parts[1], 10);
+
+        if (isNaN(inputMonth) || isNaN(inputYear)) return true;
+
+        const now = new Date();
+        const currentMonth = now.getMonth() + 1;
+        const currentYear = now.getFullYear();
+
+        if (inputYear < currentYear) return true;
+        if (inputYear === currentYear && inputMonth < currentMonth) return true;
+
+        return false;
+        }
+
+        if (selectedPaymentType === 'card') {
         const cardName = document.getElementById('cardName').value.trim();
         const cardNumber = document.getElementById('cardNumber').value.trim();
-        if (!cardName || !cardNumber) {
-            window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Kartica je odbijena.");
-            return;
-        }
-    }
+        const cardExpiry = document.getElementById('cardExpiry') ? document.getElementById('cardExpiry').value.trim() : '';
 
-    if (selectedPaymentType === 'bank') {
+        const cvvEl = document.getElementById('cardCvv');
+        const zipEl = document.getElementById('billingZip');
+        const cardCvv = cvvEl ? cvvEl.value.trim() : '';
+        const billingZip = zipEl ? zipEl.value.trim() : '';
+
+        if (!cardName || !cardNumber || isCardExpired(cardExpiry) || cardCvv.length !== 3 || billingZip.length !== 5) {
+        window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Kartica je odbijena (nevalidni podaci, CVV ili poštanski broj).");
+        return;
+        }
+        }
+
+        if (selectedPaymentType === 'bank') {
         const day = new Date().getDay();
         if (day === 0 || day === 6) {
-            window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Banka ne radi subotom i nedjeljom.");
-            return;
+        window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Banka ne radi subotom i nedjeljom.");
+        return;
         }
-    }
+        }
 
         if (selectedPaymentType === 'rates') {
-  const months = parseInt(document.getElementById('ratesMonths').value, 10);
-  const checked = document.querySelector('input[name="rateSubMethod"]:checked');
-  const subMethod = checked ? checked.value : 'Karticom';
+        const months = parseInt(document.getElementById('ratesMonths').value, 10);
+        const checked = document.querySelector('input[name="rateSubMethod"]:checked');
+        const subMethod = checked ? checked.value : 'Karticom';
 
-  if (!months || months < 1 || months > 60) {
-    alert("Unesite validan broj mjeseci (1-60).");
-    return;
-  }
+        if (!months || months < 1 || months > 60) {
+        alert("Unesite validan broj mjeseci (1-60).");
+        return;
+        }
 
-  if (subMethod === 'Karticom') {
-    const cardName = document.getElementById('cardName').value.trim();
-    const cardNumber = document.getElementById('cardNumber').value.trim();
-    if (!cardName || !cardNumber) {
-      window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Unesite podatke kartice za plaćanje na rate.");
-      return;
-    }
-  }
+        if (subMethod === 'Karticom') {
+        const cardName = document.getElementById('cardName').value.trim();
+        const cardNumber = document.getElementById('cardNumber').value.trim();
+        const cardExpiry = document.getElementById('cardExpiry') ? document.getElementById('cardExpiry').value.trim() : '';
 
-  if (subMethod === 'Bankovni transfer') {
-    const day = new Date().getDay();
-    if (day === 0 || day === 6) {
-      window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Banka ne radi subotom i nedjeljom.");
-      return;
-    }
-  }
+        const cvvEl = document.getElementById('cardCvv');
+        const zipEl = document.getElementById('billingZip');
+        const cardCvv = cvvEl ? cvvEl.value.trim() : '';
+        const billingZip = zipEl ? zipEl.value.trim() : '';
 
-  localStorage.setItem('paymentType', 'Na rate (' + subMethod + ')');
-}
-        
-        else {
+        if (!cardName || !cardNumber || isCardExpired(cardExpiry) || cardCvv.length !== 3 || billingZip.length !== 5) {
+        window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Kartica je odbijena (nevalidni podaci, CVV ili poštanski broj za plaćanje na rate).");
+        return;
+        }
+        }
+
+        if (subMethod === 'Bankovni transfer') {
+        const day = new Date().getDay();
+        if (day === 0 || day === 6) {
+        window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Banka ne radi subotom i nedjeljom.");
+        return;
+        }
+        }
+
+        localStorage.setItem('paymentType', 'Na rate (' + subMethod + ')');
+        } else {
         localStorage.setItem('paymentType', selectedPaymentType === 'card' ? 'Kartica' : 'Bankovni prenos');
         localStorage.removeItem('ratesMonths');
         localStorage.removeItem('ratesMonthly');
-    }
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const paketId = urlParams.get('paketId') || localStorage.getItem('reservationPaketId') || '1';
+        localStorage.setItem('selectedPackageId', paketId);
 
         const resCode = 'IT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
         localStorage.setItem('finalReservationCode', resCode);
@@ -645,18 +673,18 @@
 
         const cardNumberEl = document.getElementById('cardNumber');
         const expiryEl = document.getElementById('cardExpiry');
+        const cvvEl = document.getElementById('cardCvv');
+        const zipEl = document.getElementById('billingZip');
 
         if (cardNumberEl) {
         cardNumberEl.setAttribute('inputmode', 'numeric');
         cardNumberEl.setAttribute('autocomplete', 'cc-number');
-        cardNumberEl.maxLength = 19; 
-
+        cardNumberEl.maxLength = 19;
 
         cardNumberEl.addEventListener('input', () => {
         let digits = cardNumberEl.value.replace(/\D/g, '').slice(0, 16);
         const parts = digits.match(/.{1,4}/g) || [];
         cardNumberEl.value = parts.join(' ');
-
 
         if (digits.length === 16 && expiryEl) {
         expiryEl.focus();
@@ -667,7 +695,7 @@
         if (expiryEl) {
         expiryEl.setAttribute('inputmode', 'numeric');
         expiryEl.setAttribute('autocomplete', 'cc-exp');
-        expiryEl.maxLength = 5; 
+        expiryEl.maxLength = 5;
 
         expiryEl.addEventListener('input', () => {
         let digits = expiryEl.value.replace(/\D/g, '').slice(0, 4);
@@ -679,15 +707,48 @@
 
         const mmStr = String(mm).padStart(2, '0');
         const rest = digits.slice(2);
-
         expiryEl.value = rest ? `${mmStr}/${rest}` : mmStr;
         } else {
         expiryEl.value = digits;
         }
+
+        if (expiryEl.value.length === 5) {
+        const parts = expiryEl.value.split('/');
+        const inputMonth = parseInt(parts[0], 10);
+        const inputYear = parseInt('20' + parts[1], 10);
+        const now = new Date();
+        const currentMonth = now.getMonth() + 1;
+        const currentYear = now.getFullYear();
+
+        if (inputYear < currentYear || (inputYear === currentYear && inputMonth < currentMonth)) {
+        expiryEl.style.borderColor = 'red';
+        } else {
+        expiryEl.style.borderColor = '';
+        }
+        } else {
+        expiryEl.style.borderColor = '';
+        }
+        });
+        }
+
+        if (cvvEl) {
+        cvvEl.setAttribute('inputmode', 'numeric');
+        cvvEl.maxLength = 3;
+
+        cvvEl.addEventListener('input', () => {
+        cvvEl.value = cvvEl.value.replace(/\D/g, ''); 
+        });
+        }
+
+        if (zipEl) {
+        zipEl.setAttribute('inputmode', 'numeric');
+        zipEl.maxLength = 5;
+
+        zipEl.addEventListener('input', () => {
+        zipEl.value = zipEl.value.replace(/\D/g, ''); 
         });
         }
         });
     </script>
-
-</body>
+    </body>
 </html>
