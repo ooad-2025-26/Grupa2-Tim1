@@ -100,7 +100,7 @@ namespace InterTrips___Turistička_Agencija.Controllers;
         }
     }
 
-
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetMojeRezervacije()
     {
