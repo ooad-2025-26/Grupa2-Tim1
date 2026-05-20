@@ -16,11 +16,15 @@
             <li><a asp-controller="Destinacije" asp-action="Index">Destinacije</a></li>
             <li><a asp-controller="Home" asp-action="ONama">O nama</a></li>
             <li><a asp-controller="Home" asp-action="Kontakt">Kontakt</a></li>
-            <a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a>
+            
 @if (User?.Identity?.IsAuthenticated == true)
 {
     <li><a asp-controller="Rezervacija" asp-action="Index">Moje rezervacije</a></li>
-}           @if (User?.Identity?.IsAuthenticated == true)
+}     
+            <li>
+                 <a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a>
+                </li>
+@if (User?.Identity?.IsAuthenticated == true)
 {
                 var profileHref = User.IsInRole("Admin") ? "/Administrator"
                             : User.IsInRole("Agent") ? "/Agent"

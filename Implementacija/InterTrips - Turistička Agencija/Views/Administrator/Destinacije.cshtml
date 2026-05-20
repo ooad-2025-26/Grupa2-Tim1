@@ -4,58 +4,283 @@
     ViewData["Title"] = "Admin - Destinacije";
     Layout = null;
 }
-
 <!DOCTYPE html>
 <html lang="bs">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"]</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+
     <style>
-        .wrap { max-width: 1100px; margin: 28px auto; padding: 0 18px; }
-        .bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
-        .card { background: rgba(255,255,255,0.86); border:1px solid rgba(95,181,187,0.16); border-radius:16px; box-shadow: var(--shadow); padding:16px; }
-        .grid { display:grid; grid-template-columns: 120px 1fr auto; gap:14px; align-items:center; padding:12px; border-radius:12px; border:1px solid rgba(95,181,187,0.14); background: rgba(255,255,255,0.72); margin-bottom:10px; }
-        .thumb { width:120px; height:76px; border-radius:12px; background:#eef; object-fit:cover; border:1px solid rgba(95,181,187,0.14); }
-        .actions { display:flex; gap:10px; }
-        .btn { height:40px; padding:0 14px; border-radius:12px; cursor:pointer; font-weight:800; border:1px solid rgba(95,181,187,0.18); background:#fff; }
-        .btn-primary { border:none; color:#fff; background: linear-gradient(135deg, #6abfc6, #86bfe0); }
-        .btn-danger { border:1px solid rgba(255,0,0,0.18); background: rgba(255,0,0,0.06); color:#b42318; }
-        a.btn { display:inline-flex; align-items:center; text-decoration:none; }
+            :root {
+                --primary: #6abfc6;
+                --primary-dark: #2b777e;
+                --primary-light: rgba(106, 191, 198, 0.12);
+                --text-main: #2d3748;
+                --text-muted: #718096;
+                --bg-card: rgba(255, 255, 255, 0.90);
+                --border-color: rgba(95, 181, 187, 0.15);
+                --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            }
+
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: #f7fafc;
+                color: var(--text-main);
+                margin: 0;
+                padding: 0;
+            }
+
+            .dash-topbar {
+                height: 64px;
+                padding: 0 32px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: rgba(255, 255, 255, 0.85);
+                border-bottom: 1px solid var(--border-color);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            }
+
+                .dash-topbar .logo {
+                    width: 90px;
+                    height: 44px;
+                    object-fit: contain;
+                }
+
+            .logout-btn {
+                border: 1px solid rgba(95, 181, 187, 0.3);
+                background: transparent;
+                color: var(--text-main);
+                border-radius: 30px;
+                padding: 8px 18px;
+                cursor: pointer;
+                font-weight: 500;
+                font-size: 13px;
+                transition: all 0.2s ease;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+            }
+
+                .logout-btn:hover {
+                    background: var(--primary-light);
+                    border-color: var(--primary);
+                    color: var(--primary-dark);
+                }
+
+            .wrap {
+                max-width: 1200px;
+                margin: 40px auto;
+                padding: 0 24px;
+            }
+
+            .bar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+            }
+
+            .card {
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: 20px;
+                box-shadow: var(--shadow-md);
+                padding: 32px;
+            }
+
+                .card h2 {
+                    font-size: 22px;
+                    font-weight: 600;
+                    margin-top: 0;
+                    margin-bottom: 24px;
+                    color: var(--text-main);
+                    border-bottom: 2px solid rgba(106, 191, 198, 0.1);
+                    padding-bottom: 12px;
+                }
+
+            .grid {
+                display: grid;
+                grid-template-columns: 140px 1fr auto;
+                gap: 20px;
+                align-items: center;
+                padding: 16px;
+                border-radius: 14px;
+                border: 1px solid rgba(95, 181, 187, 0.12);
+                background: rgba(255, 255, 255, 0.65);
+                margin-bottom: 14px;
+                transition: all 0.2s ease;
+            }
+
+                .grid:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.03);
+                    border-color: rgba(95, 181, 187, 0.3);
+                    background: #fff;
+                }
+
+                .grid:last-child {
+                    margin-bottom: 0;
+                }
+
+            .thumb {
+                width: 140px;
+                height: 88px;
+                border-radius: 10px;
+                object-fit: cover;
+                border: 1px solid rgba(95, 181, 187, 0.15);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            }
+
+            .dest-info h3 {
+                margin: 0 0 4px 0;
+                font-size: 16px;
+                font-weight: 700;
+                color: var(--text-main);
+            }
+
+            .dest-info p {
+                margin: 0;
+                color: var(--text-muted);
+                font-size: 13px;
+            }
+
+            .actions {
+                display: flex;
+                gap: 10px;
+            }
+
+            .btn {
+                height: 38px;
+                padding: 0 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 13px;
+                border: 1px solid rgba(95, 181, 187, 0.3);
+                background: #fff;
+                color: var(--text-main);
+                transition: all 0.2s ease;
+            }
+
+                .btn:hover {
+                    background: #f7fafc;
+                    border-color: var(--primary);
+                }
+
+            .btn-primary {
+                border: none;
+                color: #fff;
+                background: linear-gradient(135deg, #6abfc6, #5fa9b1);
+                box-shadow: 0 2px 4px rgba(106, 191, 198, 0.2);
+            }
+
+                .btn-primary:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 8px rgba(106, 191, 198, 0.3);
+                    filter: brightness(1.05);
+                }
+
+            .btn-danger {
+                border: 1px solid rgba(229, 62, 62, 0.2);
+                background: rgba(229, 62, 62, 0.05);
+                color: #e53e3e;
+            }
+
+                .btn-danger:hover {
+                    background: rgba(229, 62, 62, 0.1);
+                    border-color: #e53e3e;
+                    color: #c53030;
+                }
+
+            a.btn {
+                display: inline-flex;
+                align-items: center;
+                text-decoration: none;
+            }
+
+            @@media (max-width: 768px) {
+                .grid {
+                    grid-template-columns: 1fr;
+                    text-align: center;
+                    justify-items: center;
+                }
+
+                .actions {
+                    width: 100%;
+                    justify-content: center;
+                }
+
+                .bar {
+                    flex-direction: column;
+                    gap: 12px;
+                }
+            }
     </style>
 </head>
 <body>
+
+    <header class="dash-topbar">
+        <a href="/" class="logo-link">
+            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+        </a>
+
+        <div style="display:flex; gap:10px; align-items:center;">
+            <a href="/Administrator/Index" class="logout-btn" style="text-decoration:none; background: rgba(106,191,198,0.15); font-weight:700; border-color: var(--primary);">Destinacije</a>
+            <a href="/Administrator/Paketi" class="logout-btn" style="text-decoration:none;">Paketi</a>
+            <a href="/Administrator/Korisnici" class="logout-btn" style="text-decoration:none;">Korisnici</a>
+            <a href="/Administrator/Rezervacije" class="logout-btn" style="text-decoration:none;">Rezervacije</a>
+            <a href="/Destinacije" class="logout-btn" style="text-decoration:none;">Pregled na sajtu</a>
+            <form method="post" action="/Account/Logout" style="display:inline;">
+                @Html.AntiForgeryToken()
+                <button class="logout-btn" type="submit" style="color: #e53e3e; border-color: rgba(229, 62, 62, 0.2);">Odjavi se</button>
+            </form>
+        </div>
+    </header>
+
     <div class="wrap">
         <div class="bar">
             <div class="btnrow">
-    <a class="btn" asp-controller="Administrator" asp-action="Index">Nazad na dashboard</a>
-    
-</div>
-            <a class="btn btn-primary" asp-controller="Administrator" asp-action="DestinacijaCreate">+ Dodaj destinaciju</a>
+                <a class="btn" asp-controller="Administrator" asp-action="Index">← Nazad na dashboard</a>
+            </div>
+            <a class="btn btn-primary" asp-controller="Administrator" asp-action="DestinacijaCreate">+ Dodaj novu destinaciju</a>
         </div>
 
         <div class="card">
+            <h2>Upravljanje postojećim destinacijama</h2>
+
             @if (!Model.Any())
             {
-                <p style="color:var(--muted); font-weight:700;">Nema destinacija u bazi.</p>
+                <p style="color: var(--text-muted); font-weight: 500; text-align: center; padding: 24px;">Nema registrovanih destinacija u bazi podataka.</p>
             }
             else
             {
                 foreach (var d in Model)
                 {
                     <div class="grid">
-                        <img class="thumb" src="@(string.IsNullOrWhiteSpace(d.SlikaUrl) ? "/assets/bali.jpg" : d.SlikaUrl)" alt="slika" />
-                        <div>
-                            <div style="font-weight:900; color:var(--text);">@d.Naziv</div>
-                            <div style="color:var(--muted); font-size:13px;">@d.Drzava • @d.Kategorija</div>
+                        <img class="thumb" src="@(string.IsNullOrWhiteSpace(d.SlikaUrl) ? "/assets/bali.jpg" : d.SlikaUrl)" alt="slika destinacije" />
+                        <div class="dest-info">
+                            <h3>@d.Naziv</h3>
+                            <p>@d.Drzava • <span style="color: var(--primary-dark); font-weight: 500;">@d.Kategorija</span></p>
                         </div>
                         <div class="actions">
                             <a class="btn" asp-controller="Administrator" asp-action="DestinacijaEdit" asp-route-id="@d.Id">Uredi</a>
 
                             <form asp-controller="Administrator" asp-action="DestinacijaDelete" asp-route-id="@d.Id" method="post" style="display:inline;">
                                 @Html.AntiForgeryToken()
-                                <button class="btn btn-danger" type="submit" onclick="return confirm('Obrisati destinaciju?')">Obriši</button>
+                                <button class="btn btn-danger" type="submit" onclick="return confirm('Da li ste sigurni da želite obrisati destinaciju @d.Naziv?')">Obriši</button>
                             </form>
                         </div>
                     </div>

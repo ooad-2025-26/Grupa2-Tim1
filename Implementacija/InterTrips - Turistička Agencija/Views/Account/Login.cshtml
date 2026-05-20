@@ -583,33 +583,49 @@
                 }
             });
 
-            // REGISTER (demo)
-            document.getElementById('registerBtn').addEventListener('click', async function () {
-                const name = document.getElementById('registerName').value.trim();
-                const email = document.getElementById('registerEmail').value.trim();
-                const password = document.getElementById('registerPassword').value.trim();
-                const confirm = document.getElementById('registerConfirm').value.trim();
+    // REGISTER (demo)
+    document.getElementById('registerBtn').addEventListener('click', async function () {
+    const name = document.getElementById('registerName').value.trim();
+    const email = document.getElementById('registerEmail').value.trim();
+    const password = document.getElementById('registerPassword').value.trim();
+    const confirm = document.getElementById('registerConfirm').value.trim();
 
-                if (!name || !email || !password || !confirm) { alert('Popunite sva polja.'); return; }
-                if (password !== confirm) { alert('Lozinke se ne poklapaju.'); return; }
+    if (!name || !email || !password || !confirm) { 
+        alert('Popunite sva polja.'); 
+        return; 
+    }
+    
+    if (password !== confirm) { 
+        alert('Lozinke se ne poklapaju.'); 
+        return; 
+    }
+              const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\W_]{8,}$/;
 
-                try {
-                    const res = await fetch('/Account/Register', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'same-origin',
-                        body: JSON.stringify({ Name: name, Email: email, Password: password })
-                    });
+    if (!passwordRegex.test(password)) {
+        alert('Lozinka ne ispunjava sigurnosne uslove!\n\nMora imati:\n- Minimalno 8 karaktera\n- Najmanje jedno veliko slovo (A-Z)\n- Najmanje jedno malo slovo (a-z)\n- Najmanje jedan broj (0-9)');
+        return;
+    }
 
-                    const data = await res.json().catch(() => ({}));
-                    if (!res.ok || !data.success) { alert(data.message || 'Registracija nije uspjela.'); return; }
+    try {
+        const res = await fetch('/Account/Register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ Name: name, Email: email, Password: password })
+        });
 
-                   window.location.href = data.redirectUrl || '/';
-                } catch {
-                    alert('Greška pri registraciji. Provjerite konekciju i pokušajte ponovo.');
-                }
-            });
+        const data = await res.json().catch(() => ({}));
 
+        if (res.ok && data.success) {
+            window.location.href = data.redirectUrl || '/';
+            return;
+        } else {
+            alert(data.message || 'Registracija nije uspjela.');
+        }
+    } catch {
+        alert('Greška pri registraciji. Provjerite konekciju.');
+    }
+});
          
           
             function togglePassword(inputId, iconEl) {

@@ -350,4 +350,58 @@ public class AdministratorController : Controller
 
         return View(viewModel);
     }
+    [HttpGet]
+    public async Task<IActionResult> Korisnici()
+    {
+        var destinacijeCount = await _db.Destinacije.CountAsync();
+        var rezervacijeCount = await _db.Rezervacije.CountAsync();
+
+        var agentiCount = await _userManager.Users.Where(u => u.Uloga == 1).CountAsync();
+
+        var korisniciIzBaze = await _userManager.Users.ToListAsync();
+
+        var viewModel = new AdminDashboardVm
+        {
+            DestinacijeCount = destinacijeCount,
+            KorisniciCount = agentiCount,
+            RezervacijeCount = rezervacijeCount,
+            Destinacije = await _db.Destinacije.ToListAsync(),
+            SviKorisnici = korisniciIzBaze 
+        };
+
+        return View(viewModel);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PromijeniUlogu(string korisnikId, int novaUloga)
+    {
+        var korisnik = await _userManager.FindByIdAsync(korisnikId);
+
+        if (korisnik != null)
+        {
+            korisnik.Uloga = novaUloga;
+            await _userManager.UpdateAsync(korisnik);
+
+            var trenutneUloge = await _userManager.GetRolesAsync(korisnik);
+            if (trenutneUloge.Any())
+            {
+                await _userManager.RemoveFromRolesAsync(korisnik, trenutneUloge);
+            }
+
+            if (novaUloga == 2)
+            {
+                await _userManager.AddToRoleAsync(korisnik, "Admin");
+            }
+            else if (novaUloga == 1)
+            {
+                await _userManager.AddToRoleAsync(korisnik, "Agent");
+            }
+            else
+            {
+                await _userManager.AddToRoleAsync(korisnik, "Client");
+            }
+        }
+
+        return RedirectToAction("Korisnici");
+    }
 }

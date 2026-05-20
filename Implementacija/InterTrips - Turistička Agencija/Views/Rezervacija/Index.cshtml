@@ -14,7 +14,7 @@
 
     .navbar {
         height: 65px;
-        background: rgba(255, 255, 255, 0.95); 
+        background: rgba(255, 255, 255, 0.95);
         border-bottom: 1px solid rgba(95, 181, 187, 0.15);
         display: flex;
         align-items: center;
@@ -98,7 +98,7 @@
         padding: 8px 18px;
         border-radius: 999px;
         background: rgba(30, 127, 136, 0.15);
-        color: #1e7f88 !important; 
+        color: #1e7f88 !important;
         border: 1px solid rgba(30, 127, 136, 0.35);
         font-size: 13px;
         font-weight: 700;
@@ -108,13 +108,11 @@
     }
 
         .btn-logout:hover {
-            background: #1e7f88; 
-            color: #fff !important; 
+            background: #1e7f88;
+            color: #fff !important;
             border-color: transparent;
             transform: translateY(-1px);
         }
-
-   
 
     #userArea {
         display: inline-flex;
@@ -266,7 +264,7 @@
 </footer>
 
 @section Scripts {
-    <script src="~/js/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
         .hero--reservations {
@@ -431,6 +429,7 @@
 
     <script>
         let ucitaneRezervacije = [];
+
         function ukloniKvacice(tekst) {
         if (!tekst) return '—';
         return String(tekst)
@@ -439,6 +438,7 @@
         .replace(/[Šš]/g, 'S')
         .replace(/[Đđ]/g, 'Dj');
         }
+
         async function getReservationsForCurrentUser() {
         try {
         const response = await fetch('/Rezervacija/GetMojeRezervacije', {
@@ -493,9 +493,7 @@
         function planButtonHtml(r) {
         if (!r || !r.paketId) return '';
         return `
-        <a class="pill"
-        style="text-decoration:none;"
-        href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(r.paketId)}">
+        <a class="pill" style="text-decoration:none;" href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(r.paketId)}">
         Plan putovanja
         </a>
         `;
@@ -508,18 +506,19 @@
         return;
         }
 
-        function ukloniKvacice(tekst) {
-        if (!tekst) return '—';
-        return String(tekst)
-        .replace(/[ČĆčć]/g, 'C')
-        .replace(/[Žž]/g, 'Z')
-        .replace(/[Šš]/g, 'S')
-        .replace(/[Đđ]/g, 'Dj');
+        const pick = (...vals) => {
+        for (const v of vals) {
+        if (v === null || v === undefined) continue;
+        const s = String(v).trim();
+        if (s !== '') return s;
         }
+        return '';
+        };
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
+        // Header
         doc.setFillColor(10, 34, 40);
         doc.rect(0, 0, 210, 40, 'F');
 
@@ -531,7 +530,7 @@
         doc.setFontSize(11);
         doc.setFont("helvetica", "normal");
         doc.setTextColor(100, 100, 100);
-        doc.text(`Datum izdavanja dokumenta: ${new Date().toLocaleDateString('de-DE')}`, 15, 50);
+        doc.text(`Datum izdavanja dokumenta: ${new Date().toLocaleDateString('bs-BA')}`, 15, 50);
 
         doc.setDrawColor(95, 181, 187);
         doc.setLineWidth(0.5);
@@ -542,8 +541,8 @@
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(10, 34, 40);
-        doc.text(`Rezervacija koda: #${r.id}`, 15, 68);
-        doc.text(`Status: ${ukloniKvacice(r.status || 'Aktivna').toUpperCase()}`, 130, 68);
+        doc.text(`Rezervacija koda: #${pick(r.id, r.Id, '—')}`, 15, 68);
+        doc.text(`Status: ${ukloniKvacice(pick(r.status, r.Status, 'Aktivna')).toUpperCase()}`, 130, 68);
 
         doc.setFontSize(12);
         doc.setFont("helvetica", "normal");
@@ -551,11 +550,11 @@
 
         let y = 85;
         const stavke = [
-        { label: "Destinacija:", info: `${ukloniKvacice(r.destinacija || r.Destinacija)} ${r.drzava ? '(' + ukloniKvacice(r.drzava) + ')' : ''}` },
-        { label: "Naziv paketa:", info: ukloniKvacice(r.paketNaziv || r.PaketNaziv) },
-        { label: "Datum polaska:", info: r.datumPolaska || r.DatumPolaska || '—' },
-        { label: "Datum povratka:", info: r.datumPovratka || r.DatumPovratka || '—' },
-        { label: "Ukupan broj putnika:", info: brPutnika }
+        { label: "Destinacija:", info: `${ukloniKvacice(pick(r.destinacija, r.Destinacija, '—'))} ${pick(r.drzava, r.Drzava, '') ? '(' + ukloniKvacice(pick(r.drzava, r.Drzava)) + ')' : ''}` },
+        { label: "Naziv paketa:", info: ukloniKvacice(pick(r.paketNaziv, r.PaketNaziv, '—')) },
+        { label: "Datum polaska:", info: pick(r.datumPolaska, r.DatumPolaska, '—') },
+        { label: "Datum povratka:", info: pick(r.datumPovratka, r.DatumPovratka, '—') },
+        { label: "Ukupan broj putnika:", info: String(brPutnika) }
         ];
 
         stavke.forEach(item => {
@@ -567,73 +566,99 @@
         });
 
         const listaPutnika = r.putnici || r.putniciRezervacije || r.Putnici;
+
         if (listaPutnika && listaPutnika.length > 0) {
         y += 10;
         doc.setFont("helvetica", "bold");
         doc.setFontSize(13);
         doc.setTextColor(10, 34, 40);
         doc.text("Spisak putnika na rezervaciji:", 15, y);
-        y += 5;
+        y += 6;
 
-        const colX = {
-        rb: 15,       
-        ime: 30,      
-        pasos: 95,    
-        drz: 140      
-        };
-        const tableWidth = 180;
+        // KALIBRISANE X KOORDINATE (Sprečavaju preklapanje države i telefona)
+        const colX = { rb: 15, ime: 25, dob: 80, pasos: 110, drz: 140, tel: 165 };
+        const tableWidth = 180; // Puna širina tabele unutar margina
 
+        // Zaglavlje tabele
         doc.setFillColor(40, 55, 60);
         doc.rect(colX.rb, y, tableWidth, 8, 'F');
 
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(10);
+        doc.setFontSize(9);
         doc.setTextColor(255, 255, 255);
-
         doc.text("R.b.", colX.rb + 2, y + 5.5);
-        doc.text("Ime i Prezime", colX.ime + 2, y + 5.5);
-        doc.text("Broj pasosa", colX.pasos + 2, y + 5.5);
-        doc.text("Drzavljanstvo", colX.drz + 2, y + 5.5);
+        doc.text("Ime i Prezime", colX.ime + 2, y + 5.5); // Izbačen znak &
+        doc.text("Datum rod.", colX.dob + 2, y + 5.5);
+        doc.text("Pasos", colX.pasos + 2, y + 5.5);
+        doc.text("Drz.", colX.drz + 2, y + 5.5);
+        doc.text("Telefon", colX.tel + 2, y + 5.5);
 
-        y += 8; 
-
+        y += 8;
         doc.setTextColor(40, 40, 40);
 
         listaPutnika.forEach((p, i) => {
-        const imePrezime = ukloniKvacice(`${p.ime || p.Ime || ''} ${p.prezime || p.Prezime || ''}`);
-        const pasos = p.brojPasosa || p.BrojPasosa || '—';
-        const drzavljanstvo = ukloniKvacice(p.drzavljanstvo || p.Drzavljanstvo || '—');
-
-        if (i % 2 === 0) {
-        doc.setFillColor(245, 248, 248);
-        } else {
-        doc.setFillColor(255, 255, 255);
+        if (y > 270) {
+        doc.addPage();
+        y = 20;
         }
+
+        const imePrezime = ukloniKvacice(`${pick(p.ime, p.Ime, '')} ${pick(p.prezime, p.Prezime, '')}`.trim()) || '—';
+        const pasos = pick(p.brojPasosa, p.BrojPasosa, '—');
+        const drz = ukloniKvacice(pick(p.drzavljanstvo, p.Drzavljanstvo, '—'));
+        const dob = pick(p.datumRodjenja, p.DatumRodjenja, p.birthDate, p.BirthDate, '—');
+        const tel = pick(p.telefon, p.Telefon, p.phone, p.Phone, '—');
+        const req = pick(p.posebniZahtjevi, p.PosebniZahtjevi, p.requests, p.Requests, '');
+
+        // Alternirajuće pozadine redova
+        doc.setFillColor(i % 2 === 0 ? 245 : 255, i % 2 === 0 ? 248 : 255, i % 2 === 0 ? 248 : 255);
         doc.rect(colX.rb, y, tableWidth, 8, 'F');
 
+        // Okvir ćelija
         doc.setDrawColor(210, 225, 225);
         doc.setLineWidth(0.2);
         doc.rect(colX.rb, y, tableWidth, 8, 'D');
 
+        doc.setFontSize(9);
         doc.setFont("helvetica", "normal");
         doc.text(`${i + 1}.`, colX.rb + 2, y + 5.5);
-        doc.setFont("helvetica", "bold"); 
+
+        doc.setFont("helvetica", "bold");
         doc.text(imePrezime, colX.ime + 2, y + 5.5);
+
+        // Upisivanje podataka u strogo definisane kolone
         doc.setFont("helvetica", "normal");
-        doc.text(pasos, colX.pasos + 2, y + 5.5);
-        doc.text(drzavljanstvo, colX.drz + 2, y + 5.5);
+        doc.text(String(dob), colX.dob + 2, y + 5.5);
+        doc.text(String(pasos), colX.pasos + 2, y + 5.5);
+        doc.text(String(drz), colX.drz + 2, y + 5.5);
+        doc.text(String(tel), colX.tel + 2, y + 5.5);
 
         y += 8;
+
+        if (req && req !== "Nema") {
+        if (y > 270) { doc.addPage(); y = 20; }
+
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(8);
+        doc.setTextColor(110, 110, 110);
+
+        const lines = doc.splitTextToSize(`Napomena: ${ukloniKvacice(req)}`, 175);
+        doc.text(lines, colX.ime + 2, y);
+        y += (lines.length * 4) + 2;
+
+        doc.setTextColor(40, 40, 40);
+        }
         });
         }
 
-        y += 20;
+        y += 15;
+        if (y > 280) { doc.addPage(); y = 20; }
+
         doc.setFont("helvetica", "italic");
         doc.setFontSize(10);
         doc.setTextColor(120, 120, 120);
         doc.text("Hvala Vam na povjerenju! Vas InterTrips tim.", 15, y);
 
-        doc.save(`Rezervacija_InterTrips_${r.id}.pdf`);
+        doc.save(`Rezervacija_InterTrips_${pick(r.id, r.Id, '—')}.pdf`);
         }
 
         async function renderReservations() {
@@ -643,7 +668,6 @@
         if (!listEl) return;
 
         ucitaneRezervacije = await getReservationsForCurrentUser();
-        console.log("Učitane rezervacije:", ucitaneRezervacije);
 
         if (!ucitaneRezervacije || ucitaneRezervacije.length === 0) {
         listEl.innerHTML = '';
@@ -655,13 +679,8 @@
 
         listEl.innerHTML = ucitaneRezervacije.map((r, index) => {
         const isCancelled = r.status === 'Otkazana';
-        const cancelBtn = isCancelled
-        ? ''
-        : `
-        <button
-        class="btn-cancel"
-        type="button"
-        onclick="cancelReservation('${r.id}')">
+        const cancelBtn = isCancelled ? '' : `
+        <button class="btn-cancel" type="button" onclick="cancelReservation('${r.id}')">
         Otkaži rezervaciju
         </button>
         `;
@@ -669,11 +688,7 @@
         const planBtn = planButtonHtml(r);
         const stvarniBrojPutnika = r.brojPutnika || r.BrojPutnika || (r.putnici ? r.putnici.length : 1);
         const pdfBtn = `
-        <button
-        class="pill"
-        type="button"
-        style="cursor:pointer;"
-        onclick="downloadPdfByIndex(${index})">
+        <button class="pill" type="button" style="cursor:pointer;" onclick="downloadPdfByIndex(${index})">
         📄 Preuzmi PDF
         </button>
         `;

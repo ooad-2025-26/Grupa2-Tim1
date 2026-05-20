@@ -5,6 +5,6 @@ public class AdminDashboardVm
     public int DestinacijeCount { get; set; }
     public int KorisniciCount { get; set; }
     public int RezervacijeCount { get; set; }
-
+    public List<ApplicationUser> SviKorisnici { get; set; }
     public List<Destinacija> Destinacije { get; set; } = new();
 }

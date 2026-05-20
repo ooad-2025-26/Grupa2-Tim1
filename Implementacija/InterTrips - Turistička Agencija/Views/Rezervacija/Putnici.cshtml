@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "InterTrips - Putnici";
+    ViewData["Title"] = "InterTrips - Podaci o putnicima";
     Layout = null;
 }
 
@@ -16,22 +16,66 @@
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
 
     <style>
-            .page {
-                padding: 34px 24px 56px;
+            :root {
+                --primary: #6abfc6;
+                --primary-dark: #4a9ea5;
+                --secondary: #86bfe0;
+                --text-main: #2d3748;
+                --text-muted: #718096;
+                --bg-page: #f7fafc;
+                --border-color: #e2e8f0;
+                --error-color: #e53e3e;
+                --radius-lg: 16px;
+                --radius-md: 12px;
+                --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+                --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+                --transition: all 0.2s ease-in-out;
+            }
+
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: var(--bg-page);
+                color: var(--text-main);
+                margin: 0;
+                padding: 0;
+                -webkit-font-smoothing: antialiased;
             }
 
             .topbar {
-                height: 56px;
-                background: rgba(255,255,255,0.80);
-                border-bottom: 1px solid rgba(95,181,187,0.12);
+                height: 70px;
+                background: rgba(255, 255, 255, 0.85);
+                border-bottom: 1px solid var(--border-color);
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 0 26px;
+                padding: 0 40px;
                 position: sticky;
                 top: 0;
-                z-index: 50;
-                backdrop-filter: blur(10px);
+                z-index: 100;
+                backdrop-filter: blur(12px);
+                box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            }
+
+            .logo-link {
+                display: flex;
+                align-items: center;
+            }
+
+            .secure-badge {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 13px;
+                font-weight: 500;
+                color: #38a169;
+                background: #f0fff4;
+                padding: 6px 14px;
+                border-radius: 30px;
+                border: 1px solid #c6f6d5;
+            }
+
+            .page {
+                padding: 40px 20px 80px;
             }
 
             .center-shell {
@@ -42,188 +86,346 @@
             .steps {
                 display: flex;
                 justify-content: center;
-                gap: 48px;
-                margin: 16px 0 26px;
-                flex-wrap: wrap;
+                gap: 16px;
+                margin-bottom: 40px;
             }
 
             .step {
-                text-align: center;
-                color: var(--muted);
-                font-size: 11px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: var(--text-muted);
+                font-size: 13px;
+                font-weight: 500;
+                background: #fff;
+                padding: 10px 20px;
+                border-radius: 30px;
+                box-shadow: var(--shadow-sm);
+                border: 1px solid var(--border-color);
             }
 
                 .step .circle {
-                    width: 30px;
-                    height: 30px;
+                    width: 26px;
+                    height: 26px;
                     border-radius: 50%;
-                    border: 1px solid rgba(95,181,187,0.35);
+                    background: #edf2f7;
                     display: grid;
                     place-items: center;
-                    margin: 0 auto 8px;
-                    color: var(--primary-dark);
-                    background: rgba(255,255,255,0.65);
+                    color: var(--text-muted);
+                    font-weight: 600;
+                    font-size: 12px;
                 }
 
                 .step.active {
-                    color: var(--text);
-                    font-weight: 600;
+                    color: #fff;
+                    background: linear-gradient(135deg, var(--primary), var(--secondary));
+                    border-color: transparent;
                 }
 
                     .step.active .circle {
-                        background: linear-gradient(135deg, #6abfc6, #86bfe0);
-                        color: #ffffff;
-                        border-color: transparent;
+                        background: rgba(255, 255, 255, 0.25);
+                        color: #fff;
                     }
 
             .booking-grid {
                 display: grid;
-                grid-template-columns: 1.7fr 1fr;
-                gap: 20px;
+                grid-template-columns: 1.6fr 1fr;
+                gap: 30px;
                 align-items: start;
             }
 
             .panel {
-                background: rgba(255,255,255,0.84);
-                border: 1px solid rgba(95,181,187,0.16);
-                border-radius: 16px;
-                box-shadow: var(--shadow);
-                backdrop-filter: blur(10px);
+                background: #ffffff;
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-md);
+                overflow: hidden;
             }
 
             .panel-pad {
-                padding: 24px;
+                padding: 32px;
+            }
+
+            .panel-title {
+                font-size: 20px;
+                font-weight: 700;
+                margin-top: 0;
+                margin-bottom: 24px;
+                color: var(--text-main);
+                border-bottom: 2px solid #f7fafc;
+                padding-bottom: 12px;
+            }
+
+            .passenger-block {
+                margin-bottom: 35px;
+                padding-bottom: 25px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+                .passenger-block:last-child {
+                    border-bottom: none;
+                    margin-bottom: 0;
+                    padding-bottom: 0;
+                }
+
+            .p-title {
+                font-weight: 700;
+                margin-bottom: 20px;
+                color: var(--primary-dark);
+                font-size: 15px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+                .p-title::before {
+                    content: '';
+                    display: inline-block;
+                    width: 4px;
+                    height: 16px;
+                    background: var(--primary);
+                    border-radius: 2px;
+                }
+
+            .form-group {
+                margin-bottom: 18px;
             }
 
             .row {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 14px;
-                margin-bottom: 14px;
-            }
-
-            .input, .textarea {
-                width: 100%;
-                background: #fff;
-                border: 1px solid rgba(95,181,187,0.18);
-                border-radius: 10px;
-                height: 42px;
-                padding: 0 14px;
-                font-size: 13px;
-                outline: none;
-            }
-
-            .textarea {
-                height: 80px;
-                padding: 12px;
-                resize: none;
-            }
-
-            .summary-photo {
-                height: 170px;
-                position: relative;
-                border-radius: 16px 16px 0 0;
-            }
-
-            .summary-place {
-                position: absolute;
-                left: 14px;
-                bottom: 14px;
-                font-weight: 700;
-                font-size: 18px;
-                color: #fff;
-            }
-
-                .summary-place small {
-                    display: block;
-                    font-size: 11px;
-                    color: #dff4f5;
-                    font-weight: 500;
-                }
-
-            .summary-body {
-                padding: 16px;
-            }
-
-            .summary-row {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 10px;
-                font-size: 12px;
-                color: var(--muted);
-            }
-
-                .summary-row strong {
-                    color: var(--text);
-                }
-
-            .total {
-                color: var(--primary-dark);
-                font-size: 24px;
-                font-weight: 800;
-            }
-
-            .main-btn {
-                background: linear-gradient(135deg, #6abfc6, #86bfe0);
-                color: #fff;
-                border: none;
-                height: 46px;
-                border-radius: 12px;
-                font-weight: 800;
-                cursor: pointer;
-            }
-
-            .secondary-btn {
-                background: none;
-                border: 1px solid rgba(95,181,187,0.25);
-                padding: 10px 20px;
-                border-radius: 12px;
-                cursor: pointer;
-                color: var(--text);
-                font-weight: 700;
-            }
-
-            .passenger-block {
-                margin-bottom: 25px;
-                padding-bottom: 10px;
-                border-bottom: 1px solid rgba(95,181,187,0.12);
-            }
-
-            .p-title {
-                font-weight: 800;
-                margin-bottom: 15px;
-                color: var(--primary-dark);
-                font-size: 14px;
-                text-transform: uppercase;
+                gap: 16px;
             }
 
             .field-label {
                 display: block;
                 font-size: 11px;
-                font-weight: 800;
+                font-weight: 700;
+                color: var(--text-muted);
+                margin-bottom: 6px;
+                text-transform: uppercase;
+                letter-spacing: .8px;
+            }
+
+                .field-label .required {
+                    color: var(--error-color);
+                    margin-left: 2px;
+                }
+
+            .input, .textarea {
+                width: 100%;
+                background: #fff;
+                border: 1px solid #cbd5e0;
+                border-radius: var(--radius-md);
+                height: 46px;
+                padding: 0 16px;
+                font-size: 14px;
+                font-family: inherit;
+                color: var(--text-main);
+                outline: none;
+                box-sizing: border-box;
+                transition: var(--transition);
+            }
+
+                .input:focus, .textarea:focus {
+                    border-color: var(--primary);
+                    box-shadow: 0 0 0 3px rgba(106, 191, 198, 0.15);
+                }
+
+            .textarea {
+                height: 90px;
+                padding: 12px 16px;
+                resize: none;
+            }
+
+            .summary-card {
+                position: sticky;
+                top: 100px;
+            }
+
+            .summary-photo {
+                height: 190px;
+                position: relative;
+                display: flex;
+                align-items: flex-end;
+                padding: 20px;
+                background-size: cover;
+                background-position: center;
+            }
+
+                .summary-photo::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 100%);
+                    z-index: 1;
+                }
+
+            .summary-place {
+                position: relative;
+                z-index: 2;
+                font-weight: 700;
+                font-size: 22px;
+                color: #fff;
+                line-height: 1.2;
+            }
+
+                .summary-place small {
+                    display: block;
+                    font-size: 13px;
+                    color: #e2e8f0;
+                    font-weight: 400;
+                    margin-top: 2px;
+                }
+
+            .summary-body {
+                padding: 24px;
+            }
+
+            .summary-row {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 14px;
+                font-size: 13px;
+                color: var(--text-muted);
+                border-bottom: 1px dashed #edf2f7;
+                padding-bottom: 8px;
+            }
+
+                .summary-row:last-of-type {
+                    border-bottom: none;
+                }
+
+                .summary-row strong {
+                    color: var(--text-main);
+                    font-weight: 600;
+                }
+
+            .total-wrapper {
+                border-top: 2px solid #edf2f7;
+                padding-top: 20px;
+                margin-top: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+                .total-wrapper span {
+                    font-weight: 600;
+                    color: var(--text-main);
+                }
+
+            .total {
                 color: var(--primary-dark);
-                margin: 10px 0 8px;
-                letter-spacing: .6px;
+                font-size: 26px;
+                font-weight: 800;
             }
 
             .btn-row {
                 display: flex;
                 justify-content: space-between;
-                gap: 12px;
-                margin-top: 20px;
-                flex-wrap: wrap;
+                gap: 16px;
+                margin-top: 30px;
             }
 
+            .main-btn {
+                background: linear-gradient(135deg, var(--primary), var(--secondary));
+                color: #fff;
+                border: none;
+                height: 50px;
+                padding: 0 32px;
+                border-radius: var(--radius-md);
+                font-weight: 600;
+                font-size: 15px;
+                cursor: pointer;
+                box-shadow: 0 4px 10px rgba(106, 191, 198, 0.3);
+                transition: var(--transition);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+                .main-btn:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 6px 14px rgba(106, 191, 198, 0.4);
+                    opacity: 0.95;
+                }
+
+            .secondary-btn {
+                background: #fff;
+                border: 1px solid #cbd5e0;
+                padding: 0 24px;
+                height: 50px;
+                border-radius: var(--radius-md);
+                cursor: pointer;
+                color: var(--text-main);
+                font-weight: 600;
+                font-size: 15px;
+                transition: var(--transition);
+            }
+
+                .secondary-btn:hover {
+                    background: #f7fafc;
+                    border-color: #a0aec0;
+                }
+
             .error-note {
-                font-size: 12px;
-                color: #d64545;
-                margin-top: 8px;
+                font-size: 13px;
+                background: #fff5f5;
+                color: var(--error-color);
+                border: 1px solid #fed7d7;
+                padding: 12px 16px;
+                border-radius: var(--radius-md);
+                margin-top: 20px;
                 display: none;
+                font-weight: 500;
+                line-height: 1.4;
             }
 
             @@media (max-width: 980px) {
                 .booking-grid {
                     grid-template-columns: 1fr;
+                    gap: 24px;
+                }
+
+                .summary-card {
+                    position: static;
+                }
+
+                .topbar {
+                    padding: 0 20px;
+                }
+
+                .steps {
+                    flex-wrap: wrap;
+                    gap: 10px;
+                }
+
+                .step {
+                    padding: 8px 14px;
+                    font-size: 12px;
+                }
+            }
+
+            @@media (max-width: 480px) {
+                .row {
+                    grid-template-columns: 1fr;
+                    gap: 12px;
+                }
+
+                .panel-pad {
+                    padding: 20px;
+                }
+
+                .btn-row {
+                    flex-direction: column-reverse;
+                }
+
+                .secondary-btn, .main-btn {
+                    width: 100%;
                 }
             }
     </style>
@@ -232,15 +434,15 @@
 <body>
     <div class="topbar">
         <a href="/" class="logo-link">
-            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo" style="height:40px;">
+            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo" style="height:42px;">
         </a>
-        <div class="secure" style="font-size:12px; color:var(--muted);">🛡 Sigurna kupovina</div>
+        <div class="secure-badge">🛡️ Sigurna kupovina</div>
     </div>
 
     <div class="page">
         <div class="center-shell">
             <div class="steps">
-                <div class="step active"><div class="circle">✓</div>Detalji</div>
+                <div class="step"><div class="circle">✓</div>Detalji</div>
                 <div class="step active"><div class="circle">2</div>Putnici</div>
                 <div class="step"><div class="circle">3</div>Plaćanje</div>
                 <div class="step"><div class="circle">4</div>Potvrda</div>
@@ -249,7 +451,7 @@
             <div class="booking-grid">
                 <div class="left-col">
                     <div class="panel panel-pad">
-                        <h3 style="margin-bottom:20px; color:var(--primary-dark);">Podaci o putnicima</h3>
+                        <h3 class="panel-title">Podaci o putnicima</h3>
 
                         <div id="passengerContainer"></div>
 
@@ -257,14 +459,14 @@
 
                         <div class="btn-row">
                             <button class="secondary-btn" type="button" onclick="window.history.back()">← Nazad</button>
-                            <button class="main-btn" style="padding:0 30px;" type="button" onclick="goToPayment()">Nastavi na plaćanje →</button>
+                            <button class="main-btn" type="button" onclick="goToPayment()">Nastavi na plaćanje →</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="right-col">
                     <div class="panel summary-card">
-                        <div class="summary-photo" id="summaryPhoto" style="background: url('/assets/bali.jpg') center/cover;">
+                        <div class="summary-photo" id="summaryPhoto" style="background-image: url('/assets/bali.jpg');">
                             <div class="summary-place" id="summaryDest">Destinacija <small id="summaryCountry">—</small></div>
                         </div>
                         <div class="summary-body">
@@ -272,70 +474,97 @@
                             <div class="summary-row"><span>Povratak</span><strong id="summaryReturn">—</strong></div>
                             <div class="summary-row"><span>Putnici</span><strong id="summaryTravelers">—</strong></div>
                             <div class="summary-row"><span>Smještaj</span><strong id="summaryRoom">—</strong></div>
-                            <div style="border-top:1px solid rgba(95,181,187,0.12); padding-top:15px; margin-top:15px; display:flex; justify-content:space-between; align-items:center;">
-                                <span>Ukupno</span>
+
+                            <div class="total-wrapper">
+                                <span>Ukupno za uplatu</span>
                                 <span class="total" id="summaryTotal">$0</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
     <template id="passengerTemplate">
         <div class="passenger-block">
-            <div class="p-title title"></div>
+            <div class="p-title title">Putnik</div>
 
-            <label class="field-label">TIP PUTNIKA</label>
-            <div class="row">
-                <select class="input ptype" style="grid-column: span 2;">
+            <div class="form-group">
+                <label class="field-label">Tip putnika <span class="required">*</span></label>
+                <select class="input ptype">
                     <option value="adult">Odrasli (18+)</option>
                     <option value="child">Dijete (0-17)</option>
                 </select>
             </div>
 
-            <div class="row">
-                <input class="input fname" placeholder="Ime">
-                <input class="input lname" placeholder="Prezime">
+            <div class="form-group row">
+                <div>
+                    <label class="field-label">Ime <span class="required">*</span></label>
+                    <input class="input fname" placeholder="Unesite ime">
+                </div>
+                <div>
+                    <label class="field-label">Prezime <span class="required">*</span></label>
+                    <input class="input lname" placeholder="Unesite prezime">
+                </div>
             </div>
 
-            <div>
-                <label class="field-label">DATUM ROĐENJA</label>
-                <input type="date" class="input birthdate">
-            </div>
-            <div>
-                <label class="field-label">BROJ PASOŠA</label>
-                <input class="input passport" placeholder="npr. C1234567" maxlength="9" autocomplete="off">
+            <div class="form-group row">
+                <div>
+                    <label class="field-label">Datum rođenja <span class="required">*</span></label>
+                    <input type="date" class="input birthdate">
+                </div>
+                <div>
+                    <label class="field-label">Telefon <span class="required">*</span></label>
+                    <div style="display:flex; gap:10px;">
+                        <select class="input phoneCode" style="max-width:130px; min-width: 100px;">
+                            <option value="">+xxx</option>
+                        </select>
+                        <input class="input phoneNumber" placeholder="61 123 456" autocomplete="tel">
+                    </div>
+                </div>
             </div>
 
-            <div class="row">
-                <select class="input nationality" style="grid-column: span 2;">
-                    <option value="">Odaberite državljanstvo</option>
-                </select>
+            <div class="form-group row">
+                <div>
+                    <label class="field-label">Broj pasoša <span class="required">*</span></label>
+                    <input class="input passport"
+                           placeholder="npr. C1234567"
+                           maxlength="9"
+                           autocomplete="off"
+                           inputmode="text">
+                </div>
+                <div>
+                    <label class="field-label">Državljanstvo <span class="required">*</span></label>
+                    <select class="input nationality">
+                        <option value="">Odaberite državljanstvo</option>
+                    </select>
+                </div>
             </div>
 
-            <textarea class="textarea requests" placeholder="Posebni zahtjevi (ishrana, alergije...)"></textarea>
+            <div class="form-group">
+                <label class="field-label">Posebni zahtjevi</label>
+                <textarea class="textarea requests" placeholder="Napomena (ishrana, alergije, posebne potrebe...)"></textarea>
+            </div>
         </div>
     </template>
 
     <script>
             const countries = [
-                { name: "Bosna i Hercegovina", flag: "🇧🇦" },
-                { name: "Hrvatska", flag: "🇭🇷" },
-                { name: "Srbija", flag: "🇷🇸" },
-                { name: "Crna Gora", flag: "🇲🇪" },
-                { name: "Slovenija", flag: "🇸🇮" },
-                { name: "Njemačka", flag: "🇩🇪" },
-                { name: "Austrija", flag: "🇦🇹" },
-                { name: "Italija", flag: "🇮🇹" },
-                { name: "Francuska", flag: "🇫🇷" },
-                { name: "Švicarska", flag: "🇨🇭" },
-                { name: "Švedska", flag: "🇸🇪" },
-                { name: "Turska", flag: "🇹🇷" },
-                { name: "Ujedinjeni Arapski Emirati", flag: "🇦🇪" },
-                { name: "SAD", flag: "🇺🇸" }
+                { name: "Bosna i Hercegovina", flag: "🇧🇦", dial: "+387", digits: 8 },
+                { name: "Hrvatska", flag: "🇭🇷", dial: "+385", digits: 9 },
+                { name: "Srbija", flag: "🇷🇸", dial: "+381", digits: 9 },
+                { name: "Crna Gora", flag: "🇲🇪", dial: "+382", digits: 8 },
+                { name: "Slovenija", flag: "🇸🇮", dial: "+386", digits: 8 },
+                { name: "Njemačka", flag: "🇩🇪", dial: "+49", digits: 9 },
+                { name: "Austrija", flag: "🇦🇹", dial: "+43", digits: 9 },
+                { name: "Italija", flag: "🇮🇹", dial: "+39", digits: 9 },
+                { name: "Francuska", flag: "🇫🇷", dial: "+33", digits: 9 },
+                { name: "Švicarska", flag: "🇨🇭", dial: "+41", digits: 9 },
+                { name: "Švedska", flag: "🇸🇪", dial: "+46", digits: 9 },
+                { name: "Turska", flag: "🇹🇷", dial: "+90", digits: 10 },
+                { name: "Ujedinjeni Arapski Emirati", flag: "🇦🇪", dial: "+971", digits: 9 },
+                { name: "SAD", flag: "🇺🇸", dial: "+1", digits: 10 }
             ].sort((a, b) => a.name.localeCompare(b.name));
 
             function calcAgeYears(isoDate) {
@@ -350,12 +579,43 @@
                 return age;
             }
 
+            function onlyDigits(s) {
+                return (s || "").replace(/\D/g, "");
+            }
+
+            function formatLocalPhone(digits) {
+                if (!digits) return "";
+                const parts = [];
+                parts.push(digits.slice(0, 2));
+                if (digits.length > 2) parts.push(digits.slice(2, 5));
+                if (digits.length > 5) parts.push(digits.slice(5, 8));
+                if (digits.length > 8) parts.push(digits.slice(8));
+                return parts.filter(Boolean).join(" ");
+            }
+
+            function formatFullPhone(code, localDigits) {
+                if (!code) return formatLocalPhone(localDigits);
+                const local = formatLocalPhone(localDigits);
+                return local ? `${code} ${local}` : code;
+            }
+
+            function groupBy3(digits) {
+                return digits.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
+            }
+
+            function getCountryRuleByName(name) {
+                return countries.find(c => c.name === name) || null;
+            }
+
+            function getCountryRuleByDial(dial) {
+                return countries.find(c => c.dial === dial) || null;
+            }
+
             function generatePassengers() {
                 const container = document.getElementById('passengerContainer');
                 const template = document.getElementById('passengerTemplate');
 
                 const count = parseInt(localStorage.getItem('reservationTravelers') || '1', 10) || 1;
-
                 container.innerHTML = '';
 
                 for (let i = 1; i <= count; i++) {
@@ -370,10 +630,23 @@
                         selectNat.appendChild(opt);
                     });
 
+                    const phoneCodeEl = clone.querySelector('.phoneCode');
+                    countries.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.dial;
+                        opt.textContent = `${c.flag} ${c.dial}`;
+                        phoneCodeEl.appendChild(opt);
+                    });
+
                     const wrapper = document.createElement('div');
                     wrapper.appendChild(clone);
-
                     const block = wrapper.querySelector('.passenger-block');
+
+                    const doLiveValidate = () => {
+                        const res = validateBlock(block, i - 1);
+                        if (!res.ok) setFormError(res.msg);
+                        else setFormError('');
+                    };
 
                     const passportEl = block.querySelector('.passport');
                     if (passportEl) {
@@ -382,17 +655,58 @@
                                 .toUpperCase()
                                 .replace(/[^A-Z0-9]/g, '')
                                 .slice(0, 9);
+                            doLiveValidate();
                         });
                     }
 
-                    const doLiveValidate = () => {
-                        const res = validateBlock(block, i - 1);
-                        if (!res.ok) setFormError(res.msg);
-                        else setFormError('');
-                    };
+                    const phoneCode = block.querySelector('.phoneCode');
+                    const phoneNumber = block.querySelector('.phoneNumber');
+                    const nationality = block.querySelector('.nationality');
+
+                    function applyPhoneRuleFromNationality() {
+                        const rule = getCountryRuleByName(nationality?.value);
+                        if (!rule) return;
+
+                        if (phoneCode && !phoneCode.value) phoneCode.value = rule.dial;
+
+                        if (phoneNumber) {
+                            const maxDigits = rule.digits;
+                            const digits = onlyDigits(phoneNumber.value).slice(0, maxDigits);
+                            phoneNumber.value = formatLocalPhone(digits);
+                        }
+                    }
+
+                    nationality?.addEventListener('change', () => {
+                        applyPhoneRuleFromNationality();
+                        doLiveValidate();
+                    });
+
+                    phoneNumber?.addEventListener('input', () => {
+                        const rule = getCountryRuleByDial(phoneCode?.value) || getCountryRuleByName(nationality?.value);
+                        const maxDigits = rule?.digits ?? 9;
+                        const digits = onlyDigits(phoneNumber.value).slice(0, maxDigits);
+
+                        phoneNumber.value = formatLocalPhone(digits);
+                        doLiveValidate();
+                    });
+
+                    phoneCode?.addEventListener('change', () => {
+                        const rule = getCountryRuleByDial(phoneCode.value);
+                        if (!rule || !phoneNumber) return;
+
+                        if (nationality && !nationality.value) {
+                            nationality.value = rule.name;
+                        }
+
+                        const digits = onlyDigits(phoneNumber.value).slice(0, rule.digits);
+                        phoneNumber.value = formatLocalPhone(digits);
+                        doLiveValidate();
+                    });
 
                     block.querySelector('.ptype')?.addEventListener('change', doLiveValidate);
                     block.querySelector('.birthdate')?.addEventListener('change', doLiveValidate);
+                    block.querySelector('.fname')?.addEventListener('input', doLiveValidate);
+                    block.querySelector('.lname')?.addEventListener('input', doLiveValidate);
 
                     container.appendChild(block);
                 }
@@ -410,7 +724,7 @@
 
                 const img = localStorage.getItem('reservationImage') || '/assets/bali.jpg';
                 document.getElementById('summaryPhoto').style.backgroundImage =
-                    `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.3)), url('${img}')`;
+                    `linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.2)), url('${img}')`;
             }
 
             function setFormError(msg) {
@@ -427,24 +741,82 @@
 
             function validateBlock(block, idx) {
                 const type = block.querySelector('.ptype')?.value || 'adult';
+
                 const birthEl = block.querySelector('.birthdate');
+                const fnameEl = block.querySelector('.fname');
+                const lnameEl = block.querySelector('.lname');
+                const passportEl = block.querySelector('.passport');
+                const nationalityEl = block.querySelector('.nationality');
+                const phoneEl = block.querySelector('.phoneNumber');
+
+                [birthEl, fnameEl, lnameEl, passportEl, nationalityEl, phoneEl].forEach(el => {
+                    if (el) el.style.borderColor = '';
+                });
+
+                if (fnameEl && !fnameEl.value.trim()) {
+                    fnameEl.style.borderColor = 'var(--error-color)';
+                    return { ok: false, msg: `Unesite ime za putnika ${idx + 1}.` };
+                }
+
+                if (lnameEl && !lnameEl.value.trim()) {
+                    lnameEl.style.borderColor = 'var(--error-color)';
+                    return { ok: false, msg: `Unesite prezime za putnika ${idx + 1}.` };
+                }
+
                 const birthDate = birthEl?.value;
+                if (!birthDate) {
+                    if (birthEl) birthEl.style.borderColor = 'var(--error-color)';
+                    return { ok: false, msg: `Unesite datum rođenja za putnika ${idx + 1}.` };
+                }
 
-                if (birthEl) birthEl.style.borderColor = '';
+                const inputYear = parseInt(birthDate.split('-')[0], 10);
+                const currentYear = new Date().getFullYear();
 
-                if (!birthDate) return { ok: true, msg: '' };
+                if (inputYear < 1900 || inputYear > currentYear) {
+                    if (birthEl) birthEl.style.borderColor = 'var(--error-color)';
+                    return { ok: false, msg: `Godina rođenja za putnika ${idx + 1} mora biti između 1900. i ${currentYear}. godine.` };
+                }
+                // --------------------------------------
 
                 const age = calcAgeYears(birthDate);
                 if (age === null) return { ok: false, msg: `Datum rođenja za putnika ${idx + 1} nije ispravan.` };
 
                 if (type === 'adult' && age < 18) {
-                    if (birthEl) birthEl.style.borderColor = '#ff6b6b';
-                    return { ok: false, msg: `Putnik ${idx + 1} je označen kao Odrasli (18+), ali ima ${age} godina. Ako nema 18+, mora biti Dijete.` };
+                    if (birthEl) birthEl.style.borderColor = 'var(--error-color)';
+                    return { ok: false, msg: `Putnik ${idx + 1} ima ${age} god. Ako je Odrasli, mora imati 18+ godina.` };
                 }
 
                 if (type === 'child' && age >= 18) {
-                    if (birthEl) birthEl.style.borderColor = '#ff6b6b';
-                    return { ok: false, msg: `Putnik ${idx + 1} je označen kao Dijete, ali ima ${age} godina. Ako ima 18+, mora biti Odrasli.` };
+                    if (birthEl) birthEl.style.borderColor = 'var(--error-color)';
+                    return { ok: false, msg: `Putnik ${idx + 1} ima ${age} god. Ako je Dijete, mora imati manje od 18 godina.` };
+                }
+
+                const phoneCode = block.querySelector('.phoneCode')?.value || '';
+                const phoneDigits = onlyDigits(phoneEl?.value || '');
+
+                if (!phoneCode) {
+                    return { ok: false, msg: `Odaberite pozivni broj za putnika ${idx + 1}.` };
+                }
+
+                const rule = getCountryRuleByDial(phoneCode);
+                const expected = rule?.digits ?? 9;
+
+                if (phoneDigits.length !== expected) {
+                    if (phoneEl) phoneEl.style.borderColor = 'var(--error-color)';
+                    return { ok: false, msg: `Broj telefona za putnika ${idx + 1} mora imati tačno ${expected} cifara.` };
+                }
+
+                const passport = (passportEl?.value || '').trim();
+                const PASSPORT_LEN = 9;
+
+                if (!passport || passport.length !== PASSPORT_LEN || !/^[A-Z0-9]+$/.test(passport)) {
+                    if (passportEl) passportEl.style.borderColor = 'var(--error-color)';
+                    return { ok: false, msg: `Broj pasoša za putnika ${idx + 1} mora imati tačno ${PASSPORT_LEN} alfanumeričkih karaktera.` };
+                }
+
+                if (nationalityEl && !nationalityEl.value) {
+                    nationalityEl.style.borderColor = 'var(--error-color)';
+                    return { ok: false, msg: `Odaberite državljanstvo za putnika ${idx + 1}.` };
                 }
 
                 return { ok: true, msg: '' };
@@ -455,65 +827,40 @@
 
                 const passengers = [];
                 const blocks = document.querySelectorAll('.passenger-block');
-                let valid = true;
-                let firstError = '';
 
                 let countAdultsForm = 0;
                 let countChildrenForm = 0;
 
-                blocks.forEach((block, idx) => {
-                    const birthEl = block.querySelector('.birthdate');
-                    if (birthEl) birthEl.style.borderColor = '';
+                for (let idx = 0; idx < blocks.length; idx++) {
+                    const block = blocks[idx];
+
+                    const res = validateBlock(block, idx);
+                    if (!res.ok) {
+                        setFormError(res.msg || "Provjerite podatke putnika.");
+                        return;
+                    }
 
                     const type = block.querySelector('.ptype')?.value || 'adult';
-
                     if (type === 'adult') countAdultsForm++;
                     if (type === 'child') countChildrenForm++;
 
                     const nationalityEl = block.querySelector('.nationality');
+                    const phoneCode = block.querySelector('.phoneCode')?.value || '';
+                    const phoneDigits = onlyDigits(block.querySelector('.phoneNumber')?.value || '');
+                    const phoneFormatted = phoneCode ? formatFullPhone(phoneCode, phoneDigits) : "";
+
                     const p = {
                         type,
                         firstName: block.querySelector('.fname').value.trim(),
                         lastName: block.querySelector('.lname').value.trim(),
                         birthDate: block.querySelector('.birthdate').value,
                         passport: block.querySelector('.passport').value.trim(),
-                        nationality: nationalityEl.value,
+                        nationality: nationalityEl?.value || "",
+                        phone: phoneFormatted,
                         requests: block.querySelector('.requests').value.trim()
                     };
 
-                    if (!p.firstName || !p.lastName || !p.birthDate || !p.nationality) {
-                        valid = false;
-                        if (!firstError) firstError = `Molimo popunite sva polja za putnika ${idx + 1}.`;
-                    }
-                    if (!p.firstName || !p.lastName || !p.birthDate) {
-                        valid = false;
-                        if (!firstError) firstError = `Molimo popunite ime, prezime i datum rođenja za putnika ${idx + 1}.`;
-                    }
-
-                    const age = calcAgeYears(p.birthDate);
-                    if (age === null) {
-                        valid = false;
-                        if (!firstError) firstError = `Datum rođenja za putnika ${idx + 1} nije ispravan.`;
-                    } else {
-                        if (p.type === 'adult' && age < 18) {
-                            valid = false;
-                            if (birthEl) birthEl.style.borderColor = '#ff6b6b';
-                            if (!firstError) firstError = `Putnik ${idx + 1} je označen kao Odrasli, ali ima ${age} godina (mora imati 18+).`;
-                        }
-
-                        if (p.type === 'child' && age >= 18) {
-                            valid = false;
-                            if (birthEl) birthEl.style.borderColor = '#ff6b6b';
-                            if (!firstError) firstError = `Putnik ${idx + 1} je označen kao Dijete, ali ima ${age} godina (dijete mora imati manje od 18).`;
-                        }
-                    }
-
                     passengers.push(p);
-                });
-
-                if (!valid) {
-                    setFormError(firstError || "Provjerite podatke putnika.");
-                    return;
                 }
 
                 const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '0', 10);
@@ -521,18 +868,11 @@
 
                 if (localStorage.getItem('reservationAdults') !== null || localStorage.getItem('reservationChildren') !== null) {
                     if (countAdultsForm !== expectedAdults || countChildrenForm !== expectedChildren) {
-                        setFormError(`Struktura putnika se ne poklapa sa rezervacijom! Rezervisali ste za: ${expectedAdults} odraslih i ${expectedChildren} djece. Molimo prilagodite tip putnika.`);
+                        setFormError(`Struktura putnika ne odgovara rezervaciji! Izabrano: ${countAdultsForm} odraslih, ${countChildrenForm} djece. Očekivano: ${expectedAdults} odraslih, ${expectedChildren} djece.`);
                         return;
                     }
                 }
 
-                const paketId = localStorage.getItem('reservationPaketId');
-                const destination = localStorage.getItem('reservationDestination') || '';
-                const country = localStorage.getItem('reservationCountry') || '';
-
-                localStorage.setItem('reservationPaketId', paketId || '');
-                localStorage.setItem('reservationDestination', destination);
-                localStorage.setItem('reservationCountry', country);
                 localStorage.setItem('savedPassengers', JSON.stringify(passengers));
                 window.location.href = '/Placanje';
             }

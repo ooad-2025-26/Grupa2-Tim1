@@ -24,7 +24,7 @@ public class Putnik
     [EmailAddress, MaxLength(200)]
     public string? Email { get; set; }
 
-    [MaxLength(40)]
+    [MaxLength(30)]
     public string? Telefon { get; set; }
 
     public DateTime? DatumRodjenja { get; set; }

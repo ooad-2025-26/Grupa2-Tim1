@@ -9,62 +9,229 @@
 <html lang="bs">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
     <style>
+            :root {
+                --bg-gradient: linear-gradient(180deg, #e6f3f3 0%, #dff4f5 100%);
+                --primary: #6abfc6;
+                --primary-dark: #50a2a8;
+                --primary-light: rgba(106, 191, 198, 0.1);
+                --text-main: #2d4042;
+                --text-muted: #738a8c;
+                --danger: #e06c75;
+                --danger-light: #fdf2f2;
+                --shadow: 0 10px 30px rgba(95, 181, 187, 0.08);
+                --border: 1px solid rgba(95, 181, 187, 0.16);
+            }
+
+            body {
+                font-family: 'Poppins', sans-serif;
+                background: var(--bg-gradient);
+                min-height: 100vh;
+                margin: 0;
+                padding: 0;
+                color: var(--text-main);
+            }
+
             .page-wrap {
-                padding: 30px;
+                padding: 40px 20px;
                 max-width: 1000px;
                 margin: 0 auto;
             }
 
-            .grid-list {
-                display: grid;
-                gap: 15px;
-            }
-
-            .item {
-                background: white;
-                padding: 15px;
-                border-radius: 12px;
-                border: 1px solid #eee;
+            .page-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                margin-bottom: 30px;
+                background: rgba(255, 255, 255, 0.8);
+                backdrop-filter: blur(10px);
+                padding: 20px 28px;
+                border-radius: 18px;
+                border: var(--border);
+                box-shadow: var(--shadow);
+            }
+
+                .page-header h2 {
+                    margin: 0;
+                    font-size: 24px;
+                    font-weight: 800;
+                    color: var(--text-main);
+                    letter-spacing: -0.5px;
+                }
+
+            .btn-back {
+                display: inline-flex;
+                align-items: center;
+                padding: 10px 20px;
+                background: #fff;
+                border: 1px solid rgba(95, 181, 187, 0.3);
+                color: var(--text-muted);
+                border-radius: 999px;
+                text-decoration: none;
+                font-size: 13px;
+                font-weight: 600;
+                transition: all 0.2s ease;
+            }
+
+                .btn-back:hover {
+                    color: var(--primary-dark);
+                    border-color: var(--primary);
+                    background: var(--primary-light);
+                    transform: translateX(-2px);
+                }
+
+            .grid-list {
+                display: grid;
+                gap: 16px;
+            }
+
+            .item {
+                background: rgba(255, 255, 255, 0.9);
+                padding: 22px 28px;
+                border-radius: 18px;
+                border: 1px solid rgba(0, 0, 0, 0.04);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-shadow: var(--shadow);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+                .item:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 14px 35px rgba(95, 181, 187, 0.15);
+                }
+
+                .item.preuzeto {
+                    background: rgba(255, 255, 255, 0.95);
+                    border: 1.5px solid var(--primary);
+                }
+
+            .info {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .info-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex-wrap: wrap;
             }
 
             .info h3 {
                 margin: 0;
-                font-size: 16px;
+                font-size: 18px;
+                font-weight: 700;
+                color: var(--text-main);
+            }
+
+            .badge-mine {
+                background: linear-gradient(135deg, #6abfc6, #86bfe0);
+                color: #fff;
+                font-size: 11px;
+                font-weight: 700;
+                padding: 3px 12px;
+                border-radius: 999px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
             }
 
             .info p {
-                margin: 5px 0 0;
-                font-size: 12px;
-                color: #777;
+                margin: 0;
+                font-size: 13px;
+                color: var(--text-muted);
+                font-weight: 500;
             }
 
-            .preuzeto {
-                background: #f0f9fa;
-                border-color: #6abfc6;
+            .action-btn {
+                padding: 10px 24px;
+                font-family: 'Poppins', sans-serif;
+                font-size: 13px;
+                font-weight: 700;
+                border: none;
+                border-radius: 999px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                outline: none;
+                box-shadow: 0 4px 12px rgba(106, 191, 198, 0.2);
+            }
+
+            .btn-take {
+                background: linear-gradient(135deg, #6abfc6, #86bfe0);
+                color: #fff;
+            }
+
+                .btn-take:hover {
+                    background: linear-gradient(135deg, #50a2a8, #6fa9cc);
+                    transform: scale(1.03);
+                }
+
+            .btn-release {
+                background: var(--danger-light);
+                color: var(--danger);
+                border: 1px solid rgba(224, 108, 117, 0.2);
+                box-shadow: none;
+            }
+
+                .btn-release:hover {
+                    background: var(--danger);
+                    color: #fff;
+                    border-color: var(--danger);
+                    transform: scale(1.03);
+                }
+
+            @@media (max-width: 600px) {
+                .item {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 16px;
+                    padding: 20px;
+                }
+
+                .action-btn {
+                    width: 100%;
+                }
+
+                .page-header {
+                    padding: 16px;
+                }
             }
     </style>
 </head>
 <body>
     <div class="page-wrap">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+
+        <header class="page-header">
             <h2>Preuzimanje paketa</h2>
-            <a href="/Agent" class="btn">Nazad</a>
-        </div>
+            <a href="/Agent" class="btn-back">← Nazad na panel</a>
+        </header>
 
         <div class="grid-list">
             @foreach (var p in Model.SviPaketi)
             {
                 bool isMine = Model.MojiPaketiIds.Contains(p.Id);
+
                 <div class="item @(isMine ? "preuzeto" : "")">
                     <div class="info">
-                        <h3>@p.Naziv</h3>
-                        <p>@p.Destinacija?.Naziv | @p.TrajanjeNoci noći | @p.CijenaOd BAM</p>
+                        <div class="info-header">
+                            <h3>@p.Naziv</h3>
+                            @if (isMine)
+                            {
+                                <span class="badge-mine">Moj paket</span>
+                            }
+                        </div>
+                        <p>📍 @p.Destinacija?.Naziv &nbsp;|&nbsp; 🌙 @p.TrajanjeNoci noći &nbsp;|&nbsp; 💳 @p.CijenaOd BAM</p>
                     </div>
 
                     <form action="/Agent/TogglePaket" method="post">
@@ -74,16 +241,17 @@
 
                         @if (isMine)
                         {
-                            <button type="submit" class="select-btn btn-muted">Pusti paket</button>
+                            <button type="submit" class="action-btn btn-release">Pusti paket</button>
                         }
                         else
                         {
-                            <button type="submit" class="select-btn">Preuzmi paket</button>
+                            <button type="submit" class="action-btn btn-take">Preuzmi paket</button>
                         }
                     </form>
                 </div>
             }
         </div>
+
     </div>
 </body>
 </html>

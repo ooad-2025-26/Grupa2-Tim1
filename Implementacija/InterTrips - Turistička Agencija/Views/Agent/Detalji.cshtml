@@ -1,5 +1,328 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model InterTrips___Turistička_Agencija.Models.Rezervacija
 @{
+    ViewData["Title"] = "Agent - Detalji Rezervacije";
+    Layout = null;
+
+    string statusKlasa = Model.Status.ToString().ToLower();
+    string imeKlijenta = Model.Korisnik?.Ime ?? "Nepoznato ime";
+    string emailKlijenta = Model.Korisnik?.Email ?? "Nije uneseno";
+
+    string agentId = Context.Request.Query["agentr"].ToString();
+
+    if (string.IsNullOrEmpty(agentId))
+    {
+        agentId = "2"; 
+    }
 }
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
+    <style>
+            :root {
+                --bg-gradient: linear-gradient(180deg, #e6f3f3 0%, #dff4f5 100%);
+                --primary: #6abfc6;
+                --primary-dark: #50a2a8;
+                --primary-light: rgba(106, 191, 198, 0.1);
+                --text-main: #2d4042;
+                --text-muted: #738a8c;
+                --shadow: 0 10px 30px rgba(95, 181, 187, 0.08);
+                --border: 1px solid rgba(95, 181, 187, 0.16);
+                --status-kreirana-bg: rgba(25, 118, 210, 0.1);
+                --status-kreirana-txt: #1976d2;
+                --status-potvrdjena-bg: rgba(46, 125, 50, 0.1);
+                --status-potvrdjena-txt: #2e7d32;
+                --status-otkazana-bg: rgba(198, 40, 40, 0.1);
+                --status-otkazana-txt: #c62828;
+            }
+
+            body {
+                background: var(--bg-gradient);
+                font-family: 'Poppins', sans-serif;
+                min-height: 100vh;
+                margin: 0;
+                padding: 0;
+                color: var(--text-main);
+            }
+
+            .details-page {
+                padding: 40px 20px;
+            }
+
+            .details-shell {
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            .page-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 25px;
+                background: rgba(255, 255, 255, 0.8);
+                backdrop-filter: blur(10px);
+                padding: 20px 28px;
+                border-radius: 18px;
+                border: var(--border);
+                box-shadow: var(--shadow);
+            }
+
+                .page-header h1 {
+                    font-size: 24px;
+                    font-weight: 800;
+                    margin: 4px 0 0 0;
+                    letter-spacing: -0.5px;
+                }
+
+            .btn-back {
+                text-decoration: none;
+                color: var(--text-muted);
+                font-size: 13px;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                transition: all 0.2s ease;
+            }
+
+                .btn-back:hover {
+                    color: var(--primary-dark);
+                    transform: translateX(-2px);
+                }
+
+            .main-card {
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 20px;
+                border: 1px solid rgba(0, 0, 0, 0.04);
+                padding: 35px;
+                box-shadow: var(--shadow);
+                display: flex;
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .section-block {
+                border-bottom: 1px solid rgba(95, 181, 187, 0.12);
+                padding-bottom: 25px;
+            }
+
+                .section-block:last-child {
+                    border-bottom: none;
+                    padding-bottom: 0;
+                }
+
+            .section-title {
+                font-size: 16px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                color: var(--primary-dark);
+                margin: 0 0 16px 0;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .info-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 20px;
+            }
+
+            .grid-item {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+                .grid-item label {
+                    font-size: 12px;
+                    color: var(--text-muted);
+                    font-weight: 500;
+                }
+
+                .grid-item span {
+                    font-size: 15px;
+                    font-weight: 600;
+                    color: var(--text-main);
+                }
+
+            .status-badge {
+                padding: 6px 16px;
+                border-radius: 999px;
+                font-size: 12px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                display: inline-block;
+            }
+
+            .status-kreirana {
+                background: var(--status-kreirana-bg);
+                color: var(--status-kreirana-txt);
+            }
+
+            .status-potvrdjena {
+                background: var(--status-potvrdjena-bg);
+                color: var(--status-potvrdjena-txt);
+            }
+
+            .status-otkazana {
+                background: var(--status-otkazana-bg);
+                color: var(--status-otkazana-txt);
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
+            }
+
+            .passengers-table {
+                width: 100%;
+                border-collapse: collapse;
+                text-align: left;
+            }
+
+                .passengers-table th {
+                    background: rgba(95, 181, 187, 0.06);
+                    color: var(--text-main);
+                    font-size: 13px;
+                    font-weight: 600;
+                    padding: 12px 16px;
+                    border-bottom: 2px solid rgba(95, 181, 187, 0.15);
+                }
+
+                .passengers-table td {
+                    padding: 14px 16px;
+                    font-size: 14px;
+                    color: var(--text-main);
+                    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+                }
+
+                .passengers-table tr:last-child td {
+                    border-bottom: none;
+                }
+
+            @@media (max-width: 600px) {
+                .page-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 12px;
+                }
+
+                .main-card {
+                    padding: 20px;
+                }
+            }
+    </style>
+</head>
+<body>
+
+    <div class="details-page">
+        <div class="details-shell">
+
+            <header class="page-header">
+                <div>
+                    <a href="/Agent/Rezervacije?agentr=@agentId" class="btn-back">← Nazad na listu rezervacija</a>
+                    <h1>Detalji rezervacije #@Model.Id</h1>
+                </div>
+                <div>
+                    <span class="status-badge status-@statusKlasa">
+                        Status: @Model.Status
+                    </span>
+                </div>
+            </header>
+
+            <main class="main-card">
+
+                <div class="section-block">
+                    <h2 class="section-title">🌍 Podaci o Aranžmanu</h2>
+                    <div class="info-grid">
+                        <div class="grid-item">
+                            <label>Naziv paketa</label>
+                            <span>@(Model.Paket?.Naziv ?? "Nezaveden aranžman")</span>
+                        </div>
+                        <div class="grid-item">
+                            <label>Destinacija</label>
+                            <span>@(Model.Paket?.Destinacija?.Naziv ?? "—")</span>
+                        </div>
+                        <div class="grid-item">
+                            <label>Datum polaska</label>
+                            <span>@Model.DatumPolaska.ToString("dd. MMMM yyyy.")</span>
+                        </div>
+                        <div class="grid-item">
+                            <label>Trajanje</label>
+                            <span>@(Model.Paket?.TrajanjeNoci) noćenja</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-block">
+                    <h2 class="section-title">👤 Nosilac rezervacije (Klijent)</h2>
+                    <div class="info-grid">
+                        <div class="grid-item">
+                            <label>Ime i prezime</label>
+                            <span>@imeKlijenta</span>
+                        </div>
+                        <div class="grid-item">
+                            <label>Email adresa</label>
+                            <span>@emailKlijenta</span>
+                        </div>
+                        <div class="grid-item">
+                            <label>Ukupno putnika</label>
+                            <span>👥 @(Model.Putnici?.Count ?? 0) osiguranih osoba</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-block">
+                    <h2 class="section-title">Spisak putnika</h2>
+                    <div class="table-wrapper">
+                        @if (Model.Putnici == null || !Model.Putnici.Any())
+                        {
+                            <p style="color: var(--text-muted); font-style: italic; margin: 0;">Nema registrovanih putnika za ovu rezervaciju.</p>
+                        }
+                        else
+                        {
+                            <table class="passengers-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Ime i prezime</th>
+                                        <th>Broj pasoša</th>
+                                        <th>Državljanstvo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int brojac = 1;
+                                    }
+                                    @foreach (var putnik in Model.Putnici)
+                                    {
+                                        <tr>
+                                            <td>@(brojac++)</td>
+                                            <td><strong>@putnik.Ime @putnik.Prezime</strong></td>
+                                            <td>@(string.IsNullOrEmpty(putnik.BrojPasosa) ? "—" : putnik.BrojPasosa)</td>
+                                            <td>@(string.IsNullOrEmpty(putnik.Drzavljanstvo) ? "—" : putnik.Drzavljanstvo)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+</body>
+</html>

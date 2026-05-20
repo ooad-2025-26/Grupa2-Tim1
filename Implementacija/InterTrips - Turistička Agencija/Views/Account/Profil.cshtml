@@ -2,97 +2,99 @@
     ViewData["Title"] = "InterTrips - Profil";
     Layout = "_LayoutRaw";
 }
-
+@Html.AntiForgeryToken()
 <style>
     :root {
         --bg: #eaf7f7;
         --bg-soft: #f6fcfc;
-        --card: rgba(255,255,255,0.82);
+        --card: rgba(255,255,255,0.85);
         --line: rgba(95,181,187,0.16);
         --primary: #2aa9b0;
         --primary-dark: #1e7f88;
         --accent: #86d9ff;
         --text: #24414a;
         --muted: #5f7c86;
-        --shadow: 0 16px 36px rgba(63,116,128,0.10);
-        --field: rgba(255,255,255,0.92);
-        --success: #36d399;
-        --danger: #ff8fa3;
-    }
-
-    .profile-hero {
-        min-height: 220px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 36px 18px;
-        background: linear-gradient(rgba(125,207,207,0.16), rgba(167,216,255,0.18)), url('/assets/contact-hero.jpg') center/cover no-repeat;
-        border-bottom: 1px solid rgba(95,181,187,0.10);
+        --shadow: 0 20px 40px rgba(63,116,128,0.08);
+        --field: rgba(255,255,255,0.95);
+        --success: #10b981;
+        --danger: #ef4444;
     }
 
     html, body, button, input, textarea, select {
         font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
 
-    .profile-hero h1,
-    .head-left h2,
-    .section-title {
-        font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        font-weight: 800;
+    body {
+        background-color: #f4fafb;
+        color: var(--text);
+        margin: 0;
     }
 
-    .profile-hero .inner {
-            max-width: 820px;
-            background: rgba(255,255,255,0.68);
-            border: 1px solid rgba(95,181,187,0.14);
-            border-radius: 22px;
+    .profile-hero {
+        min-height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 40px 20px;
+        background: linear-gradient(rgba(125,207,207,0.2), rgba(167,216,255,0.25)), url('/assets/contact-hero.jpg') center/cover no-repeat;
+        border-bottom: 1px solid rgba(95,181,187,0.12);
+    }
+
+        .profile-hero .inner {
+            max-width: 850px;
+            background: rgba(255,255,255,0.75);
+            border: 1px solid rgba(95,181,187,0.2);
+            border-radius: 24px;
             box-shadow: var(--shadow);
-            backdrop-filter: blur(8px);
-            padding: 26px 22px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 32px 24px;
         }
 
     .tag {
         display: inline-block;
-        padding: 5px 14px;
+        padding: 4px 14px;
         border: 1px solid rgba(95,181,187,0.35);
         border-radius: 999px;
         color: var(--primary-dark);
         font-size: 11px;
-        font-weight: 800;
-        letter-spacing: .6px;
-        margin-bottom: 12px;
-        background: rgba(125,207,207,0.10);
+        font-weight: 700;
+        letter-spacing: .8px;
+        margin-bottom: 14px;
+        background: rgba(125,207,207,0.12);
+        text-transform: uppercase;
     }
 
     .profile-hero h1 {
-        font-size: clamp(2rem, 4.5vw, 3.2rem);
-        line-height: 1.05;
+        font-size: clamp(2.2rem, 5vw, 3.5rem);
+        line-height: 1.1;
         font-weight: 900;
         color: var(--text);
-        margin-bottom: 10px;
+        margin: 0 0 12px;
+        letter-spacing: -1px;
     }
 
     .profile-hero p {
         color: var(--muted);
-        font-size: 13px;
-        line-height: 1.7;
+        font-size: 14px;
+        line-height: 1.6;
         margin: 0;
     }
 
     .section {
-        padding: 28px 24px 56px;
+        padding: 40px 24px 60px;
     }
 
     .container {
-        max-width: 1020px;
+        max-width: 1050px;
         margin: 0 auto;
     }
 
     .card {
         background: var(--card);
-        border: 1px solid rgba(95,181,187,0.14);
-        border-radius: 18px;
+        border: 1px solid rgba(95,181,187,0.16);
+        border-radius: 24px;
         box-shadow: var(--shadow);
         overflow: hidden;
     }
@@ -101,146 +103,230 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 12px;
+        gap: 16px;
         flex-wrap: wrap;
-        padding: 18px 18px 14px;
+        padding: 24px 32px;
         border-bottom: 1px solid rgba(95,181,187,0.12);
-        background: rgba(255,255,255,0.55);
+        background: rgba(255,255,255,0.6);
         backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .head-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .user-avatar-circle {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 800;
+        box-shadow: 0 4px 10px rgba(42, 169, 176, 0.3);
     }
 
     .head-left h2 {
         margin: 0;
-        font-size: 18px;
+        font-size: 20px;
         color: var(--text);
-        font-weight: 900;
+        font-weight: 800;
     }
 
     .head-left .sub {
-        margin-top: 4px;
+        margin-top: 2px;
         color: var(--muted);
-        font-size: 12px;
-        font-weight: 600;
+        font-size: 13px;
+        font-weight: 500;
     }
 
     .actions {
         display: flex;
-        gap: 10px;
+        gap: 12px;
         align-items: center;
         flex-wrap: wrap;
     }
 
     .pill {
-        padding: 6px 14px;
-        border-radius: 999px;
+        padding: 8px 18px;
+        border-radius: 30px;
         border: 1px solid var(--primary);
         color: var(--primary-dark);
-        background: rgba(125,207,207,0.08);
-        font-size: 12px;
-        font-weight: 800;
+        background: rgba(125,207,207,0.06);
+        font-size: 13px;
+        font-weight: 600;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        height: 38px;
+        height: 40px;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
     }
+
+        .pill:hover {
+            background: rgba(125,207,207,0.15);
+            transform: translateY(-1px);
+        }
 
     .fill {
-        padding: 6px 14px;
-        border-radius: 999px;
+        padding: 8px 22px;
+        border-radius: 30px;
         border: none;
-        background: linear-gradient(135deg, #7dcfcf, #a7d8ff);
-        color: #18424a;
-        font-size: 12px;
-        font-weight: 900;
+        background: linear-gradient(135deg, #6abfc6, #86bfe0);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
         cursor: pointer;
-        height: 38px;
+        height: 40px;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(106, 191, 198, 0.2);
     }
 
+        .fill:hover {
+            filter: brightness(1.05);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(106, 191, 198, 0.3);
+        }
+
     .card-body {
-        padding: 18px;
+        padding: 32px;
     }
 
     .grid-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 14px;
+        gap: 20px;
     }
 
     .grid-3 {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        gap: 14px;
+        gap: 20px;
     }
 
     .label {
         display: block;
         font-size: 11px;
-        font-weight: 800;
+        font-weight: 700;
         color: var(--primary-dark);
-        margin: 10px 0 8px;
-        letter-spacing: .6px;
+        margin-bottom: 8px;
+        letter-spacing: .8px;
+        text-transform: uppercase;
     }
 
     .input {
         width: 100%;
-        height: 42px;
-        border-radius: 12px;
-        border: 1px solid rgba(95,181,187,0.18);
-        background: rgba(255,255,255,0.92);
+        height: 44px;
+        border-radius: 10px;
+        border: 1px solid rgba(95,181,187,0.25);
+        background: var(--field);
         color: var(--text);
-        padding: 0 14px;
+        padding: 0 16px;
         outline: none;
-        font-size: 13px;
+        font-size: 14px;
+        box-sizing: border-box;
+        font-family: inherit;
+        transition: all 0.2s ease;
     }
 
+        .input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(42, 169, 176, 0.15);
+            background: #fff;
+        }
+
         .input[disabled] {
-            background: rgba(255,255,255,0.60);
-            color: rgba(36,65,74,0.70);
+            background: rgba(239, 246, 246, 0.7);
+            color: var(--muted);
+            border-color: rgba(95,181,187,0.12);
+            cursor: not-allowed;
         }
 
     .divider {
         border: none;
-        border-top: 1px solid rgba(95,181,187,0.14);
-        margin: 18px 0;
+        border-top: 1px solid rgba(95,181,187,0.15);
+        margin: 32px 0;
     }
 
     .section-title {
-        font-size: 16px;
-        font-weight: 900;
+        font-size: 18px;
+        font-weight: 700;
         color: var(--text);
         margin: 0 0 6px;
     }
 
     .hint {
-        font-size: 12px;
+        font-size: 13px;
         color: var(--muted);
-        line-height: 1.7;
-        margin: 0 0 14px;
+        line-height: 1.6;
+        margin: 0 0 20px;
     }
 
     .msg {
         display: none;
-        margin-top: 12px;
-        font-size: 13px;
-        font-weight: 800;
-        color: var(--primary-dark);
+        margin-top: 16px;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 10px 16px;
+        border-radius: 8px;
+        text-align: center;
+        animation: fadeIn 0.3s ease;
     }
 
-    @@media (max-width: 900px) {
+        .msg.success {
+            display: block;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .msg.danger {
+            display: block;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@media (max-width: 768px) {
         .grid-2, .grid-3 {
             grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .card-head {
+            padding: 20px;
+        }
+
+        .card-body {
+            padding: 20px;
         }
     }
 
     body > a[href*="Account/Login"],
     body > a[href*="Profil"],
+    body > a[href*="Logout"], 
     body > button,
-
     #profileForm ~ a,
-    main ~ a {
-        display: none !important;
-    }
-
+    main ~ a,
     body > [href*="test@intertrips.ba"] {
         display: none !important;
     }
@@ -248,9 +334,9 @@
 
 <section class="profile-hero">
     <div class="inner">
-        <div class="tag">KORISNIČKI PROFIL</div>
+        <div class="tag">Korisnički panel</div>
         <h1>MOJ <span style="color:var(--primary-dark);">PROFIL</span></h1>
-        <p>Uredite svoje podatke i upravljajte pristupom računu.</p>
+        <p>Ažurirajte lične podatke, kontakt informacije i upravljajte sigurnosnim postavkama vašeg računa.</p>
     </div>
 </section>
 
@@ -259,38 +345,61 @@
         <div class="card">
             <div class="card-head">
                 <div class="head-left">
-                    <h2>Podaci o računu</h2>
-                    <div class="sub">Demo verzija: podaci se čuvaju lokalno u browseru</div>
+                    <div class="user-avatar-circle" id="userAvatar">U</div>
+                    <div>
+                        <h2>Podaci o računu</h2>
+                        <div class="sub">Pregled i modifikacija vašeg ličnog kartona</div>
+                    </div>
                 </div>
 
                 <div class="actions">
                     <a class="pill" href="/">Početna</a>
                     <a class="pill" href="/Destinacije">Destinacije</a>
-                    <button class="fill" id="logoutBtnProfile" type="button">Odjava</button>
+                    <button class="fill" id="logoutBtnProfile" type="button" style="background: #e53e3e; box-shadow: 0 4px 6px rgba(229, 62, 62, 0.2);">Odjava</button>
                 </div>
             </div>
 
             <div class="card-body">
                 <form id="profileForm">
+
+                    <h3 class="section-title" style="margin-bottom: 16px;">Osnovne informacije</h3>
                     <div class="grid-2">
                         <div>
-                            <label class="label">IME I PREZIME</label>
-                            <input id="displayName" class="input" type="text" placeholder="Vaše ime i prezime" />
+                            <label class="label">Ime i prezime</label>
+                            <input id="displayName" class="input" type="text" placeholder="Vaše ime i prezime" required />
                         </div>
 
                         <div>
-                            <label class="label">USERNAME / EMAIL</label>
-                            <input id="usernameOrEmail" class="input" type="text" placeholder="npr. alex@example.com" />
+                            <label class="label">Username / Email adresa</label>
+                            <input id="usernameOrEmail" class="input" type="email" placeholder="npr. ime@example.com" required />
+                        </div>
+                    </div>
+
+                    <div class="grid-3" style="margin-top: 16px;">
+                        <div>
+                            <label class="label">Broj telefona</label>
+                            <input id="phoneNumber" class="input" type="tel" placeholder="Npr. +387 61 123 456" />
                         </div>
 
                         <div>
-                            <label class="label">ULOGA</label>
+                            <label class="label">Grad i Država</label>
+                            <input id="location" class="input" type="text" placeholder="Npr. Sarajevo, BiH" />
+                        </div>
+
+                        <div>
+                            <label class="label">Datum rođenja</label>
+                            <input id="birthDate" class="input" type="date" />
+                        </div>
+                    </div>
+
+                    <div class="grid-2" style="margin-top: 16px;">
+                        <div>
+                            <label class="label">Sistemska uloga</label>
                             <input id="role" class="input" type="text" disabled />
                         </div>
-
                         <div>
-                            <label class="label">INICIJAL</label>
-                            <input id="initial" class="input" type="text" disabled />
+                            <label class="label">Status naloga</label>
+                            <input id="accountStatus" class="input" type="text" value="Aktivan nalog" disabled style="color: var(--success); font-weight: 600;" />
                         </div>
                     </div>
 
@@ -298,29 +407,29 @@
 
                     <h3 class="section-title">Promjena lozinke</h3>
                     <p class="hint">
-                        Ako imate spremljenu lozinku, unesite trenutnu. Ako nemate, prvo je postavite.
+                        Za izmjenu pristupne lozinke ispunite sva tri polja ispod. Ukoliko ne želite mijenjati lozinku, ostavite ih praznim.
                     </p>
 
                     <div class="grid-3">
                         <div>
-                            <label class="label">TRENUTNA LOZINKA</label>
+                            <label class="label">Trenutna lozinka</label>
                             <input id="currentPassword" class="input" type="password" placeholder="••••••••" />
                         </div>
 
                         <div>
-                            <label class="label">NOVA LOZINKA</label>
+                            <label class="label">Nova lozinka</label>
                             <input id="newPassword" class="input" type="password" placeholder="Min. 6 znakova" />
                         </div>
 
                         <div>
-                            <label class="label">POTVRDI NOVU</label>
+                            <label class="label">Potvrdi novu lozinku</label>
                             <input id="confirmPassword" class="input" type="password" placeholder="Ponovite lozinku" />
                         </div>
                     </div>
 
-                    <div style="display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:18px;">
-                        <button type="button" id="resetBtn" class="pill" style="cursor:pointer;">Poništi</button>
-                        <button type="submit" class="fill">Sačuvaj promjene</button>
+                    <div style="display:flex; justify-content:flex-end; gap:12px; flex-wrap:wrap; margin-top:28px;">
+                        <button type="button" id="resetBtn" class="pill" style="cursor:pointer; border-color: rgba(95,181,187,0.4);">Poništi unos</button>
+                        <button type="submit" class="fill">Sačuvaj sve izmjene</button>
                     </div>
 
                     <div id="saveMsg" class="msg"></div>
@@ -345,17 +454,21 @@
 
                 const user = await response.json();
 
-                document.getElementById('displayName').value =
-                    user.fullName || user.userName || '';
+                document.getElementById('displayName').value = user.fullName || user.userName || '';
+                document.getElementById('usernameOrEmail').value = user.email || user.userName || '';
+                document.getElementById('role').value = user.role || 'Korisnik';
 
-                document.getElementById('usernameOrEmail').value =
-                    user.email || user.userName || '';
+                document.getElementById('phoneNumber').value = user.phoneNumber || '';
+                document.getElementById('location').value = user.location || '';
 
-                document.getElementById('role').value =
-                    user.role || 'Korisnik';
+                if (user.birthDate) {
+                    document.getElementById('birthDate').value = user.birthDate.split('T')[0];
+                } else {
+                    document.getElementById('birthDate').value = '';
+                }
 
-                document.getElementById('initial').value =
-                    (user.userName || 'U').charAt(0).toUpperCase();
+                const initialLetter = (user.fullName || user.userName || 'U').charAt(0).toUpperCase();
+                document.getElementById('userAvatar').textContent = initialLetter;
 
             } catch (err) {
                 console.error(err);
@@ -363,14 +476,15 @@
             }
         }
 
-        function showMsg(text) {
+        function showMsg(text, type = 'success') {
             const el = document.getElementById('saveMsg');
-            el.style.display = 'block';
+            el.className = 'msg ' + type;
             el.textContent = text;
 
             setTimeout(() => {
+                el.className = 'msg';
                 el.style.display = 'none';
-            }, 3000);
+            }, 4000);
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -379,61 +493,72 @@
 
             document.getElementById('logoutBtnProfile')
                 .addEventListener('click', async function () {
-
                     await fetch('/Account/Logout', {
                         method: 'POST',
                         credentials: 'same-origin'
                     });
-
                     window.location.href = '/';
                 });
 
             document.getElementById('resetBtn')
                 .addEventListener('click', function () {
-
                     document.getElementById('currentPassword').value = '';
                     document.getElementById('newPassword').value = '';
                     document.getElementById('confirmPassword').value = '';
 
                     loadProfile();
-
-                    showMsg('Poništene izmjene.');
+                    showMsg('Forma je vraćena na originalne podatke.', 'success');
                 });
 
             document.getElementById('profileForm')
                 .addEventListener('submit', async function (e) {
-
                     e.preventDefault();
+
+                    const nPassword = document.getElementById('newPassword').value;
+                    const cPassword = document.getElementById('confirmPassword').value;
+
+                    if (nPassword !== cPassword) {
+                        showMsg('Nova lozinka i potvrda se ne podudaraju!', 'danger');
+                        return;
+                    }
 
                     const data = {
                         fullName: document.getElementById('displayName').value,
                         email: document.getElementById('usernameOrEmail').value,
+                        phoneNumber: document.getElementById('phoneNumber').value,
+                        location: document.getElementById('location').value,
+                        birthDate: document.getElementById('birthDate').value,
                         currentPassword: document.getElementById('currentPassword').value,
-                        newPassword: document.getElementById('newPassword').value,
-                        confirmPassword: document.getElementById('confirmPassword').value
+                        newPassword: nPassword,
+                        confirmPassword: cPassword
                     };
 
                     try {
-
                         const response = await fetch('/Account/UpdateProfile', {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
                             },
                             credentials: 'same-origin',
                             body: JSON.stringify(data)
                         });
 
                         if (response.ok) {
-                            showMsg('Profil uspješno ažuriran.');
+                            showMsg('Profil je uspješno ažuriran i sačuvan.', 'success');
+                            document.getElementById('currentPassword').value = '';
+                            document.getElementById('newPassword').value = '';
+                            document.getElementById('confirmPassword').value = '';
+                            const currentName = document.getElementById('displayName').value;
+                            document.getElementById('userAvatar').textContent = currentName.charAt(0).toUpperCase();
                         }
                         else {
-                            alert('Greška pri spremanju profila.');
+                            showMsg('Greška pri čuvanju podataka na serveru.', 'danger');
                         }
 
                     } catch (err) {
                         console.error(err);
-                        alert('Greška u komunikaciji sa serverom.');
+                        showMsg('Greška u komunikaciji sa serverom.', 'danger');
                     }
                 });
         });

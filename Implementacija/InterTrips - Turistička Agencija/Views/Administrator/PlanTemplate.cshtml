@@ -5,101 +5,180 @@
     var paketNaziv = Model.Paket?.Naziv ?? $"Paket #{Model.PaketId}";
     var dest = Model.Paket?.Destinacija;
 }
-
 <!DOCTYPE html>
 <html lang="bs">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"]</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+
     <style>
-            .wrap {
-                max-width: 1100px;
-                margin: 28px auto;
-                padding: 0 18px;
+            :root {
+                --primary: #6abfc6;
+                --primary-dark: #2b777e;
+                --primary-light: rgba(106, 191, 198, 0.12);
+                --text-main: #2d3748;
+                --text-muted: #718096;
+                --bg-card: rgba(255, 255, 255, 0.90);
+                --border-color: rgba(95, 181, 187, 0.15);
+                --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
             }
 
-            .bar {
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: #f7fafc;
+                color: var(--text-main);
+                margin: 0;
+                padding: 0;
+            }
+
+            .dash-topbar {
+                height: 64px;
+                padding: 0 32px;
                 display: flex;
+                align-items: center;
                 justify-content: space-between;
-                align-items: flex-start;
-                gap: 12px;
-                flex-wrap: wrap;
-                margin-bottom: 14px;
+                background: rgba(255, 255, 255, 0.85);
+                border-bottom: 1px solid var(--border-color);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.02);
             }
 
-            .card {
-                background: rgba(255,255,255,0.86);
-                border: 1px solid rgba(95,181,187,0.16);
-                border-radius: 16px;
-                box-shadow: var(--shadow);
-                padding: 16px;
-            }
+                .dash-topbar .logo {
+                    width: 90px;
+                    height: 44px;
+                    object-fit: contain;
+                }
 
-            .muted {
-                color: var(--muted);
-                font-size: 12px;
-            }
-
-            .btn {
-                height: 40px;
-                padding: 0 14px;
-                border-radius: 12px;
+            .logout-btn {
+                border: 1px solid rgba(95, 181, 187, 0.3);
+                background: transparent;
+                color: var(--text-main);
+                border-radius: 30px;
+                padding: 8px 18px;
                 cursor: pointer;
-                font-weight: 800;
-                border: 1px solid rgba(95,181,187,0.18);
-                background: #fff;
-            }
-
-            .btn-primary {
-                border: none;
-                color: #fff;
-                background: linear-gradient(135deg, #6abfc6, #86bfe0);
-            }
-
-            .btn-danger {
-                border: 1px solid rgba(255,0,0,0.18);
-                background: rgba(255,0,0,0.06);
-                color: #b42318;
-            }
-
-            a.btn {
+                font-weight: 500;
+                font-size: 13px;
+                transition: all 0.2s ease;
+                text-decoration: none;
                 display: inline-flex;
                 align-items: center;
-                text-decoration: none;
             }
 
-            .grid {
-                display: grid;
-                grid-template-columns: 0.7fr 1.4fr 2fr 0.9fr auto;
-                gap: 12px;
-                align-items: center;
-                padding: 12px;
-                border-radius: 12px;
-                border: 1px solid rgba(95,181,187,0.14);
-                background: rgba(255,255,255,0.72);
-                margin-bottom: 10px;
+                .logout-btn:hover {
+                    background: var(--primary-light);
+                    border-color: var(--primary);
+                    color: var(--primary-dark);
+                }
+
+            .wrap {
+                max-width: 1200px;
+                margin: 40px auto;
+                padding: 0 24px;
             }
+
+            .dash-hero {
+                margin-bottom: 32px;
+                padding: 32px;
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: 20px;
+                box-shadow: var(--shadow-md);
+                position: relative;
+                overflow: hidden;
+            }
+
+                .dash-hero::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 4px;
+                    height: 100%;
+                    background: linear-gradient(to bottom, var(--primary), #86bfe0);
+                }
+
+                .dash-hero h1 {
+                    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+                    font-weight: 700;
+                    margin: 4px 0 8px 0;
+                    color: var(--text-main);
+                    letter-spacing: -0.5px;
+                }
+
+            .card {
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: 20px;
+                box-shadow: var(--shadow-md);
+                padding: 32px;
+                margin-bottom: 30px;
+            }
+
+            .section-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-top: 0;
+                margin-bottom: 20px;
+                color: var(--text-main);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .grid-row {
+                display: grid;
+                grid-template-columns: 80px 100px 1fr 100px auto;
+                gap: 20px;
+                align-items: center;
+                padding: 16px 20px;
+                border-radius: 14px;
+                border: 1px solid rgba(95, 181, 187, 0.12);
+                background: rgba(255, 255, 255, 0.65);
+                margin-bottom: 12px;
+                transition: all 0.2s ease;
+            }
+
+                .grid-row:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.03);
+                    border-color: rgba(95, 181, 187, 0.3);
+                    background: #fff;
+                }
 
             .field-label {
                 display: block;
-                font-size: 11px;
-                font-weight: 800;
+                font-size: 12px;
+                font-weight: 700;
                 color: var(--primary-dark);
-                margin: 10px 0 8px;
-                letter-spacing: .6px;
+                margin-bottom: 8px;
+                text-transform: uppercase;
+                letter-spacing: .5px;
             }
 
             .input, .textarea {
                 width: 100%;
                 background: #fff;
-                border: 1px solid rgba(95,181,187,0.18);
-                border-radius: 10px;
-                height: 40px;
+                border: 1px solid rgba(95, 181, 187, 0.3);
+                border-radius: 8px;
+                height: 42px;
                 padding: 0 14px;
-                font-size: 13px;
+                font-size: 14px;
+                font-family: inherit;
+                color: var(--text-main);
                 outline: none;
+                box-sizing: border-box;
+                transition: all 0.2s ease;
             }
 
             .textarea {
@@ -108,11 +187,64 @@
                 resize: none;
             }
 
+                .input:focus, .textarea:focus {
+                    border-color: var(--primary);
+                    box-shadow: 0 0 0 3px rgba(106, 191, 198, 0.15);
+                }
+
             .row2 {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 12px;
+                gap: 16px;
+                margin-bottom: 16px;
             }
+
+            .btn {
+                height: 40px;
+                padding: 0 18px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 13px;
+                border: 1px solid rgba(95, 181, 187, 0.3);
+                background: #fff;
+                color: var(--text-main);
+                transition: all 0.2s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+            }
+
+                .btn:hover {
+                    background: #f7fafc;
+                    border-color: var(--primary);
+                }
+
+            .btn-primary {
+                border: none;
+                color: #fff;
+                background: linear-gradient(135deg, #6abfc6, #5fa9b1);
+                box-shadow: 0 2px 4px rgba(106, 191, 198, 0.2);
+            }
+
+                .btn-primary:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 8px rgba(106, 191, 198, 0.3);
+                    filter: brightness(1.05);
+                }
+
+            .btn-danger {
+                border: 1px solid rgba(229, 62, 62, 0.2);
+                background: rgba(229, 62, 62, 0.05);
+                color: #e53e3e;
+            }
+
+                .btn-danger:hover {
+                    background: rgba(229, 62, 62, 0.1);
+                    border-color: #e53e3e;
+                    color: #c53030;
+                }
 
             .actions {
                 display: flex;
@@ -122,138 +254,180 @@
             }
 
             .badge {
-                display: inline-block;
-                padding: 4px 10px;
-                border-radius: 999px;
-                font-size: 11px;
-                font-weight: 800;
-                border: 1px solid rgba(95,181,187,0.18);
-                background: rgba(106,191,198,0.10);
+                display: inline-flex;
+                padding: 4px 12px;
+                border-radius: 30px;
+                font-size: 12px;
+                font-weight: 600;
+                background: var(--primary-light);
                 color: var(--primary-dark);
+            }
+
+            .timeline-number {
+                font-size: 18px;
+                font-weight: 800;
+                color: var(--primary-dark);
+                background: var(--primary-light);
+                width: 36px;
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+            }
+
+            .napomena-box {
+                display: flex;
+                gap: 16px;
+                align-items: flex-start;
+                background: #f8fafc;
+                padding: 20px;
+                border-radius: 12px;
+                border: 1px dashed rgba(95, 181, 187, 0.3);
+                margin-bottom: 24px;
+            }
+
+            @@media (max-width: 850px) {
+                .grid-row {
+                    grid-template-columns: 1fr 1fr;
+                    gap: 12px;
+                }
+
+                    .grid-row div:nth-child(3) {
+                        grid-column: 1 / -1;
+                    }
+
+                    .grid-row .actions {
+                        grid-column: 1 / -1;
+                        justify-content: flex-start;
+                        border-top: 1px solid #edf2f7;
+                        padding-top: 12px;
+                    }
             }
     </style>
 </head>
 <body>
-    <div class="wrap">
-        <div class="bar">
-            <div>
-                <h2 style="margin:0;">Plan putovanja (template)</h2>
-                <div class="muted" style="margin-top:4px;">
-                    <strong>@paketNaziv</strong>
-                    @if (dest != null)
-                    {
-                        <span> • @dest.Naziv (@dest.Drzava)</span>
-                    }
-                </div>
-            </div>
 
-            <div class="actions">
-                <a class="btn" href="/Administrator">Dashboard</a>
-                <a class="btn" href="/Administrator/Paketi">Paketi</a>
-                @if (Model.PaketId != null)
+    <header class="dash-topbar">
+        <a href="/" class="logo-link">
+            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+        </a>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <a href="/Administrator/Index" class="logout-btn">Destinacije</a>
+            <a href="/Administrator/Paketi" class="logout-btn" style="background: rgba(106,191,198,0.15); font-weight:700; border-color: var(--primary);">Paketi</a>
+            <a href="/Administrator/Korisnici" class="logout-btn">Korisnici</a>
+            <a href="/Administrator/Rezervacije" class="logout-btn">Rezervacije</a>
+            <form method="post" action="/Account/Logout" style="display:inline;">
+                @Html.AntiForgeryToken()
+                <button class="logout-btn" type="submit" style="color: #e53e3e; border-color: rgba(229, 62, 62, 0.2);">Odjavi se</button>
+            </form>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="dash-hero">
+            <span class="badge">UREĐIVANJE ARANŽMANA</span>
+            <h1>Plan putovanja (Template)</h1>
+            <p style="color: var(--text-muted); font-size: 14px; margin: 4px 0 0 0;">
+                Definišite plan po danima ili satnicama za paket: <strong style="color: var(--text-main);">@paketNaziv</strong>
+                @if (dest != null)
                 {
-                    <a class="btn" href="/PlanPutovanja/Preview?paketId=@Model.PaketId" target="_blank">Pregled na sajtu</a>
+                    <span> u destinaciji <strong>@dest.Naziv (@dest.Drzava)</strong></span>
                 }
-                else
-                {
-                    <a class="btn" href="/Destinacije" target="_blank">Pregled na sajtu</a>
-                }
-            </div>
+            </p>
         </div>
 
         <div class="card">
-            <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;">
-                <div style="flex:1; min-width:260px;">
-                    <div class="field-label">NAPOMENA (opciono)</div>
-                    <form asp-controller="Administrator"
-                          asp-action="PlanTemplateSaveNapomena"
-                          method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@Model.Id" />
 
-                        <textarea name="napomena">@Model.Napomena</textarea>
-
-                        <button type="submit">Sačuvaj</button>
-                    </form>
+            <form asp-controller="Administrator" asp-action="PlanTemplateSaveNapomena" method="post" class="napomena-box">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <div style="flex: 1;">
+                    <label class="field-label" style="margin-bottom: 6px;">Krovna napomena plana (Opciono)</label>
+                    <input class="input" name="napomena" value="@Model.Napomena" placeholder="Npr. Plan puta je podložan blagim izmjenama u zavisnosti od vremenskih uslova..." />
                 </div>
+                <button type="submit" class="btn" style="margin-top: 26px; height: 42px; background: #fff;">Sačuvaj</button>
+            </form>
 
-                <div style="min-width:260px;">
-                    <div class="badge">Ukupno stavki: @Model.Stavke.Count</div>
-                </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; margin-top: 40px;">
+                <h3 class="section-title" style="margin: 0;">+ Dodaj novu stavku / dan</h3>
+                <span class="badge">Ukupno stavki: @Model.Stavke.Count</span>
             </div>
 
-            <hr style="margin:16px 0; border:none; border-top:1px solid rgba(95,181,187,0.12);" />
-
-            <h3 style="margin:0 0 10px;">Dodaj novu stavku</h3>
-
-            <form asp-controller="Administrator" asp-action="PlanTemplateDodajStavku" method="post">
+            <form asp-controller="Administrator" asp-action="PlanTemplateDodajStavku" method="post" style="background: rgba(106,191,198,0.03); padding: 24px; border-radius: 12px; border: 1px solid rgba(95,181,187,0.15);">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="planId" value="@Model.Id" />
 
                 <div class="row2">
                     <div>
-                        <label class="field-label">REDNI BROJ</label>
+                        <label class="field-label">Redni broj stavke (ili dan)</label>
                         <input class="input" type="number" name="redniBroj" min="1" value="@(Model.Stavke.Any() ? Model.Stavke.Max(s => s.RedniBroj) + 1 : 1)" required />
                     </div>
 
                     <div>
-                        <label class="field-label">VRIJEME (opciono)</label>
+                        <label class="field-label">Vrijeme aktivnosti (Opciono)</label>
                         <input class="input" type="time" name="vrijeme" />
                     </div>
                 </div>
 
-                <div>
-                    <label class="field-label">NAZIV</label>
-                    <input class="input" name="naziv" maxlength="160" required placeholder="Npr. Dan 1 - Dolazak / Check-in" />
+                <div style="margin-bottom: 16px;">
+                    <label class="field-label">Naziv aktivnosti / Naslov dana</label>
+                    <input class="input" name="naziv" maxlength="160" required placeholder="Npr. Dan 1 - Dolazak u hotel i slobodno vrijeme" />
                 </div>
 
-                <div>
-                    <label class="field-label">OPIS</label>
-                    <textarea class="textarea" name="opis" maxlength="600" placeholder="Kratak opis aktivnosti..."></textarea>
+                <div style="margin-bottom: 16px;">
+                    <label class="field-label">Detaljan opis aktivnosti</label>
+                    <textarea class="textarea" name="opis" maxlength="600" placeholder="Unesite detalje o letu, transferu, izletima ili planiranim obilascima za ovaj segment..."></textarea>
                 </div>
 
-                <div class="actions" style="margin-top:12px;">
-                    <button class="btn btn-primary" type="submit">+ Dodaj stavku</button>
+                <div class="actions">
+                    @if (Model.PaketId != null)
+                    {
+                        <a class="btn" href="/PlanPutovanja/Preview?paketId=@Model.PaketId" target="_blank">👁️ Pregledaj na sajtu</a>
+                    }
+                    <button class="btn btn-primary" type="submit">Unesi u plan putovanja</button>
                 </div>
             </form>
 
-            <hr style="margin:16px 0; border:none; border-top:1px solid rgba(95,181,187,0.12);" />
-
-            <h3 style="margin:0 0 10px;">Postojeće stavke</h3>
+            <h3 class="section-title" style="margin-top: 48px; margin-bottom: 20px;">Trenutni hronološki slijed</h3>
 
             @if (!Model.Stavke.Any())
             {
-                <div class="muted" style="font-weight:800;">Nema stavki. Dodaj prvu stavku iz forme iznad.</div>
+                <div style="color: var(--text-muted); font-style: italic; text-align: center; padding: 40px; background: #f8fafc; border-radius: 12px;">
+                    Plan putovanja je trenutno prazan. Koristite formu iznad kako biste unijeli prvi dan ili aktivnost.
+                </div>
             }
             else
             {
                 foreach (var s in Model.Stavke.OrderBy(x => x.RedniBroj))
                 {
-                    <div class="grid">
+                    <div class="grid-row">
                         <div>
-                            <div class="muted">Broj</div>
-                            <div style="font-weight:900;">@s.RedniBroj</div>
+                            <div class="field-label" style="margin-bottom: 2px;">Pozicija</div>
+                            <div class="timeline-number">@s.RedniBroj</div>
                         </div>
 
                         <div>
-                            <div class="muted">Vrijeme</div>
-                            <div style="font-weight:900;">@(s.Vrijeme.HasValue ? s.Vrijeme.Value.ToString(@"hh\:mm") : "—")</div>
+                            <div class="field-label" style="margin-bottom: 2px;">Satnica</div>
+                            <div style="font-weight: 600; color: var(--text-main); font-size: 15px;">
+                                @(s.Vrijeme.HasValue ? s.Vrijeme.Value.ToString(@"hh\:mm") : "— : —")
+                            </div>
                         </div>
 
                         <div>
-                            <div style="font-weight:900;">@s.Naziv</div>
-                            <div class="muted">@s.Opis</div>
+                            <div style="font-weight: 700; font-size: 16px; color: var(--text-main); margin-bottom: 4px;">@s.Naziv</div>
+                            <div style="color: var(--text-muted); font-size: 13px; line-height: 1.5;">@s.Opis</div>
                         </div>
 
                         <div>
-                            <span class="badge">Template</span>
+                            <span class="badge" style="font-size: 11px;">Aktivan</span>
                         </div>
 
                         <div class="actions">
                             <form asp-controller="Administrator" asp-action="PlanTemplateObrisiStavku" method="post" style="display:inline;">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@s.Id" />
-                                <button class="btn btn-danger" type="submit" onclick="return confirm('Obrisati stavku?')">Obriši</button>
+                                <button class="btn btn-danger" type="submit" onclick="return confirm('Da li ste sigurni da želite obrisati stavku: @s.Naziv?')">Ukloni</button>
                             </form>
                         </div>
                     </div>

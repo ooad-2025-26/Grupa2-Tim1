@@ -1,6 +1,7 @@
 ﻿using InterTrips___Turistička_Agencija.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace InterTrips___Turistička_Agencija.Controllers;
 
@@ -18,9 +19,19 @@ public class AccountController : Controller
         _signInManager = signInManager;
     }
 
-    public record LoginDto(string Email, string Password);
-    public record RegisterDto(string Name, string Email, string Password);
-   
+    public class LoginDto
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class RegisterDto
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
+
     [HttpGet("Login")]
     public IActionResult Login()
     {
@@ -42,31 +53,44 @@ public class AccountController : Controller
         var roles = await _userManager.GetRolesAsync(user);
 
         var redirectUrl = roles.Contains("Admin") ? "/Administrator"
-                : roles.Contains("Agent") ? "/Agent"
+                : roles.Contains("Agent") ? $"/Agent?agentId={user.Id}"
                 : "/";
 
         return Ok(new { success = true, redirectUrl });
     }
 
     [HttpPost("Register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+    public async Task<IActionResult> Register([FromBody] RegisterDto model)
     {
-        var existing = await _userManager.FindByEmailAsync(dto.Email);
-        if (existing != null) return BadRequest(new { success = false, message = "Email je već registrovan." });
+        if (model == null || string.IsNullOrWhiteSpace(model.Name) || string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
+        {
+            return BadRequest(new { success = false, message = "Sva polja su obavezna!" });
+        }
 
         var user = new ApplicationUser
         {
-            UserName = dto.Email,
-            Email = dto.Email,
-            Ime = dto.Name
+            UserName = model.Email,
+            Email = model.Email,
+            EmailConfirmed = true
+           
         };
 
-        var result = await _userManager.CreateAsync(user, dto.Password);
-        if (!result.Succeeded)
-            return BadRequest(new { success = false, message = string.Join(" ", result.Errors.Select(e => e.Description)) });
+        var result = await _userManager.CreateAsync(user, model.Password);
 
-        await _signInManager.SignInAsync(user, isPersistent: false);
-        return Ok(new { success = true });
+        if (result.Succeeded)
+        {
+            var kreiraniKorisnik = await _userManager.FindByNameAsync(user.UserName);
+            if (kreiraniKorisnik != null)
+            {
+                await _userManager.AddToRoleAsync(kreiraniKorisnik, "Client");
+            }
+            await _signInManager.SignInAsync(user, isPersistent: false);
+
+            return Json(new { success = true, redirectUrl = "/" });
+        }
+
+        var errorMessage = string.Join(" ", result.Errors.Select(e => e.Description));
+        return BadRequest(new { success = false, message = errorMessage });
     }
 
     [HttpPost("Logout")]
@@ -88,4 +112,4 @@ public class AccountController : Controller
             userName = User.Identity!.Name
         });
     }
-}
+    }

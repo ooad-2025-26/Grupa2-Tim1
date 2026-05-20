@@ -578,9 +578,9 @@
         }
         }
         try {
-       const paketIdIzMemorije = safe('selectedPackageId', '0');
+        const paketIdIzMemorije = safe('selectedPackageId', '0');
 
-       const datumPolaskaRaw = safe('reservationDeparture', '');
+        const datumPolaskaRaw = safe('reservationDeparture', '');
         const datumPovratkaRaw = safe('reservationReturn', '');
 
         const formatirajZaBazu = (dateStr) => {
@@ -608,6 +608,7 @@
         prezime: p.lastName,
         brojPasosa: p.passport,
         drzavljanstvo: p.nationality,
+        telefon: p.phone || "",
 
         datumRodjenja: p.birthDate
         ? p.birthDate
@@ -633,7 +634,7 @@
         } catch (error) {
         console.error("Došlo je do greške u komunikaciji sa serverom:", error);
         }
-        
+
         }
 
 
@@ -700,6 +701,13 @@
         doc.text(`Period: ${safe('reservationDeparture', '')} - ${safe('reservationReturn', '')}`, 20, 112);
         doc.text(`Smještaj: ${safe('reservationRoom', '')}`, 20, 119);
         doc.text(`Broj putnika: ${safe('reservationTravelers', '')}`, 20, 126);
+        const passengersRaw = localStorage.getItem('savedPassengers');
+        let firstPhone = '';
+        try {
+        const ps = passengersRaw ? JSON.parse(passengersRaw) : [];
+        firstPhone = ps?.[0]?.phone || '';
+        } catch { }
+        if (firstPhone) doc.text(`Kontakt telefon: ${firstPhone}`, 20, 133);
 
         doc.setFont('DejaVuSans', 'bold');
         doc.text("FINANSIJSKI PODACI:", 120, 95);
@@ -718,7 +726,7 @@
         }
 
         doc.line(20, 138, 190, 138);
-doc.setFontSize(12);
+        doc.setFontSize(12);
         doc.setFont('DejaVuSans', 'bold');
         doc.text("PODACI O PUTNICIMA:", 20, 148);
 
@@ -732,7 +740,9 @@ doc.setFontSize(12);
         console.error("Greška pri čitanju putnika iz localStorage", e);
         }
 
-        let currentY = 158; 
+        let currentY = 158;
+
+        const colX = { rb: 22, ime: 30, tip: 78, dob: 96, pasos: 122, drz: 146, tel: 170 };
 
         if (passengers.length === 0) {
         doc.setFontSize(10);
@@ -742,15 +752,16 @@ doc.setFontSize(12);
         } else {
         doc.setFontSize(9);
         doc.setFont('DejaVuSans', 'bold');
-        doc.setFillColor(240, 248, 248); 
-        doc.rect(20, currentY - 5, 170, 7, 'F');
+        doc.setFillColor(240, 248, 248);
+        doc.rect(20, currentY - 5, 175, 7, 'F');
 
-        doc.text("#", 22, currentY);
-        doc.text("Ime i Prezime", 32, currentY);
-        doc.text("Tip", 82, currentY);
-        doc.text("Datum rođ.", 102, currentY);
-        doc.text("Broj pasoša", 132, currentY);
-        doc.text("Državljanstvo", 162, currentY);
+        doc.text("#", colX.rb, currentY);
+        doc.text("Ime i Prezime", colX.ime, currentY); // Zamijenjen & sa i
+        doc.text("Tip", colX.tip, currentY);
+        doc.text("Datum rođ.", colX.dob, currentY);
+        doc.text("Pasoš", colX.pasos, currentY);
+        doc.text("Drž.", colX.drz, currentY);
+        doc.text("Telefon", colX.tel, currentY);
 
         currentY += 8;
 
@@ -758,18 +769,20 @@ doc.setFontSize(12);
         if (currentY > 250) {
         doc.addPage();
         doc.setFont('DejaVuSans', 'normal');
-        currentY = 30; 
+        currentY = 30;
 
         doc.setFontSize(9);
         doc.setFont('DejaVuSans', 'bold');
         doc.setFillColor(240, 248, 248);
-        doc.rect(20, currentY - 5, 170, 7, 'F');
-        doc.text("#", 22, currentY);
-        doc.text("Ime i Prezime", 32, currentY);
-        doc.text("Tip", 82, currentY);
-        doc.text("Datum rođ.", 102, currentY);
-        doc.text("Broj pasoša", 132, currentY);
-        doc.text("Državljanstvo", 162, currentY);
+        doc.rect(20, currentY - 5, 175, 7, 'F'); // Dodana pozadina i na novoj stranici radi konzistentnosti
+
+        doc.text("#", colX.rb, currentY);
+        doc.text("Ime i Prezime", colX.ime, currentY); // Zamijenjen & sa i
+        doc.text("Tip", colX.tip, currentY);
+        doc.text("Datum rođ.", colX.dob, currentY);
+        doc.text("Pasoš", colX.pasos, currentY);
+        doc.text("Drž.", colX.drz, currentY);
+        doc.text("Telefon", colX.tel, currentY);
         currentY += 8;
         }
 
@@ -785,27 +798,28 @@ doc.setFontSize(12);
         if (parts.length === 3) formattedDate = `${parts[2]}.${parts[1]}.${parts[0]}.`;
         }
 
-        doc.text(`${index + 1}.`, 22, currentY);
-        doc.text(normalizeUpperBs(fullName), 32, currentY);
-        doc.text(normalizeUpperBs(pTypeFormatted), 82, currentY);
-        doc.text(formattedDate, 102, currentY);
-        doc.text(normalizeUpperBs(p.passport || '—'), 132, currentY);
-        doc.text(normalizeUpperBs(p.nationality || '—'), 162, currentY);
+        doc.text(`${index + 1}.`, colX.rb, currentY);
+        doc.text(normalizeUpperBs(fullName), colX.ime, currentY);
+        doc.text(normalizeUpperBs(pTypeFormatted), colX.tip, currentY);
+        doc.text(formattedDate, colX.dob, currentY);
+        doc.text(normalizeUpperBs(p.passport || '—'), colX.pasos, currentY);
+        doc.text(normalizeUpperBs(p.nationality || '—'), colX.drz, currentY);
+        doc.text(p.phone ? String(p.phone) : '—', colX.tel, currentY);
 
         if (p.requests && p.requests.trim() !== "") {
         currentY += 5;
         doc.setFontSize(8);
         doc.setFont('DejaVuSans', 'italic');
         doc.setTextColor(100, 100, 100);
-        doc.text(`Napomena za putnika ${index + 1}: ${p.requests}`, 32, currentY);
-        doc.setTextColor(0, 0, 0); 
+        doc.text(`Napomena za putnika ${index + 1}: ${p.requests}`, colX.ime, currentY);
+        doc.setTextColor(0, 0, 0);
         }
 
         doc.setDrawColor(220, 235, 235);
         doc.setLineWidth(0.2);
         doc.line(20, currentY + 2, 190, currentY + 2);
 
-        currentY += 8; 
+        currentY += 8;
         });
         }
         let footerY = currentY + 15;
