@@ -1,31 +1,40 @@
 using InterTrips___Turistička_Agencija.Data;
+using InterTrips___Turistička_Agencija.Enums;
 using InterTrips___Turistička_Agencija.Models;
 using InterTrips___Turistička_Agencija.Models.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using InterTrips___Turistička_Agencija.Enums;
 
-namespace InterTrips___Turistička_Agencija.Controllers
-{
+namespace InterTrips___Turistička_Agencija.Controllers;
+
     public class AgentController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AgentController(ApplicationDbContext context)
+        public AgentController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _db = context;
+            _userManager = userManager;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var emailAgenta = User.Identity?.Name;
-            if (string.IsNullOrEmpty(emailAgenta)) return Unauthorized("Niste ulogovani.");
+            if (string.IsNullOrEmpty(emailAgenta))
+                return RedirectToAction("Login", "Account");
 
-            var agent = await _db.Set<Korisnik>().FirstOrDefaultAsync(k => k.Email == emailAgenta);
-            if (agent == null || agent.Uloga != Uloga.Agent)
-                return Forbid("Pristup dozvoljen samo turističkim agentima.");
-            int agentId = agent.Id; 
+            var user = await _userManager.FindByEmailAsync(emailAgenta);
+
+            if (user == null || !await _userManager.IsInRoleAsync(user, "Agent"))
+            {
+                return Forbid();
+            }
+
+            var agentIzBaze = await _db.Set<Korisnik>().FirstOrDefaultAsync(k => k.Email == emailAgenta);
+            int agentId = agentIzBaze?.Id ?? 0;
 
             var mojiPaketiList = await _db.Set<AgentPaket>()
                 .Where(ap => ap.AgentId == agentId)
@@ -48,6 +57,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
 
             return View(vm);
         }
+
         [HttpGet]
         public async Task<IActionResult> Rezervacije(int agentId)
         {
@@ -62,7 +72,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 AktivneRezervacije = await _db.Rezervacije
                     .Include(r => r.Korisnik)
                     .Include(r => r.Paket)
-                        .ThenInclude(p => p.Destinacija)
+                        .ThenInclude(p => p != null ? p.Destinacija : null!) // Siguran include pod-svojstva
                     .Include(r => r.Putnici)
                     .Where(r => mojiPaketiIds.Contains(r.PaketId))
                     .ToListAsync()
@@ -99,29 +109,31 @@ namespace InterTrips___Turistička_Agencija.Controllers
             var rezervacija = await _db.Rezervacije
                 .Include(r => r.Korisnik)
                 .Include(r => r.Paket)
-                    .ThenInclude(p => p.Destinacija)
+                    .ThenInclude(p => p != null ? p.Destinacija : null!) // Sprečava warning kod ugniježđenih objekata
                 .Include(r => r.Putnici)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
-            if (rezervacija == null) return NotFound();
+            if (rezervacija == null)
+                return NotFound();
 
             return View(rezervacija);
         }
-    
-         [HttpGet]
+
+        [HttpGet]
         public async Task<IActionResult> Paketi(int agentId)
         {
+            var mojiPaketiIds = await _db.Set<AgentPaket>()
+                                          .Where(ap => ap.AgentId == agentId)
+                                          .Select(ap => ap.PaketId)
+                                          .ToListAsync();
+
             var viewModel = new AgentPaketiVm
             {
                 AgentId = agentId,
                 SviPaketi = await _db.Paketi.Include(p => p.Destinacija).ToListAsync(),
-                MojiPaketiIds = await _db.AgentPaketi
-                                              .Where(ap => ap.AgentId == agentId)
-                                              .Select(ap => ap.PaketId)
-                                              .ToListAsync()
+                MojiPaketiIds = mojiPaketiIds
             };
 
             return View(viewModel);
         }
     }
-}

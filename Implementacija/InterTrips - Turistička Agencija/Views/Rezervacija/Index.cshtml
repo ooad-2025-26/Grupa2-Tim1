@@ -1,3 +1,4 @@
+@using InterTrips___Turistička_Agencija.Models
 @{
     ViewData["Title"] = "InterTrips - Moje rezervacije";
     Layout = "_Layout";
@@ -254,12 +255,7 @@
         method: 'GET',
         credentials: 'same-origin'
         });
-
-        if (!response.ok) {
-        console.error("Greška pri dohvatanju rezervacija.");
-        return [];
-        }
-
+        if (!response.ok) return [];
         return await response.json();
         } catch (error) {
         console.error("Greška:", error);
@@ -290,15 +286,10 @@
         }
 
         function badgeHtml(status) {
-        if (status === 'Otkazana') {
-        return '<span class="r-badge cancel">OTKAZANA</span>';
-        }
-        if (status === 'Potvrdjena' || status === 'Potvrđena') {
-        return '<span class="r-badge success" style="background:#36d399;color:#fff;">POTVRĐENA</span>';
-        }
+        if (status === 'Otkazana') return '<span class="r-badge cancel">OTKAZANA</span>';
+        if (status === 'Potvrdjena' || status === 'Potvrđena') return '<span class="r-badge success" style="background:#36d399;color:#fff;">POTVRĐENA</span>';
         return '<span class="r-badge">AKTIVNA</span>';
         }
-
         function planButtonHtml(r) {
         if (!r || !r.paketId) return '';
         return `
@@ -307,21 +298,15 @@
         </a>
         `;
         }
-
         function downloadPdfByIndex(index) {
         const r = ucitaneRezervacije[index];
-        if (!r) {
-        alert("Greška: Podaci o rezervaciji nisu pronađeni.");
-        return;
-        }
+        if (!r) return;
 
         const pick = (...vals) => {
         for (const v of vals) {
-        if (v === null || v === undefined) continue;
-        const s = String(v).trim();
-        if (s !== '') return s;
+        if (v !== null && v !== undefined && String(v).trim() !== '') return String(v).trim();
         }
-        return '';
+        return '—';
         };
 
         const { jsPDF } = window.jspdf;
@@ -329,7 +314,6 @@
 
         doc.setFillColor(10, 34, 40);
         doc.rect(0, 0, 210, 40, 'F');
-
         doc.setFont("helvetica", "bold");
         doc.setFontSize(22);
         doc.setTextColor(255, 255, 255);
@@ -341,7 +325,6 @@
         doc.text(`Datum izdavanja dokumenta: ${new Date().toLocaleDateString('bs-BA')}`, 15, 50);
 
         doc.setDrawColor(95, 181, 187);
-        doc.setLineWidth(0.5);
         doc.line(15, 55, 195, 55);
 
         const brPutnika = r.brojPutnika || r.BrojPutnika || (r.putnici ? r.putnici.length : 1);
@@ -349,146 +332,49 @@
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(10, 34, 40);
-        doc.text(`Rezervacija koda: #${pick(r.id, r.Id, '—')}`, 15, 68);
+        doc.text(`Rezervacija koda: #${pick(r.id, r.Id)}`, 15, 68);
         doc.text(`Status: ${ukloniKvacice(pick(r.status, r.Status, 'Aktivna')).toUpperCase()}`, 130, 68);
-
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(40, 40, 40);
 
         let y = 85;
         const stavke = [
-        { label: "Destinacija:", info: `${ukloniKvacice(pick(r.destinacija, r.Destinacija, '—'))} ${pick(r.drzava, r.Drzava, '') ? '(' + ukloniKvacice(pick(r.drzava, r.Drzava)) + ')' : ''}` },
-        { label: "Naziv paketa:", info: ukloniKvacice(pick(r.paketNaziv, r.PaketNaziv, '—')) },
-        { label: "Datum polaska:", info: pick(r.datumPolaska, r.DatumPolaska, '—') },
-        { label: "Datum povratka:", info: pick(r.datumPovratka, r.DatumPovratka, '—') },
+        { label: "Destinacija:", info: `${ukloniKvacice(pick(r.destinacija, r.Destinacija))} ${r.drzava ? '(' + ukloniKvacice(r.drzava) + ')' : ''}` },
+        { label: "Naziv paketa:", info: ukloniKvacice(pick(r.paketNaziv, r.PaketNaziv)) },
+        { label: "Datum polaska:", info: pick(r.datumPolaska, r.DatumPolaska) },
+        { label: "Datum povratka:", info: pick(r.datumPovratka, r.DatumPovratka) },
         { label: "Ukupan broj putnika:", info: String(brPutnika) }
         ];
 
         stavke.forEach(item => {
-        doc.setFont("helvetica", "bold");
-        doc.text(item.label, 15, y);
-        doc.setFont("helvetica", "normal");
-        doc.text(String(item.info), 65, y);
+        doc.setFont("helvetica", "bold"); doc.text(item.label, 15, y);
+        doc.setFont("helvetica", "normal"); doc.text(String(item.info), 65, y);
         y += 10;
         });
 
-        const listaPutnika = r.putnici || r.putniciRezervacije || r.Putnici;
-
-        if (listaPutnika && listaPutnika.length > 0) {
-        y += 10;
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(13);
-        doc.setTextColor(10, 34, 40);
-        doc.text("Spisak putnika na rezervaciji:", 15, y);
-        y += 6;
-
-        const colX = { rb: 15, ime: 25, dob: 80, pasos: 110, drz: 140, tel: 165 };
-        const tableWidth = 180;
-
-        doc.setFillColor(40, 55, 60);
-        doc.rect(colX.rb, y, tableWidth, 8, 'F');
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(9);
-        doc.setTextColor(255, 255, 255);
-        doc.text("R.b.", colX.rb + 2, y + 5.5);
-        doc.text("Ime i Prezime", colX.ime + 2, y + 5.5);
-        doc.text("Datum rod.", colX.dob + 2, y + 5.5);
-        doc.text("Pasos", colX.pasos + 2, y + 5.5);
-        doc.text("Drz.", colX.drz + 2, y + 5.5);
-        doc.text("Telefon", colX.tel + 2, y + 5.5);
-
-        y += 8;
-        doc.setTextColor(40, 40, 40);
-
-        listaPutnika.forEach((p, i) => {
-        if (y > 270) {
-        doc.addPage();
-        y = 20;
+        doc.save(`Rezervacija_InterTrips_${pick(r.id, r.Id)}.pdf`);
         }
 
-        const imePrezime = ukloniKvacice(`${pick(p.ime, p.Ime, '')} ${pick(p.prezime, p.Prezime, '')}`.trim()) || '—';
-        const pasos = pick(p.brojPasosa, p.BrojPasosa, '—');
-        const drz = ukloniKvacice(pick(p.drzavljanstvo, p.Drzavljanstvo, '—'));
-        const dob = pick(p.datumRodjenja, p.DatumRodjenja, p.birthDate, p.BirthDate, '—');
-        const tel = pick(p.telefon, p.Telefon, p.phone, p.Phone, '—');
-        const req = pick(p.posebniZahtjevi, p.PosebniZahtjevi, p.requests, p.Requests, '');
-
-        doc.setFillColor(i % 2 === 0 ? 245 : 255, i % 2 === 0 ? 248 : 255, i % 2 === 0 ? 248 : 255);
-        doc.rect(colX.rb, y, tableWidth, 8, 'F');
-
-        doc.setDrawColor(210, 225, 225);
-        doc.setLineWidth(0.2);
-        doc.rect(colX.rb, y, tableWidth, 8, 'D');
-
-        doc.setFontSize(9);
-        doc.setFont("helvetica", "normal");
-        doc.text(`${i + 1}.`, colX.rb + 2, y + 5.5);
-
-        doc.setFont("helvetica", "bold");
-        doc.text(imePrezime, colX.ime + 2, y + 5.5);
-
-        doc.setFont("helvetica", "normal");
-        doc.text(String(dob), colX.dob + 2, y + 5.5);
-        doc.text(String(pasos), colX.pasos + 2, y + 5.5);
-        doc.text(String(drz), colX.drz + 2, y + 5.5);
-        doc.text(String(tel), colX.tel + 2, y + 5.5);
-
-        y += 8;
-
-        if (req && req !== "Nema") {
-        if (y > 270) { doc.addPage(); y = 20; }
-
-        doc.setFont("helvetica", "italic");
-        doc.setFontSize(8);
-        doc.setTextColor(110, 110, 110);
-
-        const lines = doc.splitTextToSize(`Napomena: ${ukloniKvacice(req)}`, 175);
-        doc.text(lines, colX.ime + 2, y);
-        y += (lines.length * 4) + 2;
-
-        doc.setTextColor(40, 40, 40);
-        }
-        });
-        }
-
-        y += 15;
-        if (y > 280) { doc.addPage(); y = 20; }
-
-        doc.setFont("helvetica", "italic");
-        doc.setFontSize(10);
-        doc.setTextColor(120, 120, 120);
-        doc.text("Hvala Vam na povjerenju! Vas InterTrips tim.", 15, y);
-
-        doc.save(`Rezervacija_InterTrips_${pick(r.id, r.Id, '—')}.pdf`);
-        }
 
         async function renderReservations() {
         const listEl = document.getElementById('reservationsList');
         const emptyMsg = document.getElementById('emptyMsg');
-
         if (!listEl) return;
 
         let sveRezervacije = await getReservationsForCurrentUser();
+
         const danas = new Date(2026, 4, 20);
         danas.setHours(0, 0, 0, 0);
 
         ucitaneRezervacije = sveRezervacije.filter(r => {
         const datumString = r.datumPovratka || r.DatumPovratka;
         if (!datumString) return true;
-
         let povratak;
-
         if (datumString.includes('.')) {
         const parts = datumString.split('.');
         povratak = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
         } else {
-        ptvratak = new Date(datumString);
+        povratak = new Date(datumString);
         }
-
-        if (isNaN(povratak.getTime())) return true; // Zaštita od neispravnog datuma
-
+        if (isNaN(povratak.getTime())) return true;
         povratak.setHours(0, 0, 0, 0);
         return povratak > danas;
         });
@@ -504,10 +390,9 @@
         listEl.innerHTML = ucitaneRezervacije.map((r, index) => {
         const isCancelled = r.status === 'Otkazana';
         const currentId = r.id || r.Id || '';
+
         const cancelBtn = isCancelled ? '' : `
-        <button class="btn-cancel" type="button" onclick="cancelReservation('${currentId}')">
-        Otkaži rezervaciju
-        </button>
+        <button class="btn-cancel" type="button" onclick="cancelReservation('${currentId}')">Otkaži rezervaciju</button>
         `;
 
         const planBtn = planButtonHtml(r);
@@ -517,7 +402,6 @@
         📄 Preuzmi PDF
         </button>
         `;
-
         return `
         <div class="r-card">
         <div class="r-top">
@@ -525,26 +409,11 @@
         ${badgeHtml(r.status)}
         </div>
         <div class="r-grid">
-        <div class="r-line">
-        <span>Destinacija</span>
-        <strong>${r.destinacija || r.Destinacija || '—'} ${r.drzava ? '(' + r.drzava + ')' : ''}</strong>
-        </div>
-        <div class="r-line">
-        <span>Paket</span>
-        <strong>${r.paketNaziv || r.PaketNaziv || '—'}</strong>
-        </div>
-        <div class="r-line">
-        <span>Period</span>
-        <strong>${r.datumPolaska || r.DatumPolaska || '—'} - ${r.datumPovratka || r.DatumPovratka || '—'}</strong>
-        </div>
-        <div class="r-line">
-        <span>Broj putnika</span>
-        <strong>${stvarniBrojPutnika}</strong>
-        </div>
-        <div class="r-line">
-        <span>Status</span>
-        <strong>${r.status || r.Status || 'Aktivna'}</strong>
-        </div>
+        <div class="r-line"><span>Destinacija</span><strong>${r.destinacija || r.Destinacija || '—'} ${r.drzava ? '(' + r.drzava + ')' : ''}</strong></div>
+        <div class="r-line"><span>Paket</span><strong>${r.paketNaziv || r.PaketNaziv || '—'}</strong></div>
+        <div class="r-line"><span>Period</span><strong>${r.datumPolaska || r.DatumPolaska || '—'} - ${r.datumPovratka || r.DatumPovratka || '—'}</strong></div>
+        <div class="r-line"><span>Broj putnika</span><strong>${stvarniBrojPutnika}</strong></div>
+        <div class="r-line"><span>Status</span><strong>${r.status || r.Status || 'Aktivna'}</strong></div>
         </div>
         <div class="r-actions">
         ${planBtn}

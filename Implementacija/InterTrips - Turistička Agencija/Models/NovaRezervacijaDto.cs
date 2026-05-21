@@ -9,5 +9,6 @@ namespace InterTrips___Turistička_Agencija.Models
         public DateOnly DatumPovratka { get; set; }
 
         public List<PutnikDto> Putnici { get; set; } = new();
+        public string? PromoKod { get; set; }
     }
 }

@@ -333,19 +333,19 @@ public class AdministratorController : Controller
     {
         var ciljaniEmail = "test@intertrips.ba";
 
-         var sveRezervacije = await _db.Rezervacije
-            .Include(r => r.Paket)
-                .ThenInclude(p => p!.Destinacija)
-            .Include(r => r.Korisnik)
-            .Include(r => r.Putnici)
-            .Include(r => r.Placanje)
-            .OrderByDescending(r => r.Id)
-            .ToListAsync();
+        var sveRezervacije = await _db.Rezervacije
+           .Include(r => r.Paket)
+               .ThenInclude(p => p!.Destinacija)
+           .Include(r => r.Korisnik)
+           .Include(r => r.Putnici)
+           .Include(r => r.Placanje)
+           .OrderByDescending(r => r.Id)
+           .ToListAsync();
 
         var viewModel = new AdminRezervacijeVm
         {
             KorisnikEmail = ciljaniEmail,
-            Rezervacije = sveRezervacije 
+            Rezervacije = sveRezervacije
         };
 
         return View(viewModel);
@@ -366,7 +366,7 @@ public class AdministratorController : Controller
             KorisniciCount = agentiCount,
             RezervacijeCount = rezervacijeCount,
             Destinacije = await _db.Destinacije.ToListAsync(),
-            SviKorisnici = korisniciIzBaze 
+            SviKorisnici = korisniciIzBaze
         };
 
         return View(viewModel);

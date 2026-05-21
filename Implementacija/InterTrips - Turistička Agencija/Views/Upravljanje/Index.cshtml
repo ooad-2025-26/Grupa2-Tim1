@@ -1,0 +1,260 @@
+﻿@{
+    ViewData["Title"] = "InterTrips - Dashboard za upravljanje";
+    Layout = "_Layout";
+    string pocetniTab = ViewBag.AktivniTab ?? "hoteli";
+}
+
+<div class="dashboard-container">
+    <aside class="dashboard-sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-toolbox"></i>
+            <span>DASHBOARD</span>
+        </div>
+        <nav class="sidebar-nav">
+            <button class="sidebar-btn" data-tab="hoteli" onclick="switchTab('hoteli')">
+                <i class="fa-solid fa-hotel"></i> Hoteli
+            </button>
+            <button class="sidebar-btn" data-tab="letovi" onclick="switchTab('letovi')">
+                <i class="fa-solid fa-plane"></i> Letovi
+            </button>
+            <button class="sidebar-btn" data-tab="dobavljaci" onclick="switchTab('dobavljaci')">
+                <i class="fa-solid fa-handshake"></i> Dobavljači i partneri
+            </button>
+        </nav>
+    </aside>
+
+    <main class="dashboard-content">
+
+        <div id="tab-hoteli" class="tab-pane">
+            <div class="pane-header">
+                <h2><i class="fa-solid fa-hotel"></i> Upravljanje hotelima</h2>
+                <button class="btn-action"><i class="fa-solid fa-plus"></i> Dodaj novi hotel</button>
+            </div>
+            <p class="pane-desc">Pregled, unos i izmjena hotela koji su u ponudi unutar aranžmana.</p>
+
+            <div class="dashboard-card-placeholder">
+                <p><i class="fa-solid fa-circle-info"></i> Ovdje će se učitavati tabela ili lista hotela iz baze podataka.</p>
+            </div>
+        </div>
+
+        <div id="tab-letovi" class="tab-pane">
+            <div class="pane-header">
+                <h2><i class="fa-solid fa-plane"></i> Upravljanje letovima</h2>
+                <button class="btn-action"><i class="fa-solid fa-plus"></i> Registruj let</button>
+            </div>
+            <p class="pane-desc">Evidencija avio-kompanija, brojeva letova, polazaka i kapaciteta.</p>
+
+            <div class="dashboard-card-placeholder">
+                <p><i class="fa-solid fa-circle-info"></i> Ovdje će se učitavati tabela ili lista letova.</p>
+            </div>
+        </div>
+
+        <div id="tab-dobavljaci" class="tab-pane">
+            <div class="pane-header">
+                <h2><i class="fa-solid fa-handshake"></i> Dobavljači i partneri</h2>
+                <button class="btn-action"><i class="fa-solid fa-user-plus"></i> Dodaj partnera</button>
+            </div>
+            <p class="pane-desc">Spisak eksternih saradnika, lokalnih agencija, vodiča i prevoznika.</p>
+
+            <div class="dashboard-card-placeholder">
+                <p><i class="fa-solid fa-circle-info"></i> Ovdje će se učitavati spisak registrovanih partnera i ugovora.</p>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+@section Styles {
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: calc(100vh - 65px);
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            box-shadow: var(--shadow);
+        }
+
+        /* Sidebar stilovi */
+        .dashboard-sidebar {
+            width: 260px;
+            background: #1a323a;
+            color: #ffffff;
+            padding: 30px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .sidebar-header {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 10px;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.75);
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+            .sidebar-btn i {
+                width: 20px;
+                text-align: center;
+            }
+
+            .sidebar-btn:hover, .sidebar-btn.active {
+                background: var(--primary);
+                color: #ffffff;
+            }
+
+        /* Sadržaj stilovi */
+        .dashboard-content {
+            flex: 1;
+            padding: 40px;
+            background: #fdfdfd;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+            .tab-pane.active {
+                display: block;
+                animation: fadeIn 0.3s ease;
+            }
+
+        .pane-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f0f6f6;
+            padding-bottom: 15px;
+            margin-bottom: 10px;
+        }
+
+            .pane-header h2 {
+                margin: 0;
+                font-size: 24px;
+                color: var(--text);
+                font-weight: 700;
+            }
+
+                .pane-header h2 i {
+                    color: var(--primary);
+                }
+
+        .pane-desc {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .btn-action {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            transition: var(--transition);
+        }
+
+            .btn-action:hover {
+                background: var(--primary-dark);
+            }
+
+        /* Placeholderi za tabele baze */
+        .dashboard-card-placeholder {
+            background: #f7fbfb;
+            border: 2px dashed rgba(42, 169, 176, 0.25);
+            border-radius: 12px;
+            padding: 60px;
+            text-align: center;
+            color: var(--muted);
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+            .dashboard-card-placeholder i {
+                color: var(--primary);
+                margin-right: 6px;
+            }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(3px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@media (max-width: 900px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+
+            .dashboard-sidebar {
+                width: auto;
+                padding: 15px;
+            }
+
+            .dashboard-content {
+                padding: 20px;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            switchTab('@pocetniTab');
+        });
+
+        function switchTab(tabName) {
+            const panes = document.querySelectorAll('.tab-pane');
+            panes.forEach(p => p.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.sidebar-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+
+            const targetPane = document.getElementById('tab-' + tabName);
+            if (targetPane) {
+                targetPane.classList.add('active');
+            }
+
+            const targetBtn = document.querySelector(`[data-tab="${tabName}"]`);
+            if (targetBtn) {
+                targetBtn.classList.add('active');
+            }
+        }
+    </script>
+}

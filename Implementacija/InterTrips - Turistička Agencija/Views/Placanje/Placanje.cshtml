@@ -474,7 +474,7 @@
                         <p id="ratesMessage" style="font-size:13px; color: #50a2a8; font-weight: 600; margin-top:8px;"></p>
 
                         <div id="ratesSubMethod" style="display:none; margin-top:18px; padding-top: 14px; border-top: 1px dashed rgba(95,181,187,0.2);">
-                            <label class="field-label">NAČIN PLAĆANJA RATA</label>
+                            <label class="field-label">ODABERITE NAČIN PLAĆANJA RATA</label>
                             <div style="display:flex; flex-direction:column; gap:12px; margin-top: 8px;">
                                 <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:#1a3f42; font-size:13px; font-weight:500;">
                                     <input type="radio" name="rateSubMethod" value="Karticom" checked onchange="onRateSubMethodChange()" style="accent-color: #6abfc6; transform: scale(1.1);" />
@@ -511,6 +511,15 @@
                             <div class="summary-row"><span>Trajanje</span><strong id="summaryDuration">—</strong></div>
                             <div class="summary-row"><span>Putnici</span><strong id="summaryTravelers">—</strong></div>
                             <div class="summary-row"><span>Smještaj</span><strong id="summaryRoom">—</strong></div>
+                            <div style="margin-top: 15px; margin-bottom: 15px; padding-top: 10px; border-top: 1px dashed rgba(95, 181, 187, 0.15);">
+                                <label class="field-label" style="margin-top: 0; margin-bottom: 6px;">PROMO KOD / KUPON</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <input class="input" id="couponCode" placeholder="Unesite kod" style="height: 38px; font-size: 13px;">
+                                    <button class="main-btn" type="button" onclick="applyCoupon()" style="height: 38px; padding: 0 16px; border-radius: 12px; font-size: 13px; white-space: nowrap;">Primijeni</button>
+                                </div>
+                                <p id="couponMessage" style="font-size: 12px; margin-top: 6px; font-weight: 500; display: none;"></p>
+                            </div>
+
                             <div class="price-line">
                                 <span>Ukupno</span>
                                 <span class="total" id="summaryTotal">$0</span>
@@ -548,6 +557,7 @@
         const msg = document.getElementById('ratesMessage');
         if (msg) msg.textContent = '';
         updateRatesPreview();
+        onRateSubMethodChange();
         }
 
         if (type !== 'rates') {
@@ -556,12 +566,22 @@
         }
         }
 
+        function onRateSubMethodChange() {
+        const checked = document.querySelector('input[name="rateSubMethod"]:checked');
+        const subMethod = checked ? checked.value : 'Karticom';
+
+        // Polja za karticu se prikazuju isključivo ako su izabrane rate i pod-metoda je 'Karticom'
+        if (subMethod === 'Karticom' && selectedPaymentType === 'rates') {
+        document.getElementById('cardFields').style.display = 'block';
+        } else if (selectedPaymentType === 'rates') {
+        document.getElementById('cardFields').style.display = 'none';
+        }
+        }
+
         function parseTotalKM(raw) {
         if (!raw) return 0;
-
         let s = String(raw).trim();
         s = s.replace(/KM/gi, '').replace(/\$/g, '').replace(/\s/g, '');
-
         if (s.includes('.') && s.includes(',')) {
         s = s.replace(/\./g, '');
         s = s.replace(',', '.');
@@ -585,16 +605,15 @@
         const subWrap = document.getElementById('ratesSubMethod');
 
         if (!monthsEl || !msgEl) return;
-        if (subWrap) subWrap.style.display = 'none';
+        if (!monthsEl.value) { msgEl.textContent = ''; if (subWrap) subWrap.style.display = 'none'; return; }
 
         const months = parseInt(monthsEl.value, 10);
         const totalRaw = localStorage.getItem('reservationTotal') || '0';
         const total = parseTotalKM(totalRaw);
 
-        if (!monthsEl.value) { msgEl.textContent = ''; return; }
-
         if (isNaN(months) || months < 1 || months > 60) {
         msgEl.textContent = 'Unesite broj mjeseci od 1 do 60.';
+        if (subWrap) subWrap.style.display = 'none';
         return;
         }
 
@@ -626,14 +645,20 @@
         document.getElementById('summaryTotal').textContent = localStorage.getItem('reservationTotal') || '$0';
 
         const photo = document.getElementById('summaryPhoto');
+        if (photo) {
         photo.style.background = `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4)), url('${image}') center/cover no-repeat`;
+        }
         }
 
         async function currentUserKey() {
+        try {
         const res = await fetch('/Account/Me', { credentials: 'same-origin' });
         if (!res.ok) return 'guest';
         const me = await res.json();
         return me.userName || 'guest';
+        } catch (e) {
+        return 'guest';
+        }
         }
 
         async function saveReservationToHistory(resCode) {
@@ -665,7 +690,6 @@
         async function payNow() {
         function isCardExpired(expiryString) {
         if (!expiryString || !expiryString.includes('/')) return true;
-
         const parts = expiryString.split('/');
         if (parts.length !== 2) return true;
 
@@ -709,11 +733,12 @@
         }
 
         if (selectedPaymentType === 'rates') {
-        const months = parseInt(document.getElementById('ratesMonths').value, 10);
+        const monthsVal = document.getElementById('ratesMonths').value;
+        const months = parseInt(monthsVal, 10);
         const checked = document.querySelector('input[name="rateSubMethod"]:checked');
         const subMethod = checked ? checked.value : 'Karticom';
 
-        if (!months || months < 1 || months > 60) {
+        if (!monthsVal || isNaN(months) || months < 1 || months > 60) {
         alert("Unesite validan broj mjeseci (1-60).");
         return;
         }
@@ -744,7 +769,7 @@
 
         localStorage.setItem('paymentType', 'Na rate (' + subMethod + ')');
         } else {
-        localStorage.setItem('paymentType', selectedPaymentType === 'card' ? 'Kartica' : 'Bankovni prenos');
+        localStorage.setItem('paymentType', selectedPaymentType === 'card' ? 'Kartica' : (selectedPaymentType === 'cash' ? 'Gotovina' : 'Bankovni prenos'));
         localStorage.removeItem('ratesMonths');
         localStorage.removeItem('ratesMonthly');
         }
@@ -782,7 +807,6 @@
         cardNumberEl.setAttribute('inputmode', 'numeric');
         cardNumberEl.setAttribute('autocomplete', 'cc-number');
         cardNumberEl.maxLength = 19;
-
         cardNumberEl.addEventListener('input', () => {
         let digits = cardNumberEl.value.replace(/\D/g, '').slice(0, 16);
         const parts = digits.match(/.{1,4}/g) || [];
@@ -836,7 +860,6 @@
         if (cvvEl) {
         cvvEl.setAttribute('inputmode', 'numeric');
         cvvEl.maxLength = 3;
-
         cvvEl.addEventListener('input', () => {
         cvvEl.value = cvvEl.value.replace(/\D/g, '');
         });
@@ -845,12 +868,46 @@
         if (zipEl) {
         zipEl.setAttribute('inputmode', 'numeric');
         zipEl.maxLength = 5;
-
         zipEl.addEventListener('input', () => {
         zipEl.value = zipEl.value.replace(/\D/g, '');
         });
         }
         });
+
+        function applyCoupon() {
+        const codeInput = document.getElementById('couponCode');
+        const msgEl = document.getElementById('couponMessage');
+        const totalEl = document.getElementById('summaryTotal');
+
+        if (!codeInput || !msgEl || !totalEl) return;
+
+        const unesenKod = codeInput.value.trim().toUpperCase();
+        const totalRaw = localStorage.getItem('reservationTotal') || '0';
+        let trenutnaCijena = parseTotalKM(totalRaw);
+
+        if (unesenKod === "INTERTRIPS10") {
+        let popust = trenutnaCijena * 0.10;
+        let novaCijena = trenutnaCijena - popust;
+
+        totalEl.textContent = `${novaCijena.toFixed(2)} KM`;
+        msgEl.style.color = "#2b8a3e";
+        msgEl.textContent = `Kupon uspješno primijenjen! Ušteđeno: ${popust.toFixed(2)} KM (10%).`;
+        msgEl.style.display = "block";
+
+        localStorage.setItem('reservationTotal', `${novaCijena.toFixed(2)} KM`);
+        if (selectedPaymentType === 'rates') {
+        updateRatesPreview();
+        }
+        } else if (unesenKod === "") {
+        msgEl.style.color = "#cc5c5c";
+        msgEl.textContent = "Molimo unesite kod kupona.";
+        msgEl.style.display = "block";
+        } else {
+        msgEl.style.color = "#cc5c5c";
+        msgEl.textContent = "Uneseni kupon nije validan ili je istekao.";
+        msgEl.style.display = "block";
+        }
+        }
     </script>
 </body>
 </html>

@@ -56,8 +56,8 @@ namespace InterTrips___Turistička_Agencija.Controllers
             var korisnik = _db.Users.FirstOrDefault(u => u.Email == emailKorisnika);
             if (korisnik == null) return Unauthorized("Korisnik nije pronađen u Identity bazi podataka.");
 
-            var paketPostoji = _db.Paketi.Any(p => p.Id == model.PaketId);
-            if (!paketPostoji)
+            var paket = await _db.Paketi.FirstOrDefaultAsync(p => p.Id == model.PaketId);
+            if (paket == null)
             {
                 return BadRequest($"Odabrani PaketId ({model.PaketId}) ne postoji u bazi podataka.");
             }
@@ -66,6 +66,30 @@ namespace InterTrips___Turistička_Agencija.Controllers
             if (stvarniKorisnikUBazi == null)
             {
                 return BadRequest("Korisnik nema kreiran profil u tabeli Korisnici.");
+            }
+
+            decimal baznaCijena = 500; 
+
+            var propertyCijena = paket.GetType().GetProperties().FirstOrDefault(p => p.Name.Contains("Cijena") || p.Name.Contains("Price"));
+            if (propertyCijena != null)
+            {
+                var vrijednost = propertyCijena.GetValue(paket);
+                if (vrijednost != null) baznaCijena = Convert.ToDecimal(vrijednost);
+            }
+
+            decimal konacnaCijena = baznaCijena * model.Putnici.Count;
+
+            if (!string.IsNullOrEmpty(model.PromoKod))
+            {
+                if (model.PromoKod.ToUpper() == "LETO2026" || model.PromoKod.ToUpper() == "INTERTRIPS10")
+                {
+                    decimal popust = konacnaCijena * 0.15m; 
+                    konacnaCijena -= popust;
+                }
+                else
+                {
+                    return BadRequest("Uneseni promo kod nije važeći ili je istekao.");
+                }
             }
 
             var novaRezervacija = new Rezervacija
@@ -92,7 +116,13 @@ namespace InterTrips___Turistička_Agencija.Controllers
             {
                 _db.Rezervacije.Add(novaRezervacija);
                 await _db.SaveChangesAsync();
-                return Ok(new { id = novaRezervacija.Id, message = "Rezervacija uspješno spašena u bazu!" });
+
+                return Ok(new
+                {
+                    id = novaRezervacija.Id,
+                    cijenaZaPlacanje = konacnaCijena,
+                    message = "Rezervacija uspješno spašena u bazu!"
+                });
             }
             catch (DbUpdateException ex)
             {
@@ -204,6 +234,40 @@ namespace InterTrips___Turistička_Agencija.Controllers
             {
                 return BadRequest(new { greska = ex.Message });
             }
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ProvjeriKupon(string kod, int paketId)
+        {
+            if (string.IsNullOrEmpty(kod)) return BadRequest("Kod nije unesen.");
+
+            var paket = await _db.Paketi.FindAsync(paketId);
+            if (paket == null) return BadRequest("Odabrani paket ne postoji.");
+
+            decimal staraCijena = 500;
+            var propertyCijena = paket.GetType().GetProperties().FirstOrDefault(p => p.Name.Contains("Cijena") || p.Name.Contains("Price"));
+            if (propertyCijena != null)
+            {
+                var vrijednost = propertyCijena.GetValue(paket);
+                if (vrijednost != null) staraCijena = Convert.ToDecimal(vrijednost);
+            }
+
+            if (kod.ToUpper() == "LETO2026" || kod.ToUpper() == "INTERTRIPS10")
+            {
+                decimal popustIznos = staraCijena * 0.15m; 
+                decimal novaCijena = staraCijena - popustIznos;
+
+                return Ok(new
+                {
+                    validan = true,
+                    poruka = "Kupon uspješno primijenjen! Popust: 15%",
+                    novaCijena = novaCijena,
+                    usteda = popustIznos
+                });
+            }
+
+            return NotFound(new { validan = false, poruka = "Uneseni kupon ne postoji ili je istekao." });
         }
     }
 }

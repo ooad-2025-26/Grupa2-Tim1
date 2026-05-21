@@ -21,15 +21,15 @@ public class AccountController : Controller
 
     public class LoginDto
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 
     public class RegisterDto
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 
     [HttpGet("Login")]
@@ -112,4 +112,8 @@ public class AccountController : Controller
             userName = User.Identity!.Name
         });
     }
+    [HttpGet("AccessDenied")]
+    public IActionResult AccessDenied()
+    { return Content("Pristup odbijen. Nemate administratorske ili agentske ovlasti za ovaj dio stranice.");
     }
+}

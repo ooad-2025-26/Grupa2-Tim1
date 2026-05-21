@@ -4,6 +4,7 @@ using InterTrips___Turistička_Agencija.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InterTrips___Turistička_Agencija.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260521112517_DodajImeIPrezimeUUser")]
+    partial class DodajImeIPrezimeUUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,7 +45,7 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
 
                     b.HasIndex("PaketId");
 
-                    b.ToTable("AgentPaket", (string)null);
+                    b.ToTable("AgentPaketi");
                 });
 
             modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.ApplicationUser", b =>

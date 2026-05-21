@@ -8,9 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString,
-        sqlOptions => sqlOptions.EnableRetryOnFailure()));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+    options.UseSqlServer(connectionString, sqlOptions => sqlOptions.EnableRetryOnFailure())
+           .ConfigureWarnings(warnings => warnings.Ignore(
+               Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning
+           ))
+);
 
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

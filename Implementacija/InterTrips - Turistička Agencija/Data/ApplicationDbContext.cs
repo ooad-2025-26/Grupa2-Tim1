@@ -59,5 +59,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     .HasForeignKey(s => s.PlanPutovanjaId)
     .OnDelete(DeleteBehavior.Cascade);
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<AgentPaket>().ToTable("AgentPaket");
     }
 }
