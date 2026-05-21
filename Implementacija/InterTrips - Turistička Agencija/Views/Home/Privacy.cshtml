@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>
+    <title>InterTrips - @ViewData["Title"]</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,55 +17,275 @@
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
 
     <style>
+            :root {
+                --primary: #2aa9b0;
+                --primary-dark: #1e7f88;
+                --text: #24414a;
+                --muted: #5f7c86;
+                --shadow: 0 16px 36px rgba(63,116,128,0.06);
+                --transition: all 0.25s ease;
+            }
+
+            body {
+                font-family: 'Poppins', sans-serif;
+                color: var(--text);
+                margin: 0;
+                background-color: #f6fbfb;
+            }
+
+            /* --- TOPBAR / NAVIGACIJA --- */
+            .topbar {
+                height: 65px;
+                background: rgba(255, 255, 255, 0.9);
+                border-bottom: 1px solid rgba(95, 181, 187, 0.15);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 40px;
+                position: sticky;
+                top: 0;
+                z-index: 50;
+                backdrop-filter: blur(12px);
+                box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            }
+
+            .logo-link {
+                display: flex;
+                align-items: center;
+            }
+
+            .logo {
+                width: 90px;
+                height: 45px;
+                object-fit: contain;
+                display: block;
+            }
+
+            .nav-links {
+                display: flex;
+                align-items: center;
+                gap: 24px;
+                font-size: 13px;
+                font-weight: 600;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            }
+
+                .nav-links a {
+                    color: rgba(36, 65, 74, 0.8);
+                    transition: var(--transition);
+                    text-decoration: none;
+                }
+
+                    .nav-links a:hover {
+                        color: var(--primary-dark);
+                    }
+
+                .nav-links .pill {
+                    padding: 8px 18px;
+                    border-radius: 999px;
+                    border: 1px solid var(--primary);
+                    color: var(--primary-dark) !important;
+                    background: rgba(42, 169, 176, 0.05);
+                }
+
+                    .nav-links .pill:hover {
+                        background: var(--primary);
+                        color: #fff !important;
+                    }
+
+            .btn-gold {
+                padding: 8px 18px;
+                border-radius: 999px;
+                background: linear-gradient(135deg, #2aa9b0, #86d9ff);
+                color: #fff !important;
+                border: none;
+                font-size: 13px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: var(--transition);
+                display: inline-block;
+                text-decoration: none;
+            }
+
+                .btn-gold:hover {
+                    filter: brightness(1.05);
+                    transform: translateY(-1px);
+                }
+
             .page {
-                max-width: 980px;
-                margin: 0 auto;
-                padding: 40px 18px 60px;
+                max-width: 860px;
+                margin: 40px auto 60px;
+                padding: 0 20px;
             }
 
             .card {
-                background: rgba(255,255,255,0.78);
-                border: 1px solid rgba(95,181,187,0.16);
-                border-radius: 18px;
+                background: #ffffff;
+                border: 1px solid rgba(95,181,187,0.14);
+                border-radius: 20px;
                 box-shadow: var(--shadow);
-                padding: 32px;
+                padding: 45px 50px;
             }
 
             h1 {
-                color: var(--primary-dark);
-                margin-bottom: 16px;
-                font-size: 26px;
-                font-weight: 700;
+                color: var(--text);
+                margin-top: 0;
+                margin-bottom: 24px;
+                font-size: clamp(1.8rem, 4vw, 2.4rem);
+                font-weight: 800;
+                position: relative;
             }
+
+                h1::after {
+                    content: '';
+                    display: block;
+                    width: 60px;
+                    height: 4px;
+                    background: var(--primary);
+                    border-radius: 2px;
+                    margin-top: 12px;
+                }
 
             h2 {
-                margin-top: 24px;
-                color: var(--text);
-                font-size: 16px;
-                font-weight: 600;
-                border-bottom: 1px solid rgba(95,181,187,0.14);
-                padding-bottom: 6px;
+                margin-top: 36px;
+                margin-bottom: 14px;
+                color: var(--primary-dark);
+                font-size: 17px;
+                font-weight: 700;
+                padding-bottom: 8px;
+                border-bottom: 1px solid rgba(95,181,187,0.12);
+                letter-spacing: 0.3px;
             }
 
-            p, li {
+            p {
                 color: var(--muted);
                 line-height: 1.8;
-                font-size: 13.5px;
-                margin-top: 8px;
+                font-size: 14px;
+                margin-top: 0;
+                margin-bottom: 16px;
             }
 
             ul {
-                padding-left: 20px;
-                margin-top: 8px;
+                padding-left: 0;
+                list-style: none;
+                margin-top: 12px;
+                margin-bottom: 20px;
+            }
+
+            li {
+                color: var(--muted);
+                line-height: 1.8;
+                font-size: 14px;
+                margin-bottom: 10px;
+                position: relative;
+                padding-left: 22px;
+            }
+
+                li::before {
+                    content: "✓";
+                    position: absolute;
+                    left: 0;
+                    color: var(--primary);
+                    font-weight: bold;
+                }
+
+            .link-style {
+                color: var(--primary-dark);
+                font-weight: 600;
+                text-decoration: none;
+                transition: var(--transition);
+                border-bottom: 1px dashed var(--primary);
+                padding-bottom: 1px;
+            }
+
+                .link-style:hover {
+                    color: var(--primary);
+                    border-bottom-style: solid;
+                }
+
+            .back-link-box {
+                margin-top: 40px;
+                padding-top: 20px;
+                border-top: 1px solid rgba(95,181,187,0.1);
             }
 
             .back-link {
-                margin-top: 28px;
-                display: inline-block;
+                color: var(--muted);
+                font-weight: 600;
+                font-size: 13px;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                transition: var(--transition);
+            }
+
+                .back-link:hover {
+                    color: var(--primary-dark);
+                    transform: translateX(-4px);
+                }
+
+            @@media (max-width: 700px) {
+                .topbar {
+                    padding: 16px;
+                    flex-direction: column;
+                    height: auto;
+                    gap: 16px;
+                }
+
+                .nav-links {
+                    flex-direction: column;
+                    width: 100%;
+                    text-align: center;
+                    gap: 14px;
+                }
+
+                .card {
+                    padding: 30px 24px;
+                }
+
+                .page {
+                    margin: 20px auto 40px;
+                }
             }
     </style>
 </head>
-<body class="auth-page">
+<body>
+
+    <header class="topbar">
+        <a asp-controller="Home" asp-action="Index" class="logo-link">
+            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+        </a>
+
+        <ul class="nav-links">
+            <li><a asp-controller="Home" asp-action="Index">Početna</a></li>
+            <li><a asp-controller="Destinacije" asp-action="Index">Destinacije</a></li>
+            <li><a asp-controller="Home" asp-action="ONama">O nama</a></li>
+            <li><a asp-controller="Home" asp-action="Kontakt">Kontakt</a></li>
+
+            @if (User?.Identity?.IsAuthenticated == true)
+            {
+                <li><a asp-controller="Rezervacija" asp-action="Index">Moje rezervacije</a></li>
+            }
+
+            <li><a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a></li>
+
+            @if (User?.Identity?.IsAuthenticated == true)
+            {
+                var profileHref = User.IsInRole("Admin") ? "/Administrator"
+                                : User.IsInRole("Agent") ? "/Agent"
+                                : "/Korisnik/Profil";
+
+                <li><a class="btn btn-gold" href="@profileHref">Profil (@User.Identity.Name)</a></li>
+            }
+            else
+            {
+                <li><a class="btn btn-gold" asp-controller="Account" asp-action="Login">Prijava</a></li>
+            }
+        </ul>
+    </header>
+
     <main class="page">
         <div class="card">
             <h1>@ViewData["Title"]</h1>
@@ -110,15 +330,16 @@
             <h2>6. Kontakt i podrška</h2>
             <p>
                 Za sva pitanja možete nas kontaktirati direktno putem naše zvanične forme na stranici
-                <a asp-controller="Home" asp-action="Kontakt" style="color: var(--primary-dark); font-weight: 600; text-decoration: underline;">Kontakt</a>.
+                <a asp-controller="Home" asp-action="Kontakt" class="link-style">Kontakt</a>.
             </p>
 
-            <p class="back-link">
-                <a asp-controller="Home" asp-action="Index" style="color: var(--primary-dark); font-weight:700; text-decoration: underline;">
+            <div class="back-link-box">
+                <a asp-controller="Home" asp-action="Index" class="back-link">
                     ← Nazad na početnu
                 </a>
-            </p>
+            </div>
         </div>
     </main>
+
 </body>
 </html>

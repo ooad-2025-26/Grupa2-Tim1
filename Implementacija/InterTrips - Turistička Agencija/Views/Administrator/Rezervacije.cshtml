@@ -2,6 +2,12 @@
 @{
     ViewData["Title"] = "Admin - Rezervacije korisnika";
     Layout = null;
+
+    var danas = DateOnly.FromDateTime(DateTime.Today);
+
+    var aktivneRezervacije = Model.Rezervacije?
+        .Where(r => r.Paket == null || r.DatumPolaska.AddDays(r.Paket.TrajanjeNoci) > danas)
+        .ToList();
 }
 <!DOCTYPE html>
 <html lang="bs">
@@ -280,10 +286,10 @@
             <div class="table-card">
                 <h2>Lista prijavljenih putovanja</h2>
 
-                @if (Model.Rezervacije == null || !Model.Rezervacije.Any())
+                @if (aktivneRezervacije == null || !aktivneRezervacije.Any())
                 {
                     <div style="text-align:center; padding:40px; color:var(--text-muted); font-weight:500;">
-                        Korisnik <strong style="color: var(--text-main);">@Model.KorisnikEmail</strong> trenutno nema evidentiranih rezervacija u sistemu.
+                        Trenutno nema aktivnih evidentiranih rezervacija u sistemu za korisnika <strong style="color: var(--text-main);">@Model.KorisnikEmail</strong>.
                     </div>
                 }
                 else
@@ -299,34 +305,33 @@
                                     <th>BROJ PUTNIKA</th>
                                     <th>STATUS</th>
                                 </tr>
-                            </table>
-                            <table class="custom-table">
-                                <tbody>
-                                    @foreach (var r in Model.Rezervacije)
-                                    {
-                                        <tr>
-                                            <td><span class="res-id">#@r.Id</span></td>
-                                            <td>
-                                                <span class="user-link">
-                                                    @(r.Korisnik != null ? r.Korisnik.Email : "ID: " + r.KorisnikId)
-                                                </span>
-                                            </td>
-                                            <td><strong style="color: var(--text-main);">@(r.Paket?.Naziv ?? "Nespecificirano")</strong></td>
-                                            <td>@(r.Paket?.Destinacija != null ? $"{r.Paket.Destinacija.Naziv} ({r.Paket.Destinacija.Drzava})" : "—")</td>
-                                            <td>
-                                                <span class="pax-badge">
-                                                    @(r.Putnici != null && r.Putnici.Any() ? r.Putnici.Count : 1) PAX
-                                                </span>
-                                            </td>
-                                            <td><span class="status-pill">@r.Status.ToString()</span></td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                </div>
+                            </thead>
+                            <tbody>
+                                @foreach (var r in aktivneRezervacije)
+                                {
+                                    <tr>
+                                        <td><span class="res-id">#@r.Id</span></td>
+                                        <td>
+                                            <span class="user-link">
+                                                @(r.Korisnik != null ? r.Korisnik.Email : "ID: " + r.KorisnikId)
+                                            </span>
+                                        </td>
+                                        <td><strong style="color: var(--text-main);">@(r.Paket?.Naziv ?? "Nespecificirano")</strong></td>
+                                        <td>@(r.Paket?.Destinacija != null ? $"{r.Paket.Destinacija.Naziv} ({r.Paket.Destinacija.Drzava})" : "—")</td>
+                                        <td>
+                                            <span class="pax-badge">
+                                                @(r.Putnici != null && r.Putnici.Any() ? r.Putnici.Count : 1) PAX
+                                            </span>
+                                        </td>
+                                        <td><span class="status-pill">@r.Status.ToString()</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
             </div>
-        </main>
-    </body>
+        </div>
+    </main>
+</body>
 </html>

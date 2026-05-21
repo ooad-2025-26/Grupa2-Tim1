@@ -3,206 +3,6 @@
     Layout = "_Layout";
 }
 
-<style>
-    :root {
-        --primary: #2aa9b0;
-        --primary-dark: #1e7f88;
-        --text: #24414a;
-        --muted: #5f7c86;
-        --shadow: 0 16px 36px rgba(63,116,128,0.10);
-    }
-
-    .navbar {
-        height: 65px;
-        background: rgba(255, 255, 255, 0.95);
-        border-bottom: 1px solid rgba(95, 181, 187, 0.15);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 40px;
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-    }
-
-    .logo-link {
-        display: flex;
-        align-items: center;
-    }
-
-    .logo {
-        width: 90px;
-        height: 45px;
-        object-fit: contain;
-        display: block;
-    }
-
-    .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        font-size: 13px;
-        font-weight: 600;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-        .nav-links a {
-            color: rgba(36, 65, 74, 0.8);
-            transition: color 0.2s ease;
-            text-decoration: none;
-        }
-
-            .nav-links a:hover,
-            .nav-links a.active {
-                color: var(--primary-dark);
-            }
-
-        .nav-links .pill {
-            padding: 8px 18px;
-            border-radius: 999px;
-            border: 1px solid var(--primary);
-            color: var(--primary-dark) !important;
-            background: rgba(42, 169, 176, 0.05);
-            transition: all 0.2s ease;
-        }
-
-            .nav-links .pill:hover {
-                background: var(--primary);
-                color: #fff !important;
-            }
-
-    .btn-gold {
-        padding: 8px 18px;
-        border-radius: 999px;
-        background: linear-gradient(135deg, #2aa9b0, #86d9ff);
-        color: #fff !important;
-        border: none;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: transform 0.2s ease, filter 0.2s ease;
-        display: inline-block;
-        text-decoration: none;
-    }
-
-        .btn-gold:hover {
-            filter: brightness(1.05);
-            transform: translateY(-1px);
-        }
-
-    .btn-logout {
-        padding: 8px 18px;
-        border-radius: 999px;
-        background: rgba(30, 127, 136, 0.15);
-        color: #1e7f88 !important;
-        border: 1px solid rgba(30, 127, 136, 0.35);
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: inline-block;
-    }
-
-        .btn-logout:hover {
-            background: #1e7f88;
-            color: #fff !important;
-            border-color: transparent;
-            transform: translateY(-1px);
-        }
-
-    #userArea {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    #userAvatar {
-        width: 30px;
-        height: 30px;
-        background: #e67e22;
-        color: #fff;
-        border-radius: 50%;
-        display: grid;
-        place-items: center;
-        font-weight: bold;
-        font-size: 12px;
-        flex-shrink: 0;
-    }
-
-    .nav-links form {
-        display: flex;
-        align-items: center;
-    }
-
-    @@media (max-width: 700px) {
-        .navbar {
-            padding: 10px 14px;
-            flex-direction: column;
-            height: auto;
-            gap: 14px;
-        }
-
-        .nav-links {
-            flex-direction: column;
-            gap: 14px;
-            width: 100%;
-            text-align: center;
-        }
-
-        #userArea {
-            flex-direction: column;
-            gap: 5px;
-        }
-    }
-</style>
-
-<nav class="navbar">
-    <a asp-controller="Home" asp-action="Index" class="logo-link">
-        <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
-    </a>
-
-    <ul class="nav-links">
-        <li><a asp-controller="Home" asp-action="Index">Početna</a></li>
-        <li><a asp-controller="Destinacije" asp-action="Index">Destinacije</a></li>
-        <li><a asp-controller="Home" asp-action="ONama">O nama</a></li>
-        <li><a asp-controller="Home" asp-action="Kontakt">Kontakt</a></li>
-
-        @if (User?.Identity?.IsAuthenticated == true)
-        {
-            <li><a class="active" asp-controller="Rezervacija" asp-action="Index">Moje rezervacije</a></li>
-        }
-
-        <li><a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a></li>
-
-        @if (User?.Identity?.IsAuthenticated == true)
-        {
-            var profileHref = User.IsInRole("Admin") ? "/Administrator"
-                            : User.IsInRole("Agent") ? "/Agent"
-                            : "/Korisnik/Profil";
-
-            <li id="userArea">
-                <div id="userAvatar">
-                    @(!string.IsNullOrEmpty(User.Identity.Name) ? User.Identity.Name[0].ToString().ToUpper() : "U")
-                </div>
-                <a class="btn btn-gold" id="userName" href="@profileHref">Profil (@User.Identity.Name)</a>
-            </li>
-            <li>
-                <form method="post" action="/Account/Logout" style="display:inline;">
-                    <button class="btn-logout" id="logoutBtn" type="submit">Odjava</button>
-                </form>
-            </li>
-        }
-        else
-        {
-            <li><a class="btn btn-gold" id="loginLink" asp-controller="Account" asp-action="Login">Prijava</a></li>
-        }
-    </ul>
-</nav>
-
 <header class="hero hero--reservations">
     <div class="hero-overlay"></div>
     <div class="hero-content">
@@ -211,6 +11,7 @@
         <p>Pregledajte Vaše rezervacije, status i po potrebi otkažite rezervaciju.</p>
     </div>
 </header>
+
 <main>
     <section class="section">
         <div class="section-header" style="margin-bottom:14px;">
@@ -267,6 +68,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
+        :root {
+        --primary: #2aa9b0;
+        --primary-dark: #1e7f88;
+        --text: #24414a;
+        --muted: #5f7c86;
+        --shadow: 0 16px 36px rgba(63,116,128,0.10);
+        }
+
         .hero--reservations {
         position: relative;
         min-height: 360px;
@@ -402,12 +211,6 @@
         color: #b42318;
         }
 
-        @@media (max-width: 760px) {
-        .r-grid {
-        grid-template-columns: 1fr;
-        }
-        }
-
         .pill {
         display: inline-flex;
         align-items: center;
@@ -424,6 +227,12 @@
 
         .pill:hover {
         filter: brightness(1.02);
+        }
+
+        @@media (max-width: 760px) {
+        .r-grid {
+        grid-template-columns: 1fr;
+        }
         }
     </style>
 
@@ -518,7 +327,6 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        // Header
         doc.setFillColor(10, 34, 40);
         doc.rect(0, 0, 210, 40, 'F');
 
@@ -575,11 +383,9 @@
         doc.text("Spisak putnika na rezervaciji:", 15, y);
         y += 6;
 
-        // KALIBRISANE X KOORDINATE (Sprečavaju preklapanje države i telefona)
         const colX = { rb: 15, ime: 25, dob: 80, pasos: 110, drz: 140, tel: 165 };
-        const tableWidth = 180; // Puna širina tabele unutar margina
+        const tableWidth = 180;
 
-        // Zaglavlje tabele
         doc.setFillColor(40, 55, 60);
         doc.rect(colX.rb, y, tableWidth, 8, 'F');
 
@@ -587,7 +393,7 @@
         doc.setFontSize(9);
         doc.setTextColor(255, 255, 255);
         doc.text("R.b.", colX.rb + 2, y + 5.5);
-        doc.text("Ime i Prezime", colX.ime + 2, y + 5.5); // Izbačen znak &
+        doc.text("Ime i Prezime", colX.ime + 2, y + 5.5);
         doc.text("Datum rod.", colX.dob + 2, y + 5.5);
         doc.text("Pasos", colX.pasos + 2, y + 5.5);
         doc.text("Drz.", colX.drz + 2, y + 5.5);
@@ -609,11 +415,9 @@
         const tel = pick(p.telefon, p.Telefon, p.phone, p.Phone, '—');
         const req = pick(p.posebniZahtjevi, p.PosebniZahtjevi, p.requests, p.Requests, '');
 
-        // Alternirajuće pozadine redova
         doc.setFillColor(i % 2 === 0 ? 245 : 255, i % 2 === 0 ? 248 : 255, i % 2 === 0 ? 248 : 255);
         doc.rect(colX.rb, y, tableWidth, 8, 'F');
 
-        // Okvir ćelija
         doc.setDrawColor(210, 225, 225);
         doc.setLineWidth(0.2);
         doc.rect(colX.rb, y, tableWidth, 8, 'D');
@@ -625,7 +429,6 @@
         doc.setFont("helvetica", "bold");
         doc.text(imePrezime, colX.ime + 2, y + 5.5);
 
-        // Upisivanje podataka u strogo definisane kolone
         doc.setFont("helvetica", "normal");
         doc.text(String(dob), colX.dob + 2, y + 5.5);
         doc.text(String(pasos), colX.pasos + 2, y + 5.5);
@@ -667,7 +470,28 @@
 
         if (!listEl) return;
 
-        ucitaneRezervacije = await getReservationsForCurrentUser();
+        let sveRezervacije = await getReservationsForCurrentUser();
+        const danas = new Date(2026, 4, 20);
+        danas.setHours(0, 0, 0, 0);
+
+        ucitaneRezervacije = sveRezervacije.filter(r => {
+        const datumString = r.datumPovratka || r.DatumPovratka;
+        if (!datumString) return true;
+
+        let povratak;
+
+        if (datumString.includes('.')) {
+        const parts = datumString.split('.');
+        povratak = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+        } else {
+        ptvratak = new Date(datumString);
+        }
+
+        if (isNaN(povratak.getTime())) return true; // Zaštita od neispravnog datuma
+
+        povratak.setHours(0, 0, 0, 0);
+        return povratak > danas;
+        });
 
         if (!ucitaneRezervacije || ucitaneRezervacije.length === 0) {
         listEl.innerHTML = '';
@@ -679,8 +503,9 @@
 
         listEl.innerHTML = ucitaneRezervacije.map((r, index) => {
         const isCancelled = r.status === 'Otkazana';
+        const currentId = r.id || r.Id || '';
         const cancelBtn = isCancelled ? '' : `
-        <button class="btn-cancel" type="button" onclick="cancelReservation('${r.id}')">
+        <button class="btn-cancel" type="button" onclick="cancelReservation('${currentId}')">
         Otkaži rezervaciju
         </button>
         `;
@@ -696,7 +521,7 @@
         return `
         <div class="r-card">
         <div class="r-top">
-        <div class="r-code">#${r.id || '—'}</div>
+        <div class="r-code">#${currentId || '—'}</div>
         ${badgeHtml(r.status)}
         </div>
         <div class="r-grid">

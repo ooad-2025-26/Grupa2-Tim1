@@ -1,20 +1,25 @@
+
 @{
     ViewData["Title"] = "Turističke destinacije";
     Layout = "_Layout";
 }
 
-<!DOCTYPE html>
-<html lang="bs">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>InterTrips - @ViewData["Title"]</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="~/css/style.css">
-  
-  <style>
+@functions {
+    string ImgFor(string? destName)
+    {
+        var n = (destName ?? "").ToLowerInvariant();
+        if (n.Contains("santorini")) return "/assets/destination1.jpg";
+        if (n.Contains("kyoto")) return "/assets/destination2.jpg";
+        if (n.Contains("machu")) return "/assets/destination3.jpg";
+        if (n.Contains("dubai")) return "/assets/destination4.jpg";
+        if (n.Contains("paris")) return "/assets/destination5.jpg";
+        if (n.Contains("bali")) return "/assets/destination6.jpg";
+        return "/assets/destination1.jpg";
+    }
+}
+
+
+<style>
     :root {
         --bg: #eaf7f7;
         --bg-soft: #f6fcfc;
@@ -31,140 +36,6 @@
         --danger: #ff8fa3;
     }
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    body {
-        font-family: 'Poppins', sans-serif;
-        background: linear-gradient(180deg, #edfafa 0%, #e2f4f5 45%, #f8fdfd 100%);
-        color: var(--text);
-        min-height: 100vh;
-    }
-
-    a {
-        color: inherit;
-        text-decoration: none;
-    }
-
-    button, input {
-        font: inherit;
-    }
-
-    .topbar {
-        height: 65px;
-        background: rgba(255, 255, 255, 0.85);
-        border-bottom: 1px solid rgba(95, 181, 187, 0.15);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 40px;
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-    }
-
-    .logo-link {
-        display: flex;
-        align-items: center;
-    }
-
-    .logo {
-        width: 90px;
-        height: 45px;
-        object-fit: contain;
-        display: block;
-    }
-
-    .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        font-size: 13px;
-        font-weight: 600;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    .nav-links a {
-        color: rgba(36, 65, 74, 0.8);
-        transition: color 0.2s ease;
-    }
-
-    .nav-links a:hover,
-    .nav-links a.active {
-        color: var(--primary-dark);
-    }
-
-    .nav-links .pill {
-        padding: 8px 18px;
-        border-radius: 999px;
-        border: 1px solid var(--primary);
-        color: var(--primary-dark) !important;
-        background: rgba(42, 169, 176, 0.05);
-        transition: all 0.2s ease;
-    }
-
-    .nav-links .pill:hover {
-        background: var(--primary);
-        color: #fff !important;
-    }
-
-            .btn-gold {
-                padding: 8px 18px;
-                border-radius: 999px;
-                background: linear-gradient(135deg, #2aa9b0, #86d9ff);
-                color: #fff !important;
-                border: none;
-                font-size: 13px;
-                font-weight: 700;
-                cursor: pointer;
-                transition: transform 0.2s ease, filter 0.2s ease;
-                display: inline-block;
-                text-decoration: none;
-            }
-
-            .btn-logout {
-                padding: 8px 18px;
-                border-radius: 999px;
-                background: rgba(30, 127, 136, 0.15);
-                color: #1e7f88 !important;
-                border: 1px solid rgba(30, 127, 136, 0.35);
-                font-size: 13px;
-                font-weight: 700;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                display: inline-block;
-            }
-    .nav-links form {
-        display: flex;
-        align-items: center;
-    }
-
-    #userArea {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    #userAvatar {
-        width: 30px;
-        height: 30px;
-        background: #e67e22;
-        color: #fff;
-        border-radius: 50%;
-        display: grid;
-        place-items: center;
-        font-weight: bold;
-        font-size: 12px;
-        flex-shrink: 0;
-    }
-
     .hero {
         min-height: 280px;
         display: flex;
@@ -176,15 +47,15 @@
         padding: 40px 18px;
     }
 
-    .hero > div {
-        background: rgba(255,255,255,0.68);
-        border: 1px solid rgba(95,181,187,0.14);
-        padding: 28px 24px;
-        border-radius: 22px;
-        box-shadow: var(--shadow);
-        backdrop-filter: blur(8px);
-        max-width: 760px;
-    }
+        .hero > div {
+            background: rgba(255,255,255,0.68);
+            border: 1px solid rgba(95,181,187,0.14);
+            padding: 28px 24px;
+            border-radius: 22px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(8px);
+            max-width: 760px;
+        }
 
     .tag {
         display: inline-block;
@@ -207,9 +78,9 @@
         color: var(--text);
     }
 
-    .hero h1 span {
-        color: var(--primary-dark);
-    }
+        .hero h1 span {
+            color: var(--primary-dark);
+        }
 
     .hero p {
         max-width: 700px;
@@ -251,14 +122,14 @@
         box-shadow: var(--shadow);
     }
 
-    .search input {
-        width: 100%;
-        background: transparent;
-        border: none;
-        outline: none;
-        color: var(--text);
-        font-size: 13px;
-    }
+        .search input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text);
+            font-size: 13px;
+        }
 
     .chip-row {
         display: flex;
@@ -276,12 +147,12 @@
         cursor: pointer;
     }
 
-    .chip.active {
-        background: linear-gradient(135deg, #7dcfcf, #a7d8ff);
-        color: #18424a;
-        border-color: transparent;
-        font-weight: 700;
-    }
+        .chip.active {
+            background: linear-gradient(135deg, #7dcfcf, #a7d8ff);
+            color: #18424a;
+            border-color: transparent;
+            font-weight: 700;
+        }
 
     .section-title {
         margin: 22px 0 20px;
@@ -289,9 +160,9 @@
         font-size: 13px;
     }
 
-    .section-title strong {
-        color: var(--primary-dark);
-    }
+        .section-title strong {
+            color: var(--primary-dark);
+        }
 
     .grid {
         display: grid;
@@ -308,14 +179,20 @@
         display: flex;
         flex-direction: column;
         min-height: 100%;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .card img {
-        width: 100%;
-        height: 210px;
-        object-fit: cover;
-        display: block;
-    }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(63,116,128,0.15);
+        }
+
+        .card img {
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+            display: block;
+        }
 
     .card-body {
         padding: 16px;
@@ -379,10 +256,10 @@
         padding-top: 10px;
     }
 
-    .price-row .from {
-        font-size: 12px;
-        color: var(--muted);
-    }
+        .price-row .from {
+            font-size: 12px;
+            color: var(--muted);
+        }
 
     .price {
         color: var(--primary-dark);
@@ -401,17 +278,17 @@
         width: fit-content;
     }
 
-    .status.available {
-        background: rgba(54,211,153,0.12);
-        color: #1f8f68;
-        border: 1px solid rgba(54,211,153,0.25);
-    }
+        .status.available {
+            background: rgba(54,211,153,0.12);
+            color: #1f8f68;
+            border: 1px solid rgba(54,211,153,0.25);
+        }
 
-    .status.soldout {
-        background: rgba(255,143,163,0.12);
-        color: #c04f67;
-        border: 1px solid rgba(255,143,163,0.25);
-    }
+        .status.soldout {
+            background: rgba(255,143,163,0.12);
+            color: #c04f67;
+            border: 1px solid rgba(255,143,163,0.25);
+        }
 
     .reserve-btn {
         margin-top: 10px;
@@ -423,320 +300,123 @@
         color: #18424a;
         font-weight: 800;
         cursor: pointer;
+        transition: filter 0.2s ease;
     }
 
-    .reserve-btn:hover {
-        filter: brightness(1.03);
-    }
-
-    .newsletter {
-        margin-top: 60px;
-        padding: 28px 24px;
-        border-top: 1px solid rgba(95,181,187,0.12);
-        border-bottom: 1px solid rgba(95,181,187,0.12);
-        background: rgba(255,255,255,0.60);
-    }
-
-    .newsletter > div:first-child {
-        margin-bottom: 18px;
-    }
-
-    .newsletter h3 {
-        font-size: 22px;
-        margin-bottom: 4px;
-        color: var(--text);
-    }
-
-    .newsletter p {
-        font-size: 12px;
-        color: var(--muted);
-    }
-
-    .newsletter-form {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    .newsletter-form input {
-        min-width: 260px;
-        height: 40px;
-        border-radius: 999px;
-        border: 1px solid rgba(95,181,187,0.18);
-        background: rgba(255,255,255,0.92);
-        color: var(--text);
-        padding: 0 16px;
-        outline: none;
-    }
-
-    .newsletter-form input::placeholder {
-        color: rgba(95,124,134,0.7);
-    }
-
-    .newsletter-form button {
-        height: 40px;
-        padding: 0 18px;
-        border-radius: 999px;
-        border: none;
-        background: linear-gradient(135deg, #7dcfcf, #a7d8ff);
-        color: #18424a;
-        font-weight: 700;
-        cursor: pointer;
-    }
-
-    .newsletter-form button:hover {
-        filter: brightness(1.03);
-    }
-
-    #newsletterMessage {
-        margin-top: 12px;
-        font-size: 13px;
-        color: var(--primary-dark);
-        font-weight: 600;
-    }
-
-    .footer {
-        padding: 34px 24px 24px;
-        background: linear-gradient(180deg, #eefbfb 0%, #e0f4f4 100%);
-    }
-
-    .footer-grid {
-        display: grid;
-        grid-template-columns: 1.5fr 1fr 1fr 1fr;
-        gap: 24px;
-        align-items: start;
-    }
-
-    .footer .logo {
-        margin-bottom: 14px;
-    }
-
-    .footer p, .footer a {
-        font-size: 12px;
-        color: var(--muted);
-        line-height: 1.8;
-    }
-
-    .footer h4 {
-        color: var(--primary-dark);
-        font-size: 11px;
-        margin-bottom: 12px;
-        text-transform: uppercase;
-        letter-spacing: .7px;
-    }
-
-    .copyright {
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        flex-wrap: wrap;
-        margin-top: 22px;
-        padding-top: 16px;
-        border-top: 1px solid rgba(95,181,187,0.12);
-        color: var(--muted);
-        font-size: 11px;
-    }
+        .reserve-btn:hover {
+            filter: brightness(1.03);
+        }
 
     @@media (max-width: 980px) {
-        .grid, .footer-grid {
+        .grid {
             grid-template-columns: 1fr 1fr;
         }
     }
 
     @@media (max-width: 700px) {
-        .grid, .footer-grid {
+        .grid {
             grid-template-columns: 1fr;
         }
 
         .section {
             padding: 22px 16px 48px;
         }
-
-        .topbar {
-            padding: 12px 14px;
-            flex-direction: column;
-            height: auto;
-            gap: 14px;
-        }
-
-        .nav-links {
-            flex-direction: column;
-            width: 100%;
-            text-align: center;
-            gap: 12px;
-        }
-
-        .newsletter-form input {
-            min-width: 100%;
-        }
     }
-  </style>
-</head>
-<body>
+</style>
 
-<header class="topbar">
-  <a asp-controller="Home" asp-action="Index" class="logo-link">
-    <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
-  </a>
-
-  <ul class="nav-links">
-    <li><a asp-controller="Home" asp-action="Index">Početna</a></li>
-    <li><a class="active" asp-controller="Destinacije" asp-action="Index">Destinacije</a></li>
-    <li><a asp-controller="Home" asp-action="ONama">O nama</a></li>
-    <li><a asp-controller="Home" asp-action="Kontakt">Kontakt</a></li>
-
-    @if (User?.Identity?.IsAuthenticated == true)
-    {
-        <li><a asp-controller="Rezervacija" asp-action="Index">Moje rezervacije</a></li>
-    }
-
-    <li><a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a></li>
-
-    @if (User?.Identity?.IsAuthenticated == true)
-    {
-        var profileHref = User.IsInRole("Admin") ? "/Administrator"
-                        : User.IsInRole("Agent") ? "/Agent"
-                        : "/Korisnik/Profil";
-
-        <li id="userArea">
-            <div id="userAvatar">
-                @(!string.IsNullOrEmpty(User.Identity.Name) ? User.Identity.Name[0].ToString().ToUpper() : "U")
-            </div>
-            <a class="btn btn-gold" id="userName" href="@profileHref">Profil (@User.Identity.Name)</a>
-        </li>
-                <li>
-                    <form method="post" action="/Account/Logout" style="display:inline;">
-                        <button class="btn-logout" id="logoutBtn" type="submit">Odjava</button>
-                    </form>
-                </li>
-    }
-    else
-    {
-        <li><a class="btn btn-gold" id="loginLink" asp-controller="Account" asp-action="Login">Prijava</a></li>
-    }
-  </ul>
-</header>
-
-  <section class="hero">
+<section class="hero">
     <div>
-      <div class="tag">TURISTIČKE DESTINACIJE</div>
-      <h1>Pregled <span>destinacija</span></h1>
-      <p>Odaberite destinaciju putovanja, pogledajte cijenu, trajanje i dostupnost, te nastavite na proces rezervacije.</p>
+        <div class="tag">TURISTIČKE DESTINACIJE</div>
+        <h1>Pregled <span>destinacija</span></h1>
+        <p>Odaberite destinaciju putovanja, pogledajte cijenu, trajanje i dostupnost, te nastavite na proces rezervacije.</p>
     </div>
-  </section>
+</section>
 
-  <section class="section">
+<section class="section">
     <div class="container">
-      <div class="filters">
-        <div class="search">
-          <span style="color:var(--primary-dark); font-size:14px;">⌕</span>
-          <input type="text" placeholder="Pretražite pakete...">
+        <div class="filters">
+            <div class="search">
+                <span style="color:var(--primary-dark); font-size:14px;">⌕</span>
+                <input type="text" placeholder="Pretražite pakete...">
+            </div>
+
+            <div class="chip-row">
+                <button class="chip active">Sve destinacije</button>
+            </div>
         </div>
 
-        <div class="chip-row">
-          <button class="chip active">Sve destinacije</button>
+        <div class="section-title">Prikazano <strong>@Model.Count</strong> turističkih paketa</div>
+
+        <div class="grid">
+            @foreach (var p in Model)
+            {
+                <article class="card">
+                    <img src="@ImgFor(p.Destinacija?.Naziv)" alt="@p.Naziv">
+                    <div class="card-body">
+                        <div class="card-top">
+                            <span class="tag-small">
+                                @(string.IsNullOrWhiteSpace(p.Destinacija?.Kategorija) ? "Paket" : p.Destinacija!.Kategorija)
+                            </span>
+                            <span class="rating">★ 4.8</span>
+                        </div>
+
+                        <h3>@p.Naziv</h3>
+
+                        <div class="country">
+                            @p.Destinacija?.Drzava • @p.TrajanjeNoci noći
+                        </div>
+
+                        <div class="desc">
+                            @(string.IsNullOrWhiteSpace(p.Destinacija?.Opis) ? "Opis nije unesen." : p.Destinacija!.Opis)
+                        </div>
+
+                        <div class="status @(p.Status == InterTrips___Turistička_Agencija.Enums.StatusPaketa.Dostupan ? "available" : "soldout")">
+                            @(p.Status == InterTrips___Turistička_Agencija.Enums.StatusPaketa.Dostupan ? "Dostupan" : "Rasprodano")
+                        </div>
+
+                        <div class="price-row">
+                            <div class="from">Od</div>
+                            <div class="price">@p.CijenaOd.ToString("0.##") BAM</div>
+                        </div>
+
+                        <button class="reserve-btn" onclick="window.location.href='/Rezervacija/Rezervacija?paketId=@p.Id'">
+                            Rezerviši paket
+                        </button>
+                    </div>
+                </article>
+            }
         </div>
-      </div>
-
-      <div class="section-title">Prikazano <strong>@Model.Count</strong> turističkih paketa</div>
-
-     <div class="grid">
-  @foreach (var p in Model)
-  {
-    <article class="card">
-@functions{
-  string ImgFor(string? destName)
-  {
-    var n = (destName ?? "").ToLowerInvariant();
-    if (n.Contains("santorini")) return "/assets/destination1.jpg";
-    if (n.Contains("kyoto")) return "/assets/destination2.jpg";
-    if (n.Contains("machu")) return "/assets/destination3.jpg";
-    if (n.Contains("dubai")) return "/assets/destination4.jpg";
-    if (n.Contains("paris")) return "/assets/destination5.jpg";
-    if (n.Contains("bali")) return "/assets/destination6.jpg";
-    return "/assets/destination1.jpg";
-  }
-}
-<img src="@ImgFor(p.Destinacija?.Naziv)" alt="@p.Naziv">
-      <div class="card-body">
-        <div class="card-top">
-          <span class="tag-small">
-            @(string.IsNullOrWhiteSpace(p.Destinacija?.Kategorija) ? "Paket" : p.Destinacija!.Kategorija)
-          </span>
-          <span class="rating">★ 4.8</span>
-        </div>
-
-        <h3>@p.Naziv</h3>
-
-        <div class="country">
-          @p.Destinacija?.Drzava • @p.TrajanjeNoci noći
-        </div>
-
-        <div class="desc">
-@(string.IsNullOrWhiteSpace(p.Destinacija?.Opis) ? "Opis nije unesen." : p.Destinacija!.Opis)        </div>
-
-    <div class="status @(p.Status == InterTrips___Turistička_Agencija.Enums.StatusPaketa.Dostupan ? "available" : "soldout")">
-  @(p.Status == InterTrips___Turistička_Agencija.Enums.StatusPaketa.Dostupan ? "Dostupan" : "Rasprodano")
-</div>
-
-        <div class="price-row">
-          <div class="from">Od</div>
-          <div class="price">@p.CijenaOd.ToString("0.##") BAM</div>
-        </div>
-
-        <button class="reserve-btn"
-                onclick="window.location.href='/Rezervacija/Rezervacija?paketId=@p.Id'">
-          Rezerviši paket
-        </button>
-      </div>
-    </article>
-  }
-</div>
     </div>
- 
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
+</section>
+<footer class="footer">
+    <div class="footer-grid">
         <div>
-          <a href="/" class="logo-link">
-            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
-          </a>
-          <p>Pregledajte i rezervišite turističke pakete uz InterTrips.</p>
+            <a asp-controller="Home" asp-action="Index" class="logo-link">
+                <img src="~/assets/logo.png" alt="InterTrips logo" class="logo small-logo">
+            </a>
+            <p>Otkrijte najbolje destinacije na svijetu.</p>
         </div>
 
         <div>
-          <h4>Istraži</h4>
-          <p><a href="/destinacije">Destinacije</a></p>
-          <p><a href="#">Putni vodiči</a></p>
-          <p><a href="#">Najbolja iskustva</a></p>
-          <p><a href="#">Skriveni dragulji</a></p>
+            <h4>Istraži</h4>
+            <a asp-controller="Destinacije" asp-action="Index">Destinacije</a>
+            <a href="#">Putni vodiči</a>
+            <a href="#">Najbolja iskustva</a>
         </div>
 
         <div>
-          <h4>Kompanija</h4>
-          <p><a href="/Home/About">O nama</a></p>
-          <p><a href="karijere.html">Karijere</a></p>
-          <p><a href="/Home/Contact">Kontakt</a></p>
+            <h4>Kompanija</h4>
+            <a asp-controller="Home" asp-action="ONama">O nama</a>
+            <a href="#">Karijere</a>
+            <a asp-controller="Home" asp-action="Kontakt">Kontakt</a>
         </div>
 
         <div>
-          <h4>Podrška</h4>
-          <p><a href="#">Centar za pomoć</a></p>
-          <p><a href="#">Politika privatnosti</a></p>
-          <p><a href="#">Uvjeti korištenja</a></p>
-          <p><a href="#">Politika kolačića</a></p>
+            <h4>Podrška</h4>
+            <a href="#">Centar za pomoć</a>
+            <a asp-controller="Home" asp-action="Privacy">Politika privatnosti</a>
+            <a href="#">Uvjeti korištenja</a>
         </div>
-      </div>
-
-      <div class="copyright">
-        <div>© 2026 InterTrips. Sva prava zadržana.</div>
-        <div>Napravljen s ❤ za putnike širom svijeta</div>
-      </div>
     </div>
-  </footer>
-
-
-  
-</body>
-</html>
+    <div class="footer-bottom">© 2026 InterTrips. Sva prava zadržana.</div>
+</footer>

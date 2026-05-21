@@ -107,5 +107,21 @@ namespace InterTrips___Turistička_Agencija.Controllers
 
             return View(rezervacija);
         }
+    
+         [HttpGet]
+        public async Task<IActionResult> Paketi(int agentId)
+        {
+            var viewModel = new AgentPaketiVm
+            {
+                AgentId = agentId,
+                SviPaketi = await _db.Paketi.Include(p => p.Destinacija).ToListAsync(),
+                MojiPaketiIds = await _db.AgentPaketi
+                                              .Where(ap => ap.AgentId == agentId)
+                                              .Select(ap => ap.PaketId)
+                                              .ToListAsync()
+            };
+
+            return View(viewModel);
+        }
     }
 }

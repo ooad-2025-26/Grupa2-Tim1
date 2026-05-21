@@ -4,7 +4,6 @@
     ViewData["Title"] = "Agent - Upravljanje Paketima";
     Layout = null;
 }
-
 <!DOCTYPE html>
 <html lang="bs">
 <head>
@@ -15,7 +14,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
 
     <style>
@@ -56,7 +54,7 @@
                 backdrop-filter: blur(10px);
                 padding: 20px 28px;
                 border-radius: 18px;
-                border: var(--border);
+                border: rgba(95, 181, 187, 0.16);
                 box-shadow: var(--shadow);
             }
 
@@ -214,41 +212,44 @@
 
         <header class="page-header">
             <h2>Preuzimanje paketa</h2>
-            <a href="/Agent" class="btn-back">← Nazad na panel</a>
+            <a href="/Agent?agentId=@Model.AgentId" class="btn-back">← Nazad na panel</a>
         </header>
 
         <div class="grid-list">
-            @foreach (var p in Model.SviPaketi)
+            @if (Model.SviPaketi != null)
             {
-                bool isMine = Model.MojiPaketiIds.Contains(p.Id);
+                foreach (var p in Model.SviPaketi)
+                {
+                    bool isMine = Model.MojiPaketiIds != null && Model.MojiPaketiIds.Contains(p.Id);
 
-                <div class="item @(isMine ? "preuzeto" : "")">
-                    <div class="info">
-                        <div class="info-header">
-                            <h3>@p.Naziv</h3>
+                    <div class="item @(isMine ? "preuzeto" : "")">
+                        <div class="info">
+                            <div class="info-header">
+                                <h3>@p.Naziv</h3>
+                                @if (isMine)
+                                {
+                                    <span class="badge-mine">Moj paket</span>
+                                }
+                            </div>
+                            <p>📍 @(p.Destinacija?.Naziv ?? "Nespecificirano") &nbsp;|&nbsp; 🌙 @p.TrajanjeNoci noći &nbsp;|&nbsp; 💳 @p.CijenaOd BAM</p>
+                        </div>
+
+                        <form action="/Agent/TogglePaket" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="paketId" value="@p.Id" />
+                            <input type="hidden" name="agentId" value="@Model.AgentId" />
+
                             @if (isMine)
                             {
-                                <span class="badge-mine">Moj paket</span>
+                                <button type="submit" class="action-btn btn-release">Pusti paket</button>
                             }
-                        </div>
-                        <p>📍 @p.Destinacija?.Naziv &nbsp;|&nbsp; 🌙 @p.TrajanjeNoci noći &nbsp;|&nbsp; 💳 @p.CijenaOd BAM</p>
+                            else
+                            {
+                                <button type="submit" class="action-btn btn-take">Preuzmi paket</button>
+                            }
+                        </form>
                     </div>
-
-                    <form action="/Agent/TogglePaket" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="paketId" value="@p.Id" />
-                        <input type="hidden" name="agentId" value="@Model.AgentId" />
-
-                        @if (isMine)
-                        {
-                            <button type="submit" class="action-btn btn-release">Pusti paket</button>
-                        }
-                        else
-                        {
-                            <button type="submit" class="action-btn btn-take">Preuzmi paket</button>
-                        }
-                    </form>
-                </div>
+                }
             }
         </div>
 
