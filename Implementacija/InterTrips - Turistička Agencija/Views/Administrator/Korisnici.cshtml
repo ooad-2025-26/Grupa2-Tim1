@@ -9,186 +9,167 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
 
     <style>
             :root {
-                --primary: #6abfc6;
-                --primary-dark: #2b777e;
-                --primary-light: rgba(106, 191, 198, 0.12);
-                --text-main: #2d3748;
-                --text-muted: #718096;
-                --bg-card: rgba(255, 255, 255, 0.90);
-                --border-color: rgba(95, 181, 187, 0.15);
-                --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-                --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+                --bg-main: #f8fafc;
+                --sidebar-bg: #0f172a;
+                --sidebar-text: #94a3b8;
+                --sidebar-active: #38bdf8;
+                --text-dark: #0f172a;
+                --text-muted: #64748b;
+                --border: #e2e8f0;
+                --card-bg: #ffffff;
+                --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
+                --primary: #0ea5e9;
             }
 
-            body {
-                font-family: 'Poppins', sans-serif;
-                background-color: #f7fafc;
-                color: var(--text-main);
+            .nav-item i {
+                width: 20px;
+                margin-right: 12px;
+                font-size: 16px;
+                text-align: center;
+                transition: color 0.2s ease;
+            }
+
+            * {
+                box-sizing: border-box;
                 margin: 0;
                 padding: 0;
             }
 
-            .dash-page {
-                padding: 40px 24px 60px;
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: var(--bg-main);
+                color: var(--text-dark);
+                display: flex;
+                min-height: 100vh;
             }
 
-            .dash-topbar {
-                height: 64px;
-                padding: 0 32px;
+            .sidebar {
+                width: 260px;
+                background-color: var(--sidebar-bg);
+                color: #fff;
+                padding: 24px 16px;
                 display: flex;
-                align-items: center;
-                justify-content: space-between;
-                background: rgba(255, 255, 255, 0.85);
-                border-bottom: 1px solid var(--border-color);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                position: sticky;
+                flex-direction: column;
+                position: fixed;
+                height: 100vh;
+                left: 0;
                 top: 0;
                 z-index: 100;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.02);
             }
 
-                .dash-topbar .logo {
-                    width: 90px;
-                    height: 44px;
-                    object-fit: contain;
-                    transition: transform 0.2s ease;
+                .sidebar .logo-area {
+                    padding: 0 12px 32px;
+                    border-bottom: 1px solid #1e293b;
+                    margin-bottom: 24px;
                 }
 
-                    .dash-topbar .logo:hover {
-                        transform: scale(1.03);
-                    }
+            .sidebar-logo-text {
+                font-size: 20px;
+                font-weight: 700;
+                color: #ffffff;
+                text-decoration: none;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                display: block;
+            }
 
-            .dash-shell {
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                flex-grow: 1;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                color: var(--sidebar-text);
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 500;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+            }
+
+                .nav-item:hover {
+                    background: #1e293b;
+                    color: #fff;
+                }
+
+                .nav-item.active {
+                    background: rgba(14, 165, 233, 0.15);
+                    color: var(--sidebar-active);
+                    font-weight: 600;
+                }
+
+            .sidebar-footer {
+                padding-top: 16px;
+                border-top: 1px solid #1e293b;
+            }
+
+            .logout-btn-nav {
+                width: 100%;
+                background: transparent;
+                border: 1px solid rgba(239, 68, 68, 0.25);
+                color: #ef4444;
+                padding: 10px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 13px;
+                transition: all 0.2s;
+            }
+
+                .logout-btn-nav:hover {
+                    background: rgba(239, 68, 68, 0.1);
+                }
+
+            .main-content {
+                margin-left: 260px;
+                flex-grow: 1;
+                padding: 40px 48px;
                 max-width: 1200px;
-                margin: 0 auto;
             }
 
-            .dash-hero {
+            .dash-header {
                 margin-bottom: 32px;
-                padding: 32px;
-                background: var(--bg-card);
-                border: 1px solid var(--border-color);
-                border-radius: 20px;
-                box-shadow: var(--shadow-md);
-                position: relative;
-                overflow: hidden;
             }
 
-                .dash-hero::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 4px;
-                    height: 100%;
-                    background: linear-gradient(to bottom, var(--primary), #86bfe0);
-                }
-
-                .dash-hero h1 {
-                    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+                .dash-header h1 {
+                    font-size: 26px;
                     font-weight: 700;
-                    margin: 8px 0;
-                    color: var(--text-main);
+                    color: var(--text-dark);
                     letter-spacing: -0.5px;
                 }
 
-                .dash-hero p {
+                .dash-header p {
                     color: var(--text-muted);
                     font-size: 14px;
-                    line-height: 1.6;
-                    margin: 0;
-                    max-width: 800px;
+                    margin-top: 4px;
                 }
 
-            .badge {
-                display: inline-block;
-                padding: 4px 12px;
-                background: var(--primary-light);
-                color: var(--primary-dark);
-                border-radius: 30px;
-                font-size: 11px;
-                font-weight: 700;
-                letter-spacing: 1px;
-                text-transform: uppercase;
+            .card {
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                box-shadow: var(--shadow);
+                padding: 24px;
             }
-
-            .dash-card {
-                background: var(--bg-card);
-                border: 1px solid var(--border-color);
-                border-radius: 20px;
-                box-shadow: var(--shadow-md);
-                padding: 32px;
-            }
-
-                .dash-card h2 {
-                    font-size: 22px;
-                    font-weight: 600;
-                    margin-top: 0;
-                    margin-bottom: 24px;
-                    color: var(--text-main);
-                    border-bottom: 2px solid rgba(106, 191, 198, 0.1);
-                    padding-bottom: 12px;
-                }
-
-            .logout-btn {
-                border: 1px solid rgba(95, 181, 187, 0.3);
-                background: transparent;
-                color: var(--text-main);
-                border-radius: 30px;
-                padding: 8px 18px;
-                cursor: pointer;
-                font-weight: 500;
-                font-size: 13px;
-                transition: all 0.2s ease;
-                text-decoration: none;
-                display: inline-flex;
-                align-items: center;
-            }
-
-                .logout-btn:hover {
-                    background: var(--primary-light);
-                    border-color: var(--primary);
-                    color: var(--primary-dark);
-                }
-
-            .mini-btn {
-                border: none;
-                border-radius: 8px;
-                padding: 8px 16px;
-                background: linear-gradient(135deg, #6abfc6, #5fa9b1);
-                color: #fff;
-                font-weight: 600;
-                font-size: 12px;
-                cursor: pointer;
-                text-decoration: none;
-                transition: all 0.2s ease;
-                box-shadow: 0 2px 4px rgba(106, 191, 198, 0.2);
-            }
-
-                .mini-btn:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 4px 8px rgba(106, 191, 198, 0.3);
-                    filter: brightness(1.05);
-                }
-
-                .mini-btn:active {
-                    transform: translateY(0);
-                }
 
             .user-table-container {
                 overflow-x: auto;
-                border-radius: 12px;
-                border: 1px solid rgba(95, 181, 187, 0.12);
+                border-radius: 8px;
+                border: 1px solid var(--border);
             }
 
             .user-table {
@@ -199,20 +180,20 @@
             }
 
                 .user-table th {
-                    background: rgba(106, 191, 198, 0.05);
-                    color: var(--primary-dark);
+                    background: #f8fafc;
+                    color: #475569;
                     font-weight: 600;
-                    padding: 16px 20px;
-                    border-bottom: 2px solid rgba(95, 181, 187, 0.16);
-                    letter-spacing: 0.5px;
+                    padding: 14px 20px;
+                    border-bottom: 1px solid var(--border);
+                    letter-spacing: 0.3px;
                     text-transform: uppercase;
-                    font-size: 12px;
+                    font-size: 11px;
                 }
 
                 .user-table td {
-                    padding: 18px 20px;
-                    border-bottom: 1px solid rgba(95, 181, 187, 0.08);
-                    color: #4a5568;
+                    padding: 16px 20px;
+                    border-bottom: 1px solid var(--border);
+                    color: #334155;
                     vertical-align: middle;
                 }
 
@@ -221,193 +202,233 @@
                 }
 
                 .user-table tr:hover {
-                    background: rgba(106, 191, 198, 0.02);
+                    background: #fdfdfd;
                 }
 
             .user-id {
                 font-family: monospace;
-                background: #edf2f7;
+                background: #f1f5f9;
                 padding: 4px 8px;
-                border-radius: 6px;
-                color: #4a5568;
+                border-radius: 4px;
+                color: #475569;
                 font-size: 12px;
             }
 
             .user-email {
                 font-weight: 500;
-                color: var(--text-main);
+                color: var(--text-dark);
             }
 
             .role-badge {
                 display: inline-flex;
                 align-items: center;
-                padding: 4px 12px;
-                border-radius: 30px;
+                padding: 4px 10px;
+                border-radius: 6px;
                 font-size: 12px;
-                font-weight: 600;
+                font-weight: 500;
             }
 
             .role-client {
-                background: rgba(106, 191, 198, 0.15);
-                color: #1e5257;
+                background: #e0f2fe;
+                color: #0369a1;
             }
 
             .role-agent {
-                background: rgba(245, 158, 11, 0.13);
-                color: #92400e;
+                background: #fef3c7;
+                color: #b45309;
             }
 
             .role-admin {
-                background: rgba(16, 185, 129, 0.13);
-                color: #065f46;
+                background: #dcfce7;
+                color: #15803d;
+            }
+
+            .flex-actions {
+                display: flex;
+                align-items: center;
+                gap: 8px;
             }
 
             .select-role {
                 height: 36px;
                 font-size: 13px;
                 padding: 0 32px 0 12px;
-                border-radius: 8px;
-                border: 1px solid rgba(95, 181, 187, 0.3);
+                border-radius: 6px;
+                border: 1px solid var(--border);
                 background: #fff;
                 outline: none;
-                color: var(--text-main);
+                color: var(--text-dark);
                 cursor: pointer;
-                transition: all 0.2s ease;
+                transition: all 0.15s ease;
                 appearance: none;
                 -webkit-appearance: none;
-                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%234a5568' d='M0 0l5 5 5-5z'/></svg>");
+                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%2364748b' d='M0 0l5 5 5-5z'/></svg>");
                 background-repeat: no-repeat;
                 background-position: right 12px center;
             }
 
                 .select-role:focus {
                     border-color: var(--primary);
-                    box-shadow: 0 0 0 3px rgba(106, 191, 198, 0.15);
+                    box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.15);
                 }
 
-            .flex-actions {
-                display: flex;
-                align-items: center;
-                gap: 10px;
+            .btn-save {
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                padding: 0 14px;
+                height: 36px;
+                background: #fff;
+                color: var(--text-dark);
+                font-weight: 600;
+                font-size: 12px;
+                cursor: pointer;
+                transition: all 0.15s ease;
             }
 
-            @@media (max-width: 900px) {
-                .dash-topbar {
-                    padding: 0 16px;
-                    height: auto;
-                    flex-direction: column;
-                    gap: 12px;
-                    padding-bottom: 12px;
-                    padding-top: 12px;
+                .btn-save:hover {
+                    background: #f1f5f9;
+                    border-color: #cbd5e1;
                 }
 
-                    .dash-topbar div {
-                        flex-wrap: wrap;
-                        justify-content: center;
+            @@media (max-width: 1024px) {
+                .sidebar {
+                    width: 70px;
+                    padding: 24px 8px;
+                }
+
+                    .sidebar .logo-area, .sidebar .nav-item span, .sidebar .logout-btn-nav {
+                        display: none;
                     }
 
-                .dash-card {
-                    padding: 20px;
+                .main-content {
+                    margin-left: 70px;
+                    padding: 32px 24px;
+                }
+            }
+
+            @@media (max-width: 768px) {
+                .flex-actions {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .select-role, .btn-save {
+                    width: 100%;
                 }
             }
     </style>
 </head>
-<body class="auth-page">
-    <header class="dash-topbar">
-        <a href="/" class="logo-link">
-            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
-        </a>
+<body>
 
-        <div style="display:flex; gap:10px; align-items:center;">
-            <a href="/Administrator/Index" class="logout-btn" style="text-decoration:none;">Destinacije</a>
-            <a href="/Administrator/Paketi" class="logout-btn" style="text-decoration:none;">Paketi</a>
-            <a href="/Administrator/Korisnici" class="logout-btn" style="text-decoration:none; background: rgba(106,191,198,0.15); font-weight:700; border-color: var(--primary);">Korisnici</a>
-            <a href="/Administrator/Rezervacije" class="logout-btn" style="text-decoration:none;">Rezervacije</a>
-            <a href="/Destinacije" class="logout-btn" style="text-decoration:none;">Pregled na sajtu</a>
-            <form method="post" action="/Account/Logout" style="display:inline;">
+    <aside class="sidebar">
+        <div class="logo-area">
+            <a href="/" class="sidebar-logo-text">InterTrips</a>
+        </div>
+
+        <nav class="nav-links">
+            <a href="/Administrator/Index" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
+            </a>
+            <a href="/Administrator/Destinacije" class="nav-item">
+                <i class="fa-solid fa-map-location-dot"></i> <span>Destinacije</span>
+            </a>
+            <a href="/Administrator/Letovi" class="nav-item">
+                <i class="fa-solid fa-plane"></i> <span>Letovi</span>
+            </a>
+            <a href="/Administrator/Hoteli" class="nav-item">
+                <i class="fa-solid fa-hotel"></i> <span>Hoteli</span>
+            </a>
+            <a href="/Administrator/Paketi" class="nav-item">
+                <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
+            </a>
+            <a href="/Administrator/Korisnici" class="nav-item active">
+                <i class="fa-solid fa-users"></i> <span>Korisnici</span>
+            </a>
+            <a href="/Administrator/Rezervacije" class="nav-item">
+                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <form method="post" action="/Account/Logout">
                 @Html.AntiForgeryToken()
-                <button class="logout-btn" type="submit" style="color: #e53e3e; border-color: rgba(229, 62, 62, 0.2);">Odjavi se</button>
+                <button class="logout-btn-nav" type="submit">Odjavi se</button>
             </form>
         </div>
-    </header>
+    </aside>
 
-    <main class="dash-page">
-        <div class="dash-shell">
-            <div class="dash-hero">
-                <span class="badge">ADMIN PANEL</span>
-                <h1>Upravljanje korisnicima sistema</h1>
-                <p>Pregled svih registrovanih klijenata, turističkih agenata i administratora unutar baze podataka InterTrips agencije.</p>
-            </div>
+    <main class="main-content">
 
-            <div class="dash-card">
-                <h2>Registrovani korisnici i osoblje</h2>
+        <header class="dash-header">
+            <h1>Upravljanje korisnicima sistema</h1>
+            <p>Pregled svih registrovanih klijenata, turističkih agenata i administratora unutar baze podataka InterTrips agencije.</p>
+        </header>
 
-                <div class="user-table-container">
-                    <table class="user-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>KORISNIČKO IME / EMAIL</th>
-                                <th>TRENUTNA ULOGA</th>
-                                <th>PROMJENA ULOGE / AKCIJE</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.SviKorisnici != null && Model.SviKorisnici.Any())
-                            {
-                                foreach (var korisnik in Model.SviKorisnici)
-                                {
-                                    <tr>
-                                        <td><span class="user-id">#@korisnik.Id.Substring(0, Math.Min(korisnik.Id.Length, 8))...</span></td>
-                                        <td><span class="user-email">@korisnik.Email</span></td>
-                                        <td>
-                                            @if (korisnik.Uloga == 2)
-                                            {
-                                                <span class="role-badge role-admin">Admin</span>
-                                            }
-                                            else if (korisnik.Uloga == 1)
-                                            {
-                                                <span class="role-badge role-agent">Agent</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="role-badge role-client">Klijent</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <form asp-controller="Administrator" asp-action="PromijeniUlogu" method="post" class="flex-actions">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="korisnikId" value="@korisnik.Id" />
-
-                                                <select name="novaUloga" class="select-role">
-                                                    <option value="0" selected="@(korisnik.Uloga == 0 ? "selected" : null)">Klijent</option>
-                                                    <option value="1" selected="@(korisnik.Uloga == 1 ? "selected" : null)">Agent</option>
-                                                    <option value="2" selected="@(korisnik.Uloga == 2 ? "selected" : null)">Admin</option>
-                                                </select>
-
-                                                <button type="submit" class="mini-btn" onclick="return confirm('Da li ste sigurni da želite promijeniti ulogu za @korisnik.Email?')">
-                                                    Spasi
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                            else
+        <div class="card">
+            <div class="user-table-container">
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Korisničko ime / Email</th>
+                            <th>Trenutna uloga</th>
+                            <th>Promjena uloge / Akcije</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.SviKorisnici != null && Model.SviKorisnici.Any())
+                        {
+                            foreach (var korisnik in Model.SviKorisnici)
                             {
                                 <tr>
-                                    <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 32px;">
-                                        Nema registrovanih korisnika u bazi podataka.
+                                    <td><span class="user-id">#@korisnik.Id.Substring(0, Math.Min(korisnik.Id.Length, 8))...</span></td>
+                                    <td><span class="user-email">@korisnik.Email</span></td>
+                                    <td>
+                                        @if (korisnik.Uloga == 2)
+                                        {
+                                            <span class="role-badge role-admin">Admin</span>
+                                        }
+                                        else if (korisnik.Uloga == 1)
+                                        {
+                                            <span class="role-badge role-agent">Agent</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="role-badge role-client">Klijent</span>
+                                        }
                                     </td>
-                                    tour-table-row
+                                    <td>
+                                        <form asp-controller="Administrator" asp-action="PromijeniUlogu" method="post" class="flex-actions">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="korisnikId" value="@korisnik.Id" />
+
+                                            <select name="novaUloga" class="select-role">
+                                                <option value="0" selected="@(korisnik.Uloga == 0 ? "selected" : null)">Klijent</option>
+                                                <option value="1" selected="@(korisnik.Uloga == 1 ? "selected" : null)">Agent</option>
+                                                <option value="2" selected="@(korisnik.Uloga == 2 ? "selected" : null)">Admin</option>
+                                            </select>
+
+                                            <button type="submit" class="btn-save" onclick="return confirm('Da li ste sigurni da želite promijeniti ulogu za @korisnik.Email?')">
+                                                Spasi
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                             }
-                        </tbody>
-                    </table>
-                </div>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 32px;">
+                                    Trenutno nema registrovanih korisnika u bazi podataka.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
-
         </div>
     </main>
+
 </body>
 </html>

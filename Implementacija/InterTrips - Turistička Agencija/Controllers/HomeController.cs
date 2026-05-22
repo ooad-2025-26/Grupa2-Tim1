@@ -20,32 +20,15 @@ namespace InterTrips___Turistička_Agencija.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var sviPaketi = await _db.Paketi
-               .Include(p => p.Destinacija)
-               .OrderByDescending(p => p.Id)
-               .ToListAsync();
-
-            if (sviPaketi == null) sviPaketi = new List<Paket>();
-
-            var istaknuteDestinacije = sviPaketi.Where(p =>
-            {
-                var prop = p.GetType().GetProperties().FirstOrDefault(pr => pr.Name.Contains("Status"));
-                if (prop != null)
-                {
-                    var vrijednost = prop.GetValue(p);
-                    if (vrijednost != null)
-                    {
-                        return vrijednost.ToString() == "Dostupan" || Convert.ToInt32(vrijednost) == 0;
-                    }
-                }
-                return true; 
-            })
-            .Take(10)
-            .ToList();
+            var istaknuteDestinacije = await _db.Paketi
+                .Include(p => p.Destinacija)
+                .Where(p => p.Status == StatusPaketa.Dostupan) 
+                .OrderByDescending(p => p.Id)
+                .Take(10)
+                .ToListAsync();
 
             return View(istaknuteDestinacije);
         }
-
         public IActionResult Kontakt()
         {
             return View("~/Views/Home/Kontakt.cshtml");

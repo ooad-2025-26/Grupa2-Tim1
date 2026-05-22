@@ -8,54 +8,57 @@
     <div class="hero-overlay"></div>
     <div class="hero-content">
         <span class="badge">REZERVACIJE</span>
-        <h1 style="letter-spacing:1px;">MOJE REZERVACIJE</h1>
-        <p>Pregledajte Vaše rezervacije, status i po potrebi otkažite rezervaciju.</p>
+        <h1>MOJE REZERVACIJE</h1>
+        <p>Pregledajte Vaše aktivne aranžmane, preuzmite dokumentaciju ili upravljajte statusom rezervacije.</p>
     </div>
 </header>
 
-<main>
+<main class="reservations-main">
     <section class="section">
-        <div class="section-header" style="margin-bottom:14px;">
-            <div>
-                <span class="section-label">PREGLED</span>
-                <h3>Vaših <em>rezervacija !</em></h3>
+        <div class="section-container">
+            <div class="section-header-elegant">
+                <span class="section-label">PREGLED ARANŽMANA</span>
+                <h3>Vaše <span>rezervacije</span></h3>
             </div>
-        </div>
 
-        <div class="reservations-shell" style="max-width:1140px; margin:0 auto;">
-            <div id="reservationsList" class="reservations-list"></div>
+            <div class="reservations-shell">
+                <div id="reservationsList" class="reservations-grid-layout"></div>
 
-            <p id="emptyMsg" style="display:none; color:var(--muted); font-weight:600; margin-top:10px;">
-                Nemate rezervacija.
-            </p>
+                <div id="emptyMsg" class="empty-state-box" style="display:none;">
+                    <div class="empty-icon">📂</div>
+                    <h4>Trenutno nemate aktivnih rezervacija</h4>
+                    <p>Pretražite naše pakete i pronađite sljedeću idealnu destinaciju.</p>
+                    <a asp-controller="Destinacije" asp-action="Index" class="btn-primary-elegant">Istraži destinacije</a>
+                </div>
+            </div>
         </div>
     </section>
 </main>
 
 <footer class="footer">
     <div class="footer-grid">
-        <div>
+        <div class="footer-brand">
             <a asp-controller="Home" asp-action="Index" class="logo-link">
                 <img src="~/assets/logo.png" alt="InterTrips logo" class="logo small-logo">
             </a>
-            <p>Otkrijte najbolje destinacije na svijetu.</p>
+            <p>Otkrijte najbolje destinacije na svijetu uz profesionalnu uslugu i podršku.</p>
         </div>
 
-        <div>
+        <div class="footer-links">
             <h4>Istraži</h4>
             <a asp-controller="Destinacije" asp-action="Index">Destinacije</a>
             <a href="#">Putni vodiči</a>
             <a href="#">Najbolja iskustva</a>
         </div>
 
-        <div>
+        <div class="footer-links">
             <h4>Kompanija</h4>
             <a asp-controller="Home" asp-action="ONama">O nama</a>
             <a href="#">Karijere</a>
             <a asp-controller="Home" asp-action="Kontakt">Kontakt</a>
         </div>
 
-        <div>
+        <div class="footer-links">
             <h4>Podrška</h4>
             <a href="#">Centar za pomoć</a>
             <a asp-controller="Home" asp-action="Privacy">Politika privatnosti</a>
@@ -72,167 +75,338 @@
         :root {
         --primary: #2aa9b0;
         --primary-dark: #1e7f88;
-        --text: #24414a;
-        --muted: #5f7c86;
-        --shadow: 0 16px 36px rgba(63,116,128,0.10);
+        --primary-light: rgba(42, 169, 176, 0.1);
+        --text-dark: #1c333b;
+        --text-muted: #647c85;
+        --bg-light: #f8fafb;
+        --border-subtle: rgba(42, 169, 176, 0.15);
+        --shadow-sm: 0 4px 12px rgba(63, 116, 128, 0.05);
+        --shadow-md: 0 12px 30px rgba(63, 116, 128, 0.08);
+        --radius-md: 12px;
+        --radius-lg: 18px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .hero--reservations {
         position: relative;
-        min-height: 360px;
+        min-height: 380px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background: url('/assets/mojeRezervacije.jpg') center/cover no-repeat;
+        padding: 40px 20px;
         }
 
         .hero--reservations .hero-overlay {
-        background: linear-gradient(90deg, rgba(10,34,40,0.78) 0%, rgba(10,34,40,0.55) 55%, rgba(10,34,40,0.25) 100%), radial-gradient(900px 340px at 25% 35%, rgba(106,191,198,0.26), transparent 60%);
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(10,34,40,0.85) 0%, rgba(15,50,59,0.6) 100%);
         }
 
         .hero--reservations .hero-content {
-        max-width: 720px;
-        margin: 0 auto;
-        padding: 34px 34px 30px;
-        border-radius: 22px;
-        background: rgba(10, 34, 40, 0.35);
-        border: 1px solid rgba(255,255,255,0.18);
-        backdrop-filter: blur(12px);
-        box-shadow: 0 22px 60px rgba(0,0,0,0.22);
+        position: relative;
+        z-index: 2;
+        max-width: 680px;
+        width: 100%;
+        padding: 40px;
+        border-radius: var(--radius-lg);
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.3);
         text-align: center;
         }
 
-        .hero--reservations .badge {
-        background: rgba(255,255,255,0.16);
-        border: 1px solid rgba(255,255,255,0.22);
-        color: rgba(255,255,255,0.92);
-        }
-
-        .hero--reservations .hero-content h1 {
+        .hero--reservations h1 {
         color: #ffffff;
-        text-shadow: 0 18px 40px rgba(0,0,0,0.35);
+        font-size: 2.2rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        margin: 12px 0;
         }
 
-        .hero--reservations .hero-content p {
-        color: rgba(255,255,255,0.88);
-        text-shadow: 0 18px 40px rgba(0,0,0,0.25);
+        .hero--reservations p {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin: 0;
         }
 
-        .section .section-header h3,
-        .section .center-title h3 {
-        color: var(--text);
+        .hero--reservations .badge {
+        background: rgba(42, 169, 176, 0.3);
+        border: 1px solid var(--primary);
+        color: #ffffff;
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        display: inline-block;
         }
 
-        .section .section-header h3 em,
-        .section .center-title h3 em {
+        .reservations-main {
+        background-color: var(--bg-light);
+        padding: 60px 0;
+        }
+
+        .section-container {
+        max-width: 1140px;
+        margin: 0 auto;
+        padding: 0 20px;
+        }
+
+        .section-header-elegant {
+        margin-bottom: 35px;
+        }
+
+        .section-header-elegant .section-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--primary);
+        letter-spacing: 2px;
+        display: block;
+        margin-bottom: 6px;
+        }
+
+        .section-header-elegant h3 {
+        font-size: 1.8rem;
+        color: var(--text-dark);
+        margin: 0;
+        font-weight: 600;
+        }
+
+        .section-header-elegant h3 span {
         color: var(--primary-dark);
+        position: relative;
         }
 
-        .reservations-list {
+        .reservations-grid-layout {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 14px;
+        gap: 20px;
         }
 
         .r-card {
-        background: rgba(255,255,255,0.86);
-        border: 1px solid rgba(95,181,187,0.16);
-        border-radius: 16px;
-        box-shadow: var(--shadow);
-        padding: 16px;
-        backdrop-filter: blur(10px);
+        background: #ffffff;
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        padding: 24px;
+        transition: var(--transition);
+        }
+
+        .r-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+        border-color: rgba(42, 169, 176, 0.3);
         }
 
         .r-top {
         display: flex;
         justify-content: space-between;
-        gap: 12px;
-        flex-wrap: wrap;
         align-items: center;
-        margin-bottom: 10px;
+        gap: 15px;
+        flex-wrap: wrap;
+        padding-bottom: 16px;
+        border-bottom: 1px dashed var(--border-subtle);
+        margin-bottom: 18px;
         }
 
         .r-code {
-        font-weight: 900;
-        color: var(--primary-dark);
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        }
+
+        .r-code::before {
+        content: "🆔";
+        font-size: 14px;
         }
 
         .r-badge {
         display: inline-flex;
         align-items: center;
-        padding: 6px 10px;
-        border-radius: 999px;
+        padding: 6px 14px;
+        border-radius: 50px;
         font-size: 12px;
-        font-weight: 800;
-        border: 1px solid rgba(95,181,187,0.18);
-        background: rgba(106,191,198,0.10);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        }
+
+        .r-badge.active {
+        background: rgba(42, 169, 176, 0.1);
         color: var(--primary-dark);
+        border: 1px solid rgba(42, 169, 176, 0.2);
+        }
+
+        .r-badge.success {
+        background: rgba(46, 204, 113, 0.1);
+        color: #27ae60;
+        border: 1px solid rgba(46, 204, 113, 0.2);
         }
 
         .r-badge.cancel {
-        background: rgba(255,0,0,0.08);
-        border-color: rgba(255,0,0,0.15);
-        color: #b42318;
+        background: rgba(231, 76, 60, 0.1);
+        color: #c0392b;
+        border: 1px solid rgba(231, 76, 60, 0.2);
         }
 
         .r-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px 18px;
-        margin-top: 6px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
         }
 
         .r-line {
         display: flex;
-        justify-content: space-between;
-        gap: 14px;
-        color: var(--muted);
-        font-size: 13px;
-        border-bottom: 1px solid rgba(95,181,187,0.10);
-        padding: 8px 0;
+        flex-direction: column;
+        gap: 4px;
+        padding: 4px 0;
+        }
+
+        .r-line span {
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
         }
 
         .r-line strong {
-        color: var(--text);
+        color: var(--text-dark);
+        font-size: 14px;
+        font-weight: 600;
         }
 
+        /* Akcije / Dugmad */
         .r-actions {
-        margin-top: 12px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(0,0,0,0.04);
         display: flex;
         justify-content: flex-end;
-        gap: 10px;
+        gap: 12px;
         flex-wrap: wrap;
         }
 
-        .btn-cancel {
-        height: 40px;
-        border-radius: 12px;
-        cursor: pointer;
-        font-weight: 900;
-        padding: 0 14px;
-        background: rgba(255,0,0,0.08);
-        border: 1px solid rgba(255,0,0,0.18);
-        color: #b42318;
-        }
-
-        .pill {
+        .btn-elegant-action {
+        height: 42px;
+        padding: 0 20px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        height: 40px;
-        padding: 0 14px;
-        border-radius: 999px;
-        font-weight: 900;
+        gap: 8px;
+        cursor: pointer;
+        transition: var(--transition);
         text-decoration: none;
-        border: 1px solid rgba(95,181,187,0.18);
-        background: rgba(106,191,198,0.12);
+        border: 1px solid transparent;
+        }
+
+        .btn-elegant-action.plan {
+        background: #ffffff;
+        border-color: var(--border-subtle);
         color: var(--primary-dark);
         }
 
-        .pill:hover {
-        filter: brightness(1.02);
+        .btn-elegant-action.plan:hover {
+        background: var(--primary-light);
+        border-color: var(--primary);
         }
 
-        @@media (max-width: 760px) {
-        .r-grid {
-        grid-template-columns: 1fr;
+        .btn-elegant-action.pdf {
+        background: var(--primary-dark);
+        color: #ffffff;
+        }
+
+        .btn-elegant-action.pdf:hover {
+        background: #17656d;
+        box-shadow: 0 4px 12px rgba(30, 127, 136, 0.25);
+        }
+
+        .btn-elegant-action.cancel {
+        background: transparent;
+        color: var(--text-muted);
+        border-color: transparent;
+        }
+
+        .btn-elegant-action.cancel:hover {
+        background: rgba(231, 76, 60, 0.08);
+        color: #c0392b;
+        border-color: rgba(231, 76, 60, 0.15);
+        }
+
+        .empty-state-box {
+        background: #ffffff;
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 50px 30px;
+        text-align: center;
+        max-width: 500px;
+        margin: 40px auto 0;
+        box-shadow: var(--shadow-sm);
+        }
+
+        .empty-icon {
+        font-size: 44px;
+        margin-bottom: 16px;
+        }
+
+        .empty-state-box h4 {
+        color: var(--text-dark);
+        margin: 0 0 10px 0;
+        font-size: 1.25rem;
+        }
+
+        .empty-state-box p {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin: 0 0 24px 0;
+        line-height: 1.5;
+        }
+
+        .btn-primary-elegant {
+        display: inline-flex;
+        background: var(--primary-dark);
+        color: #ffffff;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 14px;
+        transition: var(--transition);
+        }
+
+        .btn-primary-elegant:hover {
+        background: #17656d;
+        transform: translateY(-1px);
+        }
+
+        @@media (max-width: 768px) {
+        .r-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        }
+
+        .r-actions {
+        justify-content: flex-start;
+        width: 100%;
+        }
+
+        .btn-elegant-action {
+        flex: 1 1 calc(50% - 6px);
+        font-size: 12px;
+        padding: 0 12px;
+        }
+
+        .btn-elegant-action.cancel {
+        flex: 1 1 100%;
         }
         }
     </style>
@@ -258,7 +432,7 @@
         if (!response.ok) return [];
         return await response.json();
         } catch (error) {
-        console.error("Greška:", error);
+        console.error("Greška pri preuzimanju rezervacija:", error);
         return [];
         }
         }
@@ -286,18 +460,20 @@
         }
 
         function badgeHtml(status) {
-        if (status === 'Otkazana') return '<span class="r-badge cancel">OTKAZANA</span>';
-        if (status === 'Potvrdjena' || status === 'Potvrđena') return '<span class="r-badge success" style="background:#36d399;color:#fff;">POTVRĐENA</span>';
-        return '<span class="r-badge">AKTIVNA</span>';
+        if (status === 'Otkazana') return '<span class="r-badge cancel">Otkazana</span>';
+        if (status === 'Potvrdjena' || status === 'Potvrđena') return '<span class="r-badge success">Potvrđena</span>';
+        return '<span class="r-badge active">Aktivna</span>';
         }
+
         function planButtonHtml(r) {
         if (!r || !r.paketId) return '';
         return `
-        <a class="pill" style="text-decoration:none;" href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(r.paketId)}">
+        <a class="btn-elegant-action plan" href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(r.paketId)}">
         Plan putovanja
         </a>
         `;
         }
+
         function downloadPdfByIndex(index) {
         const r = ucitaneRezervacije[index];
         if (!r) return;
@@ -350,9 +526,65 @@
         y += 10;
         });
 
-        doc.save(`Rezervacija_InterTrips_${pick(r.id, r.Id)}.pdf`);
+        y += 5;
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(13);
+        doc.setTextColor(10, 34, 40);
+        doc.text("SPISAK PUTNIKA I DETALJI OSOBNIH DOKUMENATA", 15, y);
+        y += 8;
+
+        doc.setFillColor(240, 245, 245);
+        doc.rect(15, y - 5, 180, 8, 'F');
+        doc.setFontSize(10);
+        doc.setTextColor(10, 34, 40);
+
+        doc.text("Ime i Prezime", 17, y);
+        doc.text("Telefon", 60, y);
+        doc.text("Drzavljanstvo", 100, y);
+        doc.text("Dat. Rodj.", 135, y);
+        doc.text("Broj Pasosa", 165, y);
+
+        doc.setDrawColor(200, 220, 220);
+        doc.line(15, y + 4, 195, y + 4);
+        y += 10;
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9.5);
+        doc.setTextColor(50, 50, 50);
+
+        if (r.putnici && Array.isArray(r.putnici) && r.putnici.length > 0) {
+        r.putnici.forEach((p) => {
+        if (y > 275) {
+        doc.addPage();
+        y = 25;
         }
 
+        const imePrezime = ukloniKvacice(pick(p.imePrezime, p.ImePrezime, p.ime, p.Ime));
+        const tel = pick(p.brojTelefona, p.BrojTelefona, p.telefon, p.Telefon);
+        const drzavljanstvo = ukloniKvacice(pick(p.drzavljanstvo, p.Drzavljanstvo));
+        const datRodj = pick(p.datumRodjenja, p.DatumRodjenja, p.rodjenje, p.Rodjenje);
+        const pasos = pick(p.brojPasosa, p.BrojPasosa, p.pasos, p.Pasos);
+
+        doc.text(imePrezime, 17, y);
+        doc.text(tel, 60, y);
+        doc.text(drzavljanstvo, 100, y);
+        doc.text(datRodj, 135, y);
+        doc.text(pasos, 165, y);
+
+        doc.line(15, y + 4, 195, y + 4);
+        y += 9;
+        });
+        } else {
+        doc.text("Nosilac rezervacije (Glavni putnik)", 17, y);
+        doc.text(pick(r.korisnikEmail, r.KorisnikEmail, "—"), 60, y);
+        doc.text("BiH", 100, y);
+        doc.text("—", 135, y);
+        doc.text("—", 165, y);
+        doc.line(15, y + 4, 195, y + 4);
+        }
+
+        doc.save(`Rezervacija_InterTrips_${pick(r.id, r.Id)}.pdf`);
+        }
 
         async function renderReservations() {
         const listEl = document.getElementById('reservationsList');
@@ -372,7 +604,7 @@
         const parts = datumString.split('.');
         povratak = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
         } else {
-        povratak = new Date(datumString);
+        powratak = new Date(datumString);
         }
         if (isNaN(povratak.getTime())) return true;
         povratak.setHours(0, 0, 0, 0);
@@ -392,28 +624,27 @@
         const currentId = r.id || r.Id || '';
 
         const cancelBtn = isCancelled ? '' : `
-        <button class="btn-cancel" type="button" onclick="cancelReservation('${currentId}')">Otkaži rezervaciju</button>
+        <button class="btn-elegant-action cancel" type="button" onclick="cancelReservation('${currentId}')">Otkaži rezervaciju</button>
         `;
 
         const planBtn = planButtonHtml(r);
         const stvarniBrojPutnika = r.brojPutnika || r.BrojPutnika || (r.putnici ? r.putnici.length : 1);
         const pdfBtn = `
-        <button class="pill" type="button" style="cursor:pointer;" onclick="downloadPdfByIndex(${index})">
-        📄 Preuzmi PDF
+        <button class="btn-elegant-action pdf" type="button" onclick="downloadPdfByIndex(${index})">
+        Preuzmi PDF
         </button>
         `;
         return `
         <div class="r-card">
         <div class="r-top">
-        <div class="r-code">#${currentId || '—'}</div>
+        <div class="r-code">Kod rezervacije: <strong>#${currentId || '—'}</strong></div>
         ${badgeHtml(r.status)}
         </div>
         <div class="r-grid">
         <div class="r-line"><span>Destinacija</span><strong>${r.destinacija || r.Destinacija || '—'} ${r.drzava ? '(' + r.drzava + ')' : ''}</strong></div>
-        <div class="r-line"><span>Paket</span><strong>${r.paketNaziv || r.PaketNaziv || '—'}</strong></div>
-        <div class="r-line"><span>Period</span><strong>${r.datumPolaska || r.DatumPolaska || '—'} - ${r.datumPovratka || r.DatumPovratka || '—'}</strong></div>
-        <div class="r-line"><span>Broj putnika</span><strong>${stvarniBrojPutnika}</strong></div>
-        <div class="r-line"><span>Status</span><strong>${r.status || r.Status || 'Aktivna'}</strong></div>
+        <div class="r-line"><span>Turistički Paket</span><strong>${r.paketNaziv || r.PaketNaziv || '—'}</strong></div>
+        <div class="r-line"><span>Period Putovanja</span><strong>${r.datumPolaska || r.DatumPolaska || '—'} - ${r.datumPovratka || r.DatumPovratka || '—'}</strong></div>
+        <div class="r-line"><span>Broj Putnika</span><strong>${stvarniBrojPutnika} osobe</strong></div>
         </div>
         <div class="r-actions">
         ${planBtn}

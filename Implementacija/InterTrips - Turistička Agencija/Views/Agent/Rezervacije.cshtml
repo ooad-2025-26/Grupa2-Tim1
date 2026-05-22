@@ -13,41 +13,48 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
 
     <style>
             :root {
-                --bg-gradient: linear-gradient(180deg, #e6f3f3 0%, #dff4f5 100%);
-                --primary: #6abfc6;
-                --primary-dark: #50a2a8;
-                --primary-light: rgba(106, 191, 198, 0.1);
-                --text-main: #2d4042;
-                --text-muted: #738a8c;
-                --shadow: 0 10px 30px rgba(95, 181, 187, 0.08);
-                --border: 1px solid rgba(95, 181, 187, 0.16);
-                --status-kreirana-bg: rgba(25, 118, 210, 0.1);
-                --status-kreirana-txt: #1976d2;
-                --status-potvrdjena-bg: rgba(46, 125, 50, 0.1);
-                --status-potvrdjena-txt: #2e7d32;
-                --status-otkazana-bg: rgba(198, 40, 40, 0.1);
-                --status-otkazana-txt: #c62828;
-                --status-obrisana-bg: rgba(117, 117, 117, 0.1);
-                --status-obrisana-txt: #616161;
+                --bg-main: #f4f7f6;
+                --sidebar-dark: #0a2228;
+                --primary: #1e7f88;
+                --primary-light: #2aa9b0;
+                --primary-accent: rgba(42, 169, 176, 0.04);
+                --text-main: #1f2e3d;
+                --text-muted: #6b7a87;
+                --white: #ffffff;
+                --border-color: #e2e8f0;
+                --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
+                --shadow-md: 0 10px 25px rgba(10, 34, 40, 0.04);
+                --status-kreirana-bg: #eff6ff;
+                --status-kreirana-txt: #1d4ed8;
+                --status-potvrdjena-bg: #f0fdf4;
+                --status-potvrdjena-txt: #15803d;
+                --status-otkazana-bg: #fef2f2;
+                --status-otkazana-txt: #b91c1c;
+                --status-obrisana-bg: #f8fafc;
+                --status-obrisana-txt: #475569;
+                --priority-bg: #fffbeb;
+                --priority-border: #f59e0b;
             }
 
             body {
-                background: var(--bg-gradient);
-                font-family: 'Poppins', sans-serif;
+                background-color: var(--bg-main);
+                font-family: 'Inter', sans-serif;
                 min-height: 100vh;
                 margin: 0;
                 padding: 0;
                 color: var(--text-main);
+                -webkit-font-smoothing: antialiased;
             }
 
             .dash-page {
-                padding: 40px 20px;
+                padding: 40px 24px;
             }
 
             .dash-shell {
@@ -60,70 +67,75 @@
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 30px;
-                background: rgba(255, 255, 255, 0.8);
-                backdrop-filter: blur(10px);
-                padding: 22px 28px;
-                border-radius: 18px;
-                border: var(--border);
-                box-shadow: var(--shadow);
+                background: var(--white);
+                padding: 24px 32px;
+                border-radius: 16px;
+                border: 1px solid var(--border-color);
+                box-shadow: var(--shadow-md);
             }
 
                 .dash-header h1 {
-                    font-size: 26px;
-                    color: var(--text-main);
-                    font-weight: 800;
-                    margin: 6px 0 0 0;
+                    font-size: 24px;
+                    color: var(--sidebar-dark);
+                    font-weight: 700;
+                    margin: 8px 0 0 0;
                     letter-spacing: -0.5px;
                 }
 
             .agent-badge {
-                background: linear-gradient(135deg, #2d4042, #435e61);
-                color: #fff;
-                font-size: 12px;
+                background: var(--sidebar-dark);
+                color: #dff4f5;
+                font-size: 11px;
                 font-weight: 700;
-                padding: 6px 16px;
-                border-radius: 999px;
+                padding: 8px 16px;
+                border-radius: 8px;
                 letter-spacing: 0.5px;
-                box-shadow: 0 4px 12px rgba(45, 64, 66, 0.15);
+                text-transform: uppercase;
             }
 
             .btn-back {
                 text-decoration: none;
                 color: var(--text-muted);
-                font-size: 13px;
-                font-weight: 600;
+                font-size: 14px;
+                font-weight: 500;
                 display: inline-flex;
                 align-items: center;
+                gap: 6px;
                 transition: all 0.2s ease;
             }
 
                 .btn-back:hover {
-                    color: var(--primary-dark);
-                    transform: translateX(-2px);
+                    color: var(--primary);
+                    transform: translateX(-3px);
                 }
 
+            .res-list {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
             .res-card {
-                background: rgba(255, 255, 255, 0.9);
-                border: 1px solid rgba(0, 0, 0, 0.04);
-                border-radius: 18px;
-                padding: 22px 28px;
-                margin-bottom: 16px;
+                background: var(--white);
+                border: 1px solid var(--border-color);
+                border-radius: 16px;
+                padding: 24px 32px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                box-shadow: var(--shadow);
-                transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+                box-shadow: var(--shadow-md);
+                transition: all 0.2s ease;
             }
 
                 .res-card:hover {
                     transform: translateY(-2px);
-                    border-color: var(--primary);
-                    box-shadow: 0 14px 35px rgba(95, 181, 187, 0.12);
+                    border-color: var(--primary-light);
+                    box-shadow: 0 12px 30px rgba(10, 34, 40, 0.06);
                 }
 
                 .res-card.highlight {
-                    background: linear-gradient(90deg, rgba(255, 152, 0, 0.04) 0%, rgba(255, 255, 255, 0.95) 100%);
-                    border-left: 6px solid #ff9800;
+                    background: linear-gradient(90deg, var(--priority-bg) 0%, #ffffff 100%);
+                    border-left: 5px solid var(--priority-border);
                 }
 
             .res-info {
@@ -134,121 +146,151 @@
                 display: flex;
                 align-items: center;
                 gap: 12px;
-                margin-bottom: 6px;
+                margin-bottom: 8px;
                 flex-wrap: wrap;
             }
 
             .res-info h3 {
                 margin: 0;
                 font-size: 18px;
-                font-weight: 700;
-                color: var(--text-main);
+                font-weight: 600;
+                color: var(--sidebar-dark);
+                letter-spacing: -0.3px;
             }
 
             .priority-label {
-                background: linear-gradient(135deg, #ff9800, #ffb74d);
+                background: #f59e0b;
                 color: white;
                 padding: 3px 10px;
-                border-radius: 999px;
+                border-radius: 6px;
                 font-size: 10px;
                 font-weight: 700;
                 letter-spacing: 0.5px;
-                box-shadow: 0 4px 10px rgba(255, 152, 0, 0.2);
             }
 
+            
             .res-meta {
-                margin: 0;
+                margin: 0 0 8px 0;
                 font-size: 13px;
                 color: var(--text-muted);
-                font-weight: 500;
+                font-weight: 400;
                 line-height: 1.6;
+                display: flex;
+                gap: 16px;
+                flex-wrap: wrap;
             }
 
+                .res-meta span {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                }
+
                 .res-meta strong {
-                    color: var(--text-main);
+                    font-weight: 600;
+                    color: var(--sidebar-dark);
+                }
+
+                .res-meta i {
+                    color: var(--text-muted);
+                    font-size: 14px;
                 }
 
             .res-submeta {
-                margin: 4px 0 0 0;
-                font-size: 11px;
+                font-size: 12px;
                 color: var(--text-muted);
-                opacity: 0.85;
                 display: flex;
-                gap: 14px;
+                gap: 16px;
+                align-items: center;
             }
 
-            /* Status značke */
+                .res-submeta span {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                }
+
             .status-badge {
                 padding: 6px 16px;
-                border-radius: 999px;
-                font-size: 12px;
+                border-radius: 6px;
+                font-size: 11px;
                 font-weight: 700;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
                 display: inline-block;
-                margin: 0 20px;
+                margin: 0 24px;
+                text-align: center;
+                min-width: 90px;
             }
 
             .status-kreirana {
                 background: var(--status-kreirana-bg);
                 color: var(--status-kreirana-txt);
+                border: 1px solid rgba(29, 78, 216, 0.15);
             }
 
             .status-potvrdjena {
                 background: var(--status-potvrdjena-bg);
                 color: var(--status-potvrdjena-txt);
+                border: 1px solid rgba(21, 128, 61, 0.15);
             }
 
             .status-otkazana {
                 background: var(--status-otkazana-bg);
                 color: var(--status-otkazana-txt);
+                border: 1px solid rgba(185, 28, 28, 0.15);
             }
 
             .status-obrisana {
                 background: var(--status-obrisana-bg);
                 color: var(--status-obrisana-txt);
+                border: 1px solid rgba(71, 85, 105, 0.15);
             }
 
-            /* Akciona dugmad */
             .actions-box {
                 display: flex;
-                gap: 10px;
             }
 
             .btn-detail {
-                background: linear-gradient(135deg, #6abfc6, #86bfe0);
-                color: white;
-                border: none;
-                border-radius: 999px;
-                padding: 10px 24px;
-                font-family: 'Poppins', sans-serif;
+                background: var(--primary);
+                color: var(--white);
+                border: 1px solid transparent;
+                border-radius: 8px;
+                padding: 10px 20px;
+                font-family: 'Inter', sans-serif;
                 font-size: 13px;
-                font-weight: 700;
+                font-weight: 600;
                 cursor: pointer;
                 transition: all 0.2s ease;
-                box-shadow: 0 4px 12px rgba(106, 191, 198, 0.2);
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
             }
 
                 .btn-detail:hover {
-                    background: linear-gradient(135deg, #50a2a8, #6fa9cc);
-                    transform: scale(1.02);
-                    box-shadow: 0 6px 18px rgba(95, 181, 187, 0.3);
+                    background: var(--sidebar-dark);
+                    box-shadow: 0 4px 12px rgba(10, 34, 40, 0.15);
                 }
 
-            /* Empty State */
             .empty-state {
                 text-align: center;
                 padding: 60px 20px;
-                background: rgba(255, 255, 255, 0.7);
-                border-radius: 20px;
-                border: 2px dashed rgba(95, 181, 187, 0.3);
-                box-shadow: var(--shadow);
+                background: var(--white);
+                border-radius: 16px;
+                border: 2px dashed var(--border-color);
+                box-shadow: var(--shadow-md);
             }
 
+                .empty-state i {
+                    font-size: 32px;
+                    color: #cbd5e1;
+                    margin-bottom: 12px;
+                }
+
                 .empty-state h3 {
-                    font-size: 20px;
-                    color: var(--text-main);
-                    margin-bottom: 6px;
+                    font-size: 18px;
+                    color: var(--sidebar-dark);
+                    margin: 0 0 6px 0;
                 }
 
                 .empty-state p {
@@ -257,31 +299,31 @@
                     margin: 0;
                 }
 
-            @@media (max-width: 768px) {
+            @@media (max-width: 900px) {
                 .res-card {
                     flex-direction: column;
                     align-items: flex-start;
-                    gap: 16px;
-                    padding: 20px;
+                    gap: 20px;
+                    padding: 24px;
                 }
 
                 .status-badge {
                     margin: 0;
                 }
 
-                .btn-detail {
+                .actions-box, .btn-detail {
                     width: 100%;
-                    text-align: center;
                 }
 
-                .actions-box {
-                    width: 100%;
+                .btn-detail {
+                    justify-content: center;
                 }
 
                 .dash-header {
                     flex-direction: column;
                     align-items: flex-start;
-                    gap: 14px;
+                    gap: 16px;
+                    padding: 20px;
                 }
             }
     </style>
@@ -293,16 +335,19 @@
 
             <header class="dash-header">
                 <div>
-                    <a href="/Agent?agentId=@Model.AgentId" class="btn-back">← Povratak na panel</a>
+                    <a href="/Agent?agentId=@Model.AgentId" class="btn-back">
+                        <i class="fa-solid fa-arrow-left"></i> Povratak na panel
+                    </a>
                     <h1>Lista svih rezervacija</h1>
                 </div>
-                <div class="agent-badge">AGENT ID: @Model.AgentId</div>
+                <div class="agent-badge">Agent ID: @Model.AgentId</div>
             </header>
 
             <div class="res-list">
                 @if (Model.AktivneRezervacije == null || !Model.AktivneRezervacije.Any())
                 {
                     <div class="empty-state">
+                        <i class="fa-solid fa-folder-open"></i>
                         <h3>Nema aktivnih rezervacija</h3>
                         <p>Trenutno nema rezervacija za aranžmane koje vodite.</p>
                     </div>
@@ -318,19 +363,33 @@
 
                             <div class="res-info">
                                 <div class="res-title-row">
-                                    <h3>#@r.Id - @(r.Paket?.Naziv ?? "Aranžman")</h3>
+                                    <h3>#@r.Id — @(r.Paket?.Naziv ?? "Aranžman")</h3>
                                     @if (isAlex)
                                     {
-                                        <span class="priority-label">PRIORITET</span>
+                                        <span class="priority-label">
+                                            <i class="fa-solid fa-star" style="font-size: 9px; margin-right: 2px;"></i> PRIORITET
+                                        </span>
                                     }
                                 </div>
-                                <p class="res-meta">
-                                    <strong>👤 Klijent:</strong> @email &nbsp;•&nbsp;
-                                    <strong>📍 Destinacija:</strong> @(r.Paket?.Destinacija?.Naziv ?? "—")
-                                </p>
+
+                                <div class="res-meta">
+                                    <span>
+                                        <i class="fa-regular fa-user"></i>
+                                        <strong>Klijent:</strong> @email
+                                    </span>
+                                    <span>
+                                        <i class="fa-solid fa-location-dot"></i>
+                                        <strong>Destinacija:</strong> @(r.Paket?.Destinacija?.Naziv ?? "—")
+                                    </span>
+                                </div>
+
                                 <div class="res-submeta">
-                                    <span>📅 Polazak: @r.DatumPolaska.ToString("dd. MMM yyyy")</span>
-                                    <span>👥 Putnika: @r.Putnici.Count</span>
+                                    <span>
+                                        <i class="fa-regular fa-calendar"></i> Polazak: @r.DatumPolaska.ToString("dd. MMM yyyy.")
+                                    </span>
+                                    <span>
+                                        <i class="fa-solid fa-users"></i> Putnika: @r.Putnici.Count
+                                    </span>
                                 </div>
                             </div>
 
@@ -342,7 +401,7 @@
 
                             <div class="actions-box">
                                 <button class="btn-detail" onclick="location.href='/Agent/Detalji/@r.Id'">
-                                    Detalji
+                                    Detalji <i class="fa-solid fa-chevron-right" style="font-size: 11px;"></i>
                                 </button>
                             </div>
 

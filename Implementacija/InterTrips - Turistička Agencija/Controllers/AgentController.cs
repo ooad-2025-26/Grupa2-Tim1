@@ -72,7 +72,7 @@ namespace InterTrips___Turistička_Agencija.Controllers;
                 AktivneRezervacije = await _db.Rezervacije
                     .Include(r => r.Korisnik)
                     .Include(r => r.Paket)
-                        .ThenInclude(p => p != null ? p.Destinacija : null!) // Siguran include pod-svojstva
+                        .ThenInclude(p => p != null ? p.Destinacija : null!) 
                     .Include(r => r.Putnici)
                     .Where(r => mojiPaketiIds.Contains(r.PaketId))
                     .ToListAsync()
@@ -109,7 +109,7 @@ namespace InterTrips___Turistička_Agencija.Controllers;
             var rezervacija = await _db.Rezervacije
                 .Include(r => r.Korisnik)
                 .Include(r => r.Paket)
-                    .ThenInclude(p => p != null ? p.Destinacija : null!) // Sprečava warning kod ugniježđenih objekata
+                    .ThenInclude(p => p != null ? p.Destinacija : null!) 
                 .Include(r => r.Putnici)
                 .FirstOrDefaultAsync(r => r.Id == id);
 

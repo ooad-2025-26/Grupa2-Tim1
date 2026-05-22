@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InterTrips___Turistička_Agencija.Models;
 
@@ -16,7 +17,7 @@ public class StavkaPlanaTemplate
     [Required, MaxLength(160)]
     public string Naziv { get; set; } = string.Empty;
 
-    [MaxLength(600)]
+    [Column(TypeName = "nvarchar(max)")]
     public string? Opis { get; set; }
 
     public TimeSpan? Vrijeme { get; set; }

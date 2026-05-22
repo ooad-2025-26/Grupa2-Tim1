@@ -1,7 +1,7 @@
 @model List<InterTrips___Turistička_Agencija.Models.Paket>
 @using InterTrips___Turistička_Agencija.Enums
 @{
-    ViewData["Title"] = "InterTrips - Rezervacija";
+    ViewData["Title"] = "InterTrips - Sigurna Rezervacija";
     Layout = null;
 }
 
@@ -14,631 +14,625 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
 
     <style>
-            :root {
-                --primary: #6abfc6;
-                --primary-dark: #4a9ea5;
-                --secondary: #86bfe0;
-                --text-main: #2d3748;
-                --text-muted: #718096;
-                --bg-page: #f7fafc;
-                --border-color: #e2e8f0;
-                --error-color: #e53e3e;
-                --radius-lg: 16px;
-                --radius-md: 12px;
-                --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-                --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-                --transition: all 0.2s ease-in-out;
-            }
-
-            body {
-                font-family: 'Poppins', sans-serif;
-                background-color: var(--bg-page);
-                color: var(--text-main);
-                margin: 0;
-                padding: 0;
-                -webkit-font-smoothing: antialiased;
-            }
-
-            #login-block, #booking-view {
-                display: none;
-            }
-
-                #login-block.active, #booking-view.active {
-                    display: block;
-                }
-
-            .topbar {
-                height: 70px;
-                background: rgba(255, 255, 255, 0.95);
-                border-bottom: 1px solid var(--border-color);
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0 40px;
-                position: sticky;
-                top: 0;
-                z-index: 100;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            }
-
-            .logo-link {
-                display: flex;
-                align-items: center;
-            }
-
-            .logo {
-                height: 42px;
-            }
-
-            .secure {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                font-size: 13px;
-                font-weight: 500;
-                color: #38a169;
-                background: #f0fff4;
-                padding: 6px 14px;
-                border-radius: 30px;
-                border: 1px solid #c6f6d5;
-            }
-
-            .page {
-                padding: 40px 20px 80px;
-            }
-
-            .center-shell {
-                max-width: 1140px;
-                margin: 0 auto;
-            }
-
-            .intro {
-                text-align: center;
-                padding: 10px 0 30px;
-            }
-
-            .badge {
-                display: inline-block;
-                background: rgba(106, 191, 198, 0.12);
-                color: var(--primary-dark);
-                font-size: 11px;
-                font-weight: 700;
-                padding: 6px 16px;
-                border-radius: 30px;
-                letter-spacing: 1px;
-                margin-bottom: 12px;
-            }
-
-            .intro h1 {
-                font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-                line-height: 1.2;
-                font-weight: 800;
-                margin: 0 0 12px;
-                color: var(--text-main);
-            }
-
-                .intro h1 span {
-                    color: var(--primary-dark);
-                }
-
-            .intro p {
-                color: var(--text-muted);
-                font-size: 14px;
-                max-width: 600px;
-                margin: 0 auto;
-                line-height: 1.6;
-            }
-
-            .steps {
-                display: flex;
-                justify-content: center;
-                gap: 24px;
-                margin-bottom: 40px;
-                flex-wrap: wrap;
-            }
-
-            .step {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                color: var(--text-muted);
-                font-size: 13px;
-                font-weight: 500;
-                background: #fff;
-                padding: 10px 20px;
-                border-radius: 30px;
-                box-shadow: var(--shadow-sm);
-                border: 1px solid var(--border-color);
-            }
-
-                .step .circle {
-                    width: 26px;
-                    height: 26px;
-                    border-radius: 50%;
-                    background: #edf2f7;
-                    display: grid;
-                    place-items: center;
-                    color: var(--text-muted);
-                    font-weight: 600;
-                    font-size: 12px;
-                }
-
-                .step.active {
-                    color: #fff;
-                    background: linear-gradient(135deg, var(--primary), var(--secondary));
-                    border-color: transparent;
-                }
-
-                    .step.active .circle {
-                        background: rgba(255, 255, 255, 0.25);
-                        color: #fff;
-                    }
-
-            .booking-grid {
-                display: grid;
-                grid-template-columns: 1.6fr 1fr;
-                gap: 30px;
-                align-items: start;
-            }
-
-            .panel {
-                background: #ffffff;
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-lg);
-                box-shadow: var(--shadow-md);
-                margin-bottom: 24px;
-            }
-
-            .panel-pad {
-                padding: 32px;
-            }
-
-            .field-label {
-                display: block;
-                font-size: 11px;
-                font-weight: 700;
-                color: var(--text-muted);
-                margin-bottom: 8px;
-                text-transform: uppercase;
-                letter-spacing: .8px;
-            }
-
-            .input, .select, .textarea {
-                width: 100%;
-                background: #fff;
-                border: 1px solid #cbd5e0;
-                border-radius: var(--radius-md);
-                height: 46px;
-                padding: 0 16px;
-                font-size: 14px;
-                font-family: inherit;
-                color: var(--text-main);
-                outline: none;
-                box-sizing: border-box;
-                transition: var(--transition);
-            }
-
-                .input:focus, .select:focus, .textarea:focus {
-                    border-color: var(--primary);
-                    box-shadow: 0 0 0 3px rgba(106, 191, 198, 0.15);
-                }
-
-            .textarea {
-                height: 96px;
-                padding: 12px 16px;
-                resize: none;
-            }
-
-            .row {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 16px;
-            }
-
-            .adult-child {
-                display: flex;
-                gap: 32px;
-                flex-wrap: wrap;
-            }
-
-            .counter-block {
-                min-width: 140px;
-            }
-
-            .counter {
-                display: inline-flex;
-                align-items: center;
-                gap: 16px;
-                background: #f7fafc;
-                padding: 6px 12px;
-                border-radius: var(--radius-md);
-                border: 1px solid var(--border-color);
-            }
-
-                .counter button {
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 8px;
-                    border: none;
-                    background: #fff;
-                    color: var(--text-main);
-                    font-size: 18px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    box-shadow: var(--shadow-sm);
-                    transition: var(--transition);
-                }
-
-                    .counter button:hover {
-                        background: var(--primary);
-                        color: #fff;
-                    }
-
-                .counter span {
-                    min-width: 20px;
-                    text-align: center;
-                    font-weight: 700;
-                    font-size: 16px;
-                    color: var(--text-main);
-                }
-
-            #kidsNotice {
-                background: #fffaf0;
-                border: 1px solid #feebc8;
-                color: #dd6b20;
-                padding: 10px 14px;
-                border-radius: var(--radius-md);
-                font-size: 12px;
-                font-weight: 500;
-                margin-top: 12px;
-            }
-
-            .room-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 14px;
-            }
-
-            .room-option {
-                border: 1px solid var(--border-color);
-                padding: 16px;
-                border-radius: var(--radius-md);
-                cursor: pointer;
-                background: #fff;
-                transition: var(--transition);
-            }
-
-                .room-option:hover {
-                    border-color: var(--primary);
-                    background: #fcfefe;
-                }
-
-                .room-option.active {
-                    border: 2px solid var(--primary);
-                    background: rgba(106, 191, 198, 0.04);
-                }
-
-                .room-option strong {
-                    display: block;
-                    font-size: 14px;
-                    color: var(--text-main);
-                    margin-bottom: 2px;
-                }
-
-                .room-option small {
-                    color: var(--text-muted);
-                    font-size: 12px;
-                }
-
-            .main-btn, .secondary-btn {
-                height: 50px;
-                border-radius: var(--radius-md);
-                border: none;
-                cursor: pointer;
-                font-weight: 600;
-                font-size: 15px;
-                transition: var(--transition);
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                text-decoration: none;
-                box-sizing: border-box;
-            }
-
-            .main-btn {
-                background: linear-gradient(135deg, var(--primary), var(--secondary));
-                color: #ffffff;
-                box-shadow: 0 4px 10px rgba(106, 191, 198, 0.25);
-            }
-
-                .main-btn:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 6px 14px rgba(106, 191, 198, 0.35);
-                }
-
-            .secondary-btn {
-                background: #fff;
-                border: 1px solid #cbd5e0;
-                color: var(--text-main);
-            }
-
-                .secondary-btn:hover {
-                    background: #f7fafc;
-                    border-color: #a0aec0;
-                }
-
-            .full-btn {
-                width: 100%;
-            }
-
-            .summary-card {
-                overflow: hidden;
-                position: sticky;
-                top: 100px;
-            }
-
-            .summary-photo {
-                height: 190px;
-                position: relative;
-                background-size: cover;
-                background-position: center;
-                display: flex;
-                align-items: flex-end;
-                padding: 20px;
-            }
-
-                .summary-photo::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 100%);
-                    z-index: 1;
-                }
-
-            .summary-place {
-                position: relative;
-                z-index: 2;
-                font-weight: 700;
-                font-size: 22px;
-                color: #ffffff !important;
-                line-height: 1.2;
-            }
-
-            .summary-body {
-                padding: 24px;
-            }
-
-            #summaryDestination {
-                font-weight: 700;
-                font-size: 18px;
-                color: var(--text-main);
-                margin-bottom: 16px;
-                line-height: 1.4;
-            }
-
-            .summary-row {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 14px;
-                font-size: 13px;
-                color: var(--text-muted);
-                border-bottom: 1px dashed #edf2f7;
-                padding-bottom: 8px;
-            }
-
-                .summary-row span {
-                    font-weight: 500;
-                }
-
-                    .summary-row strong, .summary-row span:last-child {
-                        color: var(--text-main);
-                        font-weight: 600;
-                    }
-
-            .price-line {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-top: 20px;
-                padding-top: 16px;
-                border-top: 2px solid #edf2f7;
-            }
-
-                .price-line span:first-child {
-                    font-weight: 600;
-                    color: var(--text-main);
-                }
-
-            .total {
-                color: var(--primary-dark);
-                font-size: 26px;
-                font-weight: 800;
-            }
-
-            .benefits {
-                padding: 24px;
-                margin-top: 0;
-            }
-
-                .benefits ul {
-                    margin: 0;
-                    padding: 0;
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 12px;
-                }
-
-                .benefits li {
-                    list-style: none;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    color: var(--text-muted);
-                    font-size: 13px;
-                    font-weight: 500;
-                }
-
-                    .benefits li::before {
-                        content: "✓";
-                        color: #38a169;
-                        font-weight: 700;
-                        background: #e6fffa;
-                        width: 20px;
-                        height: 20px;
-                        display: grid;
-                        place-items: center;
-                        border-radius: 50%;
-                        font-size: 11px;
-                    }
-
-            .login-block {
-                max-width: 520px;
-                margin: 40px auto 0;
-                text-align: center;
-                background: #fff;
-                padding: 40px;
-                border-radius: var(--radius-lg);
-                border: 1px solid var(--border-color);
-                box-shadow: var(--shadow-md);
-            }
-
-            .login-hero {
-                width: 64px;
-                height: 64px;
-                border-radius: 50%;
-                display: grid;
-                place-items: center;
-                margin: 0 auto 20px;
-                background: #fffaf0;
-                border: 1px solid #feebc8;
-                font-size: 28px;
-            }
-
-            .login-block h2 {
-                font-size: 24px;
-                font-weight: 700;
-                margin: 0 0 10px;
-                color: var(--text-main);
-            }
-
-            .login-block p {
-                color: var(--text-muted);
-                font-size: 14px;
-                line-height: 1.6;
-                margin: 0 0 24px;
-            }
-
-            .reason-box {
-                background: #f7fafc;
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-md);
-                text-align: left;
-                padding: 20px;
-                margin-bottom: 24px;
-            }
-
-                .reason-box h3 {
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: var(--text-main);
-                    margin: 0 0 12px;
-                    text-transform: uppercase;
-                    letter-spacing: .5px;
-                }
-
-                .reason-box ul {
-                    margin: 0;
-                    padding: 0;
-                    display: grid;
-                    gap: 10px;
-                }
-
-                .reason-box li {
-                    list-style: none;
-                    font-size: 13px;
-                    color: var(--text-muted);
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                }
-
-                    .reason-box li::before {
-                        content: "•";
-                        color: var(--primary);
-                        font-size: 18px;
-                        line-height: 1;
-                    }
-
-            .login-actions {
-                display: flex;
-                gap: 14px;
-                justify-content: center;
-            }
-
-            .login-btn {
-                min-width: 160px;
-            }
-
-            .back-link {
-                display: inline-block;
-                margin-top: 20px;
-                color: var(--text-muted);
-                font-size: 13px;
-                text-decoration: none;
-                transition: var(--transition);
-            }
-
-                .back-link:hover {
-                    color: var(--text-main);
-                }
-
-            @@media (max-width: 980px) {
-                .booking-grid {
-                    grid-template-columns: 1fr;
-                    gap: 24px;
-                }
-
-                .summary-card {
-                    position: static;
-                }
-
-                .benefits ul {
-                    grid-template-columns: 1fr;
-                }
-            }
-
-            @@media (max-width: 700px) {
-                .row, .room-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .topbar {
-                    padding: 0 20px;
-                }
-
-                .page {
-                    padding: 20px 12px;
-                }
-
-                .login-actions {
-                    flex-direction: column;
-                }
-
-                .login-btn {
-                    width: 100%;
-                }
-
-                .adult-child {
-                    gap: 20px;
-                }
-            }
+        :root {
+        --brand-primary: #0f766e; /* Premium duboka tirkizna */
+        --brand-dark: #111827; /* Skoro crna za tekst i naslove */
+        --brand-light: #f0fdfa; /* Svijetla pozadina za isticanje */
+        --brand-accent: #0d9488; /* Svijetla tirkizna za interakcije */
+        --text-main: #374151; /* Neutralna tamna za tijelo teksta */
+        --text-muted: #6b7280; /* Siva za pomoćne tekstove */
+        --bg-page: #f8fafc; /* Čista, lagano siva pozadina stranice */
+        --border-color: #e2e8f0; /* Prefinjeni tanki obrubi */
+        --success-bg: #f0fdf4;
+        --success-color: #166534;
+        --radius-lg: 16px;
+        --radius-md: 10px;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-page);
+        color: var(--text-main);
+        margin: 0;
+        padding: 0;
+        -webkit-font-smoothing: antialiased;
+        }
+
+        #login-block, #booking-view {
+        display: none;
+        }
+
+        #login-block.active, #booking-view.active {
+        display: block;
+        }
+
+        /* Topbar / Navigacija */
+        .topbar {
+        height: 70px;
+        background: #ffffff;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 40px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        }
+
+        .logo-link {
+        display: flex;
+        align-items: center;
+        }
+
+        .logo {
+        height: 38px;
+        }
+
+        .secure-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--success-color);
+        background: var(--success-bg);
+        padding: 6px 14px;
+        border-radius: 30px;
+        border: 1px solid #bbf7d0;
+        }
+
+        /* Glavni kontejner */
+        .page {
+        padding: 40px 20px 80px;
+        }
+
+        .center-shell {
+        max-width: 1140px;
+        margin: 0 auto;
+        }
+
+        .intro {
+        text-align: center;
+        margin-bottom: 35px;
+        }
+
+        .badge {
+        display: inline-block;
+        background: var(--brand-light);
+        color: var(--brand-primary);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 30px;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        }
+
+        .intro h1 {
+        font-size: 32px;
+        font-weight: 800;
+        margin: 0 0 10px;
+        color: var(--brand-dark);
+        letter-spacing: -0.5px;
+        }
+
+        .intro p {
+        color: var(--text-muted);
+        font-size: 15px;
+        max-width: 540px;
+        margin: 0 auto;
+        line-height: 1.5;
+        }
+
+        /* Stepper - Koraci */
+        .steps {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin-bottom: 40px;
+        }
+
+        .step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        font-size: 14px;
+        font-weight: 500;
+        }
+
+        .step .circle {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        display: grid;
+        place-items: center;
+        color: var(--text-muted);
+        font-weight: 700;
+        font-size: 12px;
+        }
+
+        .step.active {
+        color: var(--brand-primary);
+        font-weight: 600;
+        }
+
+        .step.active .circle {
+        background: var(--brand-primary);
+        color: #ffffff;
+        }
+
+        /* Grid raspored */
+        .booking-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 30px;
+        align-items: start;
+        }
+
+        .panel {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 24px;
+        overflow: hidden;
+        }
+
+        .panel-pad {
+        padding: 30px;
+        }
+
+        /* Forme i elementi unosa */
+        .form-group {
+        margin-bottom: 20px;
+        }
+
+        .field-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--brand-dark);
+        margin-bottom: 8px;
+        }
+
+        .input, .select, .textarea {
+        width: 100%;
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        height: 46px;
+        padding: 0 14px;
+        font-size: 14px;
+        font-family: inherit;
+        color: var(--brand-dark);
+        outline: none;
+        box-sizing: border-box;
+        transition: var(--transition);
+        }
+
+        .input:focus, .select:focus, .textarea:focus {
+        border-color: var(--brand-primary);
+        box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+        }
+
+        .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        }
+
+        /* Radio kartice */
+        .custom-radio-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        }
+
+        .custom-radio-card {
+        position: relative;
+        cursor: pointer;
+        }
+
+        .custom-radio-card input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        }
+
+        .radio-card-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px;
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        transition: var(--transition);
+        }
+
+        .custom-radio-card:hover .radio-card-content {
+        border-color: var(--text-muted);
+        }
+
+        .custom-radio-card input[type="radio"]:checked + .radio-card-content {
+        border-color: var(--brand-primary);
+        background-color: var(--brand-light);
+        }
+
+        .radio-card-text {
+        display: flex;
+        flex-direction: column;
+        }
+
+        .radio-card-content strong {
+        font-size: 14px;
+        color: var(--brand-dark);
+        }
+
+        .radio-card-content small {
+        color: var(--text-muted);
+        font-size: 12px;
+        }
+
+        /* Brojači putnika */
+        .adult-child {
+        display: flex;
+        gap: 24px;
+        }
+
+        .counter-block {
+        flex: 1;
+        }
+
+        .counter {
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #ffffff;
+        width: 140px;
+        padding: 4px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        }
+
+        .counter button {
+        width: 34px;
+        height: 34px;
+        border-radius: 6px;
+        border: none;
+        background: #f1f5f9;
+        color: var(--brand-dark);
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        display: grid;
+        place-items: center;
+        }
+
+        .counter button:hover {
+        background: var(--brand-primary);
+        color: #ffffff;
+        }
+
+        .counter span {
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--brand-dark);
+        }
+
+        #kidsNotice {
+        background: #fef3c7;
+        border: 1px solid #fde68a;
+        color: #92400e;
+        padding: 10px 14px;
+        border-radius: var(--radius-md);
+        font-size: 12px;
+        font-weight: 500;
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        }
+
+        /* Dugmad */
+        .main-btn, .secondary-btn {
+        height: 46px;
+        border-radius: var(--radius-md);
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-sizing: border-box;
+        gap: 6px;
+        }
+
+        .main-btn {
+        background: var(--brand-primary);
+        color: #ffffff;
+        }
+
+        .main-btn:hover {
+        background: var(--brand-accent);
+        }
+
+        .secondary-btn {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        color: var(--brand-dark);
+        }
+
+        .secondary-btn:hover {
+        background: #f8fafc;
+        border-color: var(--text-muted);
+        }
+
+        .full-btn {
+        width: 100%;
+        }
+
+        /* Desna kolona - Pregled */
+        .summary-card {
+        position: sticky;
+        top: 100px;
+        }
+
+        .summary-photo {
+        height: 160px;
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: flex-end;
+        padding: 20px;
+        background-color: #cbd5e0;
+        }
+
+        .summary-photo::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 100%);
+        z-index: 1;
+        }
+
+        .summary-place {
+        position: relative;
+        z-index: 2;
+        font-weight: 700;
+        font-size: 20px;
+        color: #ffffff !important;
+        }
+
+        .summary-body {
+        padding: 24px;
+        }
+
+        .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: var(--text-muted);
+        border-bottom: 1px dashed var(--border-color);
+        padding-bottom: 8px;
+        }
+
+        .summary-row span:first-child {
+        font-weight: 500;
+        }
+
+        .summary-row strong, .summary-row span:last-child {
+        color: var(--brand-dark);
+        font-weight: 600;
+        }
+
+        .price-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border-color);
+        }
+
+        .price-line span:first-child {
+        font-weight: 600;
+        color: var(--brand-dark);
+        font-size: 14px;
+        }
+
+        .total {
+        color: var(--brand-primary);
+        font-size: 24px;
+        font-weight: 800;
+        }
+
+        /* Prednosti */
+        .benefits {
+        padding: 20px 24px;
+        }
+
+        .benefits ul {
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        }
+
+        .benefits li {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-main);
+        font-size: 13px;
+        font-weight: 500;
+        }
+
+        .benefits li i {
+        color: var(--brand-primary);
+        width: 16px;
+        height: 16px;
+        }
+
+        /* Login Sekcija */
+        .login-block {
+        max-width: 480px;
+        margin: 40px auto 0;
+        text-align: center;
+        background: #ffffff;
+        padding: 40px;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-md);
+        }
+
+        .login-icon-box {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 20px;
+        background: var(--brand-light);
+        color: var(--brand-primary);
+        }
+
+        .login-block h2 {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 0 0 8px;
+        color: var(--brand-dark);
+        }
+
+        .login-block p {
+        color: var(--text-muted);
+        font-size: 14px;
+        line-height: 1.5;
+        margin: 0 0 24px;
+        }
+
+        .reason-box {
+        background: var(--bg-page);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        text-align: left;
+        padding: 20px;
+        margin-bottom: 24px;
+        }
+
+        .reason-box h3 {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--brand-dark);
+        margin: 0 0 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        }
+
+        .reason-box ul {
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 10px;
+        }
+
+        .reason-box li {
+        list-style: none;
+        font-size: 13px;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        }
+
+        .reason-box li i {
+        color: var(--brand-primary);
+        width: 14px;
+        height: 14px;
+        }
+
+        .login-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        }
+
+        .login-btn {
+        flex: 1;
+        }
+
+        .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 20px;
+        color: var(--text-muted);
+        font-size: 13px;
+        text-decoration: none;
+        transition: var(--transition);
+        font-weight: 500;
+        }
+
+        .back-link:hover {
+        color: var(--brand-primary);
+        }
+
+        @@media (max-width: 1024px) {
+        .booking-grid {
+        grid-template-columns: 1fr;
+        }
+
+        .summary-card {
+        position: static;
+        }
+        }
+
+        @@media (max-width: 768px) {
+        .row, .custom-radio-group {
+        grid-template-columns: 1fr;
+        }
+
+        .topbar {
+        padding: 0 20px;
+        }
+
+        .steps {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding-left: 20px;
+        }
+
+        .login-actions {
+        flex-direction: column;
+        }
+
+        .benefits ul {
+        grid-template-columns: 1fr;
+        }
+        }
     </style>
 </head>
 <body>
@@ -646,24 +640,28 @@
         <a href="/" class="logo-link">
             <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
         </a>
-        <div class="secure">🛡️ Sigurna rezervacija</div>
+        <div class="secure-badge">
+            <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i> Sigurna rezervacija
+        </div>
     </div>
 
     <div class="page">
         <div class="center-shell">
 
             <section id="login-block" class="login-block @(User?.Identity?.IsAuthenticated == true ? "" : "active")">
-                <div class="login-hero">🔒</div>
+                <div class="login-icon-box">
+                    <i data-lucide="lock" style="width: 24px; height: 24px;"></i>
+                </div>
                 <h2>Prijava je obavezna</h2>
                 <p>Da biste rezervisali putovanje i pristupili procesu plaćanja, morate biti prijavljeni na vaš InterTrips račun.</p>
 
                 <div class="reason-box">
                     <h3>Zašto se prijaviti?</h3>
                     <ul>
-                        <li>Sigurno čuvanje podataka o rezervaciji</li>
-                        <li>Pregled historije svih vaših putovanja</li>
-                        <li>Obavještenja o statusu rezervacije</li>
-                        <li>Ekskluzivne ponude za prijavljene korisnike</li>
+                        <li><i data-lucide="check"></i> Sigurno čuvanje podataka o rezervaciji</li>
+                        <li><i data-lucide="check"></i> Pregled historije svih vaših putovanja</li>
+                        <li><i data-lucide="check"></i> Obavještenja o statusu rezervacije</li>
+                        <li><i data-lucide="check"></i> Ekskluzivne ponude za prijavljene korisnike</li>
                     </ul>
                 </div>
 
@@ -672,44 +670,56 @@
                     <button class="secondary-btn login-btn" type="button" onclick="window.location.href='/Account/Register'">Registrujte se</button>
                 </div>
 
-                <a class="back-link" href="/">← Povratak na početnu</a>
+                <a class="back-link" href="/"><i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i> Povratak na početnu</a>
             </section>
 
             <section id="booking-view" class="booking-view @(User?.Identity?.IsAuthenticated == true ? "active" : "")">
                 <div class="intro">
                     <div class="badge">REZERVACIJA PUTOVANJA</div>
-                    <h1>Kreiranje <span>rezervacije</span></h1>
+                    <h1>Kreiranje rezervacije</h1>
                     <p>Unesite podatke za odabrani turistički paket i nastavite na unos podataka putnika.</p>
                 </div>
 
                 <div class="steps">
-                    <div class="step active"><div class="circle">1</div>Detalji</div>
-                    <div class="step"><div class="circle">2</div>Putnici</div>
-                    <div class="step"><div class="circle">3</div>Plaćanje</div>
-                    <div class="step"><div class="circle">4</div>Potvrda</div>
+                    <div class="step active"><div class="circle">1</div> Detalji putovanja</div>
+                    <div class="step"><div class="circle">2</div> Podaci o putnicima</div>
+                    <div class="step"><div class="circle">3</div> Sigurno plaćanje</div>
+                    <div class="step"><div class="circle">4</div> Potvrda</div>
                 </div>
 
                 <div class="booking-grid">
                     <div class="left-column">
                         <div class="panel panel-pad">
-                            <div style="margin-bottom: 20px;">
+
+                            <div class="form-group">
                                 <label class="field-label">Odaberite paket</label>
-                                <select class="select" id="destinationSelect">
+                                <select class="select" id="destinationSelect" onchange="handlePackageChange()">
                                     <option value="">-- Odaberite paket --</option>
                                     @if (Model != null)
                                     {
                                         foreach (var p in Model)
                                         {
-                                            if (p.Status == StatusPaketa.Rasprodan)
+                                            if (p.Status == StatusPaketa.Rasprodan) continue;
+
+                                            var terminiList = p.DostupniTermini ?? new List<InterTrips___Turistička_Agencija.Models.TerminPutovanja>();
+
+                                            var terminiJson = System.Text.Json.JsonSerializer.Serialize(terminiList.Select(t => new
                                             {
-                                                continue;
-                                            }
+                                                id = t.Id,
+                                                polazak = t.DatumPolaska.ToString("yyyy-MM-dd"),
+                                                returnDate = t.DatumPovratka.ToString("yyyy-MM-dd"),
+                                                tekst = t.DatumPolaska.ToString("dd.MM.yyyy") + " - " + t.DatumPovratka.ToString("dd.MM.yyyy") + (t.Popunjeno >= t.Kapacitet ? " (Popunjeno)" : "")
+                                            }));
+
                                             <option value="@p.Id"
                                                     data-img="@p.Destinacija?.SlikaUrl"
                                                     data-price="@p.CijenaOd"
-                                                    data-nights="@p.TrajanjeNoci"
                                                     data-destinacija="@p.Destinacija?.Naziv"
-                                                    data-drzava="@p.Destinacija?.Drzava">
+                                                    data-drzava="@p.Destinacija?.Drzava"
+                                                    data-hotel="@(p.Hotel != null ? p.Hotel.Naziv + " " + string.Concat(Enumerable.Repeat("★", p.Hotel.BrojZvjezdica)) : "Uključen smještaj")"
+                                                    data-let="@(p.Let != null ? p.Let.BrojLeta : "")"
+                                                    data-prevoz-tip="@p.DostupniPrevoz"
+                                                    data-termini="@terminiJson">
                                                 @p.Naziv (@p.Destinacija?.Naziv)
                                             </option>
                                         }
@@ -717,24 +727,48 @@
                                 </select>
                             </div>
 
-                            <div style="margin-bottom: 24px;">
-                                <a id="planLink" class="secondary-btn" href="#" style="display:none; height: 38px; font-size: 13px; padding: 0 16px;">
-                                    🗺️ Pogledaj plan putovanja
+                            <div class="form-group" style="display: none;">
+                                <label class="field-label">Dostupni termini putovanja</label>
+                                <select class="select" id="dateTerminSelect" disabled>
+                                    <option value="">-- Prvo odaberite paket --</option>
+                                </select>
+                                <input type="hidden" id="departureDate" />
+                                <input type="hidden" id="returnDate" />
+                            </div>
+
+                            <div id="prevozSekcija" class="form-group" style="display: none;">
+                                <label class="field-label">Tip prevoza</label>
+                                <div class="custom-radio-group">
+                                    <label class="custom-radio-card">
+                                        <input type="radio" name="tipPrevoza" id="prevozAvion" value="Avion" checked onchange="updateSummary()" />
+                                        <div class="radio-card-content">
+                                            <i data-lucide="plane" style="color: var(--brand-primary); width: 18px; height: 18px;"></i>
+                                            <div class="radio-card-text">
+                                                <strong>Avion</strong>
+                                                <small>+10% na osnovicu</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <label class="custom-radio-card" id="prevozBusOpcija">
+                                        <input type="radio" name="tipPrevoza" id="prevozBus" value="Bus" onchange="updateSummary()" />
+                                        <div class="radio-card-content">
+                                            <i data-lucide="bus" style="color: var(--brand-primary); width: 18px; height: 18px;"></i>
+                                            <div class="radio-card-text">
+                                                <strong>Autobus</strong>
+                                                <small>Standardna cijena</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <a id="planLink" class="secondary-btn" href="#" style="display:none; height: 38px; font-size: 13px; padding: 0 14px;">
+                                    <i data-lucide="map" style="width: 14px; height: 14px;"></i> Pogledaj plan putovanja
                                 </a>
                             </div>
 
-                            <div class="row" style="margin-bottom: 24px;">
-                                <div>
-                                    <label class="field-label">Datum polaska</label>
-                                    <input class="input" type="date" id="departureDate" />
-                                </div>
-                                <div>
-                                    <label class="field-label">Datum povratka</label>
-                                    <input class="input" type="date" id="returnDate" readonly style="background: #edf2f7; cursor: not-allowed;" />
-                                </div>
-                            </div>
-
-                            <div class="adult-child" style="margin-bottom: 28px;">
+                            <div class="adult-child form-group">
                                 <div class="counter-block">
                                     <label class="field-label">Odrasli</label>
                                     <div class="counter">
@@ -751,40 +785,62 @@
                                         <button type="button" onclick="changeCount('children', 1)">+</button>
                                     </div>
                                     <div id="kidsNotice" style="display:none;">
-                                        ℹ️ Djeca do 17 godina ne plaćaju aranžman!
+                                        <i data-lucide="info" style="width: 14px; height: 14px;"></i> Djeca do 17 godina ne plaćaju aranžman!
                                     </div>
                                 </div>
                             </div>
 
-                            <div style="margin-bottom: 32px;">
+                            <div class="form-group">
                                 <label class="field-label" style="margin-bottom: 12px;">Vrsta smještaja</label>
-                                <div class="room-grid">
-                                    <div class="room-option active" onclick="selectRoom(this)">
-                                        <strong>Standardna soba</strong>
-                                        <small>Uključeno u cijenu</small>
-                                    </div>
-                                    <div class="room-option" onclick="selectRoom(this)">
-                                        <strong>Deluxe soba</strong>
-                                        <small>+200 BAM/osobi</small>
-                                    </div>
-                                    <div class="room-option" onclick="selectRoom(this)">
-                                        <strong>Suite</strong>
-                                        <small>+500 BAM/osobi</small>
-                                    </div>
-                                    <div class="room-option" onclick="selectRoom(this)">
-                                        <strong>Privatna vila</strong>
-                                        <small>+1200 BAM/osobi</small>
-                                    </div>
+                                <div class="custom-radio-group">
+                                    <label class="custom-radio-card">
+                                        <input type="radio" name="roomType" value="standardna soba" checked onchange="updateSummary()" />
+                                        <div class="radio-card-content">
+                                            <div class="radio-card-text">
+                                                <strong>Standardna soba</strong>
+                                                <small>Uključeno u cijenu</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <label class="custom-radio-card">
+                                        <input type="radio" name="roomType" value="deluxe soba" onchange="updateSummary()" />
+                                        <div class="radio-card-content">
+                                            <div class="radio-card-text">
+                                                <strong>Deluxe soba</strong>
+                                                <small>+200 BAM / osobi</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <label class="custom-radio-card">
+                                        <input type="radio" name="roomType" value="suite" onchange="updateSummary()" />
+                                        <div class="radio-card-content">
+                                            <div class="radio-card-text">
+                                                <strong>Suite</strong>
+                                                <small>+500 BAM / osobi</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <label class="custom-radio-card">
+                                        <input type="radio" name="roomType" value="president suite" onchange="updateSummary()" />
+                                        <div class="radio-card-content">
+                                            <div class="radio-card-text">
+                                                <strong>President suite</strong>
+                                                <small>+1200 BAM / osobi</small>
+                                            </div>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
 
-                            <button class="main-btn full-btn" onclick="goToPassengers()">Nastavi na unos putnika →</button>
+                            <button class="main-btn full-btn" style="margin-top: 15px;" onclick="goToPassengers()">
+                                Nastavi na unos putnika <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+                            </button>
                         </div>
                     </div>
 
                     <div class="right-column">
                         <div class="panel summary-card">
-                            <div class="summary-photo" id="summaryPhoto" style="background-image: url('/assets/bali.jpg');">
+                            <div class="summary-photo" id="summaryPhoto" style="background-image: url('@Url.Content("~/assets/bali.jpg")');">
                                 <div class="summary-place" id="summaryDestination">Odaberite destinaciju</div>
                             </div>
                             <div class="summary-body">
@@ -792,21 +848,29 @@
                                 <div class="summary-row"><span>Povratak</span><span id="summaryReturn">—</span></div>
                                 <div class="summary-row"><span>Putnici</span><span id="summaryTravelers">Odrasli: 2, Djeca: 0</span></div>
                                 <div class="summary-row"><span>Trajanje</span><span id="summaryNights">—</span></div>
+                                <div class="summary-row"><span>Prevoz</span><strong id="summaryPrevoz">—</strong></div>
+                                <div class="summary-item">
+                                    <span class="label">Informacije o letu:</span>
+                                    <span id="summaryLet" class="value">—</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Hotel / Smještaj:</span>
+                                    <strong id="summaryHotel">—</strong>
+                                </div>
                                 <div class="summary-row"><span>Smještaj</span><strong id="summaryRoom">Standardna soba</strong></div>
-
                                 <div class="price-line">
                                     <span>Ukupno za uplatu</span>
-                                    <span class="total" id="summaryTotal">0.00 BAM</span>
+                                    <span class="total" id="summaryTotal">0.00 KM</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="panel benefits">
                             <ul>
-                                <li>SSL sigurnost podataka</li>
-                                <li>Besplatno otkazivanje 48h</li>
-                                <li>Podrška agencije 24/7</li>
-                                <li>Garancija najbolje cijene</li>
+                                <li><i data-lucide="lock"></i> SSL sigurnost podataka</li>
+                                <li><i data-lucide="calendar-x"></i> Besplatno otkazivanje 48h</li>
+                                <li><i data-lucide="phone-call"></i> Podrška agencije 24/7</li>
+                                <li><i data-lucide="badge-check"></i> Garancija najbolje cijene</li>
                             </ul>
                         </div>
                     </div>
@@ -816,151 +880,240 @@
     </div>
 
     <script>
-            const destinationSelect = document.getElementById('destinationSelect');
-            const departureDate = document.getElementById('departureDate');
-            const returnDate = document.getElementById('returnDate');
-            const adultsCount = document.getElementById('adultsCount');
-            const childrenCount = document.getElementById('childrenCount');
-            const summaryTotal = document.getElementById('summaryTotal');
-            const summaryRoom = document.getElementById('summaryRoom');
-            const kidsNotice = document.getElementById('kidsNotice');
+        lucide.createIcons();
 
-            const ROOM_EXTRAS = {
-                "standardna soba": 0,
-                "deluxe soba": 200,
-                "suite": 500,
-                "privatna vila": 1200
-            };
+        const destinationSelect = document.getElementById('destinationSelect');
+        const dateTerminSelect = document.getElementById('dateTerminSelect');
+        const departureDate = document.getElementById('departureDate');
+        const returnDate = document.getElementById('returnDate');
+        const adultsCount = document.getElementById('adultsCount');
+        const childrenCount = document.getElementById('childrenCount');
+        const summaryTotal = document.getElementById('summaryTotal');
+        const summaryRoom = document.getElementById('summaryRoom');
+        const kidsNotice = document.getElementById('kidsNotice');
+        const prevozSekcija = document.getElementById('prevozSekcija');
+        const prevozBusOpcija = document.getElementById('prevozBusOpcija');
+        const prevozAvion = document.getElementById('prevozAvion');
+        const prevozBus = document.getElementById('prevozBus');
+        const summaryPrevoz = document.getElementById('summaryPrevoz');
 
-            window.addEventListener('DOMContentLoaded', function () {
-                const danas = new Date().toISOString().split('T')[0];
-                if (departureDate) departureDate.min = danas;
-                updateSummary();
-            });
+        let globalNights = 0;
 
-            if (departureDate) departureDate.addEventListener('change', updateSummary);
-            if (destinationSelect) destinationSelect.addEventListener('change', updateSummary);
+        const ROOM_EXTRAS = {
+        "standardna soba": 0,
+        "deluxe soba": 200,
+        "suite": 500,
+        "president suite": 1200
+        };
 
-            function selectRoom(el) {
-                document.querySelectorAll('.room-option').forEach(opt => opt.classList.remove('active'));
-                el.classList.add('active');
+        window.addEventListener('DOMContentLoaded', function () {
+        handlePackageChange();
+        });
 
-                const roomName = el.querySelector('strong').innerText;
-                summaryRoom.innerText = roomName;
+        function handlePackageChange() {
+        const selectedOpt = destinationSelect.options[destinationSelect.selectedIndex];
+        if (!selectedOpt || selectedOpt.value === "") {
+        document.getElementById('planLink').style.display = 'none';
+        prevozSekcija.style.display = 'none';
+        dateTerminSelect.innerHTML = `<option value="">-- Prvo odaberite paket --</option>`;
+        resetSummary();
+        return;
+        }
 
-                updateSummary();
-            }
+        const terminiData = selectedOpt.getAttribute('data-termini');
+        let termini = [];
+        try {
+        termini = JSON.parse(terminiData) || [];
+        } catch (e) {
+        console.error("Greška pri čitanju termina", e);
+        }
 
-            function addDays(isoDate, days) {
-                const d = new Date(isoDate + "T00:00:00");
-                d.setDate(d.getDate() + days);
-                return d.toISOString().split('T')[0];
-            }
+        if (termini.length > 0) {
+        const fiksniTermin = termini[0];
 
-            function updateSummary() {
-                if (!destinationSelect || destinationSelect.selectedIndex <= 0) {
-                    document.getElementById('summaryDestination').innerText = 'Odaberite destinaciju';
-                    document.getElementById('summaryDeparture').innerText = '—';
-                    document.getElementById('summaryReturn').innerText = '—';
-                    document.getElementById('summaryNights').innerText = '—';
-                    summaryTotal.innerText = '0.00 BAM';
-                    if (kidsNotice) kidsNotice.style.display = 'none';
-                    return;
-                }
+        dateTerminSelect.innerHTML = `<option value="${fiksniTermin.id}" selected>${fiksniTermin.tekst}</option>`;
 
-                const opt = destinationSelect.options[destinationSelect.selectedIndex];
-                const nights = parseInt(opt.getAttribute('data-nights') || '1', 10) || 1;
-                const days = nights + 1; 
-                const basePrice = parseFloat(opt.getAttribute('data-price')) || 0;
-                const img = opt.getAttribute('data-img');
+        departureDate.value = fiksniTermin.polazak;
+        returnDate.value = fiksniTermin.povratak; 
 
-                const nightsEl = document.getElementById('summaryNights');
-                if (nightsEl) nightsEl.innerText = `${nights} noći / ${days} dana`;
+        const d1 = new Date(fiksniTermin.polazak);
+        const d2 = new Date(fiksniTermin.povratak);
+        const razlikaUvremenu = d2.getTime() - d1.getTime();
+        globalNights = Math.ceil(razlikaUvremenu / (1000 * 3600 * 24));
+        } else {
+        dateTerminSelect.innerHTML = `<option value="">Nema dostupnih termina</option>`;
+        departureDate.value = "";
+        returnDate.value = "";
+        globalNights = 0;
+        }
 
-                document.getElementById('summaryDestination').innerText = opt.text;
-                if (img) document.getElementById('summaryPhoto').style.backgroundImage = `url('${img}')`;
+        const prevozTip = selectedOpt.getAttribute('data-prevoz-tip');
+        if (prevozTip === 'Oboje') {
+        prevozSekcija.style.display = 'block';
+        prevozBusOpcija.style.display = 'block';
+        const avionCard = prevozAvion.closest('.custom-radio-card');
+        if (avionCard) avionCard.style.display = 'block';
+        if (!prevozAvion.checked && !prevozBus.checked) {
+        prevozAvion.checked = true;
+        }
+        } else {
+        prevozSekcija.style.display = 'none';
+        if (prevozTip === 'SamoAutobus') {
+        prevozBus.checked = true;
+        prevozAvion.checked = false;
+        } else {
+        prevozAvion.checked = true;
+        prevozBus.checked = false;
+        }
+        }
 
-                const adults = parseInt(adultsCount?.innerText || '1', 10) || 1;
-                const children = parseInt(childrenCount?.innerText || '0', 10) || 0;
+        const planLink = document.getElementById('planLink');
+        planLink.href = `/Paketi/Detalji/${selectedOpt.value}`;
+        planLink.style.display = 'inline-flex';
 
-                if (children > 0) {
-                    if (kidsNotice) kidsNotice.style.display = 'block';
-                } else {
-                    if (kidsNotice) kidsNotice.style.display = 'none';
-                }
+        const hotelInfo = selectedOpt.getAttribute('data-hotel');
+        document.getElementById('summaryHotel').textContent = hotelInfo ? hotelInfo : "—";
 
-                document.getElementById('summaryTravelers').innerText = `Odrasli: ${adults}, Djeca: ${children}`;
-                document.getElementById('summaryDeparture').innerText = departureDate.value || "—";
+        updateSummary();
+        }
 
-                if (departureDate.value) {
-                    returnDate.value = addDays(departureDate.value, nights);
-                } else {
-                    returnDate.value = '';
-                }
+        function formatDate(dateStr) {
+        if (!dateStr) return "—";
 
-                document.getElementById('summaryReturn').innerText = returnDate.value || "—";
+          const date = new Date(dateStr);
 
-                const currentRoomName = (summaryRoom?.innerText || '').toLowerCase();
-                const extraPerPerson = ROOM_EXTRAS[currentRoomName] || 0;
+        if (isNaN(date.getTime())) {
+        const numbers = dateStr.match(/\d+/g);
+        if (numbers && numbers.length >= 3) {
+        if (dateStr.includes('.')) {
+        return `${numbers[0].padStart(2, '0')}.${numbers[1].padStart(2, '0')}.${numbers[2]}.`;
+        }
+        return `${numbers[2].padStart(2, '0')}.${numbers[1].padStart(2, '0')}.${numbers[0]}.`;
+        }
+        return "—";
+        }
 
-                const finalTotal = (basePrice + extraPerPerson) * adults * nights;
-                summaryTotal.innerText = finalTotal.toFixed(2) + " BAM";
+        const dan = String(date.getDate()).padStart(2, '0');
+        const mjesec = String(date.getMonth() + 1).padStart(2, '0'); 
+        const godina = date.getFullYear();
 
-                const planLink = document.getElementById('planLink');
-                if (planLink) {
-                    const paketId = destinationSelect.value;
-                    if (!paketId) {
-                        planLink.style.display = 'none';
-                    } else {
-                        planLink.style.display = 'inline-flex';
-                        planLink.href = `/PlanPutovanja/Preview?paketId=${encodeURIComponent(paketId)}`;
-                    }
-                }
-            }
+        return `${dan}.${mjesec}.${godina}.`;
+        }
 
-            function changeCount(type, delta) {
-                const el = document.getElementById(type + 'Count');
-                if (!el) return;
-                let val = parseInt(el.innerText) + delta;
+        function changeCount(type, val) {
+        if (type === 'adults') {
+        let current = parseInt(adultsCount.textContent);
+        current += val;
+        if (current < 1) current = 1;
+        adultsCount.textContent = current;
+        } else if (type === 'children') {
+        let current = parseInt(childrenCount.textContent);
+        current += val;
+        if (current < 0) current = 0;
+        childrenCount.textContent = current;
+        kidsNotice.style.display = current > 0 ? 'flex' : 'none';
+        }
+        updateSummary();
+        }
 
-                if (type === 'adults' && val < 1) val = 1;
-                if (type === 'children' && val < 0) val = 0;
+        function updateSummary() {
+        const selectedOpt = destinationSelect.options[destinationSelect.selectedIndex];
+        if (!selectedOpt || selectedOpt.value === "") {
+        resetSummary();
+        return;
+        }
 
-                el.innerText = val;
-                updateSummary();
-            }
+        const basePrice = parseFloat(selectedOpt.getAttribute('data-price')) || 0;
+        const destName = selectedOpt.getAttribute('data-destinacija');
+        const country = selectedOpt.getAttribute('data-drzava');
+        const hotel = selectedOpt.getAttribute('data-hotel');
+        const flight = selectedOpt.getAttribute('data-let');
+        const imgUrl = selectedOpt.getAttribute('data-img');
+        const prevozTip = selectedOpt.getAttribute('data-prevoz-tip');
 
-            function goToPassengers() {
-                if (!destinationSelect.value || !departureDate.value) {
-                    alert("Molimo popunite sve podatke (paket i datum polaska)!");
-                    return;
-                }
+        const adults = parseInt(adultsCount.textContent);
+        const children = parseInt(childrenCount.textContent);
 
-                const opt = destinationSelect.options[destinationSelect.selectedIndex];
-                const nights = parseInt(opt.getAttribute('data-nights') || '1', 10) || 1;
-                const days = nights + 1;
+        const transportRadio = document.querySelector('input[name="tipPrevoza"]:checked');
+        const transportType = transportRadio ? transportRadio.value : 'Bus';
 
-                returnDate.value = addDays(departureDate.value, nights);
+        const roomTypeRadio = document.querySelector('input[name="roomType"]:checked');
+        const roomTypeValue = roomTypeRadio ? roomTypeRadio.value : 'standardna soba';
 
-                localStorage.setItem('reservationPaketId', destinationSelect.value);
-                localStorage.setItem('reservationPaketNaziv', opt ? opt.text : '');
-                localStorage.setItem('reservationDestination', opt.getAttribute('data-destinacija') || '');
-                localStorage.setItem('reservationCountry', opt.getAttribute('data-drzava') || '');
-                localStorage.setItem('reservationImage', opt.getAttribute('data-img') || '/assets/bali.jpg');
-                localStorage.setItem('reservationDeparture', departureDate.value);
-                localStorage.setItem('reservationReturn', returnDate.value);
-                localStorage.setItem('reservationDuration', `${nights} noći / ${days} dana`);
+        document.getElementById('summaryDestination').textContent = `${destName}, ${country}`;
+        if (imgUrl) {
+        document.getElementById('summaryPhoto').style.backgroundImage = `url('${imgUrl}')`;
+        }
 
-                const adults = parseInt(adultsCount.innerText || '1', 10);
-                const children = parseInt(childrenCount.innerText || '0', 10);
-                localStorage.setItem('reservationTravelers', String(adults + children));
-                localStorage.setItem('reservationAdultsCount', String(adults));
-                localStorage.setItem('reservationChildrenCount', String(children));
-                localStorage.setItem('reservationRoom', summaryRoom.innerText);
-                localStorage.setItem('reservationTotal', summaryTotal.innerText);
+        document.getElementById('summaryDeparture').textContent = formatDate(departureDate.value);
+        document.getElementById('summaryReturn').textContent = formatDate(returnDate.value);
+        document.getElementById('summaryTravelers').textContent = `Odrasli: ${adults}, Djeca: ${children}`;
+        document.getElementById('summaryNights').textContent = globalNights > 0 ? `${globalNights} noćenja` : "—";
 
-                window.location.href = "/rezervacija/putnici";
-            }
+        if (transportType === 'Avion') {
+        document.getElementById('summaryPrevoz').textContent = '✈️ Avion';
+        document.getElementById('summaryLet').textContent = flight ? flight : 'Uključen let';
+        document.getElementById('summaryLet').closest('.summary-item').style.display = 'block';
+        } else {
+        document.getElementById('summaryPrevoz').textContent = '🚌 Autobus';
+        document.getElementById('summaryLet').closest('.summary-item').style.display = 'none';
+        }
+
+        document.getElementById('summaryHotel').textContent = hotel ? hotel : '—';
+        summaryRoom.textContent = roomTypeValue.charAt(0).toUpperCase() + roomTypeValue.slice(1);
+
+        let total = basePrice * adults;
+        if (prevozTip === 'Oboje' && transportType === 'Avion') {
+        total += (basePrice * 0.10) * adults;
+        }
+
+        const extraPerPerson = ROOM_EXTRAS[roomTypeValue.toLowerCase()] || 0;
+        total += extraPerPerson * adults;
+
+        summaryTotal.textContent = `${total.toFixed(2)} KM`;
+        try {
+        localStorage.setItem('reservationTotal', `${total.toFixed(2)} KM`);
+        localStorage.setItem('selectedPackageId', selectedOpt.value);
+        } catch (e) {
+        console.warn("Problem sa lokalnim skladištem (privatni mod ili restrikcija):", e);
+        }
+        localStorage.setItem('reservationTotal', `${total.toFixed(2)} KM`);
+        localStorage.setItem('selectedPackageId', selectedOpt.value);
+        }
+
+        function resetSummary() {
+        document.getElementById('summaryDestination').textContent = "Odaberite destinaciju";
+        document.getElementById('summaryPhoto').style.backgroundImage = "url('/assets/bali.jpg')";
+        document.getElementById('summaryDeparture').textContent = "—";
+        document.getElementById('summaryReturn').textContent = "—";
+        document.getElementById('summaryTravelers').textContent = "Odrasli: 2, Djeca: 0";
+        document.getElementById('summaryNights').textContent = "—";
+        document.getElementById('summaryPrevoz').textContent = "—";
+        document.getElementById('summaryLet').textContent = "—";
+        document.getElementById('summaryHotel').textContent = "—";
+        summaryRoom.textContent = "Standardna soba";
+        summaryTotal.textContent = "0.00 KM";
+        }
+
+        function goToPassengers() {
+        if (destinationSelect.value === "") {
+        alert("Molimo vas da odaberete turistički paket prije nastavka.");
+        destinationSelect.focus();
+        return;
+        }
+        if (dateTerminSelect.value === "") {
+        alert("Sistem nije uspio učitati fiksni termin za ovaj paket.");
+        return;
+        }
+
+        const transportRadio = document.querySelector('input[name="tipPrevoza"]:checked');
+        const transportType = transportRadio ? transportRadio.value : 'Bus';
+
+        const roomTypeRadio = document.querySelector('input[name="roomType"]:checked');
+        const roomTypeValue = roomTypeRadio ? roomTypeRadio.value : 'standardna soba';
+    
+        window.location.href = `/Rezervacija/Putnici?paketId=${destinationSelect.value}&terminId=${dateTerminSelect.value}&polazak=${departureDate.value}&odrasli=${adultsCount.textContent}&djeca=${childrenCount.textContent}&prevoz=${encodeURIComponent(transportType)}&smjestaj=${encodeURIComponent(roomTypeValue)}`;
+        }
     </script>
 </body>
 </html>

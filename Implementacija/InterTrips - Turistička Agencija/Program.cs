@@ -2,21 +2,19 @@ using InterTrips___Turistička_Agencija.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using InterTrips___Turistička_Agencija.Models;
-
+using InterTrips___Turistička_Agencija.Services;
+using InterTrips___Turistička_Agencija.Background;
 
 var builder = WebApplication.CreateBuilder(args);
-
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString, sqlOptions => sqlOptions.EnableRetryOnFailure())
            .ConfigureWarnings(warnings => warnings.Ignore(
                Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning
-           ))
-);
+           )));
 
-
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-{
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
     options.Password.RequiredLength = 6;
     options.Password.RequireDigit = false;
     options.Password.RequireUppercase = false;
@@ -26,20 +24,21 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
-builder.Services.ConfigureApplicationCookie(options =>
-{
+
+builder.Services.ConfigureApplicationCookie(options => {
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
-
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.LoginPath = "/Account/Login";
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
-
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddHostedService<PutovanjeReminderWorker>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -56,8 +55,18 @@ using (var scope = app.Services.CreateScope())
     string[] roles = { "Admin", "Agent", "Client" };
     foreach (var r in roles)
     {
-        if (!await roleManager.RoleExistsAsync(r))
-            await roleManager.CreateAsync(new IdentityRole(r));
+        try
+        {
+            var role = await roleManager.FindByNameAsync(r);
+            if (role == null)
+            {
+                await roleManager.CreateAsync(new IdentityRole(r));
+            }
+        }
+        catch (Exception)
+        {
+            
+        }
     }
 
     async Task EnsureUser(string email, string password, string role)
@@ -85,6 +94,7 @@ using (var scope = app.Services.CreateScope())
     await EnsureUser("admin@intertrips.ba", "admin123", "Admin");
     await EnsureUser("test@intertrips.ba", "password123", "Client");
 }
+
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -97,10 +107,8 @@ else
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapStaticAssets();
 
 app.MapControllerRoute(
@@ -108,5 +116,4 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
-
 app.Run();

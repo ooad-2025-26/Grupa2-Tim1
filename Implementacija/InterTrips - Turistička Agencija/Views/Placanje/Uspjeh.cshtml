@@ -17,14 +17,22 @@
 
     <style>
             :root {
-                --primary: #2aa9b0;
-                --primary-dark: #1e7f88;
-                --success: #36d399;
-                --text: #1a2e35;
-                --muted: #64828d;
-                --bg: #f0fafa;
-                --card: #ffffff;
-                --shadow: 0 20px 40px rgba(0,0,0,0.06);
+                --primary: #2b7a80;
+                --primary-dark: #1e5a5e;
+                --primary-light: #f0f7f8;
+                --success: #10b981;
+                --success-light: #ecfdf5;
+                --dark: #122b2e;
+                --text-main: #2d3748;
+                --text-muted: #718096;
+                --bg-page: #f8fafc;
+                --border-color: #e2e8f0;
+                --radius-lg: 24px;
+                --radius-md: 14px;
+                --radius-sm: 8px;
+                --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+                --shadow-md: 0 12px 30px rgba(18, 43, 46, 0.06);
+                --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             }
 
             * {
@@ -35,29 +43,18 @@
 
             body {
                 font-family: 'Poppins', sans-serif;
-                background: radial-gradient(circle at top right, #ffffff, #e6f4f5);
-                color: var(--text);
+                background-color: var(--bg-page);
+                color: var(--text-main);
                 min-height: 100vh;
-                overflow-x: hidden;
-            }
-
-            @@keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(20px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
+                -webkit-font-smoothing: antialiased;
             }
 
             .topbar {
                 height: 70px;
-                background: rgba(255, 255, 255, 0.8);
+                background: rgba(255, 255, 255, 0.85);
                 backdrop-filter: blur(12px);
-                border-bottom: 1px solid rgba(95, 181, 187, 0.15);
+                -webkit-backdrop-filter: blur(12px);
+                border-bottom: 1px solid var(--border-color);
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -69,131 +66,170 @@
 
             .logo {
                 width: 100px;
-                transition: transform 0.3s;
+                transition: var(--transition);
             }
 
                 .logo:hover {
-                    transform: scale(1.05);
+                    transform: scale(1.03);
                 }
 
             .secure {
-                font-size: 12px;
-                color: var(--muted);
+                font-size: 13px;
+                color: var(--success);
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: 6px;
                 font-weight: 600;
+                background: var(--success-light);
+                padding: 6px 14px;
+                border-radius: 999px;
+                border: 1px solid rgba(16, 185, 129, 0.15);
             }
 
-                .secure::before {
-                    content: "✓";
-                    color: var(--success);
-                    font-weight: 800;
+                .secure svg {
+                    width: 14px;
+                    height: 14px;
                 }
 
             .page {
-                padding: 60px 20px;
-                animation: fadeInUp 0.6s ease-out;
+                padding: 50px 20px 80px;
+                animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             }
 
             .shell {
-                max-width: 850px;
+                max-width: 880px;
                 margin: 0 auto;
             }
 
             .hero {
                 background: url('/assets/placanje.jpg') center/cover no-repeat !important;
-                padding: 60px 20px;
+                padding: 50px 20px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                border-radius: 24px;
+                border-radius: var(--radius-lg);
                 margin-bottom: 30px;
+                box-shadow: var(--shadow-sm);
+                position: relative;
             }
 
+                .hero::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(18, 43, 46, 0.15);
+                    border-radius: var(--radius-lg);
+                }
+
             .hero-bubble {
-                background: rgba(255, 255, 255, 0.85);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 30px;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                border-radius: var(--radius-lg);
                 padding: 40px;
-                max-width: 650px;
+                max-width: 680px;
+                width: 100%;
                 display: flex;
-                gap: 25px;
+                gap: 28px;
                 align-items: center;
-                box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
-                animation: bubbleFloat 0.8s ease-out;
+                box-shadow: var(--shadow-md);
+                position: relative;
+                z-index: 2;
             }
 
             .hero-icon {
-                width: 70px;
-                height: 70px;
+                width: 64px;
+                height: 64px;
                 background: var(--success);
                 color: white;
-                font-size: 30px;
                 border-radius: 50%;
                 display: grid;
                 place-items: center;
                 flex-shrink: 0;
-                box-shadow: 0 8px 20px rgba(54, 211, 153, 0.3);
+                box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
             }
+
+                .hero-icon svg {
+                    width: 32px;
+                    height: 32px;
+                }
 
             .hero-content {
                 text-align: left;
+                width: 100%;
             }
 
                 .hero-content h1 {
                     font-size: 24px;
-                    margin-bottom: 8px;
-                    color: var(--text);
+                    font-weight: 700;
+                    margin-bottom: 6px;
+                    color: var(--dark);
+                    letter-spacing: -0.5px;
                 }
 
                 .hero-content p {
                     font-size: 14px;
-                    color: var(--muted);
-                    margin-bottom: 20px;
-                    line-height: 1.6;
+                    color: var(--text-muted);
+                    margin-bottom: 24px;
+                    line-height: 1.5;
                 }
 
-          
-            @@keyframes bubbleFloat {
-                from {
-                    opacity: 0;
-                    transform: translateY(20px) scale(0.95);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0) scale(1);
-                }
+            .btn-row {
+                display: flex;
+                gap: 12px;
+                justify-content: flex-start;
             }
 
-            @@media (max-width: 600px) {
-                .hero-bubble {
-                    flex-direction: column;
-                    text-align: center;
-                    padding: 30px 20px;
+            .main-btn {
+                background: var(--primary);
+                color: white;
+                padding: 12px 24px;
+                border-radius: var(--radius-md);
+                border: 1px solid transparent;
+                font-weight: 600;
+                font-size: 14px;
+                cursor: pointer;
+                transition: var(--transition);
+                box-shadow: 0 4px 12px rgba(43, 122, 128, 0.15);
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+                .main-btn:hover {
+                    background: var(--primary-dark);
+                    transform: translateY(-1px);
+                    box-shadow: 0 6px 16px rgba(43, 122, 128, 0.25);
                 }
 
-                .hero-content {
-                    text-align: center;
+                .main-btn:disabled {
+                    background: var(--text-muted);
+                    cursor: not-allowed;
+                    transform: none;
+                    box-shadow: none;
                 }
+
+            .secondary-btn {
+                background: #ffffff;
+                color: var(--text-main);
+                padding: 12px 24px;
+                border-radius: var(--radius-md);
+                border: 1px solid var(--border-color);
+                font-weight: 600;
+                font-size: 14px;
+                cursor: pointer;
+                transition: var(--transition);
             }
 
-            .hero h1 {
-                font-size: 32px;
-                font-weight: 800;
-                margin-bottom: 12px;
-                letter-spacing: -0.5px;
-            }
-
-            .hero p {
-                color: var(--muted);
-                font-size: 16px;
-                max-width: 500px;
-                margin: 0 auto 30px;
-            }
+                .secondary-btn:hover {
+                    background: var(--bg-page);
+                    border-color: #cbd5e1;
+                    color: var(--dark);
+                }
 
             .grid {
                 display: grid;
@@ -202,159 +238,21 @@
             }
 
             .card {
-                background: rgba(255, 255, 255, 0.9);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.4);
-                box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-                border-radius: 24px;
+                background: #ffffff;
+                border: 1px solid var(--border-color);
+                box-shadow: var(--shadow-sm);
+                border-radius: var(--radius-lg);
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
             }
 
             .preview {
                 height: 200px;
                 position: relative;
                 background: #cfeff0;
-            }
-
-                .preview .badge {
-                    position: absolute;
-                    top: 15px;
-                    right: 15px;
-                    background: rgba(255, 255, 255, 0.9);
-                    padding: 6px 14px;
-                    border-radius: 12px;
-                    font-size: 11px;
-                    font-weight: 800;
-                    color: var(--primary-dark);
-                    backdrop-filter: blur(4px);
-                }
-
-                .preview .place {
-                    position: absolute;
-                    bottom: 20px;
-                    left: 20px;
-                    color: white;
-                    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-                }
-
-                    .preview .place h2 {
-                        font-size: 24px;
-                        font-weight: 800;
-                    }
-
-            .card-head {
-                padding: 16px 16px 0;
-            }
-
-            .card-body {
-                padding: 30px;
-            }
-
-            .card-title {
-                font-size: 13px;
-                text-transform: uppercase;
-                letter-spacing: 1.5px;
-                color: var(--primary);
-                font-weight: 700;
-                margin-bottom: 20px;
-                display: block;
-            }
-
-            .row {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 15px;
-                font-size: 14px;
-                border-bottom: 1px solid #f0f7f8;
-                padding-bottom: 10px;
-            }
-
-                .row:last-child {
-                    border-bottom: none;
-                    padding-bottom: 0;
-                }
-
-                .row span {
-                    color: var(--muted);
-                }
-
-                .row strong {
-                    color: var(--text);
-                    font-weight: 600;
-                }
-
-            #codeText {
-                font-family: monospace;
-                background: #f1f8f9;
-                padding: 2px 6px;
-                border-radius: 4px;
-                font-size: 15px;
-            }
-
-            .pill {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 12px;
-                border-radius: 999px;
-                background: rgba(106,191,198,0.12);
-                border: 1px solid rgba(95,181,187,0.18);
-                color: var(--primary-dark);
-                font-size: 12px;
-                font-weight: 700;
-                width: fit-content;
-            }
-
-            .btn-row {
-                display: flex;
-                gap: 15px;
-                justify-content: center;
-                margin-top: 20px;
-            }
-
-            .btn-row {
-                display: flex;
-                gap: 15px;
-                justify-content: center;
-                margin-top: 20px;
-            }
-
-            .main-btn {
-                background: var(--primary);
-                color: white;
-                padding: 14px 28px;
-                border-radius: 16px;
-                border: none;
-                font-weight: 700;
-                cursor: pointer;
-                transition: all 0.3s;
-                box-shadow: 0 8px 20px rgba(42, 169, 176, 0.2);
-            }
-
-                .main-btn:hover {
-                    background: var(--primary-dark);
-                    transform: translateY(-2px);
-                }
-
-            .secondary-btn {
-                background: #f1f8f9;
-                color: var(--primary-dark);
-                padding: 14px 28px;
-                border-radius: 16px;
-                border: none;
-                font-weight: 700;
-                cursor: pointer;
-                transition: all 0.3s;
-            }
-
-                .secondary-btn:hover {
-                    background: #e2f2f3;
-                }
-
-            .preview {
-                height: 250px;
                 background-size: cover !important;
                 background-position: center !important;
-                border-bottom: 1px solid rgba(0,0,0,0.05);
             }
 
                 .preview::after {
@@ -363,62 +261,167 @@
                     bottom: 0;
                     left: 0;
                     right: 0;
-                    height: 60%;
-                    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
+                    height: 70%;
+                    background: linear-gradient(to top, rgba(18, 43, 46, 0.7) 0%, transparent 100%);
                     pointer-events: none;
-                }
-
-                .preview .place {
-                    position: absolute;
-                    bottom: 20px;
-                    left: 20px;
-                    color: white;
-                    z-index: 2;
-                    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+                    z-index: 1;
                 }
 
                 .preview .badge {
                     position: absolute;
-                    top: 12px;
-                    left: 12px;
-                    padding: 6px 10px;
-                    border-radius: 999px;
-                    background: rgba(255,255,255,0.78);
-                    border: 1px solid rgba(95,181,187,0.18);
+                    top: 16px;
+                    left: 16px;
+                    padding: 5px 12px;
+                    border-radius: var(--radius-sm);
+                    background: rgba(255, 255, 255, 0.9);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
                     font-size: 11px;
-                    font-weight: 800;
+                    font-weight: 700;
                     color: var(--primary-dark);
+                    backdrop-filter: blur(4px);
+                    z-index: 2;
+                    letter-spacing: 0.5px;
                 }
 
                 .preview .place {
                     position: absolute;
-                    left: 14px;
-                    bottom: 14px;
-                    color: #fff;
-                    font-weight: 800;
-                    font-size: 18px;
-                    text-shadow: 0 12px 26px rgba(0,0,0,0.18);
+                    left: 20px;
+                    bottom: 20px;
+                    color: #ffffff;
+                    font-weight: 700;
+                    font-size: 20px;
+                    letter-spacing: -0.3px;
+                    z-index: 2;
                 }
 
                     .preview .place small {
                         display: block;
-                        font-size: 11px;
-                        font-weight: 500;
-                        opacity: .9;
+                        font-size: 12px;
+                        font-weight: 400;
+                        opacity: 0.85;
                         margin-top: 2px;
                     }
+
+            .card-head {
+                padding: 24px 24px 8px;
+            }
+
+            .card-body {
+                padding: 8px 24px 24px;
+                flex-grow: 1;
+            }
+
+            .card-title {
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: var(--primary);
+                font-weight: 700;
+                margin-bottom: 8px;
+                display: block;
+            }
+
+            .row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 14px;
+                font-size: 14px;
+                border-bottom: 1px dashed var(--border-color);
+                padding-bottom: 10px;
+            }
+
+                .row:last-child {
+                    border-bottom: none;
+                    padding-bottom: 0;
+                    margin-bottom: 0;
+                }
+
+                .row span {
+                    color: var(--text-muted);
+                    font-weight: 400;
+                }
+
+                .row strong {
+                    color: var(--dark);
+                    font-weight: 500;
+                }
+
+            #codeText {
+                font-family: monospace;
+                background: var(--bg-page);
+                padding: 4px 8px;
+                border-radius: var(--radius-sm);
+                font-size: 14px;
+                border: 1px solid var(--border-color);
+                color: var(--dark);
+                font-weight: 600;
+            }
+
+            .pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 4px 12px;
+                border-radius: 999px;
+                background: var(--primary-light);
+                border: 1px solid rgba(43, 122, 128, 0.15);
+                color: var(--primary-dark);
+                font-size: 11px;
+                font-weight: 600;
+                width: fit-content;
+            }
+
+            .rates-container {
+                margin-top: 16px;
+                padding: 14px;
+                background: var(--bg-page);
+                border-radius: var(--radius-md);
+                border: 1px solid var(--border-color);
+            }
+
+            @@keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(16px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
 
             @@media (max-width: 768px) {
                 .grid {
                     grid-template-columns: 1fr;
+                    gap: 20px;
                 }
 
                 .topbar {
                     padding: 0 20px;
                 }
 
-                .hero h1 {
-                    font-size: 26px;
+                .hero-bubble {
+                    flex-direction: column;
+                    text-align: center;
+                    padding: 30px 24px;
+                    gap: 20px;
+                }
+
+                .hero-content {
+                    text-align: center;
+                }
+
+                .btn-row {
+                    justify-content: center;
+                    flex-direction: column;
+                    gap: 10px;
+                }
+
+                .main-btn, .secondary-btn {
+                    width: 100%;
+                    justify-content: center;
                 }
             }
     </style>
@@ -429,19 +432,33 @@
         <a href="/" class="logo-link">
             <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
         </a>
-        <div class="secure">Uspješno plaćanje</div>
+        <div class="secure">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+            </svg>
+            Uspješno plaćanje
+        </div>
     </header>
 
     <main class="page">
         <div class="shell">
             <section class="hero">
                 <div class="hero-bubble">
-                    <div class="hero-icon">✓</div>
+                    <div class="hero-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                    </div>
                     <div class="hero-content">
-                        <h1>Uplata je uspješno evidentirana</h1>
-                        <p>Vaša potvrda je spremna. Možete preuzeti PDF dokument ili se vratiti na početnu stranicu.</p>
+                        <h1>Uplata uspješno evidentirana</h1>
+                        <p>Vaša potvrda o rezervaciji je generisana. Možete preuzeti službeni PDF dokument za Vaše putovanje ili završiti proces.</p>
                         <div class="btn-row">
-                            <button class="main-btn" type="button" onclick="downloadPDF()">Preuzmi potvrdu (PDF)</button>
+                            <button class="main-btn" type="button" id="downloadBtn" onclick="downloadPDF()">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                </svg>
+                                Preuzmi potvrdu (PDF)
+                            </button>
                             <button class="secondary-btn" type="button" onclick="window.location.href='/'">Završi</button>
                         </div>
                     </div>
@@ -456,7 +473,7 @@
                     </div>
 
                     <div class="card-head">
-                        <div class="card-title">DETALJI PUTOVANJA</div>
+                        <div class="card-title">Detalji putovanja</div>
                     </div>
 
                     <div class="card-body">
@@ -468,18 +485,21 @@
 
                 <article class="card">
                     <div class="card-head">
-                        <div class="card-title">PODACI O REZERVACIJI I UPLATI</div>
+                        <div class="card-title">Podaci o rezervaciji i uplati</div>
                     </div>
                     <div class="card-body">
                         <div class="row"><span>Broj rezervacije</span><strong id="codeText">—</strong></div>
-                        <div class="row"><span>Datum</span><strong id="dateText">—</strong></div>
+                        <div class="row"><span>Datum transakcije</span><strong id="dateText">—</strong></div>
                         <div class="row"><span>Način plaćanja</span><strong id="methodText">—</strong></div>
-                        <div class="row"><span>Ukupno</span><strong id="totalText">—</strong></div>
-                        <div id="ratesBox" style="margin-top:12px; display:none;">
-                            <div class="pill" id="ratesPill">Rate</div>
-                            <div style="margin-top:8px; font-size:13px; color:var(--muted); line-height:1.7;">
-                                <div>Mjeseci: <strong id="ratesMonthsText">—</strong></div>
-                                <div>Mjesečna rata: <strong id="ratesMonthlyText">—</strong> KM</div>
+                        <div class="row"><span>Ukupno uplaćeno</span><strong id="totalText">—</strong></div>
+
+                        <div id="ratesBox" style="display:none;">
+                            <div class="rates-container">
+                                <div class="pill" id="ratesPill">Plaćanje na rate</div>
+                                <div style="margin-top:10px; font-size:13px; color:var(--text-muted); line-height:1.6;">
+                                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Broj mjeseci:</span><strong id="ratesMonthsText">—</strong></div>
+                                    <div style="display:flex; justify-content:space-between;"><span>Mjesečna rata:</span><span><strong id="ratesMonthlyText">—</strong> KM</span></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -490,8 +510,15 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
+        window.jsPDF = window.jspdf.jsPDF;
+        let fontsReady = false;
+        let regularB64 = '';
+        let boldB64 = '';
+
         async function loadFontAsBase64(url) {
+        try {
         const res = await fetch(url);
+        if (!res.ok) throw new Error("Font nije pronađen");
         const buf = await res.arrayBuffer();
         let binary = '';
         const bytes = new Uint8Array(buf);
@@ -500,27 +527,17 @@
         binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
         }
         return btoa(binary);
-        }
-
-        let fontsReady = false;
-
-        async function ensurePdfFonts(doc) {
-        if (fontsReady) return;
-
-        const regularB64 = await loadFontAsBase64('/fonts/DejaVuSans.ttf');
-        doc.addFileToVFS('DejaVuSans.ttf', regularB64);
-        doc.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal', 'Identity-H');
-
-        try {
-        const boldB64 = await loadFontAsBase64('/fonts/DejaVuSans-Bold.ttf');
-        doc.addFileToVFS('DejaVuSans-Bold.ttf', boldB64);
-        doc.addFont('DejaVuSans-Bold.ttf', 'DejaVuSans', 'bold', 'Identity-H');
         } catch (e) {
+        console.warn("Greška pri učitavanju fonta: " + url, e);
+        return null;
+        }
         }
 
-        fontsReady = true;
+        async function preloadFonts() {
+        regularB64 = await loadFontAsBase64('/fonts/DejaVuSans.ttf');
+        boldB64 = await loadFontAsBase64('/fonts/DejaVuSans-Bold.ttf');
+        fontsReady = !!regularB64;
         }
-        window.jsPDF = window.jspdf.jsPDF;
 
         function safe(key, fallback = '—') {
         const v = localStorage.getItem(key);
@@ -536,14 +553,14 @@
 
         function normalizeUpperBs(s) {
         return String(s).toUpperCase()
-        .replace(/Č/g, "C")
-        .replace(/Ć/g, "C")
-        .replace(/Š/g, "S")
-        .replace(/Ž/g, "Z")
+        .replace(/Č/g, "C").replace(/Ć/g, "C")
+        .replace(/Š/g, "S").replace(/Ž/g, "Z")
         .replace(/Đ/g, "DJ");
         }
 
         async function loadUi() {
+        preloadFonts();
+
         const dest = safe('reservationDestination', 'Destinacija');
         const country = safe('reservationCountry', '—');
         const image = safe('reservationImage', '/assets/bali.jpg');
@@ -577,9 +594,9 @@
         document.getElementById('ratesMonthlyText').textContent = r;
         }
         }
-        try {
-        const paketIdIzMemorije = safe('selectedPackageId', '0');
 
+        try {
+        const paketIdIzMemorije = safe('selectedPackageId', '1');
         const datumPolaskaRaw = safe('reservationDeparture', '');
         const datumPovratkaRaw = safe('reservationReturn', '');
 
@@ -588,7 +605,7 @@
         if (dateStr.includes('.')) {
         const dijelovi = dateStr.split('.');
         if (dijelovi.length >= 3) {
-        return `${dijelovi[2]}-${dijelovi[1]}-${dijelovi[0]}`;
+        return `${dijelovi[2].trim()}-${dijelovi[1].trim()}-${dijelovi[0].trim()}`;
         }
         }
         return dateStr;
@@ -598,165 +615,134 @@
 
         const podaciZaBazu = {
         paketId: parseInt(paketIdIzMemorije) || 1,
-
         datumPolaska: formatirajZaBazu(datumPolaskaRaw),
-
         datumPovratka: formatirajZaBazu(datumPovratkaRaw),
-
         putnici: savedPassengers.map(p => ({
-        ime: p.firstName,
-        prezime: p.lastName,
-        brojPasosa: p.passport,
-        drzavljanstvo: p.nationality,
+        ime: p.firstName || "—",
+        prezime: p.lastName || "—",
+        brojPasosa: p.passport || "—",
+        drzavljanstvo: p.nationality || "—",
         telefon: p.phone || "",
-
-        datumRodjenja: p.birthDate
-        ? p.birthDate
-        : null,
-
+        datumRodjenja: p.birthDate ? p.birthDate : null,
         posebniZahtjevi: p.requests || ""
         }))
         };
 
         const response = await fetch('/Rezervacija/KreirajRezervaciju', {
         method: 'POST',
-        headers: {
-        'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(podaciZaBazu)
         });
 
         if (response.ok) {
-        console.log("Rezervacija je uspješno sinhronizovana i upisana u bazu podataka.");
+        console.log("Rezervacija je uspješno upisana u bazu.");
         } else {
         console.error("Server je vratio grešku prilikom upisivanja rezervacije.");
         }
         } catch (error) {
-        console.error("Došlo je do greške u komunikaciji sa serverom:", error);
+        console.error("Greška u komunikaciji sa serverom:", error);
+        }
         }
 
-        }
-
-
-        function pdfSafeText(value) {
-        if (value === null || value === undefined) return '';
-
-        let s = String(value);
-
-        s = s.replace(/<[^>]*>/g, '');
-
-        s = s.replace(/&amp;/g, '&')
-        .replace(/&nbsp;/g, ' ')
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>');
-
-        s = s.replace(/[\u0000-\u001F\u007F]/g, '');
-
-        s = s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-
-        s = s.replace(/[^\x20-\x7E]/g, '');
-
-        return s.trim();
-        }
         async function generatePDF(resCode) {
         const doc = new jsPDF();
 
-        await ensurePdfFonts(doc);
+        if (fontsReady && regularB64) {
+        doc.addFileToVFS('DejaVuSans.ttf', regularB64);
+        doc.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal', 'Identity-H');
+        if (boldB64) {
+        doc.addFileToVFS('DejaVuSans-Bold.ttf', boldB64);
+        doc.addFont('DejaVuSans-Bold.ttf', 'DejaVuSans', 'bold', 'Identity-H');
+        }
         doc.setFont('DejaVuSans', 'normal');
+        }
 
         const date = new Date().toLocaleDateString('bs-BA');
         const selectedPaymentType = safe('paymentType', 'card');
         const paymentLabel = getPaymentLabel(selectedPaymentType);
 
-        doc.setFillColor(47, 125, 134);
+        doc.setFillColor(43, 122, 128);
         doc.rect(0, 0, 210, 40, 'F');
 
         doc.setTextColor(255, 255, 255);
-        doc.setFontSize(24);
-        doc.setFont('DejaVuSans', 'bold');
-        doc.text("INTERTRIPS", 105, 20, { align: "center" });
+        doc.setFontSize(22);
+        if (fontsReady && boldB64) doc.setFont('DejaVuSans', 'bold');
+        doc.text("INTERTRIPS", 105, 18, { align: "center" });
 
         doc.setFontSize(10);
-        doc.setFont('DejaVuSans', 'normal');
-        doc.text("Agencija za turizam | Sarajevo, BiH | www.intertrips.ba", 105, 30, { align: "center" });
+        if (fontsReady) doc.setFont('DejaVuSans', 'normal');
+        doc.text("Agencija za turizam | Sarajevo, BiH | www.intertrips.ba", 105, 28, { align: "center" });
 
         doc.setTextColor(0, 0, 0);
-        doc.setFontSize(18);
-        doc.setFont('DejaVuSans', 'bold');
-        doc.text("POTVRDA REZERVACIJE", 20, 60);
+        doc.setFontSize(16);
+        if (fontsReady && boldB64) doc.setFont('DejaVuSans', 'bold');
+        doc.text("POTVRDA REZERVACIJE", 20, 55);
 
         doc.setFontSize(10);
-        doc.setFont('DejaVuSans', 'normal');
-        doc.text(`Broj dokumenta: ${resCode}`, 20, 70);
-        doc.text(`Datum izdavanja: ${date}`, 20, 75);
-        doc.line(20, 80, 190, 80);
+        if (fontsReady) doc.setFont('DejaVuSans', 'normal');
+        doc.text(`Broj dokumenta: ${resCode}`, 20, 65);
+        doc.text(`Datum izdavanja: ${date}`, 20, 71);
+        doc.setDrawColor(200, 220, 220);
+        doc.line(20, 77, 190, 77);
 
-        doc.setFont('DejaVuSans', 'bold');
-        doc.text("DETALJI PUTOVANJA:", 20, 95);
+        if (fontsReady && boldB64) doc.setFont('DejaVuSans', 'bold');
+        doc.text("DETALJI PUTOVANJA:", 20, 90);
+        if (fontsReady) doc.setFont('DejaVuSans', 'normal');
+        doc.text(`Destinacija: ${safe('reservationDestination', '')}`, 20, 98);
+        doc.text(`Period: ${safe('reservationDeparture', '')} - ${safe('reservationReturn', '')}`, 20, 105);
+        doc.text(`Smještaj: ${safe('reservationRoom', '')}`, 20, 112);
+        doc.text(`Broj putnika: ${safe('reservationTravelers', '')}`, 20, 119);
 
-        doc.setFont('DejaVuSans', 'normal');
-        doc.text(`Destinacija: ${safe('reservationDestination', '')}`, 20, 105);
-        doc.text(`Period: ${safe('reservationDeparture', '')} - ${safe('reservationReturn', '')}`, 20, 112);
-        doc.text(`Smještaj: ${safe('reservationRoom', '')}`, 20, 119);
-        doc.text(`Broj putnika: ${safe('reservationTravelers', '')}`, 20, 126);
         const passengersRaw = localStorage.getItem('savedPassengers');
         let firstPhone = '';
         try {
         const ps = passengersRaw ? JSON.parse(passengersRaw) : [];
         firstPhone = ps?.[0]?.phone || '';
         } catch { }
-        if (firstPhone) doc.text(`Kontakt telefon: ${firstPhone}`, 20, 133);
+        if (firstPhone) doc.text(`Kontakt telefon: ${firstPhone}`, 20, 126);
 
-        doc.setFont('DejaVuSans', 'bold');
-        doc.text("FINANSIJSKI PODACI:", 120, 95);
+        if (fontsReady && boldB64) doc.setFont('DejaVuSans', 'bold');
+        doc.text("FINANSIJSKI PODACI:", 120, 90);
+        if (fontsReady) doc.setFont('DejaVuSans', 'normal');
+        doc.text(`Način plaćanja: ${normalizeUpperBs(paymentLabel)}`, 120, 98);
 
-        doc.setFont('DejaVuSans', 'normal');
-        doc.text(`Način plaćanja: ${normalizeUpperBs(paymentLabel)}`, 120, 105);
-        doc.setFontSize(14);
-        doc.setFont('DejaVuSans', 'bold');
-        doc.text(`UKUPNO: ${safe('reservationTotal', '')}`, 120, 115);
+        doc.setFontSize(13);
+        if (fontsReady && boldB64) doc.setFont('DejaVuSans', 'bold');
+        doc.text(`UKUPNO: ${safe('reservationTotal', '')} KM`, 120, 108);
 
         if (selectedPaymentType === 'rates') {
         doc.setFontSize(10);
-        doc.setFont('DejaVuSans', 'normal');
-        doc.text(`Mjeseci: ${safe('ratesMonths', '')}`, 120, 124);
-        doc.text(`Mjesečna rata: ${safe('ratesMonthly', '')} KM`, 120, 130);
+        if (fontsReady) doc.setFont('DejaVuSans', 'normal');
+        doc.text(`Mjeseci: ${safe('ratesMonths', '')}`, 120, 118);
+        doc.text(`Mjesečna rata: ${safe('ratesMonthly', '')} KM`, 120, 124);
         }
 
-        doc.line(20, 138, 190, 138);
-        doc.setFontSize(12);
-        doc.setFont('DejaVuSans', 'bold');
-        doc.text("PODACI O PUTNICIMA:", 20, 148);
+        doc.line(20, 134, 190, 134);
+
+        doc.setFontSize(11);
+        if (fontsReady && boldB64) doc.setFont('DejaVuSans', 'bold');
+        doc.text("PODACI O PUTNICIMA:", 20, 144);
 
         let passengers = [];
         try {
-        const rawPassengers = localStorage.getItem('savedPassengers');
-        if (rawPassengers) {
-        passengers = JSON.parse(rawPassengers);
-        }
-        } catch (e) {
-        console.error("Greška pri čitanju putnika iz localStorage", e);
-        }
+        if (passengersRaw) passengers = JSON.parse(passengersRaw);
+        } catch (e) { console.error(e); }
 
-        let currentY = 158;
-
-        const colX = { rb: 22, ime: 30, tip: 78, dob: 96, pasos: 122, drz: 146, tel: 170 };
+        let currentY = 154;
+        const colX = { rb: 22, ime: 32, tip: 80, dob: 98, pasos: 124, drz: 148, tel: 170 };
 
         if (passengers.length === 0) {
         doc.setFontSize(10);
-        doc.setFont('DejaVuSans', 'normal');
+        if (fontsReady) doc.setFont('DejaVuSans', 'normal');
         doc.text("Nema sačuvanih podataka o putnicima.", 20, currentY);
-        currentY += 10;
         } else {
         doc.setFontSize(9);
-        doc.setFont('DejaVuSans', 'bold');
+        if (fontsReady && boldB64) doc.setFont('DejaVuSans', 'bold');
         doc.setFillColor(240, 248, 248);
         doc.rect(20, currentY - 5, 175, 7, 'F');
 
         doc.text("#", colX.rb, currentY);
-        doc.text("Ime i Prezime", colX.ime, currentY); // Zamijenjen & sa i
+        doc.text("Ime i Prezime", colX.ime, currentY);
         doc.text("Tip", colX.tip, currentY);
         doc.text("Datum rođ.", colX.dob, currentY);
         doc.text("Pasoš", colX.pasos, currentY);
@@ -768,29 +754,19 @@
         passengers.forEach((p, index) => {
         if (currentY > 250) {
         doc.addPage();
-        doc.setFont('DejaVuSans', 'normal');
         currentY = 30;
-
-        doc.setFontSize(9);
-        doc.setFont('DejaVuSans', 'bold');
         doc.setFillColor(240, 248, 248);
-        doc.rect(20, currentY - 5, 175, 7, 'F'); // Dodana pozadina i na novoj stranici radi konzistentnosti
-
+        doc.rect(20, currentY - 5, 175, 7, 'F');
+        if (fontsReady && boldB64) doc.setFont('DejaVuSans', 'bold');
         doc.text("#", colX.rb, currentY);
-        doc.text("Ime i Prezime", colX.ime, currentY); // Zamijenjen & sa i
+        doc.text("Ime i Prezime", colX.ime, currentY);
         doc.text("Tip", colX.tip, currentY);
-        doc.text("Datum rođ.", colX.dob, currentY);
-        doc.text("Pasoš", colX.pasos, currentY);
-        doc.text("Drž.", colX.drz, currentY);
-        doc.text("Telefon", colX.tel, currentY);
         currentY += 8;
         }
 
-        doc.setFontSize(9);
-        doc.setFont('DejaVuSans', 'normal');
-
+        if (fontsReady) doc.setFont('DejaVuSans', 'normal');
         const pTypeFormatted = p.type === 'adult' ? 'Odrasli' : 'Dijete';
-        const fullName = `${p.firstName} ${p.lastName}`;
+        const fullName = `${p.firstName || ''} ${p.lastName || ''}`;
 
         let formattedDate = p.birthDate || '—';
         if (p.birthDate && p.birthDate.includes('-')) {
@@ -809,38 +785,34 @@
         if (p.requests && p.requests.trim() !== "") {
         currentY += 5;
         doc.setFontSize(8);
-        doc.setFont('DejaVuSans', 'italic');
-        doc.setTextColor(100, 100, 100);
-        doc.text(`Napomena za putnika ${index + 1}: ${p.requests}`, colX.ime, currentY);
-        doc.setTextColor(0, 0, 0);
+        doc.text(`Napomena: ${p.requests}`, colX.ime, currentY);
+        doc.setFontSize(9);
         }
 
-        doc.setDrawColor(220, 235, 235);
-        doc.setLineWidth(0.2);
+        doc.setDrawColor(230, 240, 240);
         doc.line(20, currentY + 2, 190, currentY + 2);
-
         currentY += 8;
         });
         }
+
         let footerY = currentY + 15;
         if (footerY > 230) {
         doc.addPage();
         footerY = 40;
         }
 
-        doc.setDrawColor(47, 125, 134);
-        doc.setLineWidth(0.8);
-        doc.circle(50, footerY + 10, 18);
+        doc.setDrawColor(43, 122, 128);
+        doc.setLineWidth(0.6);
+        doc.circle(50, footerY + 10, 16);
 
-        doc.setFontSize(8);
-        doc.setFont('DejaVuSans', 'normal');
-        doc.setTextColor(47, 125, 134);
-        doc.text("INTERTRIPS d.o.o.", 50, footerY + 8, { align: "center" });
-        doc.text("SARAJEVO", 50, footerY + 13, { align: "center" });
-        doc.text("ID: 4200000000", 50, footerY + 18, { align: "center" });
+        doc.setFontSize(7);
+        doc.setTextColor(43, 122, 128);
+        doc.text("INTERTRIPS d.o.o.", 50, footerY + 7, { align: "center" });
+        doc.text("SARAJEVO", 50, footerY + 11, { align: "center" });
+        doc.text("Faktura / Potvrda", 50, footerY + 15, { align: "center" });
 
         doc.setTextColor(0, 0, 0);
-        doc.setFontSize(10);
+        doc.setFontSize(9);
         doc.text("__________________________", 130, footerY + 10);
         doc.text("Ovlašteno lice", 145, footerY + 16);
 
@@ -852,8 +824,20 @@
         }
 
         async function downloadPDF() {
+        const btn = document.getElementById('downloadBtn');
+        btn.disabled = true;
+        btn.textContent = 'Generisanje...';
+
         const resCode = safe('finalReservationCode', 'IT-0000-0000');
         await generatePDF(resCode);
+
+        btn.disabled = false;
+        btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+        </svg>
+        Preuzmi potvrdu (PDF)
+        `;
         }
 
         window.addEventListener('DOMContentLoaded', loadUi);

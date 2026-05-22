@@ -10,5 +10,10 @@ namespace InterTrips___Turistička_Agencija.Models
 
         public List<PutnikDto> Putnici { get; set; } = new();
         public string? PromoKod { get; set; }
+        public string BrojRezervacije { get; set; }
+        public string NacinPlacanja { get; set; }
+        public decimal UkupanIznos { get; set; }
+        public int? BrojMjeseciRata { get; set; }
+        public string? SubMetodaRata { get; set; }
     }
 }

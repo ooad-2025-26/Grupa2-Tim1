@@ -8,10 +8,9 @@
     string emailKlijenta = Model.Korisnik?.Email ?? "Nije uneseno";
 
     string agentId = Context.Request.Query["agentr"].ToString();
-
     if (string.IsNullOrEmpty(agentId))
     {
-        agentId = "2"; 
+        agentId = "2";
     }
 }
 
@@ -24,146 +23,111 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
             :root {
-                --bg-gradient: linear-gradient(180deg, #e6f3f3 0%, #dff4f5 100%);
-                --primary: #6abfc6;
-                --primary-dark: #50a2a8;
-                --primary-light: rgba(106, 191, 198, 0.1);
-                --text-main: #2d4042;
-                --text-muted: #738a8c;
-                --shadow: 0 10px 30px rgba(95, 181, 187, 0.08);
-                --border: 1px solid rgba(95, 181, 187, 0.16);
-                --status-kreirana-bg: rgba(25, 118, 210, 0.1);
-                --status-kreirana-txt: #1976d2;
-                --status-potvrdjena-bg: rgba(46, 125, 50, 0.1);
-                --status-potvrdjena-txt: #2e7d32;
-                --status-otkazana-bg: rgba(198, 40, 40, 0.1);
-                --status-otkazana-txt: #c62828;
+                --bg-main: #f4f7f6;
+                --sidebar-dark: #0a2228;
+                --primary: #1e7f88;
+                --primary-light: #2aa9b0;
+                --primary-accent: rgba(42, 169, 176, 0.05);
+                --text-main: #1f2e3d;
+                --text-muted: #6b7a87;
+                --white: #ffffff;
+                --border-color: #e2e8f0;
+                --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
+                --shadow-md: 0 10px 25px rgba(10, 34, 40, 0.04);
+                --status-kreirana-bg: #eff6ff;
+                --status-kreirana-txt: #1d4ed8;
+                --status-potvrdjena-bg: #ecfdf5;
+                --status-potvrdjena-txt: #047857;
+                --status-otkazana-bg: #fef2f2;
+                --status-otkazana-txt: #b91c1c;
             }
 
             body {
-                background: var(--bg-gradient);
-                font-family: 'Poppins', sans-serif;
+                background-color: var(--bg-main);
+                font-family: 'Inter', sans-serif;
                 min-height: 100vh;
                 margin: 0;
                 padding: 0;
                 color: var(--text-main);
+                -webkit-font-smoothing: antialiased;
             }
 
-            .details-page {
-                padding: 40px 20px;
-            }
-
-            .details-shell {
-                max-width: 900px;
+            .dashboard-container {
+                max-width: 1140px;
                 margin: 0 auto;
+                padding: 40px 24px;
             }
 
-            .page-header {
+            .top-meta {
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
-                margin-bottom: 25px;
-                background: rgba(255, 255, 255, 0.8);
-                backdrop-filter: blur(10px);
-                padding: 20px 28px;
-                border-radius: 18px;
-                border: var(--border);
-                box-shadow: var(--shadow);
+                justify-content: space-between;
+                margin-bottom: 28px;
             }
-
-                .page-header h1 {
-                    font-size: 24px;
-                    font-weight: 800;
-                    margin: 4px 0 0 0;
-                    letter-spacing: -0.5px;
-                }
 
             .btn-back {
                 text-decoration: none;
                 color: var(--text-muted);
-                font-size: 13px;
-                font-weight: 600;
+                font-size: 14px;
+                font-weight: 500;
                 display: inline-flex;
                 align-items: center;
+                gap: 8px;
                 transition: all 0.2s ease;
+                background: var(--white);
+                padding: 10px 16px;
+                border-radius: 10px;
+                box-shadow: var(--shadow-sm);
+                border: 1px solid var(--border-color);
             }
 
                 .btn-back:hover {
-                    color: var(--primary-dark);
-                    transform: translateX(-2px);
+                    color: var(--primary);
+                    border-color: var(--primary);
+                    transform: translateX(-3px);
                 }
 
-            .main-card {
-                background: rgba(255, 255, 255, 0.9);
-                border-radius: 20px;
-                border: 1px solid rgba(0, 0, 0, 0.04);
-                padding: 35px;
-                box-shadow: var(--shadow);
+            .dashboard-header {
+                background: var(--white);
+                border-radius: 16px;
+                padding: 24px 32px;
+                border: 1px solid var(--border-color);
+                box-shadow: var(--shadow-md);
                 display: flex;
-                flex-direction: column;
-                gap: 30px;
-            }
-
-            .section-block {
-                border-bottom: 1px solid rgba(95, 181, 187, 0.12);
-                padding-bottom: 25px;
-            }
-
-                .section-block:last-child {
-                    border-bottom: none;
-                    padding-bottom: 0;
-                }
-
-            .section-title {
-                font-size: 16px;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                color: var(--primary-dark);
-                margin: 0 0 16px 0;
-                display: flex;
+                justify-content: space-between;
                 align-items: center;
-                gap: 8px;
+                margin-bottom: 24px;
             }
 
-            .info-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                gap: 20px;
+            .header-title-area h1 {
+                font-size: 24px;
+                font-weight: 700;
+                color: var(--sidebar-dark);
+                margin: 0 0 4px 0;
+                letter-spacing: -0.5px;
             }
 
-            .grid-item {
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
+            .header-title-area p {
+                margin: 0;
+                font-size: 13px;
+                color: var(--text-muted);
             }
-
-                .grid-item label {
-                    font-size: 12px;
-                    color: var(--text-muted);
-                    font-weight: 500;
-                }
-
-                .grid-item span {
-                    font-size: 15px;
-                    font-weight: 600;
-                    color: var(--text-main);
-                }
 
             .status-badge {
-                padding: 6px 16px;
-                border-radius: 999px;
+                padding: 8px 18px;
+                border-radius: 8px;
                 font-size: 12px;
-                font-weight: 700;
+                font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
-                display: inline-block;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
             }
 
             .status-kreirana {
@@ -181,147 +145,264 @@
                 color: var(--status-otkazana-txt);
             }
 
+            .dashboard-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+                margin-bottom: 24px;
+            }
+
+            .dashboard-card {
+                background: var(--white);
+                border-radius: 16px;
+                border: 1px solid var(--border-color);
+                box-shadow: var(--shadow-md);
+                padding: 28px;
+            }
+
+                .dashboard-card.full-width {
+                    grid-column: span 2;
+                }
+
+            .card-title {
+                font-size: 14px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
+                color: var(--primary);
+                margin: 0 0 20px 0;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                border-bottom: 1px solid var(--border-color);
+                padding-bottom: 12px;
+            }
+
+                .card-title i {
+                    font-size: 16px;
+                }
+
+            .info-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .info-item {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+                .info-item label {
+                    font-size: 11px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    color: var(--text-muted);
+                    font-weight: 600;
+                }
+
+                .info-item span {
+                    font-size: 15px;
+                    font-weight: 500;
+                    color: var(--sidebar-dark);
+                }
+
             .table-wrapper {
                 overflow-x: auto;
+                border-radius: 12px;
+                border: 1px solid var(--border-color);
             }
 
             .passengers-table {
                 width: 100%;
                 border-collapse: collapse;
                 text-align: left;
+                background: var(--white);
             }
 
                 .passengers-table th {
-                    background: rgba(95, 181, 187, 0.06);
-                    color: var(--text-main);
-                    font-size: 13px;
+                    background: #fafbfc;
+                    color: var(--sidebar-dark);
+                    font-size: 12px;
                     font-weight: 600;
-                    padding: 12px 16px;
-                    border-bottom: 2px solid rgba(95, 181, 187, 0.15);
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    padding: 14px 18px;
+                    border-bottom: 1px solid var(--border-color);
                 }
 
                 .passengers-table td {
-                    padding: 14px 16px;
+                    padding: 16px 18px;
                     font-size: 14px;
                     color: var(--text-main);
-                    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+                    border-bottom: 1px solid var(--border-color);
                 }
 
                 .passengers-table tr:last-child td {
                     border-bottom: none;
                 }
 
-            @@media (max-width: 600px) {
-                .page-header {
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: 12px;
+                .passengers-table tr:hover td {
+                    background-color: var(--primary-accent);
                 }
 
-                .main-card {
+            .passenger-name {
+                font-weight: 600;
+                color: var(--sidebar-dark);
+            }
+
+            .empty-state {
+                color: var(--text-muted);
+                font-style: italic;
+                margin: 0;
+                padding: 20px;
+                text-align: center;
+            }
+
+                        @@media (max-width: 900px) {
+                .dashboard-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .dashboard-card.full-width {
+                    grid-column: span 1;
+                }
+            }
+
+            @@media (max-width: 600px) {
+                .dashboard-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 16px;
                     padding: 20px;
+                }
+
+                .info-list {
+                    grid-template-columns: 1fr;
                 }
             }
     </style>
 </head>
 <body>
 
-    <div class="details-page">
-        <div class="details-shell">
+    <div class="dashboard-container">
 
-            <header class="page-header">
-                <div>
-                    <a href="/Agent/Rezervacije?agentr=@agentId" class="btn-back">← Nazad na listu rezervacija</a>
-                    <h1>Detalji rezervacije #@Model.Id</h1>
-                </div>
-                <div>
-                    <span class="status-badge status-@statusKlasa">
-                        Status: @Model.Status
-                    </span>
-                </div>
-            </header>
-
-            <main class="main-card">
-
-                <div class="section-block">
-                    <h2 class="section-title">🌍 Podaci o Aranžmanu</h2>
-                    <div class="info-grid">
-                        <div class="grid-item">
-                            <label>Naziv paketa</label>
-                            <span>@(Model.Paket?.Naziv ?? "Nezaveden aranžman")</span>
-                        </div>
-                        <div class="grid-item">
-                            <label>Destinacija</label>
-                            <span>@(Model.Paket?.Destinacija?.Naziv ?? "—")</span>
-                        </div>
-                        <div class="grid-item">
-                            <label>Datum polaska</label>
-                            <span>@Model.DatumPolaska.ToString("dd. MMMM yyyy.")</span>
-                        </div>
-                        <div class="grid-item">
-                            <label>Trajanje</label>
-                            <span>@(Model.Paket?.TrajanjeNoci) noćenja</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section-block">
-                    <h2 class="section-title">👤 Nosilac rezervacije (Klijent)</h2>
-                    <div class="info-grid">
-                        <div class="grid-item">
-                            <label>Ime i prezime</label>
-                            <span>@imeKlijenta</span>
-                        </div>
-                        <div class="grid-item">
-                            <label>Email adresa</label>
-                            <span>@emailKlijenta</span>
-                        </div>
-                        <div class="grid-item">
-                            <label>Ukupno putnika</label>
-                            <span>👥 @(Model.Putnici?.Count ?? 0) osiguranih osoba</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section-block">
-                    <h2 class="section-title">Spisak putnika</h2>
-                    <div class="table-wrapper">
-                        @if (Model.Putnici == null || !Model.Putnici.Any())
-                        {
-                            <p style="color: var(--text-muted); font-style: italic; margin: 0;">Nema registrovanih putnika za ovu rezervaciju.</p>
-                        }
-                        else
-                        {
-                            <table class="passengers-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Ime i prezime</th>
-                                        <th>Broj pasoša</th>
-                                        <th>Državljanstvo</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @{
-                                        int brojac = 1;
-                                    }
-                                    @foreach (var putnik in Model.Putnici)
-                                    {
-                                        <tr>
-                                            <td>@(brojac++)</td>
-                                            <td><strong>@putnik.Ime @putnik.Prezime</strong></td>
-                                            <td>@(string.IsNullOrEmpty(putnik.BrojPasosa) ? "—" : putnik.BrojPasosa)</td>
-                                            <td>@(string.IsNullOrEmpty(putnik.Drzavljanstvo) ? "—" : putnik.Drzavljanstvo)</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        }
-                    </div>
-                </div>
-
-            </main>
+        <div class="top-meta">
+            <a href="/Agent/Rezervacije?agentr=@agentId" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Nazad na listu rezervacija
+            </a>
         </div>
+
+        <header class="dashboard-header">
+            <div class="header-title-area">
+                <h1>Rezervacija #@Model.Id</h1>
+                <p>Pregled detaljnih informacija i rute klijenta</p>
+            </div>
+            <div>
+                <span class="status-badge status-@statusKlasa">
+                    <i class="fa-solid fa-circle shadow-sm"></i> @Model.Status
+                </span>
+            </div>
+        </header>
+
+        <main class="dashboard-grid">
+
+            <div class="dashboard-card">
+                <h2 class="card-title">
+                    <i class="fa-solid fa-compass" style="color: var(--primary);"></i> Podaci o Aranžmanu
+                </h2>
+                <div class="info-list">
+                    <div class="info-item">
+                        <label>Naziv paketa</label>
+                        <span>@(Model.Paket?.Naziv ?? "Nezaveden aranžman")</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Destinacija</label>
+                        <span>@(Model.Paket?.Destinacija?.Naziv ?? "—")</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Datum polaska</label>
+                        <span><i class="fa-regular fa-calendar-days" style="font-size:13px; margin-right:4px; color:var(--text-muted)"></i> @Model.DatumPolaska.ToString("dd. MM. yyyy.")</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Trajanje aranžmana</label>
+                        <span>@(Model.Paket?.TrajanjeNoci) noćenja</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h2 class="card-title">
+                    <i class="fa-solid fa-user-tie" style="color: var(--primary);"></i> Nosilac rezervacije
+                </h2>
+                <div class="info-list">
+                    <div class="info-item">
+                        <label>Ime i prezime klijenta</label>
+                        <span style="font-weight: 600;">@imeKlijenta</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Email adresa</label>
+                        <span>@emailKlijenta</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Ukupno prijavljenih</label>
+                        <span><i class="fa-solid fa-users" style="font-size:13px; margin-right:4px; color:var(--text-muted)"></i> @(Model.Putnici?.Count ?? 0) osoba</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Kreirano preko agenta</label>
+                        <span>ID: @agentId</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card full-width">
+                <h2 class="card-title">
+                    <i class="fa-solid fa-passport" style="color: var(--primary);"></i> Detaljni podaci o saputnicima
+                </h2>
+                <div class="table-wrapper">
+                    @if (Model.Putnici == null || !Model.Putnici.Any())
+                    {
+                        <p class="empty-state">Nema registrovanih saputnika za ovu rezervaciju.</p>
+                    }
+                    else
+                    {
+                        <table class="passengers-table">
+                            <thead>
+                                <tr>
+                                    <th>Oznaka</th>
+                                    <th>Ime i prezime</th>
+                                    <th>Državljanstvo</th>
+                                    <th>Datum rođenja</th>
+                                    <th>Broj pasoša</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int brojac = 1;
+                                }
+                                @foreach (var putnik in Model.Putnici)
+                                {
+                                    <tr>
+                                        <td>#0@brojac</td>
+                                        <td class="passenger-name">@putnik.Ime @putnik.Prezime</td>
+                                        <td>@(string.IsNullOrEmpty(putnik.Drzavljanstvo) ? "—" : putnik.Drzavljanstvo)</td>
+                                        <td>@(putnik.DatumRodjenja.HasValue ? putnik.DatumRodjenja.Value.ToString("dd.MM.yyyy.") : "—")</td>
+                                        <td>
+                                            <code style="font-family:monospace; font-size:13px; background:#f1f5f9; padding:3px 6px; border-radius:4px; color:var(--sidebar-dark)">
+                                                @(string.IsNullOrEmpty(putnik.BrojPasosa) ? "—" : putnik.BrojPasosa)
+                                            </code>
+                                        </td>
+                                    </tr>
+                                    brojac++;
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+
+        </main>
     </div>
 
 </body>

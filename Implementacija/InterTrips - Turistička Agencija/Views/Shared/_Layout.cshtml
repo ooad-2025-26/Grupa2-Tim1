@@ -233,10 +233,8 @@
             }
 
 
-            @if (User == null || !User.Identity.IsAuthenticated || User.IsInRole("Klijent"))
-            {
-                <li><a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a></li>
-            }
+           
+    <li><a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a></li>
         </ul>
 
         <div class="user-area">

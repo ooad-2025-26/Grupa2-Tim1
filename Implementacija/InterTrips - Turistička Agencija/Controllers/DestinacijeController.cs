@@ -12,7 +12,10 @@ public class DestinacijeController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var paketi = await _db.Paketi.Include(p => p.Destinacija).ToListAsync();
+        var paketi = await _db.Paketi
+                          .Include(p => p.Destinacija)
+                          .Include(p => p.Hotel)
+                          .ToListAsync();
         return View(paketi);
     }
 }

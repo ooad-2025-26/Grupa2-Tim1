@@ -1,7 +1,6 @@
 @model List<InterTrips___Turistička_Agencija.Models.Paket>
-
 @{
-    ViewData["Title"] = "Admin - Paketi";
+    ViewData["Title"] = "Admin — Upravljanje Paketima";
     Layout = null;
 }
 <!DOCTYPE html>
@@ -11,80 +10,158 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"]</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
 
     <style>
             :root {
-                --primary: #6abfc6;
-                --primary-dark: #2b777e;
-                --primary-light: rgba(106, 191, 198, 0.12);
-                --text-main: #2d3748;
-                --text-muted: #718096;
-                --bg-card: rgba(255, 255, 255, 0.90);
-                --border-color: rgba(95, 181, 187, 0.15);
-                --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+                --bg-main: #f8fafc;
+                --sidebar-bg: #0f172a;
+                --sidebar-text: #94a3b8;
+                --sidebar-active: #38bdf8;
+                --text-dark: #0f172a;
+                --text-muted: #64748b;
+                --border: #e2e8f0;
+                --card-bg: #ffffff;
+                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+                --primary: #0ea5e9;
+                --primary-hover: #0284c7;
+                --danger: #ef4444;
+                --success: #10b981;
+                --warning: #f59e0b;
             }
 
-            body {
-                font-family: 'Poppins', sans-serif;
-                background-color: #f7fafc;
-                color: var(--text-main);
+            * {
+                box-sizing: border-box;
                 margin: 0;
                 padding: 0;
             }
 
-            .dash-topbar {
-                height: 64px;
-                padding: 0 32px;
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: var(--bg-main);
+                color: var(--text-dark);
                 display: flex;
-                align-items: center;
-                justify-content: space-between;
-                background: rgba(255, 255, 255, 0.85);
-                border-bottom: 1px solid var(--border-color);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                position: sticky;
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                width: 260px;
+                background-color: var(--sidebar-bg);
+                color: #fff;
+                padding: 24px 16px;
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                height: 100vh;
+                left: 0;
                 top: 0;
                 z-index: 100;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.02);
             }
 
-                .dash-topbar .logo {
-                    width: 90px;
-                    height: 44px;
-                    object-fit: contain;
+                .sidebar .logo-area {
+                    padding: 0 12px 24px;
+                    border-bottom: 1px solid #1e293b;
+                    margin-bottom: 24px;
                 }
 
-            .logout-btn {
-                border: 1px solid rgba(95, 181, 187, 0.3);
-                background: transparent;
-                color: var(--text-main);
-                border-radius: 30px;
-                padding: 8px 18px;
-                cursor: pointer;
-                font-weight: 500;
-                font-size: 13px;
-                transition: all 0.2s ease;
+            .sidebar-logo-text {
+                font-size: 20px;
+                font-weight: 700;
+                color: #ffffff;
                 text-decoration: none;
-                display: inline-flex;
-                align-items: center;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                display: block;
             }
 
-                .logout-btn:hover {
-                    background: var(--primary-light);
-                    border-color: var(--primary);
-                    color: var(--primary-dark);
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                flex-grow: 1;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                color: var(--sidebar-text);
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 500;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+            }
+
+                .nav-item i {
+                    width: 20px;
+                    margin-right: 12px;
+                    font-size: 16px;
+                    text-align: center;
+                    transition: color 0.2s ease;
                 }
 
-            .wrap {
-                max-width: 1200px;
-                margin: 40px auto;
-                padding: 0 24px;
+                .nav-item:hover {
+                    background: #1e293b;
+                    color: #fff;
+                }
+
+                .nav-item.active {
+                    background: rgba(14, 165, 233, 0.15);
+                    color: var(--sidebar-active);
+                    font-weight: 600;
+                }
+
+            .sidebar-footer {
+                padding-top: 16px;
+                border-top: 1px solid #1e293b;
             }
+
+            .logout-btn-nav {
+                width: 100%;
+                background: transparent;
+                border: 1px solid rgba(239, 68, 68, 0.25);
+                color: #ef4444;
+                padding: 10px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 13px;
+                transition: all 0.2s;
+            }
+
+                .logout-btn-nav:hover {
+                    background: rgba(239, 68, 68, 0.1);
+                }
+
+            .main-content {
+                margin-left: 260px;
+                flex-grow: 1;
+                padding: 40px 48px;
+                max-width: 1350px;
+                width: calc(100% - 260px);
+            }
+
+            .dash-header {
+                margin-bottom: 32px;
+            }
+
+                .dash-header h1 {
+                    font-size: 28px;
+                    font-weight: 700;
+                    color: var(--text-dark);
+                    letter-spacing: -0.5px;
+                }
+
+                .dash-header p {
+                    color: var(--text-muted);
+                    font-size: 14px;
+                    margin-top: 6px;
+                }
 
             .bar {
                 display: flex;
@@ -95,267 +172,420 @@
                 flex-wrap: wrap;
             }
 
+            .counter-badge {
+                display: inline-flex;
+                align-items: center;
+                padding: 8px 16px;
+                border-radius: 30px;
+                font-size: 13px;
+                font-weight: 500;
+                background: #ffffff;
+                border: 1px solid var(--border);
+                color: var(--text-dark);
+                box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            }
+
+            .card {
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+
             .muted {
                 color: var(--text-muted);
                 font-size: 13px;
             }
 
-            .dash-hero {
-                margin-bottom: 32px;
-                padding: 32px;
-                background: var(--bg-card);
-                border: 1px solid var(--border-color);
-                border-radius: 20px;
-                box-shadow: var(--shadow-md);
-                position: relative;
-                overflow: hidden;
-            }
-
-                .dash-hero::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 4px;
-                    height: 100%;
-                    background: linear-gradient(to bottom, var(--primary), #86bfe0);
-                }
-
-                .dash-hero h1 {
-                    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-                    font-weight: 700;
-                    margin: 4px 0 8px 0;
-                    color: var(--text-main);
-                    letter-spacing: -0.5px;
-                }
-
-            .card {
-                background: var(--bg-card);
-                border: 1px solid var(--border-color);
-                border-radius: 20px;
-                box-shadow: var(--shadow-md);
-                padding: 32px;
-            }
-
             .row-grid {
                 display: grid;
-                grid-template-columns: 1.5fr 1fr 0.6fr 0.8fr auto;
-                gap: 16px;
+                grid-template-columns: 2.2fr 1.2fr 1fr 1fr auto;
+                gap: 24px;
                 align-items: center;
-                padding: 18px 20px;
-                border-radius: 14px;
-                border: 1px solid rgba(95, 181, 187, 0.12);
-                background: rgba(255, 255, 255, 0.65);
-                margin-bottom: 14px;
-                transition: all 0.2s ease;
+                padding: 20px 24px;
+                border-bottom: 1px solid var(--border);
+                transition: background 0.2s ease;
             }
 
-                .row-grid:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.03);
-                    border-color: rgba(95, 181, 187, 0.3);
-                    background: #fff;
+                .row-grid:last-child {
+                    border-bottom: none;
                 }
 
-                .row-grid:last-child {
-                    margin-bottom: 0;
+                .row-grid:hover {
+                    background: #f8fafc;
                 }
 
             .paket-title {
                 font-size: 16px;
-                font-weight: 700;
-                color: var(--text-main);
-                margin-bottom: 2px;
+                font-weight: 600;
+                color: var(--text-dark);
+                margin-bottom: 4px;
             }
 
             .paket-value {
-                font-size: 15px;
+                font-size: 14px;
                 font-weight: 600;
-                color: var(--text-main);
+                color: var(--text-dark);
             }
+
+            .price-highlight {
+                font-size: 16px;
+                font-weight: 700;
+                color: #0284c7;
+            }
+
+            .capacity-container {
+                margin-top: 6px;
+                max-width: 180px;
+            }
+
+            .progress-bar-bg {
+                background: #e2e8f0;
+                border-radius: 4px;
+                height: 6px;
+                width: 100%;
+                overflow: hidden;
+                margin-top: 4px;
+            }
+
+            .progress-bar-fill {
+                background: var(--primary);
+                height: 100%;
+                border-radius: 4px;
+                transition: width 0.3s ease;
+            }
+
+                .progress-bar-fill.full {
+                    background: var(--danger) !important;
+                }
 
             .btn {
                 height: 38px;
-                padding: 0 16px;
+                padding: 0 14px;
                 border-radius: 8px;
                 cursor: pointer;
                 font-weight: 600;
                 font-size: 13px;
-                border: 1px solid rgba(95, 181, 187, 0.3);
+                border: 1px solid var(--border);
                 background: #fff;
-                color: var(--text-main);
+                color: #475569;
                 transition: all 0.2s ease;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 text-decoration: none;
+                gap: 8px;
             }
 
                 .btn:hover {
-                    background: #f7fafc;
-                    border-color: var(--primary);
+                    background: #f1f5f9;
+                    border-color: #cbd5e1;
+                    color: var(--text-dark);
                 }
 
             .btn-primary {
                 border: none;
                 color: #fff;
-                background: linear-gradient(135deg, #6abfc6, #5fa9b1);
-                box-shadow: 0 2px 4px rgba(106, 191, 198, 0.2);
+                background: var(--sidebar-bg);
+                padding: 0 18px;
             }
 
                 .btn-primary:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 4px 8px rgba(106, 191, 198, 0.3);
-                    filter: brightness(1.05);
+                    background: #1e293b;
+                    color: #fff;
+                }
+
+            .btn-secondary {
+                background: #f0fdf4;
+                color: #166534;
+                border-color: #bbf7d0;
+            }
+
+                .btn-secondary:hover {
+                    background: #dcfce7;
+                    border-color: #86efac;
                 }
 
             .btn-danger {
-                border: 1px solid rgba(229, 62, 62, 0.2);
-                background: rgba(229, 62, 62, 0.05);
-                color: #e53e3e;
+                border: 1px solid rgba(239, 68, 68, 0.15);
+                background: rgba(239, 68, 68, 0.02);
+                color: var(--danger);
             }
 
                 .btn-danger:hover {
-                    background: rgba(229, 62, 62, 0.1);
-                    border-color: #e53e3e;
-                    color: #c53030;
+                    background: #fef2f2;
+                    border-color: var(--danger);
                 }
+
+            .btn-disabled {
+                background: #f1f5f9 !important;
+                color: #94a3b8 !important;
+                border-color: #e2e8f0 !important;
+                cursor: not-allowed !important;
+                pointer-events: none;
+                opacity: 0.7;
+            }
 
             .actions {
                 display: flex;
                 gap: 8px;
                 align-items: center;
+                justify-content: flex-end;
             }
 
             .status-badge {
                 display: inline-flex;
-                padding: 4px 12px;
-                border-radius: 30px;
+                padding: 6px 12px;
+                border-radius: 8px;
                 font-size: 12px;
                 font-weight: 600;
-                background: rgba(106, 191, 198, 0.12);
-                color: var(--primary-dark);
+                background: #f1f5f9;
+                color: #475569;
+                text-transform: capitalize;
+                border: 1px solid transparent;
             }
 
-                .status-badge:contains("Aktivan"), .status-badge:contains("Aktivno") {
-                    background: rgba(16, 185, 129, 0.13);
-                    color: #065f46;
-                }
+            .status-active {
+                background: #f0fdf4;
+                color: #166534;
+                border-color: #dcfce7;
+            }
 
-            @@media (max-width: 992px) {
+            .status-inactive {
+                background: #fef2f2;
+                color: #991b1b;
+                border-color: #fee2e2;
+            }
+
+            .status-draft {
+                background: #fff7ed;
+                color: #9a3412;
+                border-color: #ffedd5;
+            }
+
+            .status-full {
+                background: #fff5f5;
+                color: #e53e3e;
+                border-color: #fed7d7;
+            }
+
+            @@media (max-width: 1200px) {
                 .row-grid {
-                    grid-template-columns: 1fr 1fr;
-                    gap: 14px;
+                    grid-template-columns: 1.6fr 1fr 1fr auto;
                 }
 
-                    .row-grid .actions {
-                        grid-column: 1 / -1;
-                        justify-content: flex-start;
-                        margin-top: 8px;
-                        border-top: 1px solid #edf2f7;
-                        padding-top: 12px;
+                .col-duration {
+                    display: none;
+                }
+            }
+
+            @@media (max-width: 1024px) {
+                .sidebar {
+                    width: 70px;
+                    padding: 24px 8px;
+                }
+
+                    .sidebar .logo-area, .sidebar .nav-item span, .sidebar .logout-btn-nav {
+                        display: none;
                     }
+
+                .main-content {
+                    margin-left: 70px;
+                    padding: 32px 24px;
+                    width: calc(100% - 70px);
+                }
+            }
+
+            @@media (max-width: 768px) {
+                .row-grid {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                    padding: 20px;
+                }
+
+                .actions {
+                    justify-content: flex-start;
+                    margin-top: 8px;
+                    border-top: 1px solid var(--border);
+                    padding-top: 16px;
+                }
+
+                .btn {
+                    flex-grow: 1;
+                }
             }
 
             @@media (max-width: 576px) {
-                .row-grid {
-                    grid-template-columns: 1fr;
-                }
-
                 .bar {
                     flex-direction: column;
                     align-items: flex-start;
                 }
+
+                    .bar div, .btn-primary {
+                        width: 100%;
+                    }
             }
     </style>
 </head>
 <body>
 
-    <header class="dash-topbar">
-        <a href="/" class="logo-link">
-            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
-        </a>
+    <aside class="sidebar">
+        <div class="logo-area">
+            <a href="/" class="sidebar-logo-text">InterTrips</a>
+        </div>
 
-        <div style="display:flex; gap:10px; align-items:center;">
-            <a href="/Administrator/Index" class="logout-btn" style="text-decoration:none;">Destinacije</a>
-            <a href="/Administrator/Paketi" class="logout-btn" style="text-decoration:none; background: rgba(106,191,198,0.15); font-weight:700; border-color: var(--primary);">Paketi</a>
-            <a href="/Administrator/Korisnici" class="logout-btn" style="text-decoration:none;">Korisnici</a>
-            <a href="/Administrator/Rezervacije" class="logout-btn" style="text-decoration:none;">Rezervacije</a>
-            <a href="/Destinacije" class="logout-btn" style="text-decoration:none;">Pregled na sajtu</a>
-            <form method="post" action="/Account/Logout" style="display:inline;">
+        <nav class="nav-links">
+            <a href="/Administrator/Index" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
+            </a>
+            <a href="/Administrator/Destinacije" class="nav-item">
+                <i class="fa-solid fa-map-location-dot"></i> <span>Destinacije</span>
+            </a>
+            <a href="/Administrator/Letovi" class="nav-item">
+                <i class="fa-solid fa-plane"></i> <span>Letovi</span>
+            </a>
+            <a href="/Administrator/Hoteli" class="nav-item">
+                <i class="fa-solid fa-hotel"></i> <span>Hoteli</span>
+            </a>
+            <a href="/Administrator/Paketi" class="nav-item active">
+                <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
+            </a>
+            <a href="/Administrator/Korisnici" class="nav-item">
+                <i class="fa-solid fa-users"></i> <span>Korisnici</span>
+            </a>
+            <a href="/Administrator/Rezervacije" class="nav-item">
+                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <form method="post" action="/Account/Logout">
                 @Html.AntiForgeryToken()
-                <button class="logout-btn" type="submit" style="color: #e53e3e; border-color: rgba(229, 62, 62, 0.2);">Odjavi se</button>
+                <button class="logout-btn-nav" type="submit">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Odjavi se
+                </button>
             </form>
         </div>
-    </header>
+    </aside>
 
-    <div class="wrap">
-        <div class="dash-hero">
-            <span class="badge">ADMIN PANEL</span>
+    <main class="main-content">
+
+        <header class="dash-header">
             <h1>Upravljanje turističkim paketima</h1>
-            <p>Kreirajte aranžmane, definišite cijene, trajanje noćenja i vežite ponude za aktivne destinacije.</p>
-        </div>
+            <p>Pregledajte, ažurirajte ili uklanjajte aranžmane sa platforme, te upravljajte pripadajućim etažnim planovima putovanja.</p>
+        </header>
 
         <div class="bar">
             <div>
-                <span class="status-badge" style="background: var(--primary-light); color: var(--primary-dark); font-weight: 700;">
-                    Ukupno paketa: @Model.Count
+                <span class="counter-badge">
+                    <i class="fa-solid fa-box-archive" style="margin-right: 8px; color: var(--text-muted);"></i>
+                    Ukupno aranžmana: &nbsp;<strong>@Model.Count</strong>
                 </span>
             </div>
             <div>
-                <a class="btn btn-primary" asp-controller="Administrator" asp-action="PaketCreate">+ Dodaj novi paket</a>
+                <a class="btn btn-primary" asp-controller="Administrator" asp-action="PaketCreate">
+                    <i class="fa-solid fa-plus"></i> Kreiraj novi paket
+                </a>
             </div>
         </div>
 
         <div class="card">
             @if (!Model.Any())
             {
-                <div class="muted" style="font-weight:500; text-align:center; padding: 32px;">
-                    Trenutno nema kreiranih paketa. Kliknite na dugme iznad da dodate prvi paket.
+                <div class="muted" style="font-weight:500; text-align:center; padding: 64px;">
+                    <i class="fa-regular fa-folder-open" style="font-size: 32px; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
+                    Trenutno nema kreiranih turističkih paketa u bazi podataka.
                 </div>
             }
             else
             {
                 foreach (var p in Model)
                 {
+                    int popunjenoMjesta = p.Rezervacije?.Sum(r => r.Putnici?.Count ?? 0) ?? 0;
+                    bool jePopunjeno = popunjenoMjesta >= p.Kapacitet;
+                    double procenatPopunjenosti = p.Kapacitet > 0 ? ((double)popunjenoMjesta / p.Kapacitet) * 100 : 0;
+
                     <div class="row-grid">
                         <div>
                             <div class="paket-title">@p.Naziv</div>
                             <div class="muted">
-                                @(p.Destinacija != null ? $"{p.Destinacija.Naziv} • {p.Destinacija.Drzava}" : "— Nema dodijeljene destinacije")
+                                <i class="fa-solid fa-location-dot" style="font-size:12px; width:14px;"></i>
+                                @(p.Destinacija != null ? $"{p.Destinacija.Naziv}, {p.Destinacija.Drzava}" : "Nema dodijeljene destinacije")
+                            </div>
+
+                            <div class="capacity-container">
+                                <div class="muted" style="font-size:11px;">
+                                    Popunjeno: <strong>@popunjenoMjesta</strong> / @p.Kapacitet mjesta
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill @(jePopunjeno ? "full" : "")" style="width: @(procenatPopunjenosti > 100 ? 100 : procenatPopunjenosti)%"></div>
+                                </div>
                             </div>
                         </div>
 
                         <div>
-                            <div class="muted">Cijena već od</div>
-                            <div class="paket-value" style="color: var(--primary-dark);">@p.CijenaOd.ToString("0.##") BAM</div>
+                            <div class="muted" style="font-size:11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Cijena od</div>
+                            <div class="paket-value price-highlight">@p.CijenaOd.ToString("0.##") BAM</div>
+                        </div>
+
+                        <div class="col-duration">
+                            <div class="muted" style="font-size:11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Trajanje</div>
+                            <div class="paket-value">
+                                <i class="fa-regular fa-moon" style="color: var(--text-muted); font-size:13px;"></i>
+                                @p.TrajanjeNoci @(p.TrajanjeNoci == 1 ? "noćenje" : "noćenja")
+                            </div>
                         </div>
 
                         <div>
-                            <div class="muted">Dužina boravka</div>
-                            <div class="paket-value">@p.TrajanjeNoci @(p.TrajanjeNoci == 1 ? "noć" : "noći")</div>
-                        </div>
-
-                        <div>
-                            <span class="status-badge">@p.Status</span>
+                            @if (jePopunjeno)
+                            {
+                                <span class="status-badge status-full">Popunjeno</span>
+                            }
+                            else
+                            {
+                                <span class="status-badge">@p.Status</span>
+                            }
                         </div>
 
                         <div class="actions">
-                            <a class="btn" asp-controller="Administrator" asp-action="PaketEdit" asp-route-id="@p.Id">Uredi</a>
+                            <a class="btn" asp-controller="Administrator" asp-action="PaketEdit" asp-route-id="@p.Id" title="Uredi paket">
+                                <i class="fa-regular fa-pen-to-square"></i> Uredi
+                            </a>
 
-                            <a class="btn" asp-controller="Administrator" asp-action="PlanTemplate" asp-route-paketId="@p.Id" style="background: rgba(106,191,198,0.05);">
-                                Plan puta
+                            <a class="btn btn-secondary @(jePopunjeno ? "btn-disabled" : "")"
+                               asp-controller="Administrator"
+                               asp-action="PlanTemplate"
+                               asp-route-paketId="@p.Id">
+                                <i class="fa-regular fa-map"></i> Plan puta
                             </a>
 
                             <form asp-controller="Administrator" asp-action="PaketDelete" asp-route-id="@p.Id" method="post" style="display:inline;">
                                 @Html.AntiForgeryToken()
-                                <button class="btn btn-danger" type="submit" onclick="return confirm('Da li ste sigurni da želite obrisati paket @p.Naziv?')">Obriši</button>
+                                <button class="btn btn-danger" type="submit" onclick="return confirm('Da li ste sigurni da želite obrisati paket @p.Naziv?')">
+                                    <i class="fa-regular fa-trash-can"></i> Obriši
+                                </button>
                             </form>
                         </div>
                     </div>
                 }
             }
         </div>
-    </div>
+    </main>
+
+    <script>
+            document.querySelectorAll('.status-badge').forEach(badge => {
+                const txt = badge.textContent.trim().toLowerCase();
+                if (txt === 'aktivan' || txt === 'aktivno' || txt === 'objavljen') {
+                    badge.classList.add('status-active');
+                } else if (txt === 'neaktivan' || txt === 'nije aktivno' || txt === 'skriveno') {
+                    badge.classList.add('status-inactive');
+                } else if (txt === 'nacrt' || txt === 'draft') {
+                    badge.classList.add('status-draft');
+                } else if (txt === 'popunjeno') {
+                    badge.classList.add('status-full');
+                }
+            });
+    </script>
 </body>
 </html>

@@ -24,4 +24,6 @@ public class Placanje
     [Required]
     public int RezervacijaId { get; set; }
     public Rezervacija? Rezervacija { get; set; }
+    public virtual ICollection<RataPlacanja> Rate { get; set; } = new List<RataPlacanja>();
+
 }

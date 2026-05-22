@@ -2,260 +2,362 @@
 
 @{
     var isEdit = Model != null && Model.Id != 0;
-    ViewData["Title"] = isEdit ? "Uredi paket" : "Novi paket";
+    ViewData["Title"] = isEdit ? "InterTrips - Uredi Paket" : "InterTrips - Novi Paket";
     Layout = null;
 
     var destinacije = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Destinacije;
     var statusi = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Statusi;
+
+    var renderModel = Model ?? new InterTrips___Turistička_Agencija.Models.Paket();
+
+    if (renderModel.DatumPolaska == DateTime.MinValue)
+    {
+        renderModel.DatumPolaska = DateTime.Now;
+    }
+    if (renderModel.DatumPovratka == DateTime.MinValue)
+    {
+        renderModel.DatumPovratka = DateTime.Now.AddDays(7);
+    }
 }
+
 <!DOCTYPE html>
 <html lang="bs">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
 
     <style>
             :root {
-                --primary: #6abfc6;
-                --primary-dark: #2b777e;
-                --primary-light: rgba(106, 191, 198, 0.12);
-                --text-main: #2d3748;
-                --text-muted: #718096;
-                --bg-card: rgba(255, 255, 255, 0.90);
-                --border-color: rgba(95, 181, 187, 0.15);
-                --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-                --danger: #e53e3e;
+                --bg-main: #f8fafc;
+                --sidebar-bg: #0f172a;
+                --sidebar-text: #94a3b8;
+                --sidebar-active: #38bdf8;
+                --text-dark: #0f172a;
+                --text-muted: #64748b;
+                --primary: #0ea5e9;
+                --primary-hover: #0284c7;
+                --border: #e2e8f0;
+                --card-bg: #ffffff;
+                --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
+                --danger: #ef4444;
+                --sidebar-footer-bg: #1e293b;
             }
 
-            body {
-                font-family: 'Poppins', sans-serif;
-                background-color: #f7fafc;
-                color: var(--text-main);
+            * {
+                box-sizing: border-box;
                 margin: 0;
                 padding: 0;
             }
 
-            .dash-topbar {
-                height: 64px;
-                padding: 0 32px;
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: var(--bg-main);
+                color: var(--text-dark);
                 display: flex;
-                align-items: center;
-                justify-content: space-between;
-                background: rgba(255, 255, 255, 0.85);
-                border-bottom: 1px solid var(--border-color);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                position: sticky;
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                width: 260px;
+                background-color: var(--sidebar-bg);
+                color: #fff;
+                padding: 24px 16px;
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                height: 100vh;
+                left: 0;
                 top: 0;
                 z-index: 100;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.02);
             }
 
-                .dash-topbar .logo {
-                    width: 90px;
-                    height: 44px;
-                    object-fit: contain;
+                .sidebar .logo-area {
+                    padding: 8px 12px 32px;
+                    border-bottom: 1px solid #1e293b;
+                    margin-bottom: 24px;
                 }
 
-            .logout-btn {
-                border: 1px solid rgba(95, 181, 187, 0.3);
-                background: transparent;
-                color: var(--text-main);
-                border-radius: 30px;
-                padding: 8px 18px;
-                cursor: pointer;
-                font-weight: 500;
-                font-size: 13px;
-                transition: all 0.2s ease;
+            .sidebar-logo-text {
+                font-size: 20px;
+                font-weight: 700;
+                color: #ffffff;
                 text-decoration: none;
-                display: inline-flex;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                display: block;
+            }
+
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                flex-grow: 1;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                color: var(--sidebar-text);
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 500;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+            }
+
+                .nav-item i {
+                    width: 20px;
+                    margin-right: 12px;
+                    font-size: 16px;
+                    text-align: center;
+                }
+
+                .nav-item:hover {
+                    background: #1e293b;
+                    color: #fff;
+                }
+
+                .nav-item.active {
+                    background: rgba(14, 165, 233, 0.15);
+                    color: var(--sidebar-active);
+                    font-weight: 600;
+                }
+
+            .sidebar-footer {
+                padding-top: 16px;
+                border-top: 1px solid #1e293b;
+            }
+
+            .logout-btn-nav {
+                width: 100%;
+                background: transparent;
+                border: 1px solid rgba(239, 68, 68, 0.25);
+                color: #ef4444;
+                padding: 10px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 13px;
+                transition: all 0.2s;
+            }
+
+                .logout-btn-nav:hover {
+                    background: rgba(239, 68, 68, 0.1);
+                }
+
+            .main-content {
+                margin-left: 260px;
+                flex-grow: 1;
+                padding: 40px 48px;
+                max-width: 1100px;
+            }
+
+            .dash-header {
+                margin-bottom: 32px;
+                display: flex;
+                justify-content: space-between;
                 align-items: center;
             }
 
-                .logout-btn:hover {
-                    background: var(--primary-light);
-                    border-color: var(--primary);
-                    color: var(--primary-dark);
-                }
-
-            .wrap {
-                max-width: 850px;
-                margin: 40px auto;
-                padding: 0 24px;
-            }
-
-            .dash-hero {
-                margin-bottom: 32px;
-                padding: 32px;
-                background: var(--bg-card);
-                border: 1px solid var(--border-color);
-                border-radius: 20px;
-                box-shadow: var(--shadow-md);
-                position: relative;
-                overflow: hidden;
-            }
-
-                .dash-hero::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 4px;
-                    height: 100%;
-                    background: linear-gradient(to bottom, var(--primary), #86bfe0);
-                }
-
-                .dash-hero h1 {
-                    font-size: clamp(1.5rem, 3vw, 2.2rem);
+                .dash-header h1 {
+                    font-size: 26px;
                     font-weight: 700;
-                    margin: 4px 0 8px 0;
-                    color: var(--text-main);
+                    color: var(--text-dark);
                     letter-spacing: -0.5px;
                 }
 
-            .card {
-                background: var(--bg-card);
-                border: 1px solid var(--border-color);
-                border-radius: 20px;
-                box-shadow: var(--shadow-md);
-                padding: 36px;
-            }
+                .dash-header p {
+                    color: var(--text-muted);
+                    font-size: 14px;
+                    margin-top: 4px;
+                }
 
-            .form-group {
-                margin-bottom: 22px;
-            }
-
-            .row-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 20px;
-            }
-
-            .field-label {
-                display: block;
-                font-size: 12px;
-                font-weight: 700;
-                color: var(--primary-dark);
-                margin-bottom: 8px;
-                text-transform: uppercase;
-                letter-spacing: .5px;
-            }
-
-            .input, .select {
-                width: 100%;
-                background: #fff;
-                border: 1px solid rgba(95, 181, 187, 0.3);
-                border-radius: 10px;
-                height: 44px;
+            .btn-secondary-top {
+                height: 40px;
                 padding: 0 16px;
+                background: #ffffff;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                color: var(--text-dark);
+                font-weight: 600;
                 font-size: 14px;
-                font-family: inherit;
-                color: var(--text-main);
+                display: inline-flex;
+                align-items: center;
+                text-decoration: none;
+                transition: all 0.15s;
+                box-shadow: var(--shadow);
+            }
+
+                .btn-secondary-top:hover {
+                    background: #f1f5f9;
+                    border-color: #cbd5e1;
+                }
+
+            .card {
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                box-shadow: var(--shadow);
+                padding: 32px;
+            }
+
+            .form-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+
+            .full-width {
+                grid-column: span 2;
+            }
+
+            .form-group-custom {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .field-label-custom {
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--text-dark);
+                margin-bottom: 6px;
+                letter-spacing: 0.3px;
+                text-transform: uppercase;
+            }
+
+            .input-custom, .select-custom {
+                width: 100%;
+                height: 44px;
+                padding: 0 14px;
+                background: #ffffff;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                color: var(--text-dark);
+                font-size: 14px;
+                transition: all 0.15s ease-in-out;
                 outline: none;
                 box-sizing: border-box;
-                transition: all 0.2s ease;
             }
 
-            .select {
-                cursor: pointer;
+            .select-custom {
                 appearance: none;
-                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232b777e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
                 background-repeat: no-repeat;
-                background-position: right 16px center;
+                background-position: right 14px center;
                 background-size: 16px;
                 padding-right: 40px;
             }
 
-                .input:focus, .select:focus {
+                .input-custom:focus, .select-custom:focus {
                     border-color: var(--primary);
-                    box-shadow: 0 0 0 3px rgba(106, 191, 198, 0.15);
+                    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
                 }
 
-            .btnrow {
-                display: flex;
-                gap: 12px;
-                justify-content: flex-end;
-                margin-top: 32px;
-                flex-wrap: wrap;
+            .err-custom {
+                color: var(--danger);
+                font-size: 12px;
+                font-weight: 500;
+                display: block;
+                margin-top: 6px;
             }
 
-            .btn {
+            .validation-summary-custom {
+                background: rgba(239, 68, 68, 0.06);
+                border: 1px solid rgba(239, 68, 68, 0.2);
+                padding: 14px;
+                border-radius: 8px;
+                color: var(--danger);
+                font-size: 13px;
+                font-weight: 600;
+                margin-bottom: 24px;
+            }
+
+            .btnrow-custom {
+                display: flex;
+                justify-content: flex-end;
+                gap: 12px;
+                margin-top: 32px;
+                padding-top: 24px;
+                border-top: 1px solid var(--border);
+            }
+
+            .btn-cancel {
                 height: 44px;
                 padding: 0 24px;
-                border-radius: 10px;
-                cursor: pointer;
+                background: #ffffff;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                color: var(--text-dark);
                 font-weight: 600;
                 font-size: 14px;
-                border: 1px solid rgba(95, 181, 187, 0.3);
-                background: #fff;
-                color: var(--text-main);
-                transition: all 0.2s ease;
+                cursor: pointer;
+                transition: all 0.15s;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 text-decoration: none;
             }
 
-                .btn:hover {
-                    background: #f7fafc;
-                    border-color: var(--primary);
+                .btn-cancel:hover {
+                    background: #f1f5f9;
+                    border-color: #cbd5e1;
                 }
 
-            .btn-primary {
+            .btn-submit-custom {
+                height: 44px;
+                padding: 0 24px;
+                background-color: var(--sidebar-bg);
                 border: none;
-                color: #fff;
-                background: linear-gradient(135deg, #6abfc6, #5fa9b1);
-                box-shadow: 0 2px 4px rgba(106, 191, 198, 0.2);
+                border-radius: 8px;
+                color: #ffffff;
+                font-weight: 600;
+                font-size: 14px;
+                cursor: pointer;
+                transition: all 0.15s;
             }
 
-                .btn-primary:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 4px 8px rgba(106, 191, 198, 0.3);
-                    filter: brightness(1.05);
+                .btn-submit-custom:hover {
+                    background-color: #1e293b;
                 }
 
-            .badge {
-                display: inline-flex;
-                padding: 4px 12px;
-                border-radius: 30px;
-                font-size: 11px;
-                font-weight: 700;
-                background: var(--primary-light);
-                color: var(--primary-dark);
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
+            @@media (max-width: 1024px) {
+                .sidebar {
+                    width: 70px;
+                    padding: 24px 8px;
+                }
+
+                    .sidebar .logo-area, .sidebar .nav-item span, .sidebar .logout-btn-nav {
+                        display: none;
+                    }
+
+                .main-content {
+                    margin-left: 70px;
+                    padding: 32px 24px;
+                }
             }
 
-            .err {
-                color: var(--danger);
-                font-size: 12px;
-                margin-top: 6px;
-                display: block;
-                font-weight: 500;
-            }
-
-            @@media (max-width: 576px) {
-                .row-grid {
+            @@media (max-width: 640px) {
+                .form-grid {
                     grid-template-columns: 1fr;
-                    gap: 0;
+                    gap: 16px;
                 }
 
-                .card {
-                    padding: 24px;
+                .full-width {
+                    grid-column: span 1;
                 }
 
-                .btnrow {
+                .btnrow-custom {
                     flex-direction: column-reverse;
                 }
 
-                .btn {
+                .btn-cancel, .btn-submit-custom {
                     width: 100%;
                 }
             }
@@ -263,81 +365,169 @@
 </head>
 <body>
 
-    <header class="dash-topbar">
-        <a href="/" class="logo-link">
-            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
-        </a>
-        <div style="display:flex; gap:10px; align-items:center;">
-            <a href="/Administrator/Index" class="logout-btn">Destinacije</a>
-            <a href="/Administrator/Paketi" class="logout-btn" style="background: rgba(106,191,198,0.15); font-weight:700; border-color: var(--primary);">Paketi</a>
-            <a href="/Administrator/Korisnici" class="logout-btn">Korisnici</a>
-            <a href="/Administrator/Rezervacije" class="logout-btn">Rezervacije</a>
-            <form method="post" action="/Account/Logout" style="display:inline;">
+    <aside class="sidebar">
+        <div class="logo-area">
+            <a href="/" class="sidebar-logo-text">InterTrips</a>
+        </div>
+
+        <nav class="nav-links">
+            <a href="/Administrator/Index" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
+            </a>
+            <a href="/Administrator/Destinacije" class="nav-item">
+                <i class="fa-solid fa-map-location-dot"></i> <span>Destinacije</span>
+            </a>
+            <a href="/Administrator/Letovi" class="nav-item">
+                <i class="fa-solid fa-plane"></i> <span>Letovi</span>
+            </a>
+            <a href="/Administrator/Hoteli" class="nav-item">
+                <i class="fa-solid fa-hotel"></i> <span>Hoteli</span>
+            </a>
+            <a href="/Administrator/Paketi" class="nav-item active">
+                <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
+            </a>
+            <a href="/Administrator/Korisnici" class="nav-item">
+                <i class="fa-solid fa-users"></i> <span>Korisnici</span>
+            </a>
+            <a href="/Administrator/Rezervacije" class="nav-item">
+                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <form method="post" action="/Account/Logout">
                 @Html.AntiForgeryToken()
-                <button class="logout-btn" type="submit" style="color: #e53e3e; border-color: rgba(229, 62, 62, 0.2);">Odjavi se</button>
+                <button class="logout-btn-nav" type="submit">Odjavi se</button>
             </form>
         </div>
-    </header>
+    </aside>
 
-    <div class="wrap">
-        <div class="dash-hero">
-            <span class="badge">@(isEdit ? "Modifikacija" : "Kreiranje") Aranžmana</span>
-            <h1>@ViewData["Title"]</h1>
-            <p style="color: var(--text-muted); font-size: 14px; margin: 4px 0 0 0;">
-                @(isEdit ? "Izmijenite detalje postojećeg turističkog paketa. Sve promjene će odmah biti vidljive klijentima." : "Unesite osnovne podatke kako biste lansirali novi turistički paket na sajt.")
-            </p>
-        </div>
+    <main class="main-content">
+        <header class="dash-header">
+            <div>
+                <h1>@ViewData["Title"]</h1>
+                <p>Postavljanje operativnih parametara, cijena i kapaciteta za turistički aranžman.</p>
+            </div>
+            <div>
+                <a href="/Administrator/Paketi" class="btn-secondary-top">
+                    <i class="fa-solid fa-arrow-left" style="margin-right: 6px;"></i> Nazad na listu
+                </a>
+            </div>
+        </header>
 
         <div class="card">
-            <form asp-controller="Administrator"
-                  asp-action="@(isEdit ? "PaketEdit" : "PaketCreate")"
-                  asp-route-id="@(Model?.Id ?? 0)"
-                  method="post">
-
+            <form asp-controller="Administrator" asp-action="@(isEdit ? "PaketEdit" : "PaketCreate")" asp-route-id="@renderModel.Id" method="post" id="paketModalForm">
                 @Html.AntiForgeryToken()
 
-                <div class="form-group">
-                    <label class="field-label">Naziv turističkog paketa</label>
-                    <input class="input" asp-for="Naziv" placeholder="Npr. Rim — Proljećna čarolija (8 dana)" />
-                    <span class="err" asp-validation-for="Naziv"></span>
-                </div>
+                <input type="hidden" asp-for="Id" value="@renderModel.Id" />
 
-                <div class="row-grid">
-                    <div class="form-group">
-                        <label class="field-label">Pripadajuća destinacija</label>
-                        <select class="select" asp-for="DestinacijaId" asp-items="destinacije">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="ModelOnly" class="validation-summary-custom"></div>
+                }
+
+                <div class="form-grid">
+
+                    <div class="form-group-custom full-width">
+                        <label class="field-label-custom">Naziv turističkog paketa</label>
+                        <input class="input-custom" asp-for="Naziv" value="@renderModel.Naziv" placeholder="Npr. Rim — Proljećna čarolija (8 dana)" required />
+                        <span class="err-custom" asp-validation-for="Naziv"></span>
+                    </div>
+
+                    <div class="form-group-custom">
+                        <label class="field-label-custom">Pripadajuća destinacija</label>
+                        <select class="select-custom" asp-for="DestinacijaId" asp-items="destinacije" required>
                             <option value="">-- Odaberite destinaciju --</option>
                         </select>
-                        <span class="err" asp-validation-for="DestinacijaId"></span>
+                        <span class="err-custom" asp-validation-for="DestinacijaId"></span>
                     </div>
 
-                    <div class="form-group">
-                        <label class="field-label">Status paketa na sajtu</label>
-                        <select class="select" asp-for="Status" asp-items="statusi"></select>
-                        <span class="err" asp-validation-for="Status"></span>
+                    <div class="form-group-custom">
+                        <label class="field-label-custom">Status paketa na sajtu</label>
+                        <select class="select-custom" asp-for="Status" asp-items="statusi"></select>
+                        <span class="err-custom" asp-validation-for="Status"></span>
                     </div>
+
+                    <div class="form-group-custom">
+                        <label class="field-label-custom">Početna cijena (BAM)</label>
+                        <input class="input-custom" asp-for="CijenaOd" type="number" step="0.01" min="1" placeholder="0.00" required />
+                        <span class="err-custom" asp-validation-for="CijenaOd"></span>
+                    </div>
+
+                    <div class="form-group-custom">
+                        <label class="field-label-custom">Dužina boravka (Noćenja)</label>
+                        <input class="input-custom" id="TrajanjeNoci" asp-for="TrajanjeNoci" value="@renderModel.TrajanjeNoci" type="number" min="1" max="90" placeholder="Npr. 7" required />
+                        <span class="err-custom" asp-validation-for="TrajanjeNoci"></span>
+                    </div>
+
+                    <div class="form-group-custom">
+                        <label class="field-label-custom">Datum polaska</label>
+                        <input class="input-custom" id="DatumPolaska" type="date" asp-for="DatumPolaska" value="@renderModel.DatumPolaska.ToString("yyyy-MM-dd")" min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                        <span class="err-custom" asp-validation-for="DatumPolaska"></span>
+                    </div>
+
+                    <div class="form-group-custom">
+                        <label class="field-label-custom">Datum povratka</label>
+                        <input class="input-custom" id="DatumPovratka" type="date" asp-for="DatumPovratka" value="@renderModel.DatumPovratka.ToString("yyyy-MM-dd")" min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                        <span class="err-custom" asp-validation-for="DatumPovratka"></span>
+                    </div>
+
+                    <div class="form-group-custom">
+                        <label class="field-label-custom">Ukupan kapacitet (Broj mjesta)</label>
+                        <input class="input-custom" asp-for="Kapacitet" value="@renderModel.Kapacitet" type="number" min="1" max="1000" placeholder="Npr. 30" required />
+                        <span class="err-custom" asp-validation-for="Kapacitet"></span>
+                    </div>
+
+                    <div class="form-group-custom">
+                        <label class="field-label-custom">Dozvoljeni tip prevoza</label>
+                        <select class="select-custom" asp-for="DostupniPrevoz">
+                            <option value="SamoAvion">Samo Avion</option>
+                            <option value="SamoAutobus">Samo Autobus</option>
+                            <option value="Oboje">Oboje (Mogućnost izbora)</option>
+                        </select>
+                        <span class="err-custom" asp-validation-for="DostupniPrevoz"></span>
+                    </div>
+
                 </div>
 
-                <div class="row-grid">
-                    <div class="form-group">
-                        <label class="field-label">Početna cijena (BAM)</label>
-                        <input class="input" asp-for="CijenaOd" type="number" step="0.01" min="0" placeholder="0.00" />
-                        <span class="err" asp-validation-for="CijenaOd"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="field-label">Dužina boravka (Noćenja)</label>
-                        <input class="input" asp-for="TrajanjeNoci" type="number" min="1" max="365" placeholder="Npr. 7" />
-                        <span class="err" asp-validation-for="TrajanjeNoci"></span>
-                    </div>
-                </div>
-
-                <div class="btnrow">
-                    <a class="btn" asp-controller="Administrator" asp-action="Paketi">Odustani</a>
-                    <button class="btn btn-primary" type="submit">Sačuvaj izmjene</button>
+                <div class="btnrow-custom">
+                    <a href="/Administrator/Paketi" class="btn-cancel">Odustani</a>
+                    <button class="btn-submit-custom" type="submit">
+                        <i class="fa-solid fa-floppy-disk" style="margin-right: 6px;"></i> Sačuvaj promjene
+                    </button>
                 </div>
             </form>
         </div>
-    </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+        function izracunajDatumPovratka() {
+        var datumPolaskaVrijednost = $('#DatumPolaska').val();
+        var noćenja = parseInt($('#TrajanjeNoci').val());
+
+        if (datumPolaskaVrijednost && !isNaN(noćenja) && noćenja > 0) {
+        var polazak = new Date(datumPolaskaVrijednost);
+
+        polazak.setDate(polazak.getDate() + noćenja);
+
+        var godina = polazak.getFullYear();
+        var mjesec = String(polazak.getMonth() + 1).padStart(2, '0');
+        var dan = String(polazak.getDate()).padStart(2, '0');
+
+        var noviDatumPovratka = gornjaGranica = `${godina}-${mjesec}-${dan}`;
+        $('#DatumPovratka').val(noviDatumPovratka);
+        }
+        }
+
+        $('#DatumPolaska, #TrajanjeNoci').on('input change', function () {
+        izracunajDatumPovratka();
+        });
+        });
+    </script>
 </body>
 </html>

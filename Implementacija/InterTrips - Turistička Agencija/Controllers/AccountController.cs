@@ -25,12 +25,15 @@ public class AccountController : Controller
         public string Password { get; set; } = string.Empty;
     }
 
-    public class RegisterDto
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
+   
+        public class RegisterDto
+        {
+            public string Ime { get; set; } = string.Empty;
+            public string Prezime { get; set; } = string.Empty;
+            public string Email { get; set; } = string.Empty;
+            public string Password { get; set; } = string.Empty;
+       }
+    
 
     [HttpGet("Login")]
     public IActionResult Login()
@@ -60,37 +63,37 @@ public class AccountController : Controller
     }
 
     [HttpPost("Register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDto model)
+    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
-        if (model == null || string.IsNullOrWhiteSpace(model.Name) || string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
+        if (dto == null)
         {
-            return BadRequest(new { success = false, message = "Sva polja su obavezna!" });
+            return BadRequest(new { success = false, message = "Podaci nisu ispravno poslani." });
         }
 
-        var user = new ApplicationUser
+        if (ModelState.IsValid)
         {
-            UserName = model.Email,
-            Email = model.Email,
-            EmailConfirmed = true
-           
-        };
-
-        var result = await _userManager.CreateAsync(user, model.Password);
-
-        if (result.Succeeded)
-        {
-            var kreiraniKorisnik = await _userManager.FindByNameAsync(user.UserName);
-            if (kreiraniKorisnik != null)
+            var user = new ApplicationUser
             {
-                await _userManager.AddToRoleAsync(kreiraniKorisnik, "Client");
-            }
-            await _signInManager.SignInAsync(user, isPersistent: false);
+                UserName = dto.Email,
+                Email = dto.Email,
+                Ime = dto.Ime,
+                Prezime = dto.Prezime
+            };
 
-            return Json(new { success = true, redirectUrl = "/" });
+            var result = await _userManager.CreateAsync(user, dto.Password);
+
+            if (result.Succeeded)
+            {
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                return Ok(new { success = true, redirectUrl = "/" });
+            }
+
+            var errors = string.Join(" ", result.Errors.Select(e => e.Description));
+            return BadRequest(new { success = false, message = errors });
         }
 
-        var errorMessage = string.Join(" ", result.Errors.Select(e => e.Description));
-        return BadRequest(new { success = false, message = errorMessage });
+        return BadRequest(new { success = false, message = "Model nije validan." });
     }
 
     [HttpPost("Logout")]

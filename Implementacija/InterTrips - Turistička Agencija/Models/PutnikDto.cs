@@ -12,7 +12,7 @@ namespace InterTrips___Turistička_Agencija.Models
 
         public string Drzavljanstvo { get; set; } = string.Empty;
 
-        public DateTime DatumRodjenja { get; set; }
+        public DateTime? DatumRodjenja { get; set; }
         public string? Telefon { get; set; }
         public string? PosebniZahtjevi { get; set; }
     }

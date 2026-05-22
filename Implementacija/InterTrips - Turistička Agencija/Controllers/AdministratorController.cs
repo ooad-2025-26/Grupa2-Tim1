@@ -20,7 +20,6 @@ public class AdministratorController : Controller
 {
     private readonly ApplicationDbContext _db;
     private readonly IWebHostEnvironment _env;
-
     private readonly UserManager<ApplicationUser> _userManager;
 
     public AdministratorController(ApplicationDbContext db, IWebHostEnvironment env, UserManager<ApplicationUser> userManager)
@@ -29,27 +28,39 @@ public class AdministratorController : Controller
         _env = env;
         _userManager = userManager;
     }
+
     [HttpGet]
     public async Task<IActionResult> Index()
     {
         var vm = new AdminDashboardVm
         {
             DestinacijeCount = await _db.Destinacije.CountAsync(),
-            KorisniciCount = _userManager.Users.Count(),
+            KorisniciCount = await _userManager.Users.CountAsync(),
             RezervacijeCount = await _db.Rezervacije.CountAsync(),
-            Destinacije = await _db.Destinacije.OrderByDescending(d => d.Id).ToListAsync()
+            Destinacije = await _db.Destinacije.OrderByDescending(d => d.Id).ToListAsync(),
+            Letovi = await _db.Letovi.ToListAsync(),
+            Hoteli = await _db.Hoteli.ToListAsync()
         };
 
         return View("~/Views/Administrator/AdminDashboard.cshtml", vm);
     }
-    [HttpGet]
-    public async Task<IActionResult> Destinacije()
-    {
-        var list = await _db.Destinacije
-            .OrderBy(d => d.Id)
-            .ToListAsync();
 
-        return View("~/Views/Administrator/Destinacije.cshtml", list);
+    [HttpGet]
+    public IActionResult Destinacije()
+    {
+        var sveDestinacije = _db.Destinacije.ToList();
+        var brojKorisnika = _db.Korisnici.Count();
+        var brojRezervacija = _db.Rezervacije.Count();
+
+        var viewModel = new AdminDashboardVm
+        {
+            Destinacije = sveDestinacije,
+            DestinacijeCount = sveDestinacije.Count,
+            KorisniciCount = brojKorisnika,
+            RezervacijeCount = brojRezervacija
+        };
+
+        return View(viewModel);
     }
 
     [HttpGet]
@@ -140,6 +151,7 @@ public class AdministratorController : Controller
     {
         var list = await _db.Paketi
             .Include(p => p.Destinacija)
+            .Include(p => p.Rezervacije)
             .OrderByDescending(p => p.Id)
             .ToListAsync();
 
@@ -149,15 +161,7 @@ public class AdministratorController : Controller
     [HttpGet]
     public async Task<IActionResult> PaketCreate(int? destinacijaId)
     {
-        ViewBag.Destinacije = await _db.Destinacije
-            .OrderBy(d => d.Naziv)
-            .Select(d => new SelectListItem { Value = d.Id.ToString(), Text = $"{d.Naziv} ({d.Drzava})" })
-            .ToListAsync();
-
-        ViewBag.Statusi = Enum.GetValues(typeof(StatusPaketa))
-            .Cast<StatusPaketa>()
-            .Select(s => new SelectListItem { Value = ((int)s).ToString(), Text = s.ToString() })
-            .ToList();
+        await FillPaketDropdowns(destinacijaId ?? 0, StatusPaketa.Dostupan);
 
         var paket = new Paket();
         if (destinacijaId.HasValue)
@@ -168,18 +172,17 @@ public class AdministratorController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> PaketCreate(Paket model)
+    public async Task<IActionResult> PaketCreate(Paket paket)
     {
-        if (!ModelState.IsValid)
+        if (ModelState.IsValid)
         {
-            await FillPaketDropdowns(model.DestinacijaId, model.Status);
-            return View("~/Views/Administrator/PaketForm.cshtml", model);
+            _db.Paketi.Add(paket);
+            await _db.SaveChangesAsync();
+            return RedirectToAction(nameof(Paketi));
         }
 
-        _db.Paketi.Add(model);
-        await _db.SaveChangesAsync();
-
-        return RedirectToAction(nameof(Paketi));
+        await FillPaketDropdowns(paket.DestinacijaId, paket.Status);
+        return View("~/Views/Administrator/PaketForm.cshtml", paket);
     }
 
     [HttpGet]
@@ -210,6 +213,11 @@ public class AdministratorController : Controller
         p.TrajanjeNoci = model.TrajanjeNoci;
         p.Status = model.Status;
         p.DestinacijaId = model.DestinacijaId;
+        p.Kapacitet = model.Kapacitet;
+
+        p.DostupniPrevoz = model.DostupniPrevoz;
+        p.DatumPolaska = model.DatumPolaska;
+        p.DatumPovratka = model.DatumPovratka;
 
         await _db.SaveChangesAsync();
         return RedirectToAction(nameof(Paketi));
@@ -251,7 +259,6 @@ public class AdministratorController : Controller
             .ToList();
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> PlanTemplate(int paketId)
     {
@@ -328,28 +335,33 @@ public class AdministratorController : Controller
         return RedirectToAction(nameof(PlanTemplate), new { paketId });
     }
 
-    [HttpGet("Administrator/Rezervacije")]
-    public async Task<IActionResult> Rezervacije()
+    [HttpGet]
+    public async Task<IActionResult> Rezervacije(string? emailPretraga)
     {
-        var ciljaniEmail = "test@intertrips.ba";
-
-        var sveRezervacije = await _db.Rezervacije
+        var query = _db.Rezervacije
            .Include(r => r.Paket)
                .ThenInclude(p => p!.Destinacija)
            .Include(r => r.Korisnik)
            .Include(r => r.Putnici)
            .Include(r => r.Placanje)
-           .OrderByDescending(r => r.Id)
-           .ToListAsync();
+           .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(emailPretraga))
+        {
+            query = query.Where(r => r.Korisnik!.Email!.Contains(emailPretraga));
+        }
+
+        var sveRezervacije = await query.OrderByDescending(r => r.Id).ToListAsync();
 
         var viewModel = new AdminRezervacijeVm
         {
-            KorisnikEmail = ciljaniEmail,
+            KorisnikEmail = emailPretraga ?? "Sve rezervacije",
             Rezervacije = sveRezervacije
         };
 
-        return View(viewModel);
+        return View("~/Views/Administrator/Rezervacije.cshtml", viewModel);
     }
+
     [HttpGet]
     public async Task<IActionResult> Korisnici()
     {
@@ -357,7 +369,6 @@ public class AdministratorController : Controller
         var rezervacijeCount = await _db.Rezervacije.CountAsync();
 
         var agentiCount = await _userManager.Users.Where(u => u.Uloga == 1).CountAsync();
-
         var korisniciIzBaze = await _userManager.Users.ToListAsync();
 
         var viewModel = new AdminDashboardVm
@@ -369,8 +380,9 @@ public class AdministratorController : Controller
             SviKorisnici = korisniciIzBaze
         };
 
-        return View(viewModel);
+        return View("~/Views/Administrator/Korisnici.cshtml", viewModel);
     }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> PromijeniUlogu(string korisnikId, int novaUloga)
@@ -403,5 +415,118 @@ public class AdministratorController : Controller
         }
 
         return RedirectToAction("Korisnici");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult LetCreate(Let model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var vm = new AdminDashboardVm
+            {
+                Destinacije = _db.Destinacije.ToList(),
+                Letovi = _db.Letovi.ToList()
+            };
+            TempData["Error"] = "Podaci nisu validni.";
+            return View("Letovi", vm);
+        }
+
+        _db.Letovi.Add(model);
+        _db.SaveChanges();
+
+        TempData["Success"] = "Let uspješno kreiran!";
+        return RedirectToAction("Letovi");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Letovi()
+    {
+        var viewModel = new AdminDashboardVm
+        {
+            DestinacijeCount = await _db.Destinacije.CountAsync(),
+            KorisniciCount = await _userManager.Users.CountAsync(),
+            RezervacijeCount = await _db.Rezervacije.CountAsync(),
+            Destinacije = await _db.Destinacije.OrderByDescending(d => d.Id).ToListAsync(),
+            Letovi = await _db.Letovi.ToListAsync(),
+            Hoteli = await _db.Hoteli.ToListAsync()
+        };
+        return View("~/Views/Administrator/Letovi.cshtml", viewModel);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Hoteli()
+    {
+        var hoteli = await _db.Hoteli
+            .Include(h => h.Destinacija)
+            .ToListAsync();
+
+        var viewModel = new HoteliPageViewModel
+        {
+            Hoteli = hoteli
+        };
+
+        ViewBag.DestinacijaId = new SelectList(await _db.Destinacije.ToListAsync(), "Id", "Naziv");
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> HotelCreate(Hotel hotel) 
+    {
+        if (ModelState.IsValid)
+        {
+            _db.Add(hotel);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "Hotel uspješno dodan!";
+            return RedirectToAction(nameof(Hoteli));
+        }
+
+        TempData["Error"] = "Greška pri dodavanju hotela. Provjerite unesene podatke.";
+        return RedirectToAction(nameof(Hoteli));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> HotelDelete(int id)
+    {
+        var hotel = await _db.Hoteli.FindAsync(id);
+        if (hotel == null)
+        {
+            TempData["Error"] = "Hotel nije pronađen.";
+            return RedirectToAction("Hoteli");
+        }
+
+        _db.Hoteli.Remove(hotel);
+        await _db.SaveChangesAsync();
+
+        TempData["Success"] = "Hotel je uspješno obrisan.";
+        return RedirectToAction("Hoteli");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetujSveRezervacije()
+    {
+        try
+        {
+            await _db.Database.ExecuteSqlRawAsync("DELETE FROM Rezervacije; DBCC CHECKIDENT ('Rezervacije', RESEED, 0);");
+
+            var hoteli = await _db.Hoteli.ToListAsync();
+            foreach (var hotel in hoteli)
+            {
+                hotel.DostupnoSoba = hotel.UkupnoSoba;
+            }
+
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "Sve rezervacije su uspješno obrisane, a kapaciteti hotela su resetovani!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Došlo je do greške: " + ex.Message;
+        }
+
+        return RedirectToAction("Rezervacije");
     }
 }

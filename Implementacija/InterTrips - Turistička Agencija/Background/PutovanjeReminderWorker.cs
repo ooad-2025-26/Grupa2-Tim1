@@ -1,0 +1,63 @@
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using InterTrips___Turistička_Agencija.Data;
+using InterTrips___Turistička_Agencija.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+namespace InterTrips___Turistička_Agencija.Background
+{
+    public class PutovanjeReminderWorker : BackgroundService
+    {
+        private readonly IServiceProvider _services;
+
+        public PutovanjeReminderWorker(IServiceProvider services)
+        {
+            _services = services;
+        }
+
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                using (var scope = _services.CreateScope())
+                {
+                    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                    var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+
+                    DateTime ciljaniDatum = DateTime.Today.AddDays(3);
+
+                    var rezervacijeZaPodsjetnik = await context.Rezervacije
+                        .Include(r => r.Paket)
+                        .Include(r => r.Korisnik)
+                        .Where(r => r.Paket != null &&
+                r.Paket.DatumPolaska.Date == ciljaniDatum)
+                        .ToListAsync(stoppingToken);
+
+                    foreach (var rezervacija in rezervacijeZaPodsjetnik)
+                    {
+                        string klijentEmail = rezervacija.Korisnik?.Email ?? "";
+
+                        if (!string.IsNullOrEmpty(klijentEmail))
+                        {
+                            string naslov = $"Podsjetnik za putovanje: {rezervacija.Paket!.Naziv}";
+                            string poruka = $@"
+                               <h3>Poštovani,</h3>
+            <p>Vaše putovanje na destinaciju <strong>{rezervacija.Paket.Naziv}</strong> počinje za 3 dana ({rezervacija.Paket.DatumPolaska.ToString("dd.MM.yyyy")}).</p>
+            <p>Molimo Vas da provjerite Vaše putne dokumente (pasoš, vizu) i plan putovanja.</p>
+            <br>
+            <p>Sretan put želi Vam <strong>InterTrips Agencija</strong>!</p>";
+
+                            await emailService.SendEmailAsync(klijentEmail, naslov, poruka);
+                        }
+                    }
+                }
+
+                await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
+            }
+        }
+    }
+}

@@ -1,0 +1,527 @@
+﻿@model InterTrips___Turistička_Agencija.Models.HoteliPageViewModel
+@{
+    ViewData["Title"] = "InterTrips - Hoteli";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
+    <style>
+            :root {
+                --bg-main: #f8fafc;
+                --sidebar-bg: #0f172a;
+                --sidebar-text: #94a3b8;
+                --sidebar-active: #38bdf8;
+                --text-dark: #0f172a;
+                --text-muted: #64748b;
+                --primary: #0ea5e9;
+                --primary-hover: #0284c7;
+                --border: #e2e8f0;
+                --card-bg: #ffffff;
+                --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
+                --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+                --success: #10b981;
+                --danger: #ef4444;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: var(--bg-main);
+                color: var(--text-dark);
+                display: flex;
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                width: 260px;
+                background-color: var(--sidebar-bg);
+                color: #fff;
+                padding: 24px 16px;
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                height: 100vh;
+                left: 0;
+                top: 0;
+                z-index: 100;
+            }
+
+                .sidebar .logo-area {
+                    padding: 8px 12px 32px;
+                    border-bottom: 1px solid #1e293b;
+                    margin-bottom: 24px;
+                }
+
+            .sidebar-logo-text {
+                font-size: 20px;
+                font-weight: 700;
+                color: #ffffff;
+                text-decoration: none;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                display: block;
+            }
+
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                flex-grow: 1;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                color: var(--sidebar-text);
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 500;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+            }
+
+                .nav-item i {
+                    width: 20px;
+                    margin-right: 12px;
+                    font-size: 16px;
+                    text-align: center;
+                }
+
+                .nav-item:hover {
+                    background: #1e293b;
+                    color: #fff;
+                }
+
+                .nav-item.active {
+                    background: rgba(14, 165, 233, 0.15);
+                    color: var(--sidebar-active);
+                    font-weight: 600;
+                }
+
+            .sidebar-footer {
+                padding-top: 16px;
+                border-top: 1px solid #1e293b;
+            }
+
+            .logout-btn-nav {
+                width: 100%;
+                background: transparent;
+                border: 1px solid rgba(239, 68, 68, 0.25);
+                color: #ef4444;
+                padding: 10px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 13px;
+                transition: all 0.2s;
+            }
+
+                .logout-btn-nav:hover {
+                    background: rgba(239, 68, 68, 0.1);
+                }
+
+            .main-content {
+                margin-left: 260px;
+                flex-grow: 1;
+                padding: 40px 48px;
+                max-width: 1300px;
+            }
+
+            .dash-header {
+                margin-bottom: 32px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+                .dash-header h1 {
+                    font-size: 26px;
+                    font-weight: 700;
+                    color: var(--text-dark);
+                    letter-spacing: -0.5px;
+                }
+
+                .dash-header p {
+                    color: var(--text-muted);
+                    font-size: 14px;
+                    margin-top: 4px;
+                }
+
+            .btn-secondary-top {
+                display: inline-flex;
+                align-items: center;
+                padding: 10px 16px;
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                color: var(--text-dark);
+                font-size: 13px;
+                font-weight: 600;
+                text-decoration: none;
+                box-shadow: var(--shadow);
+                transition: background 0.2s;
+            }
+
+                .btn-secondary-top:hover {
+                    background: #f8fafc;
+                }
+
+            .alert {
+                padding: 14px 20px;
+                border-radius: 8px;
+                margin-bottom: 24px;
+                font-size: 14px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .alert-success {
+                background: #ecfdf5;
+                color: #065f46;
+                border: 1px solid #a7f3d0;
+            }
+
+            .alert-danger {
+                background: #fef2f2;
+                color: #991b1b;
+                border: 1px solid #fca5a5;
+            }
+
+            .content-grid {
+                display: grid;
+                grid-template-columns: 1.2fr 1.8fr;
+                gap: 24px;
+                align-items: start;
+            }
+
+            .card {
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                box-shadow: var(--shadow);
+                padding: 28px;
+            }
+
+                .card h2 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: var(--text-dark);
+                    margin-bottom: 24px;
+                }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            .field-label {
+                display: block;
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--text-dark);
+                margin-bottom: 6px;
+            }
+
+            .input, .select-custom {
+                width: 100%;
+                background: #fff;
+                border: 1px solid var(--border);
+                color: var(--text-dark);
+                outline: none;
+                border-radius: 8px;
+                height: 42px;
+                padding: 0 14px;
+                font-size: 14px;
+                transition: all 0.15s ease-in-out;
+            }
+
+            .select-custom {
+                appearance: none;
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 14px center;
+                background-size: 16px;
+                padding-right: 40px;
+            }
+
+                .input:focus, .select-custom:focus {
+                    border-color: var(--primary);
+                    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+                }
+
+            .main-btn {
+                width: 100%;
+                height: 44px;
+                border-radius: 8px;
+                border: none;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 14px;
+                background-color: var(--sidebar-bg);
+                color: #fff;
+                transition: background 0.2s;
+                margin-top: 8px;
+            }
+
+                .main-btn:hover {
+                    background-color: #1e293b;
+                }
+
+            .dest-list {
+                display: flex;
+                flex-direction: column;
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                overflow: hidden;
+                background: #fff;
+            }
+
+            .dest-row {
+                padding: 16px 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid var(--border);
+                transition: background-color 0.15s;
+            }
+
+                .dest-row:last-child {
+                    border-bottom: none;
+                }
+
+                .dest-row:hover {
+                    background-color: #f8fafc;
+                }
+
+            .dest-info strong {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text-dark);
+                display: block;
+            }
+
+            .dest-info small {
+                color: var(--text-muted);
+                font-size: 12px;
+                margin-top: 2px;
+                display: block;
+            }
+
+            .actions-group {
+                display: flex;
+                gap: 8px;
+            }
+
+            .btn-action {
+                padding: 8px 14px;
+                font-size: 13px;
+                font-weight: 500;
+                border-radius: 6px;
+                text-decoration: none;
+                cursor: pointer;
+                border: 1px solid var(--border);
+                background: #fff;
+                color: var(--text-dark);
+                transition: all 0.15s;
+            }
+
+                .btn-action:hover {
+                    background: #f1f5f9;
+                    border-color: #cbd5e1;
+                }
+
+            @@media (max-width: 1024px) {
+                .sidebar {
+                    width: 70px;
+                    padding: 24px 8px;
+                }
+
+                    .sidebar .logo-area, .sidebar .nav-item span, .sidebar .logout-btn-nav {
+                        display: none;
+                    }
+
+                .main-content {
+                    margin-left: 70px;
+                    padding: 32px 24px;
+                }
+
+                .content-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo-area">
+            <a href="/" class="sidebar-logo-text">InterTrips</a>
+        </div>
+
+        <nav class="nav-links">
+            <a href="/Administrator/Index" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
+            </a>
+            <a href="/Administrator/Destinacije" class="nav-item">
+                <i class="fa-solid fa-map-location-dot"></i> <span>Destinacije</span>
+            </a>
+            <a href="/Administrator/Letovi" class="nav-item">
+                <i class="fa-solid fa-plane"></i> <span>Letovi</span>
+            </a>
+            <a href="/Administrator/Hoteli" class="nav-item active">
+                <i class="fa-solid fa-hotel"></i> <span>Hoteli</span>
+            </a>
+            <a href="/Administrator/Paketi" class="nav-item">
+                <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
+            </a>
+            <a href="/Administrator/Korisnici" class="nav-item">
+                <i class="fa-solid fa-users"></i> <span>Korisnici</span>
+            </a>
+            <a href="/Administrator/Rezervacije" class="nav-item">
+                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <form method="post" action="/Account/Logout">
+                @Html.AntiForgeryToken()
+                <button class="logout-btn-nav" type="submit">Odjavi se</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="dash-header">
+            <div>
+                <h1>Upravljanje Smještajem</h1>
+                <p>Dodajte nove hotelske kapacitete i pratite broj dostupnih soba.</p>
+            </div>
+            <div>
+                <a href="/Destinacije" target="_blank" class="btn-secondary-top">Pregledaj sajt</a>
+            </div>
+        </header>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">
+                <i class="fa-solid fa-circle-check"></i> @TempData["Success"]
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">
+                <i class="fa-solid fa-circle-exclamation"></i> @TempData["Error"]
+            </div>
+        }
+
+        <div class="content-grid">
+            <div class="card">
+                <h2>Novi hotel</h2>
+                <form asp-controller="Administrator" asp-action="HotelCreate" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-group">
+                        <label class="field-label">NAZIV HOTELA</label>
+                        <input class="input" name="Naziv" type="text" placeholder="Npr. Hotel Amfora" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">LOKACIJA / ADRESA</label>
+                        <input class="input" name="Lokacija" type="text" placeholder="Npr. Šetalište bb, Makarska" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">BROJ ZVJEZDICA</label>
+                        <input class="input" name="BrojZvjezdica" type="number" min="1" max="5" placeholder="1 - 5" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">UKUPAN BROJ SOBA</label>
+                        <input class="input" name="UkupnoSoba" type="number" min="1" placeholder="Npr. 50" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">TRENUTNO DOSTUPNO SOBA</label>
+                        <input class="input" name="DostupnoSoba" type="number" min="0" placeholder="Npr. 45" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">KONTAKT INFORMACIJE</label>
+                        <input class="input" name="KontaktInformacije" type="text" placeholder="Npr. +387 33... / info@hotel.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">DOSTUPNE USLUGE</label>
+                        <input class="input" name="DostupneUsluge" type="text" placeholder="Npr. WiFi, Pool, Parking, Breakfast">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">DESTINACIJA</label>
+                        <select name="DestinacijaId" id="DestinacijaId" class="select-custom" asp-items="ViewBag.DestinacijaId" required>
+                            <option value="">-- Odaberite destinaciju --</option>
+                        </select>
+                    </div>
+
+                    <button class="main-btn" type="submit">Dodaj hotel</button>
+                </form>
+            </div>
+            <div class="card" style="padding: 28px 0 0 0;">
+                <h2 style="padding: 0 28px; margin-bottom: 20px;">
+                    <i class="fa-solid fa-hotel" style="color: var(--primary); margin-right: 8px;"></i> Smještajni Kapaciteti
+                </h2>
+                <div class="dest-list">
+                    @if (Model.Hoteli != null && Model.Hoteli.Any())
+                    {
+                        foreach (var h in Model.Hoteli)
+                        {
+                            <div class="dest-row">
+                                <div class="dest-info">
+                                    <strong>@h.Naziv</strong>
+                                    <small>
+                                        <i class="fa-solid fa-location-dot"></i>
+                                        @(h.Destinacija != null ? $"{h.Destinacija.Naziv}, {h.Destinacija.Drzava}" : "Neraspoređeno")
+                                        | Kapacitet: @h.DostupnoSoba soba(e)
+                                    </small>
+                                </div>
+                                <div class="actions-group">
+                                    <form asp-controller="Administrator" asp-action="HotelDelete" asp-route-id="@h.Id" method="post" onsubmit="return confirm('Da li ste sigurni da želite obrisati ovaj hotel?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-action" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2);">
+                                            <i class="fa-solid fa-trash"></i> Obriši
+                                        </button>
+                                    </form>
+                                    <div asp-validation-summary="All" class="text-danger"></div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 14px;">
+                            Trenutno nema dodanih hotela u sistemu.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
