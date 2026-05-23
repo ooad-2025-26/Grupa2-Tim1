@@ -1169,6 +1169,31 @@
 
         window.location.href = `/Rezervacija/Putnici?paketId=${destinationSelect.value}&terminId=${destinationSelect.value}&polazak=${departureDate.value}&odrasli=${adultsCount.textContent}&djeca=${childrenCount.textContent}&prevoz=${encodeURIComponent(transportType)}&smjestaj=${encodeURIComponent(roomTypeValue)}`;
         }
+        @if (Model != null)
+        {
+            var odabraniPaket = Model.FirstOrDefault(p => p.Id == ViewBag.SelektovaniPaketId);
+
+            if (odabraniPaket != null && odabraniPaket.Let != null)
+            {
+                <div class="card mt-3">
+                    <div class="card-header bg-info text-white">
+                        <h4>Detalji leta</h4>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Aviokompanija:</strong> @odabraniPaket.Let.Aviokompanija</p>
+                        <p><strong>Broj leta:</strong> @odabraniPaket.Let.BrojLeta</p>
+                        <p><strong>Polazak:</strong> @odabraniPaket.Let.VrijemePolaska.ToString("dd.MM.yyyy HH:mm")</p>
+                        <p><strong>Dolazak:</strong> @odabraniPaket.Let.VrijemeDolaska.ToString("dd.MM.yyyy HH:mm")</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning mt-3">
+                    Za ovaj paket trenutno nije definisan let u bazi podataka.
+                </div>
+            }
+        }
     </script>
 </body>
 </html>
