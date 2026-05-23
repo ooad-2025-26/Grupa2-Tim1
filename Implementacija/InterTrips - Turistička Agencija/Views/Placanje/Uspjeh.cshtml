@@ -559,7 +559,7 @@
         }
 
         async function loadUi() {
-        preloadFonts();
+        await preloadFonts(); 
 
         const dest = safe('reservationDestination', 'Destinacija');
         const country = safe('reservationCountry', '—');
@@ -568,8 +568,8 @@
         document.getElementById('placeText').innerHTML = `${dest} <small>${country}</small>`;
         document.getElementById('tripPreview').style.backgroundImage = `url('${image}')`;
 
-        const dep = safe('reservationDeparture');
-        const ret = safe('reservationReturn');
+        const dep = safe('reservationDepartureText', '—');
+        const ret = safe('reservationReturnText', '—');
         document.getElementById('periodText').textContent = `${dep} - ${ret}`;
 
         document.getElementById('roomText').textContent = safe('reservationRoom');
@@ -597,8 +597,8 @@
 
         try {
         const paketIdIzMemorije = safe('selectedPackageId', '1');
-        const datumPolaskaRaw = safe('reservationDeparture', '');
-        const datumPovratkaRaw = safe('reservationReturn', '');
+        const datumPolaskaRaw = safe('reservationDepartureText', '');
+        const datumPovratkaRaw = safe('reservationReturnText', '');
 
         const formatirajZaBazu = (dateStr) => {
         if (!dateStr || dateStr === '—') return new Date().toISOString().split('T')[0];
@@ -657,7 +657,12 @@
         doc.setFont('DejaVuSans', 'normal');
         }
 
-        const date = new Date().toLocaleDateString('bs-BA');
+        const danas = new Date();
+        const dan = String(danas.getDate()).padStart(2, '0');
+        const mjesec = String(danas.getMonth() + 1).padStart(2, '0');
+        const godina = danas.getFullYear();
+        const ispravanDatum = `${dan}.${mjesec}.${godina}.`;
+
         const selectedPaymentType = safe('paymentType', 'card');
         const paymentLabel = getPaymentLabel(selectedPaymentType);
 
@@ -681,7 +686,7 @@
         doc.setFontSize(10);
         if (fontsReady) doc.setFont('DejaVuSans', 'normal');
         doc.text(`Broj dokumenta: ${resCode}`, 20, 65);
-        doc.text(`Datum izdavanja: ${date}`, 20, 71);
+        doc.text(`Datum izdavanja: ${ispravanDatum}`, 20, 71); 
         doc.setDrawColor(200, 220, 220);
         doc.line(20, 77, 190, 77);
 
@@ -689,9 +694,23 @@
         doc.text("DETALJI PUTOVANJA:", 20, 90);
         if (fontsReady) doc.setFont('DejaVuSans', 'normal');
         doc.text(`Destinacija: ${safe('reservationDestination', '')}`, 20, 98);
-        doc.text(`Period: ${safe('reservationDeparture', '')} - ${safe('reservationReturn', '')}`, 20, 105);
+        doc.text(`Period: ${safe('reservationDepartureText', '')} - ${safe('reservationReturnText', '')}`, 20, 105);
         doc.text(`Smještaj: ${safe('reservationRoom', '')}`, 20, 112);
         doc.text(`Broj putnika: ${safe('reservationTravelers', '')}`, 20, 119);
+
+        const tipPrevozaIzMemorije = safe('prevozTip', 'Autobus'); 
+        let prevozIspis = 'Autobuski prevoz uključen u cijenu';
+
+        if (tipPrevozaIzMemorije === 'Avion') {
+        const brLeta = safe('flightNumber', '');
+        const relacijaLeta = safe('flightRoute', '');
+        if (brLeta) {
+        prevozIspis = `Avion — Let: ${brLeta} ${relacijaLeta ? '(' + relacijaLeta + ')' : ''}`;
+        } else {
+        prevozIspis = 'Avionski prevoz uključen u cijenu';
+        }
+        }
+        doc.text(`Prevoz: ${normalizeUpperBs(prevozIspis)}`, 20, 126);
 
         const passengersRaw = localStorage.getItem('savedPassengers');
         let firstPhone = '';
@@ -699,7 +718,7 @@
         const ps = passengersRaw ? JSON.parse(passengersRaw) : [];
         firstPhone = ps?.[0]?.phone || '';
         } catch { }
-        if (firstPhone) doc.text(`Kontakt telefon: ${firstPhone}`, 20, 126);
+        if (firstPhone) doc.text(`Kontakt telefon: ${firstPhone}`, 20, 133);
 
         if (fontsReady && boldB64) doc.setFont('DejaVuSans', 'bold');
         doc.text("FINANSIJSKI PODACI:", 120, 90);
@@ -717,18 +736,18 @@
         doc.text(`Mjesečna rata: ${safe('ratesMonthly', '')} KM`, 120, 124);
         }
 
-        doc.line(20, 134, 190, 134);
+        doc.line(20, 139, 190, 139);
 
         doc.setFontSize(11);
         if (fontsReady && boldB64) doc.setFont('DejaVuSans', 'bold');
-        doc.text("PODACI O PUTNICIMA:", 20, 144);
+        doc.text("PODACI O PUTNICIMA:", 20, 149);
 
         let passengers = [];
         try {
         if (passengersRaw) passengers = JSON.parse(passengersRaw);
         } catch (e) { console.error(e); }
 
-        let currentY = 154;
+        let currentY = 159;
         const colX = { rb: 22, ime: 32, tip: 80, dob: 98, pasos: 124, drz: 148, tel: 170 };
 
         if (passengers.length === 0) {
@@ -825,12 +844,15 @@
 
         async function downloadPDF() {
         const btn = document.getElementById('downloadBtn');
+        if (btn) {
         btn.disabled = true;
         btn.textContent = 'Generisanje...';
+        }
 
         const resCode = safe('finalReservationCode', 'IT-0000-0000');
         await generatePDF(resCode);
 
+        if (btn) {
         btn.disabled = false;
         btn.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
@@ -838,6 +860,7 @@
         </svg>
         Preuzmi potvrdu (PDF)
         `;
+        }
         }
 
         window.addEventListener('DOMContentLoaded', loadUi);

@@ -176,13 +176,13 @@ public class AdministratorController : Controller
     {
         if (ModelState.IsValid)
         {
-            _db.Paketi.Add(paket);
+            _db.Paketi.Add(paket); 
             await _db.SaveChangesAsync();
             return RedirectToAction(nameof(Paketi));
         }
 
-        await FillPaketDropdowns(paket.DestinacijaId, paket.Status);
-        return View("~/Views/Administrator/PaketForm.cshtml", paket);
+        ViewBag.Destinacije = new SelectList(_db.Destinacije, "Id", "Naziv", paket.DestinacijaId);
+        return View(paket);
     }
 
     [HttpGet]
@@ -197,30 +197,25 @@ public class AdministratorController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> PaketEdit(int id, Paket model)
+    public async Task<IActionResult> PaketEdit(int id, Paket paket)
     {
-        var p = await _db.Paketi.FirstOrDefaultAsync(x => x.Id == id);
-        if (p == null) return NotFound();
+        if (id != paket.Id) return NotFound();
 
-        if (!ModelState.IsValid)
+        if (ModelState.IsValid)
         {
-            await FillPaketDropdowns(model.DestinacijaId, model.Status);
-            return View("~/Views/Administrator/PaketForm.cshtml", model);
+            try
+            {
+               _db.Update(paket);
+                await _db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_db.Paketi.Any(e => e.Id == paket.Id)) return NotFound();
+                else throw;
+            }
+            return RedirectToAction(nameof(Paketi));
         }
-
-        p.Naziv = model.Naziv;
-        p.CijenaOd = model.CijenaOd;
-        p.TrajanjeNoci = model.TrajanjeNoci;
-        p.Status = model.Status;
-        p.DestinacijaId = model.DestinacijaId;
-        p.Kapacitet = model.Kapacitet;
-
-        p.DostupniPrevoz = model.DostupniPrevoz;
-        p.DatumPolaska = model.DatumPolaska;
-        p.DatumPovratka = model.DatumPovratka;
-
-        await _db.SaveChangesAsync();
-        return RedirectToAction(nameof(Paketi));
+        return View(paket);
     }
 
     [HttpPost]
@@ -299,7 +294,7 @@ public class AdministratorController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> PlanTemplateDodajStavku(int planId, int redniBroj, string naziv, string? opis, TimeSpan? vrijeme)
+    public async Task<IActionResult> PlanTemplateDodajStavku(int planId, int redniBroj, string Lazy, string? opis, TimeSpan? vrijeme)
     {
         var plan = await _db.PlanoviPutovanjaTemplate.FirstOrDefaultAsync(p => p.Id == planId);
         if (plan == null) return NotFound();
@@ -308,7 +303,7 @@ public class AdministratorController : Controller
         {
             PlanPutovanjaTemplateId = planId,
             RedniBroj = redniBroj,
-            Naziv = naziv,
+            Naziv = Lazy,
             Opis = opis,
             Vrijeme = vrijeme
         });
@@ -419,21 +414,21 @@ public class AdministratorController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult LetCreate(Let model)
+    public async Task<IActionResult> LetCreate(Let model)
     {
         if (!ModelState.IsValid)
         {
             var vm = new AdminDashboardVm
             {
-                Destinacije = _db.Destinacije.ToList(),
-                Letovi = _db.Letovi.ToList()
+                Destinacije = await _db.Destinacije.ToListAsync(),
+                Letovi = await _db.Letovi.ToListAsync()
             };
             TempData["Error"] = "Podaci nisu validni.";
             return View("Letovi", vm);
         }
 
         _db.Letovi.Add(model);
-        _db.SaveChanges();
+        await _db.SaveChangesAsync();
 
         TempData["Success"] = "Let uspješno kreiran!";
         return RedirectToAction("Letovi");
@@ -473,7 +468,7 @@ public class AdministratorController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> HotelCreate(Hotel hotel) 
+    public async Task<IActionResult> HotelCreate(Hotel hotel)
     {
         if (ModelState.IsValid)
         {
@@ -529,4 +524,5 @@ public class AdministratorController : Controller
 
         return RedirectToAction("Rezervacije");
     }
+ 
 }

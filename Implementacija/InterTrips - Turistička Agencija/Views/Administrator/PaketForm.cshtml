@@ -416,7 +416,7 @@
         </header>
 
         <div class="card">
-            <form asp-controller="Administrator" asp-action="@(isEdit ? "PaketEdit" : "PaketCreate")" asp-route-id="@renderModel.Id" method="post" id="paketModalForm">
+            <form asp-controller="Administrator" asp-action="@(isEdit ? "PaketEdit" : "PaketCreate")" method="post" id="paketModalForm">
                 @Html.AntiForgeryToken()
 
                 <input type="hidden" asp-for="Id" value="@renderModel.Id" />
@@ -506,21 +506,32 @@
 
     <script>
         $(document).ready(function () {
+        // Popravka nekompatibilnosti jQuery unobtrusive validacije sa standardnim HTML5 date formatom
+        if ($.validator && $.validator.methods) {
+        $.validator.methods.date = function (value, element) {
+        return this.optional(element) || !isNaN(Date.parse(value)) || /^\d{4}-\d{2}-\d{2}$/.test(value);
+        };
+        }
+
         function izracunajDatumPovratka() {
         var datumPolaskaVrijednost = $('#DatumPolaska').val();
-        var noćenja = parseInt($('#TrajanjeNoci').val());
+        var nocenja = parseInt($('#TrajanjeNoci').val());
 
-        if (datumPolaskaVrijednost && !isNaN(noćenja) && noćenja > 0) {
+        if (datumPolaskaVrijednost && !isNaN(nocenja) && nocenja > 0) {
         var polazak = new Date(datumPolaskaVrijednost);
-
-        polazak.setDate(polazak.getDate() + noćenja);
+        polazak.setDate(polazak.getDate() + nocenja);
 
         var godina = polazak.getFullYear();
         var mjesec = String(polazak.getMonth() + 1).padStart(2, '0');
         var dan = String(polazak.getDate()).padStart(2, '0');
 
-        var noviDatumPovratka = gornjaGranica = `${godina}-${mjesec}-${dan}`;
+        var noviDatumPovratka = `${godina}-${mjesec}-${dan}`;
         $('#DatumPovratka').val(noviDatumPovratka);
+
+        // Trigger validacije nakon automatske promjene datuma
+        if ($('#paketModalForm').validate) {
+        $('#DatumPovratka').valid();
+        }
         }
         }
 

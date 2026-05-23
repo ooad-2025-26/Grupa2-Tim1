@@ -27,14 +27,30 @@ namespace InterTrips___Turistička_Agencija.Controllers
         }
 
         [HttpGet]
-        public IActionResult Rezervacija()
+        public async Task<IActionResult> Rezervacija(int? paketId)
         {
-            var paketi = _db.Paketi
-                    .Include(p => p.Destinacija)
-                    .Include(p => p.Hotel)
-                    .ToList();
+            var paketi =  _db.Paketi
+                .Include(p => p.Destinacija)
+    .Include(p => p.DostupniTermini) 
+    .Include(p => p.Hotel)
+    .Include(p => p.Let)
+    .Where(p => p.Status != StatusPaketa.Rasprodan)
+    .ToList();
 
-            if (paketi == null) paketi = new List<Paket>();
+            ViewBag.SviPaketi = paketi ?? new List<Paket>();
+
+            Paket? selektovaniPaket = null;
+            if (paketId.HasValue)
+            {
+                selektovaniPaket = paketi.FirstOrDefault(p => p.Id == paketId.Value);
+            }
+
+            if (selektovaniPaket == null && paketi.Any())
+            {
+                selektovaniPaket = paketi.First();
+            }
+
+            ViewBag.SelektovaniPaketId = selektovaniPaket?.Id ?? 0;
 
             return View("~/Views/Rezervacija/Rezervacija.cshtml", paketi);
         }

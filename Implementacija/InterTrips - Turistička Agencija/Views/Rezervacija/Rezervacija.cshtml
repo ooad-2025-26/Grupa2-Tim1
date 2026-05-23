@@ -20,14 +20,14 @@
 
     <style>
         :root {
-        --brand-primary: #0f766e; /* Premium duboka tirkizna */
-        --brand-dark: #111827; /* Skoro crna za tekst i naslove */
-        --brand-light: #f0fdfa; /* Svijetla pozadina za isticanje */
-        --brand-accent: #0d9488; /* Svijetla tirkizna za interakcije */
-        --text-main: #374151; /* Neutralna tamna za tijelo teksta */
-        --text-muted: #6b7280; /* Siva za pomoćne tekstove */
-        --bg-page: #f8fafc; /* Čista, lagano siva pozadina stranice */
-        --border-color: #e2e8f0; /* Prefinjeni tanki obrubi */
+        --brand-primary: #0f766e; 
+        --brand-dark: #111827; 
+        --brand-light: #f0fdfa; 
+        --brand-accent: #0d9488;
+        --text-main: #374151; 
+        --text-muted: #6b7280; 
+        --bg-page: #f8fafc; 
+        --border-color: #e2e8f0; 
         --success-bg: #f0fdf4;
         --success-color: #166534;
         --radius-lg: 16px;
@@ -36,6 +36,90 @@
         --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
         --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .summary-card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        position: sticky;
+        top: 20px;
+        }
+
+        .summary-photo {
+        height: 160px;
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: flex-end;
+        padding: 20px;
+        background-color: #cbd5e0;
+        }
+
+        .summary-photo::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 100%);
+        z-index: 1;
+        }
+
+        
+        .summary-place {
+        position: relative;
+        z-index: 2;
+        font-weight: 700;
+        font-size: 20px;
+        color: #ffffff !important;
+        }
+
+        .summary-body {
+        padding: 24px;
+        }
+
+        .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: var(--text-muted);
+        border-bottom: 1px dashed var(--border-color);
+        padding-bottom: 8px;
+        }
+
+        .summary-row span:first-child {
+        font-weight: 500;
+        }
+
+        .summary-row strong, .summary-row span:last-child {
+        color: var(--brand-dark);
+        font-weight: 600;
+        }
+
+        .price-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border-color);
+        }
+
+        .price-line span:first-child {
+        font-weight: 600;
+        color: var(--brand-dark);
+        font-size: 14px;
+        }
+
+        .total {
+        color: var(--brand-primary);
+        font-size: 24px;
+        font-weight: 800;
         }
 
         body {
@@ -55,7 +139,6 @@
         display: block;
         }
 
-        /* Topbar / Navigacija */
         .topbar {
         height: 70px;
         background: #ffffff;
@@ -91,7 +174,6 @@
         border: 1px solid #bbf7d0;
         }
 
-        /* Glavni kontejner */
         .page {
         padding: 40px 20px 80px;
         }
@@ -134,7 +216,6 @@
         line-height: 1.5;
         }
 
-        /* Stepper - Koraci */
         .steps {
         display: flex;
         justify-content: center;
@@ -173,7 +254,6 @@
         color: #ffffff;
         }
 
-        /* Grid raspored */
         .booking-grid {
         display: grid;
         grid-template-columns: 1.6fr 1fr;
@@ -194,7 +274,6 @@
         padding: 30px;
         }
 
-        /* Forme i elementi unosa */
         .form-group {
         margin-bottom: 20px;
         }
@@ -233,7 +312,6 @@
         gap: 16px;
         }
 
-        /* Radio kartice */
         .custom-radio-group {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -285,7 +363,6 @@
         font-size: 12px;
         }
 
-        /* Brojači putnika */
         .adult-child {
         display: flex;
         gap: 24px;
@@ -346,7 +423,6 @@
         gap: 6px;
         }
 
-        /* Dugmad */
         .main-btn, .secondary-btn {
         height: 46px;
         border-radius: var(--radius-md);
@@ -387,22 +463,7 @@
         width: 100%;
         }
 
-        /* Desna kolona - Pregled */
-        .summary-card {
-        position: sticky;
-        top: 100px;
-        }
-
-        .summary-photo {
-        height: 160px;
-        position: relative;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: flex-end;
-        padding: 20px;
-        background-color: #cbd5e0;
-        }
+        
 
         .summary-photo::before {
         content: '';
@@ -415,51 +476,7 @@
         z-index: 1;
         }
 
-        .summary-place {
-        position: relative;
-        z-index: 2;
-        font-weight: 700;
-        font-size: 20px;
-        color: #ffffff !important;
-        }
 
-        .summary-body {
-        padding: 24px;
-        }
-
-        .summary-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 12px;
-        font-size: 14px;
-        color: var(--text-muted);
-        border-bottom: 1px dashed var(--border-color);
-        padding-bottom: 8px;
-        }
-
-        .summary-row span:first-child {
-        font-weight: 500;
-        }
-
-        .summary-row strong, .summary-row span:last-child {
-        color: var(--brand-dark);
-        font-weight: 600;
-        }
-
-        .price-line {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 20px;
-        padding-top: 16px;
-        border-top: 1px solid var(--border-color);
-        }
-
-        .price-line span:first-child {
-        font-weight: 600;
-        color: var(--brand-dark);
-        font-size: 14px;
-        }
 
         .total {
         color: var(--brand-primary);
@@ -467,7 +484,6 @@
         font-weight: 800;
         }
 
-        /* Prednosti */
         .benefits {
         padding: 20px 24px;
         }
@@ -496,7 +512,6 @@
         height: 16px;
         }
 
-        /* Login Sekcija */
         .login-block {
         max-width: 480px;
         margin: 40px auto 0;
@@ -701,39 +716,30 @@
                                         {
                                             if (p.Status == StatusPaketa.Rasprodan) continue;
 
-                                            var terminiList = p.DostupniTermini ?? new List<InterTrips___Turistička_Agencija.Models.TerminPutovanja>();
-
-                                            var terminiJson = System.Text.Json.JsonSerializer.Serialize(terminiList.Select(t => new
-                                            {
-                                                id = t.Id,
-                                                polazak = t.DatumPolaska.ToString("yyyy-MM-dd"),
-                                                returnDate = t.DatumPovratka.ToString("yyyy-MM-dd"),
-                                                tekst = t.DatumPolaska.ToString("dd.MM.yyyy") + " - " + t.DatumPovratka.ToString("dd.MM.yyyy") + (t.Popunjeno >= t.Kapacitet ? " (Popunjeno)" : "")
-                                            }));
+                                            bool isSelected = ViewBag.SelectedPackageId != null && (int)ViewBag.SelectedPackageId == p.Id;
 
                                             <option value="@p.Id"
+                                                    selected="@(isSelected ? "selected" : null)"
                                                     data-img="@p.Destinacija?.SlikaUrl"
                                                     data-price="@p.CijenaOd"
                                                     data-destinacija="@p.Destinacija?.Naziv"
                                                     data-drzava="@p.Destinacija?.Drzava"
                                                     data-hotel="@(p.Hotel != null ? p.Hotel.Naziv + " " + string.Concat(Enumerable.Repeat("★", p.Hotel.BrojZvjezdica)) : "Uključen smještaj")"
                                                     data-let="@(p.Let != null ? p.Let.BrojLeta : "")"
+                                                    data-let-relacija="@(p.Let != null ? p.Let.Polazak + " → " + p.Let.Odrediste : "")"
+                                                    data-let-kompanija="@(p.Let != null ? p.Let.Aviokompanija : "")"
+                                                    data-let-vrijeme="@(p.Let != null ? p.Let.VrijemePolaska.ToString(@"hh\:mm") : "")"
                                                     data-prevoz-tip="@p.DostupniPrevoz"
-                                                    data-termini="@terminiJson">
+                                                    data-polazak="@p.DatumPolaska.ToString("yyyy-MM-dd")"
+                                                    data-povratak="@p.DatumPovratka.ToString("yyyy-MM-dd")">
                                                 @p.Naziv (@p.Destinacija?.Naziv)
                                             </option>
                                         }
                                     }
                                 </select>
-                            </div>
 
-                            <div class="form-group" style="display: none;">
-                                <label class="field-label">Dostupni termini putovanja</label>
-                                <select class="select" id="dateTerminSelect" disabled>
-                                    <option value="">-- Prvo odaberite paket --</option>
-                                </select>
-                                <input type="hidden" id="departureDate" />
-                                <input type="hidden" id="returnDate" />
+                                <input type="hidden" id="departureDate" value="" />
+                                <input type="hidden" id="returnDate" value="" />
                             </div>
 
                             <div id="prevozSekcija" class="form-group" style="display: none;">
@@ -843,29 +849,72 @@
                             <div class="summary-photo" id="summaryPhoto" style="background-image: url('@Url.Content("~/assets/bali.jpg")');">
                                 <div class="summary-place" id="summaryDestination">Odaberite destinaciju</div>
                             </div>
+
                             <div class="summary-body">
-                                <div class="summary-row"><span>Polazak</span><span id="summaryDeparture">—</span></div>
-                                <div class="summary-row"><span>Povratak</span><span id="summaryReturn">—</span></div>
-                                <div class="summary-row"><span>Putnici</span><span id="summaryTravelers">Odrasli: 2, Djeca: 0</span></div>
-                                <div class="summary-row"><span>Trajanje</span><span id="summaryNights">—</span></div>
-                                <div class="summary-row"><span>Prevoz</span><strong id="summaryPrevoz">—</strong></div>
-                                <div class="summary-item">
-                                    <span class="label">Informacije o letu:</span>
-                                    <span id="summaryLet" class="value">—</span>
+
+                                <div class="summary-row">
+                                    <span><i data-lucide="users" class="summary-icon"></i> Putnici</span>
+                                    <strong id="summaryTravelers">—</strong>
                                 </div>
                                 <div class="summary-row">
-                                    <span>Hotel / Smještaj:</span>
+                                    <span><i data-lucide="calendar" class="summary-icon"></i> Trajanje</span>
+                                    <strong id="summaryNights">—</strong>
+                                </div>
+                                <div class="summary-row">
+                                    <span><i data-lucide="hotel" class="summary-icon"></i> Hotel</span>
                                     <strong id="summaryHotel">—</strong>
                                 </div>
-                                <div class="summary-row"><span>Smještaj</span><strong id="summaryRoom">Standardna soba</strong></div>
+                                <div class="summary-row">
+                                    <span><i data-lucide="door-open" class="summary-icon"></i> Smještaj</span>
+                                    <strong id="summaryRoom">—</strong>
+                                </div>
+                                <div class="summary-row">
+                                    <span><i data-lucide="navigation" class="summary-icon"></i> Odabrani prevoz</span>
+                                    <strong id="summaryPrevoz">—</strong>
+                                </div>
+
+                                <hr class="summary-divider">
+
+                                <div id="flightSummarySection">
+                                    <div class="summary-row">
+                                        <span><i data-lucide="plane" class="summary-icon"></i> Detalji leta</span>
+                                        <strong id="summaryLet">—</strong>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span><i data-lucide="plane-takeoff" class="summary-icon"></i> Polazak</span>
+                                        <strong id="summaryDeparture">—</strong>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span><i data-lucide="plane-landing" class="summary-icon"></i> Povratak</span>
+                                        <strong id="summaryReturn">—</strong>
+                                    </div>
+                                </div>
+
+                                <div id="busSummarySection" style="display: none;">
+                                    <div class="summary-row">
+                                        <span><i data-lucide="bus" class="summary-icon"></i> Prevoz</span>
+                                        <strong>Autobuski aranžman</strong>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span><i data-lucide="calendar-days" class="summary-icon"></i> Polazak</span>
+                                        <strong id="summaryBusDeparture">—</strong>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span><i data-lucide="calendar-days" class="summary-icon"></i> Povratak</span>
+                                        <strong id="summaryBusReturn">—</strong>
+                                    </div>
+                                </div>
+
+                                <hr class="summary-divider">
+
                                 <div class="price-line">
-                                    <span>Ukupno za uplatu</span>
+                                    <span>Ukupna cijena aranžmana:</span>
                                     <span class="total" id="summaryTotal">0.00 KM</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="panel benefits">
+                        <div class="panel benefits" style="margin-top: 20px;">
                             <ul>
                                 <li><i data-lucide="lock"></i> SSL sigurnost podataka</li>
                                 <li><i data-lucide="calendar-x"></i> Besplatno otkazivanje 48h</li>
@@ -883,7 +932,6 @@
         lucide.createIcons();
 
         const destinationSelect = document.getElementById('destinationSelect');
-        const dateTerminSelect = document.getElementById('dateTerminSelect');
         const departureDate = document.getElementById('departureDate');
         const returnDate = document.getElementById('returnDate');
         const adultsCount = document.getElementById('adultsCount');
@@ -897,8 +945,6 @@
         const prevozBus = document.getElementById('prevozBus');
         const summaryPrevoz = document.getElementById('summaryPrevoz');
 
-        let globalNights = 0;
-
         const ROOM_EXTRAS = {
         "standardna soba": 0,
         "deluxe soba": 200,
@@ -911,41 +957,18 @@
         });
 
         function handlePackageChange() {
-        const selectedOpt = destinationSelect.options[destinationSelect.selectedIndex];
-        if (!selectedOpt || selectedOpt.value === "") {
-        document.getElementById('planLink').style.display = 'none';
-        prevozSekcija.style.display = 'none';
-        dateTerminSelect.innerHTML = `<option value="">-- Prvo odaberite paket --</option>`;
+        const select = document.getElementById('destinationSelect');
+        const selectedOpt = select.options[select.selectedIndex];
+
+        if (!selectedOpt || select.value === "") {
+        departureDate.value = "";
+        returnDate.value = "";
         resetSummary();
         return;
         }
 
-        const terminiData = selectedOpt.getAttribute('data-termini');
-        let termini = [];
-        try {
-        termini = JSON.parse(terminiData) || [];
-        } catch (e) {
-        console.error("Greška pri čitanju termina", e);
-        }
-
-        if (termini.length > 0) {
-        const fiksniTermin = termini[0];
-
-        dateTerminSelect.innerHTML = `<option value="${fiksniTermin.id}" selected>${fiksniTermin.tekst}</option>`;
-
-        departureDate.value = fiksniTermin.polazak;
-        returnDate.value = fiksniTermin.povratak; 
-
-        const d1 = new Date(fiksniTermin.polazak);
-        const d2 = new Date(fiksniTermin.povratak);
-        const razlikaUvremenu = d2.getTime() - d1.getTime();
-        globalNights = Math.ceil(razlikaUvremenu / (1000 * 3600 * 24));
-        } else {
-        dateTerminSelect.innerHTML = `<option value="">Nema dostupnih termina</option>`;
-        departureDate.value = "";
-        returnDate.value = "";
-        globalNights = 0;
-        }
+        departureDate.value = selectedOpt.getAttribute('data-polazak') || "";
+        returnDate.value = selectedOpt.getAttribute('data-povratak') || "";
 
         const prevozTip = selectedOpt.getAttribute('data-prevoz-tip');
         if (prevozTip === 'Oboje') {
@@ -971,16 +994,12 @@
         planLink.href = `/Paketi/Detalji/${selectedOpt.value}`;
         planLink.style.display = 'inline-flex';
 
-        const hotelInfo = selectedOpt.getAttribute('data-hotel');
-        document.getElementById('summaryHotel').textContent = hotelInfo ? hotelInfo : "—";
-
         updateSummary();
         }
 
         function formatDate(dateStr) {
         if (!dateStr) return "—";
-
-          const date = new Date(dateStr);
+        const date = new Date(dateStr);
 
         if (isNaN(date.getTime())) {
         const numbers = dateStr.match(/\d+/g);
@@ -994,7 +1013,7 @@
         }
 
         const dan = String(date.getDate()).padStart(2, '0');
-        const mjesec = String(date.getMonth() + 1).padStart(2, '0'); 
+        const mjesec = String(date.getMonth() + 1).padStart(2, '0');
         const godina = date.getFullYear();
 
         return `${dan}.${mjesec}.${godina}.`;
@@ -1016,69 +1035,109 @@
         updateSummary();
         }
 
+        function parseLocalDate(dateString) {
+        const parts = dateString.split('-');
+        return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+
         function updateSummary() {
-        const selectedOpt = destinationSelect.options[destinationSelect.selectedIndex];
-        if (!selectedOpt || selectedOpt.value === "") {
+        const select = document.getElementById('destinationSelect');
+        if (!select || select.value === "") {
         resetSummary();
         return;
         }
 
+        const selectedOpt = select.options[select.selectedIndex];
+
         const basePrice = parseFloat(selectedOpt.getAttribute('data-price')) || 0;
-        const destName = selectedOpt.getAttribute('data-destinacija');
-        const country = selectedOpt.getAttribute('data-drzava');
-        const hotel = selectedOpt.getAttribute('data-hotel');
-        const flight = selectedOpt.getAttribute('data-let');
+        const destName = selectedOpt.getAttribute('data-destinacija') || "—";
+        const country = selectedOpt.getAttribute('data-drzava') || "";
+        const hotel = selectedOpt.getAttribute('data-hotel') || '—';
         const imgUrl = selectedOpt.getAttribute('data-img');
         const prevozTip = selectedOpt.getAttribute('data-prevoz-tip');
 
-        const adults = parseInt(adultsCount.textContent);
-        const children = parseInt(childrenCount.textContent);
-
-        const transportRadio = document.querySelector('input[name="tipPrevoza"]:checked');
-        const transportType = transportRadio ? transportRadio.value : 'Bus';
+        const adults = parseInt(document.getElementById('adultsCount')?.textContent || "2");
+        const children = parseInt(document.getElementById('childrenCount')?.textContent || "0");
 
         const roomTypeRadio = document.querySelector('input[name="roomType"]:checked');
         const roomTypeValue = roomTypeRadio ? roomTypeRadio.value : 'standardna soba';
+        const transportType = document.querySelector('input[name="tipPrevoza"]:checked')?.value || 'Autobus';
 
-        document.getElementById('summaryDestination').textContent = `${destName}, ${country}`;
-        if (imgUrl) {
-        document.getElementById('summaryPhoto').style.backgroundImage = `url('${imgUrl}')`;
+        const depDateVal = departureDate.value;
+        const retDateVal = returnDate.value;
+
+        document.getElementById('summaryDeparture').textContent = formatDate(depDateVal);
+        document.getElementById('summaryReturn').textContent = formatDate(retDateVal);
+
+        if (depDateVal && retDateVal) {
+        const d1 = parseLocalDate(depDateVal);
+        const d2 = parseLocalDate(retDateVal);
+        const brojDana = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+        document.getElementById('summaryNights').textContent = `${brojDana} dana / ${brojDana - 1} noćenja`;
+        } else {
+        document.getElementById('summaryNights').textContent = "—";
         }
 
-        document.getElementById('summaryDeparture').textContent = formatDate(departureDate.value);
-        document.getElementById('summaryReturn').textContent = formatDate(returnDate.value);
+        document.getElementById('summaryDestination').textContent = country ? `${destName}, ${country}` : destName;
+
+        // Popravljeno postavljanje slike:
+        if (imgUrl && imgUrl.trim() !== "") {
+        document.getElementById('summaryPhoto').style.backgroundImage = `url('${imgUrl}')`;
+        } else {
+        document.getElementById('summaryPhoto').style.backgroundImage = "url('/assets/bali.jpg')";
+        }
+
         document.getElementById('summaryTravelers').textContent = `Odrasli: ${adults}, Djeca: ${children}`;
-        document.getElementById('summaryNights').textContent = globalNights > 0 ? `${globalNights} noćenja` : "—";
+        document.getElementById('summaryHotel').textContent = hotel;
+
+        if (summaryRoom) {
+        summaryRoom.textContent = roomTypeValue.charAt(0).toUpperCase() + roomTypeValue.slice(1);
+        }
+
+        const flight = selectedOpt.getAttribute('data-let');
+        const flightRelacija = selectedOpt.getAttribute('data-let-relacija');
+        const kompanija = selectedOpt.getAttribute('data-let-kompanija');
+        const vrijeme = selectedOpt.getAttribute('data-let-vrijeme');
+        const flightSection = document.getElementById('flightSummarySection');
+        const busSection = document.getElementById('busSummarySection');
 
         if (transportType === 'Avion') {
-        document.getElementById('summaryPrevoz').textContent = '✈️ Avion';
-        document.getElementById('summaryLet').textContent = flight ? flight : 'Uključen let';
-        document.getElementById('summaryLet').closest('.summary-item').style.display = 'block';
+        if (summaryPrevoz) summaryPrevoz.textContent = '✈️ Avion';
+        if (flight && flight.trim() !== "") {
+        document.getElementById('summaryLet').textContent = `${flight} (${kompanija}) - ${vrijeme}`;
         } else {
-        document.getElementById('summaryPrevoz').textContent = '🚌 Autobus';
-        document.getElementById('summaryLet').closest('.summary-item').style.display = 'none';
+        document.getElementById('summaryLet').textContent = 'Uključen let';
         }
-
-        document.getElementById('summaryHotel').textContent = hotel ? hotel : '—';
-        summaryRoom.textContent = roomTypeValue.charAt(0).toUpperCase() + roomTypeValue.slice(1);
+        if (flightSection) flightSection.style.display = 'block';
+        if (busSection) busSection.style.display = 'none';
+        } else {
+        if (summaryPrevoz) summaryPrevoz.textContent = '🚌 Autobus';
+        if (flightSection) flightSection.style.display = 'none';
+        if (busSection) busSection.style.display = 'block';
+        document.getElementById('summaryBusDeparture').textContent = formatDate(depDateVal);
+        document.getElementById('summaryBusReturn').textContent = formatDate(retDateVal);
+        }
 
         let total = basePrice * adults;
         if (prevozTip === 'Oboje' && transportType === 'Avion') {
         total += (basePrice * 0.10) * adults;
         }
 
-        const extraPerPerson = ROOM_EXTRAS[roomTypeValue.toLowerCase()] || 0;
+        const extraPerPerson = (typeof ROOM_EXTRAS !== 'undefined' && ROOM_EXTRAS[roomTypeValue.toLowerCase()]) || 0;
         total += extraPerPerson * adults;
 
+        if (summaryTotal) {
         summaryTotal.textContent = `${total.toFixed(2)} KM`;
+        }
+
         try {
+        localStorage.setItem('reservationDepartureText', depDateVal ? depDateVal : '');
+        localStorage.setItem('reservationReturnText', retDateVal ? retDateVal : '');
         localStorage.setItem('reservationTotal', `${total.toFixed(2)} KM`);
         localStorage.setItem('selectedPackageId', selectedOpt.value);
         } catch (e) {
-        console.warn("Problem sa lokalnim skladištem (privatni mod ili restrikcija):", e);
+        console.warn("Problem sa lokalnim skladištem:", e);
         }
-        localStorage.setItem('reservationTotal', `${total.toFixed(2)} KM`);
-        localStorage.setItem('selectedPackageId', selectedOpt.value);
         }
 
         function resetSummary() {
@@ -1088,11 +1147,11 @@
         document.getElementById('summaryReturn').textContent = "—";
         document.getElementById('summaryTravelers').textContent = "Odrasli: 2, Djeca: 0";
         document.getElementById('summaryNights').textContent = "—";
-        document.getElementById('summaryPrevoz').textContent = "—";
-        document.getElementById('summaryLet').textContent = "—";
+        if (summaryPrevoz) summaryPrevoz.textContent = "—";
+        if (document.getElementById('summaryLet')) document.getElementById('summaryLet').textContent = "—";
         document.getElementById('summaryHotel').textContent = "—";
-        summaryRoom.textContent = "Standardna soba";
-        summaryTotal.textContent = "0.00 KM";
+        if (summaryRoom) summaryRoom.textContent = "Standardna soba";
+        if (summaryTotal) summaryTotal.textContent = "0.00 KM";
         }
 
         function goToPassengers() {
@@ -1101,18 +1160,14 @@
         destinationSelect.focus();
         return;
         }
-        if (dateTerminSelect.value === "") {
-        alert("Sistem nije uspio učitati fiksni termin za ovaj paket.");
-        return;
-        }
 
         const transportRadio = document.querySelector('input[name="tipPrevoza"]:checked');
         const transportType = transportRadio ? transportRadio.value : 'Bus';
 
         const roomTypeRadio = document.querySelector('input[name="roomType"]:checked');
         const roomTypeValue = roomTypeRadio ? roomTypeRadio.value : 'standardna soba';
-    
-        window.location.href = `/Rezervacija/Putnici?paketId=${destinationSelect.value}&terminId=${dateTerminSelect.value}&polazak=${departureDate.value}&odrasli=${adultsCount.textContent}&djeca=${childrenCount.textContent}&prevoz=${encodeURIComponent(transportType)}&smjestaj=${encodeURIComponent(roomTypeValue)}`;
+
+        window.location.href = `/Rezervacija/Putnici?paketId=${destinationSelect.value}&terminId=${destinationSelect.value}&polazak=${departureDate.value}&odrasli=${adultsCount.textContent}&djeca=${childrenCount.textContent}&prevoz=${encodeURIComponent(transportType)}&smjestaj=${encodeURIComponent(roomTypeValue)}`;
         }
     </script>
 </body>

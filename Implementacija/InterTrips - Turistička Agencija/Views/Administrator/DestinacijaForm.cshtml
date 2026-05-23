@@ -338,7 +338,7 @@
             <a href="/Administrator/Index" class="nav-item">
                 <i class="fa-solid fa-chart-pie"></i> Dashboard
             </a>
-            <a href="/Administrator/Destinacije" class="nav-item">
+            <a href="/Administrator/Destinacije" class="nav-item active">
                 <i class="fa-solid fa-map-location-dot"></i> Destinacije
             </a>
             <a href="/Administrator/Paketi" class="nav-item">
@@ -347,7 +347,7 @@
             <a href="/Administrator/Korisnici" class="nav-item">
                 <i class="fa-solid fa-users"></i> Korisnici
             </a>
-            <a href="/Administrator/Rezervacije" class="nav-item active">
+            <a href="/Administrator/Rezervacije" class="nav-item">
                 <i class="fa-solid fa-calendar-check"></i> Rezervacije
             </a>
         </nav>
@@ -372,11 +372,13 @@
             <div class="card">
                 <form asp-controller="Administrator"
                       asp-action="@(isEdit ? "DestinacijaEdit" : "DestinacijaCreate")"
-                      asp-route-id="@(Model?.Id ?? 0)"
                       method="post"
                       enctype="multipart/form-data">
 
                     @Html.AntiForgeryToken()
+
+                    @* Skriveno polje za Id primarnog ključa (Ključno za Edit akciju) *@
+                    <input type="hidden" asp-for="Id" />
 
                     <div class="row">
                         <div class="form-group">

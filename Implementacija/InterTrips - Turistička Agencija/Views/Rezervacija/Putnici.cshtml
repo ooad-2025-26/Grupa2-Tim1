@@ -245,8 +245,13 @@
         }
 
         .summary-card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
         position: sticky;
-        top: 100px;
+        top: 20px;
         }
 
         .summary-photo {
@@ -271,33 +276,17 @@
         z-index: 1;
         }
 
+        
         .summary-place {
         position: relative;
         z-index: 2;
         font-weight: 700;
         font-size: 20px;
-        color: #ffffff;
-        }
-
-        .summary-place small {
-        display: block;
-        font-size: 13px;
-        color: #e2e8f0;
-        font-weight: 400;
-        margin-top: 2px;
+        color: #ffffff !important;
         }
 
         .summary-body {
         padding: 24px;
-        }
-
-        .summary-title {
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--brand-primary);
-        margin: 0 0 16px 0;
-        font-weight: 700;
         }
 
         .summary-row {
@@ -310,11 +299,11 @@
         padding-bottom: 8px;
         }
 
-        .summary-row span {
+        .summary-row span:first-child {
         font-weight: 500;
         }
 
-        .summary-row strong {
+        .summary-row strong, .summary-row span:last-child {
         color: var(--brand-dark);
         font-weight: 600;
         }
@@ -390,10 +379,7 @@
         grid-template-columns: 1fr;
         }
 
-        .summary-card {
-        position: static;
-        }
-        }
+        .
 
         @@media (max-width: 768px) {
         .row {
@@ -448,7 +434,7 @@
 
                         <div id="passengerContainer"></div>
 
-                        <div id="formError" class="error-note"></div>
+                        <div id="formError" class="error-note" style="display: none; color: #dc2626; margin-bottom: 15px; font-weight: 500;"></div>
 
                         <div class="btn-row">
                             <button class="secondary-btn" type="button" onclick="window.history.back()">
@@ -461,68 +447,68 @@
                     </div>
                 </div>
 
-                <div class="right-col">
+                <div class="right-column">
                     <div class="panel summary-card">
                         <div class="summary-photo" id="summaryPhoto">
                             <div class="summary-place" id="summaryDest">Destinacija <small id="summaryCountry">—</small></div>
                         </div>
                         <div class="summary-body">
-                            <div class="summary-title">Sažetak rezervacije</div>
 
                             <div class="summary-row">
-                                <span><i data-lucide="users" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></i>Putnici</span>
+                                <span><i data-lucide="users" class="summary-icon"></i> Putnici</span>
                                 <strong id="summaryTravelers">—</strong>
                             </div>
                             <div class="summary-row">
-                                <span><i data-lucide="calendar" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></i>Trajanje</span>
+                                <span><i data-lucide="calendar" class="summary-icon"></i> Trajanje</span>
                                 <strong id="summaryNights">—</strong>
                             </div>
                             <div class="summary-row">
-                                <span><i data-lucide="hotel" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></i>Hotel</span>
+                                <span><i data-lucide="hotel" class="summary-icon"></i> Hotel</span>
                                 <strong id="summaryHotelName">—</strong>
                             </div>
                             <div class="summary-row">
-                                <span><i data-lucide="door-open" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></i>Smještaj</span>
+                                <span><i data-lucide="door-open" class="summary-icon"></i> Smještaj</span>
                                 <strong id="summaryRoom">—</strong>
                             </div>
 
+                            <hr class="summary-divider">
+
                             <div id="flightSummarySection">
                                 <div class="summary-row">
-                                    <span><i data-lucide="plane" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></i>Let</span>
+                                    <span><i data-lucide="plane" class="summary-icon"></i> Let</span>
                                     <strong id="summaryFlightRoute">—</strong>
                                 </div>
                                 <div class="summary-row">
-                                    <span><i data-lucide="plane-takeoff" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></i>Polazak</span>
+                                    <span><i data-lucide="plane-takeoff" class="summary-icon"></i> Polazak</span>
                                     <strong id="summaryDeparture">—</strong>
                                 </div>
                                 <div class="summary-row">
-                                    <span><i data-lucide="plane-landing" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></i>Povratak</span>
+                                    <span><i data-lucide="plane-landing" class="summary-icon"></i> Povratak</span>
                                     <strong id="summaryReturn">—</strong>
-                                </div>
-                                <div class="summary-row">
-                                    <span><i data-lucide="armchair" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></i>Klasa leta</span>
-                                    <strong id="summaryFlightClass">—</strong>
                                 </div>
                             </div>
 
                             <div id="busSummarySection" style="display: none;">
                                 <div class="summary-row">
-                                    <span><i data-lucide="bus" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></i>Prevoz</span>
+                                    <span><i data-lucide="bus" class="summary-icon"></i> Prevoz</span>
                                     <strong>Autobuski aranžman</strong>
                                 </div>
                                 <div class="summary-row">
-                                    <span><i data-lucide="calendar-days" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></i>Polazak</span>
+                                    <span><i data-lucide="calendar-days" class="summary-icon"></i> Polazak</span>
                                     <strong id="summaryBusDeparture">—</strong>
                                 </div>
                                 <div class="summary-row">
-                                    <span><i data-lucide="calendar-days" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></i>Povratak</span>
+                                    <span><i data-lucide="calendar-days" class="summary-icon"></i> Povratak</span>
                                     <strong id="summaryBusReturn">—</strong>
                                 </div>
                             </div>
 
+                            <hr class="summary-divider">
+
+
                             <div class="price-line">
-                                <span>Ukupno za uplatu</span>
-                                <span class="total" id="summaryTotal">0 KM</span>
+                                <span>Ukupna cijena aranžmana:</span>
+                                <span class="total" id="summaryTotal">0.00 KM</span>
                             </div>
                         </div>
                     </div>
@@ -614,463 +600,497 @@
 
             <div class="form-group">
                 <label class="field-label">Posebni zahtjevi (ishrana, alergije, napomene za hotel/let)</label>
-                <textarea class="textarea requests" placeholder="Napomena (npr. vegetarijanski meni na letu, soba na tihoj sideni, pristupačnost...)"></textarea>
+                <textarea class="textarea requests" placeholder="Napomena (npr. vegetarijanski meni na letu, soba na tihoj strani, pristupačnost...)"></textarea>
             </div>
         </div>
     </template>
 
     <script>
-        // Inicijalizacija ikona biće pokrenuta i na kraju loadSummary-ja
-        lucide.createIcons();
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
 
         const countries = [
-        { name: "Bosna i Hercegovina", flag: "🇧🇦", dial: "+387", digits: 8 },
-        { name: "Hrvatska", flag: "🇭🇷", dial: "+385", digits: 9 },
-        { name: "Srbija", flag: "🇷🇸", dial: "+381", digits: 9 },
-        { name: "Crna Gora", flag: "🇲🇪", dial: "+382", digits: 8 },
-        { name: "Slovenija", flag: "🇸🇮", dial: "+386", digits: 8 },
-        { name: "Njemačka", flag: "🇩🇪", dial: "+49", digits: 9 },
-        { name: "Austrija", flag: "🇦🇹", dial: "+43", digits: 9 },
-        { name: "Italija", flag: "🇮🇹", dial: "+39", digits: 9 },
-        { name: "Francuska", flag: "🇫🇷", dial: "+33", digits: 9 },
-        { name: "Švicarska", flag: "🇨🇭", dial: "+41", digits: 9 },
-        { name: "Švedska", flag: "🇸🇪", dial: "+46", digits: 9 },
-        { name: "Turska", flag: "🇹🇷", dial: "+90", digits: 10 },
-        { name: "Ujedinjeni Arapski Emirati", flag: "🇦🇪", dial: "+971", digits: 9 },
-        { name: "SAD", flag: "🇺🇸", dial: "+1", digits: 10 }
+            { name: "Bosna i Hercegovina", flag: "🇧🇦", dial: "+387", digits: 8 },
+            { name: "Hrvatska", flag: "🇭🇷", dial: "+385", digits: 9 },
+            { name: "Srbija", flag: "🇷🇸", dial: "+381", digits: 9 },
+            { name: "Crna Gora", flag: "🇲🇪", dial: "+382", digits: 8 },
+            { name: "Slovenija", flag: "🇸🇮", dial: "+386", digits: 8 },
+            { name: "Njemačka", flag: "🇩🇪", dial: "+49", digits: 9 },
+            { name: "Austrija", flag: "🇦🇹", dial: "+43", digits: 9 },
+            { name: "Italija", flag: "🇮🇹", dial: "+39", digits: 9 },
+            { name: "Francuska", flag: "🇫🇷", dial: "+33", digits: 9 },
+            { name: "Švicarska", flag: "🇨🇭", dial: "+41", digits: 9 },
+            { name: "Švedska", flag: "🇸🇪", dial: "+46", digits: 9 },
+            { name: "Turska", flag: "🇹🇷", dial: "+90", digits: 10 },
+            { name: "Ujedinjeni Arapski Emirati", flag: "🇦🇪", dial: "+971", digits: 9 },
+            { name: "SAD", flag: "🇺🇸", dial: "+1", digits: 10 }
         ].sort((a, b) => a.name.localeCompare(b.name));
 
         function formatFullPhone(code, digits) {
-        return `${code} ${digits}`;
+            return `${code} ${digits}`;
         }
 
         function calcAgeYears(isoDate) {
-        if (!isoDate) return null;
-        const dob = new Date(isoDate + "T00:00:00");
-        if (isNaN(dob.getTime())) return null;
+            if (!isoDate) return null;
+            const dob = new Date(isoDate + "T00:00:00");
+            if (isNaN(dob.getTime())) return null;
 
-        const today = new Date();
-        let age = today.getFullYear() - dob.getFullYear();
-        const m = today.getMonth() - dob.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-        return age;
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+            return age;
         }
 
         function onlyDigits(s) {
-        return (s || "").replace(/\D/g, "");
+            return (s || "").replace(/\D/g, "");
         }
 
         function formatLocalPhone(digits) {
-        if (!digits) return "";
-        const parts = [];
-        parts.push(digits.slice(0, 2));
-        if (digits.length > 2) parts.push(digits.slice(2, 5));
-        if (digits.length > 5) parts.push(digits.slice(5, 8));
-        if (digits.length > 8) parts.push(digits.slice(8));
-        return parts.filter(Boolean).join(" ");
+            if (!digits) return "";
+            const parts = [];
+            parts.push(digits.slice(0, 2));
+            if (digits.length > 2) parts.push(digits.slice(2, 5));
+            if (digits.length > 5) parts.push(digits.slice(5, 8));
+            if (digits.length > 8) parts.push(digits.slice(8));
+            return parts.filter(Boolean).join(" ");
         }
 
         function getCountryRuleByName(name) {
-        return countries.find(c => c.name === name) || null;
+            return countries.find(c => c.name === name) || null;
         }
 
         function getCountryRuleByDial(dial) {
-        return countries.find(c => c.dial === dial) || null;
+            return countries.find(c => c.dial === dial) || null;
         }
 
         function generatePassengers() {
-        const container = document.getElementById('passengerContainer');
-        const template = document.getElementById('passengerTemplate');
+            const container = document.getElementById('passengerContainer');
+            const template = document.getElementById('passengerTemplate');
 
-        if (!container || !template) {
-        console.error("Missing container or template element!");
-        return;
-        }
+            if (!container || !template) {
+                console.error("Missing container or template element!");
+                return;
+            }
 
-        const count = parseInt(localStorage.getItem('reservationTravelers') || '1', 10) || 1;
-        const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '1', 10) || 1;
+            const count = parseInt(localStorage.getItem('reservationTravelers') || '1', 10) || 1;
+            const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '1', 10) || 1;
 
-        let savedPassengers = [];
-        try {
-        savedPassengers = JSON.parse(localStorage.getItem('savedPassengers') || '[]');
-        } catch (e) {
+            let savedPassengers = [];
+            try {
+                savedPassengers = JSON.parse(localStorage.getItem('savedPassengers') || '[]');
+            } catch (e) {
+                savedPassengers = [];
+            }
+            if (savedPassengers.length !== count) {
         savedPassengers = [];
+        localStorage.removeItem('savedPassengers'); 
         }
-
         container.innerHTML = '';
         for (let i = 1; i <= count; i++) {
         const clone = template.content.cloneNode(true);
-        clone.querySelector('.p-title').textContent = `Putnik ${i}`;
 
-        const selectNat = clone.querySelector('.nationality');
-        countries.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.name;
-        opt.textContent = `${c.flag} ${c.name}`;
-        selectNat.appendChild(opt);
-        });
+        const titleEl = clone.querySelector('.p-title');
+        if (titleEl) titleEl.textContent = `Putnik ${i}`;
 
-        const phoneCodeEl = clone.querySelector('.phoneCode');
-        countries.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.dial;
-        opt.textContent = `${c.flag} ${c.dial}`;
-        phoneCodeEl.appendChild(opt);
-        });
+                const selectNat = clone.querySelector('.nationality');
+                if (selectNat) {
+                    countries.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.name;
+                        opt.textContent = `${c.flag} ${c.name}`;
+                        selectNat.appendChild(opt);
+                    });
+                }
 
-        const wrapper = document.createElement('div');
-        wrapper.appendChild(clone);
-        const block = wrapper.querySelector('.passenger-block');
+                const phoneCodeEl = clone.querySelector('.phoneCode');
+                if (phoneCodeEl) {
+                    countries.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.dial;
+                        opt.textContent = `${c.flag} ${c.dial}`;
+                        phoneCodeEl.appendChild(opt);
+                    });
+                }
 
-        const pTypeEl = block.querySelector('.ptype');
-        if (pTypeEl) {
-        if (i <= expectedAdults) {
-        pTypeEl.value = 'adult';
-        } else {
-        pTypeEl.value = 'child';
+                const wrapper = document.createElement('div');
+                wrapper.appendChild(clone);
+                const block = wrapper.querySelector('.passenger-block');
+
+                const pTypeEl = block.querySelector('.ptype');
+                if (pTypeEl) {
+                    if (i <= expectedAdults) {
+                        pTypeEl.value = 'adult';
+                    } else {
+                        pTypeEl.value = 'child';
+                    }
+                }
+
+                if (savedPassengers && savedPassengers[i - 1]) {
+                    const sp = savedPassengers[i - 1];
+                    if (pTypeEl && sp.type) pTypeEl.value = sp.type;
+                    
+                    const genderEl = block.querySelector('.gender');
+                    if (genderEl && sp.gender) genderEl.value = sp.gender;
+                    
+                    const fnameEl = block.querySelector('.fname');
+                    if (fnameEl && sp.firstName) fnameEl.value = sp.firstName;
+                    
+                    const lnameEl = block.querySelector('.lname');
+                    if (lnameEl && sp.lastName) lnameEl.value = sp.lastName;
+                    
+                    const birthdateEl = block.querySelector('.birthdate');
+                    if (birthdateEl && sp.birthDate) birthdateEl.value = sp.birthDate;
+                    
+                    const passportEl = block.querySelector('.passport');
+                    if (passportEl && sp.passport) passportEl.value = sp.passport;
+                    
+                    if (selectNat && sp.nationality) selectNat.value = sp.nationality;
+                    
+                    const freqFlyerEl = block.querySelector('.freqFlyer');
+                    if (freqFlyerEl && sp.freqFlyer) freqFlyerEl.value = sp.freqFlyer;
+                    
+                    const bedPrefEl = block.querySelector('.bedPreference');
+                    if (bedPrefEl && sp.bedPreference) bedPrefEl.value = sp.bedPreference;
+                    
+                    const requestsEl = block.querySelector('.requests');
+                    if (requestsEl && sp.requests) requestsEl.value = sp.requests;
+                    
+                    const phoneNumEl = block.querySelector('.phoneNumber');
+                    if (sp.phone && phoneNumEl) {
+                        const phoneParts = sp.phone.split(' ');
+                        if (phoneParts.length > 1) {
+                            if (phoneCodeEl) phoneCodeEl.value = phoneParts[0];
+                            phoneNumEl.value = formatLocalPhone(phoneParts.slice(1).join(''));
+                        }
+                    }
+                }
+
+                const doLiveValidate = (element) => {
+                    if (element) element.style.borderColor = '';
+                    validateBlock(block, i - 1, true);
+                };
+
+                const passportEl = block.querySelector('.passport');
+                if (passportEl) {
+                    passportEl.addEventListener('input', () => {
+                        passportEl.value = passportEl.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 9);
+                        doLiveValidate(passportEl);
+                    });
+                }
+
+                const phoneCode = block.querySelector('.phoneCode');
+                const phoneNumber = block.querySelector('.phoneNumber');
+                const nationality = block.querySelector('.nationality');
+
+                function applyPhoneRuleFromNationality() {
+                    const rule = getCountryRuleByName(nationality?.value);
+                    if (!rule) return;
+                    if (phoneCode && !phoneCode.value) phoneCode.value = rule.dial;
+                    if (phoneNumber) {
+                        const maxDigits = rule.digits;
+                        const digits = onlyDigits(phoneNumber.value).slice(0, maxDigits);
+                        phoneNumber.value = formatLocalPhone(digits);
+                    }
+                }
+
+                nationality?.addEventListener('change', () => {
+                    applyPhoneRuleFromNationality();
+                    doLiveValidate(nationality);
+                });
+
+                phoneNumber?.addEventListener('input', () => {
+                    const rule = getCountryRuleByDial(phoneCode?.value) || getCountryRuleByName(nationality?.value);
+                    const maxDigits = rule?.digits ?? 9;
+                    const digits = onlyDigits(phoneNumber.value).slice(0, maxDigits);
+                    phoneNumber.value = formatLocalPhone(digits);
+                    doLiveValidate(phoneNumber);
+                });
+
+                phoneCode?.addEventListener('change', () => {
+                    const rule = getCountryRuleByDial(phoneCode.value);
+                    if (!rule || !phoneNumber) return;
+
+                    if (nationality && !nationality.value) {
+                        nationality.value = rule.name;
+                    }
+
+                    const digits = onlyDigits(phoneNumber.value).slice(0, rule.digits);
+                    phoneNumber.value = formatLocalPhone(digits);
+                    doLiveValidate(phoneCode);
+                });
+
+                block.querySelector('.ptype')?.addEventListener('change', () => doLiveValidate(block.querySelector('.ptype')));
+                block.querySelector('.gender')?.addEventListener('change', () => doLiveValidate(block.querySelector('.gender')));
+                block.querySelector('.birthdate')?.addEventListener('change', () => doLiveValidate(block.querySelector('.birthdate')));
+
+                const fnameEl = block.querySelector('.fname');
+                if (fnameEl) {
+                    fnameEl.addEventListener('input', () => {
+                        fnameEl.value = fnameEl.value.replace(/[0-9]/g, '');
+                        doLiveValidate(fnameEl);
+                    });
+                }
+
+                const lnameEl = block.querySelector('.lname');
+                if (lnameEl) {
+                    lnameEl.addEventListener('input', () => {
+                        lnameEl.value = lnameEl.value.replace(/[0-9]/g, '');
+                        doLiveValidate(lnameEl);
+                    });
+                }
+
+                container.appendChild(block);
+            }
         }
-        }
 
-        if (savedPassengers && savedPassengers[i - 1]) {
-        const sp = savedPassengers[i - 1];
-        if (pTypeEl && sp.type) pTypeEl.value = sp.type;
-        if (block.querySelector('.gender') && sp.gender) block.querySelector('.gender').value = sp.gender;
-        if (block.querySelector('.fname') && sp.firstName) block.querySelector('.fname').value = sp.firstName;
-        if (block.querySelector('.lname') && sp.lastName) block.querySelector('.lastName').value = sp.lastName;
-        if (block.querySelector('.birthdate') && sp.birthDate) block.querySelector('.birthdate').value = sp.birthDate;
-        if (block.querySelector('.passport') && sp.passport) block.querySelector('.passport').value = sp.passport;
-        if (selectNat && sp.nationality) selectNat.value = sp.nationality;
-        if (block.querySelector('.freqFlyer') && sp.freqFlyer) block.querySelector('.freqFlyer').value = sp.freqFlyer;
-        if (block.querySelector('.bedPreference') && sp.bedPreference) block.querySelector('.bedPreference').value = sp.bedPreference;
-        if (block.querySelector('.requests') && sp.requests) block.querySelector('.requests').value = sp.requests;
-        if (sp.phone && block.querySelector('.phoneNumber')) {
-        const phoneParts = sp.phone.split(' ');
-        if (phoneParts.length > 1) {
-        if (phoneCodeEl) phoneCodeEl.value = phoneParts[0];
-        block.querySelector('.phoneNumber').value = formatLocalPhone(phoneParts.slice(1).join(''));
-        }
-        }
-        }
-
-        const doLiveValidate = () => {
-        validateBlock(block, i - 1, true);
-        };
-
-        const passportEl = block.querySelector('.passport');
-        if (passportEl) {
-        passportEl.addEventListener('input', () => {
-        passportEl.value = passportEl.value
-        .toUpperCase()
-        .replace(/[^A-Z0-9]/g, '')
-        .slice(0, 9);
-        doLiveValidate();
-        });
-        }
-
-        const phoneCode = block.querySelector('.phoneCode');
-        const phoneNumber = block.querySelector('.phoneNumber');
-        const nationality = block.querySelector('.nationality');
-
-        function applyPhoneRuleFromNationality() {
-        const rule = getCountryRuleByName(nationality?.value);
-        if (!rule) return;
-        if (phoneCode && !phoneCode.value) phoneCode.value = rule.dial;
-        if (phoneNumber) {
-        const maxDigits = rule.digits;
-        const digits = onlyDigits(phoneNumber.value).slice(0, maxDigits);
-        phoneNumber.value = formatLocalPhone(digits);
-        }
-        }
-
-        nationality?.addEventListener('change', () => {
-        applyPhoneRuleFromNationality();
-        doLiveValidate();
-        });
-
-        phoneNumber?.addEventListener('input', () => {
-        const rule = getCountryRuleByDial(phoneCode?.value) || getCountryRuleByName(nationality?.value);
-        const maxDigits = rule?.digits ?? 9;
-        const digits = onlyDigits(phoneNumber.value).slice(0, maxDigits);
-        phoneNumber.value = formatLocalPhone(digits);
-        doLiveValidate();
-        });
-
-        phoneCode?.addEventListener('change', () => {
-        const rule = getCountryRuleByDial(phoneCode.value);
-        if (!rule || !phoneNumber) return;
-
-        if (nationality && !nationality.value) {
-        nationality.value = rule.name;
-        }
-
-        const digits = onlyDigits(phoneNumber.value).slice(0, rule.digits);
-        phoneNumber.value = formatLocalPhone(digits);
-        doLiveValidate();
-        });
-
-        block.querySelector('.ptype')?.addEventListener('change', doLiveValidate);
-        block.querySelector('.gender')?.addEventListener('change', doLiveValidate);
-        block.querySelector('.birthdate')?.addEventListener('change', doLiveValidate);
-
-        const fnameEl = block.querySelector('.fname');
-        if (fnameEl) {
-        fnameEl.addEventListener('input', () => {
-        fnameEl.value = fnameEl.value.replace(/\d/g, '');
-        doLiveValidate();
-        });
-        }
-
-        const lnameEl = block.querySelector('.lname');
-        if (lnameEl) {
-        lnameEl.addEventListener('input', () => {
-        lnameEl.value = lnameEl.value.replace(/\d/g, '');
-        doLiveValidate();
-        });
-        }
-
-        container.appendChild(block);
-        }
-        }
-
-        // POPRAVLJENA I USKLAĐENA FUNKCIJA ZA SUMMARY CARD
         function loadSummary() {
-        // 1. Osnovne informacije o destinaciji i hotelu
-        const summaryDest = document.getElementById('summaryDest');
-        if (summaryDest) {
-        summaryDest.innerHTML = `${localStorage.getItem('reservationDestination') || 'Destinacija'} <small id="summaryCountry">${localStorage.getItem('reservationCountry') || '—'}</small>`;
-        }
+            const summaryDest = document.getElementById('summaryDest');
+            if (summaryDest) {
+                summaryDest.innerHTML = `${localStorage.getItem('reservationDestination') || 'Destinacija'} <small id="summaryCountry">${localStorage.getItem('reservationCountry') || '—'}</small>`;
+            }
 
-        const hotelEl = document.getElementById('summaryHotelName');
-        if (hotelEl) hotelEl.textContent = localStorage.getItem('reservationHotelName') || '—';
+            const hotelEl = document.getElementById('summaryHotelName');
+            if (hotelEl) hotelEl.textContent = localStorage.getItem('reservationHotelName') || '—';
 
-        const roomEl = document.getElementById('summaryRoom');
-        if (roomEl) roomEl.textContent = localStorage.getItem('reservationRoom') || '—';
+            const roomEl = document.getElementById('summaryRoom');
+            if (roomEl) roomEl.textContent = localStorage.getItem('reservationRoom') || '—';
 
-        const nightsEl = document.getElementById('summaryNights');
-        if (nightsEl) nightsEl.textContent = localStorage.getItem('reservationNights') || localStorage.getItem('reservationDuration') || '—';
+            const nightsEl = document.getElementById('summaryNights');
+            if (nightsEl) nightsEl.textContent = localStorage.getItem('reservationNights') || localStorage.getItem('reservationDuration') || '—';
 
-        // Prikaz strukture odrasli + djeca ako postoje u skladištu
-        const travelersEl = document.getElementById('summaryTravelers');
-        if (travelersEl) {
-        const adults = localStorage.getItem('reservationAdults');
-        const children = localStorage.getItem('reservationChildren');
-        if (adults && children) {
-        travelersEl.textContent = `${adults}x Odrasli, ${children}x Djeca`;
-        } else {
-        travelersEl.textContent = localStorage.getItem('reservationTravelers') || '—';
-        }
-        }
+            const travelersEl = document.getElementById('summaryTravelers');
+            if (travelersEl) {
+                const adults = localStorage.getItem('reservationAdults');
+                const children = localStorage.getItem('reservationChildren');
+                if (adults && parseInt(adults, 10) > 0) {
+                    travelersEl.textContent = `${adults}x Odrasli${children && parseInt(children, 10) > 0 ? `, ${children}x Djeca` : ''}`;
+                } else {
+                    travelersEl.textContent = localStorage.getItem('reservationTravelers') || '—';
+                }
+            }
 
-        const totalEl = document.getElementById('summaryTotal');
-        if (totalEl) totalEl.textContent = localStorage.getItem('reservationTotal') || '0 KM';
+            const totalEl = document.getElementById('summaryTotal');
+            if (totalEl) totalEl.textContent = localStorage.getItem('reservationTotal') || '0 KM';
 
-        // 2. Logika za prebacivanje prikaza Let / Autobus na osnovu tipa prevoza
-        const prevozTip = localStorage.getItem('reservationPrevozTip') || '';
-        const autobusRezervisan = localStorage.getItem('reservationBus');
+            const prevozTip = localStorage.getItem('reservationPrevozTip') || '';
+            const autobusRezervisan = localStorage.getItem('reservationBus');
 
-        const flightSection = document.getElementById('flightSummarySection');
-        const busSection = document.getElementById('busSummarySection');
-        const passengerTitle = document.getElementById('passengerPanelTitle');
+            const flightSection = document.getElementById('flightSummarySection');
+            const busSection = document.getElementById('busSummarySection');
+            const passengerTitle = document.getElementById('passengerPanelTitle');
 
-        // Provjera da li je u pitanju autobuski aranžman
-        if (prevozTip.toLowerCase().includes('autobus') || (autobusRezervisan && autobusRezervisan !== '—' && autobusRezervisan.trim() !== '')) {
-        if (flightSection) flightSection.style.style.display = 'none';
-        if (busSection) busSection.style.display = 'block';
-        if (passengerTitle) passengerTitle.textContent = "Podaci o putnicima (Autobus i Hotel)";
+            if (prevozTip.toLowerCase().includes('autobus') || (autobusRezervisan && autobusRezervisan !== '—' && autobusRezervisan.trim() !== '')) {
+                if (flightSection) flightSection.style.display = 'none';
+                if (busSection) busSection.style.display = 'block';
+                if (passengerTitle) passengerTitle.textContent = "Podaci o putnicima (Autobus i Hotel)";
 
-        // Mapiranje datuma za autobuski prevoz
-        const busDep = document.getElementById('summaryBusDeparture');
-        const busRet = document.getElementById('summaryBusReturn');
-        if (busDep) busDep.textContent = localStorage.getItem('reservationDeparture') || '—';
-        if (busRet) busRet.textContent = localStorage.getItem('reservationReturn') || '—';
-        } else {
-        // Avionski prevoz aranžman
-        if (flightSection) flightSection.style.display = 'block';
-        if (busSection) busSection.style.display = 'none';
-        if (passengerTitle) passengerTitle.textContent = "Podaci o putnicima (Letovi i Hoteli)";
+                const busDep = document.getElementById('summaryBusDeparture');
+                const busRet = document.getElementById('summaryBusReturn');
+                if (busDep) busDep.textContent = localStorage.getItem('reservationDepartureText') || localStorage.getItem('reservationDeparture') || '—';
+                if (busRet) busRet.textContent = localStorage.getItem('reservationReturnText') || localStorage.getItem('reservationReturn') || '—';
+            } else {
+                if (flightSection) flightSection.style.display = 'block';
+                if (busSection) busSection.style.display = 'none';
+                if (passengerTitle) passengerTitle.textContent = "Podaci o putnicima (Letovi i Hoteli)";
 
-        const depEl = document.getElementById('summaryDeparture');
-        if (depEl) depEl.textContent = localStorage.getItem('reservationDeparture') || '—';
+                const depEl = document.getElementById('summaryDeparture');
+                if (depEl) depEl.textContent = localStorage.getItem('reservationDepartureText') || localStorage.getItem('reservationDeparture') || '—';
 
-        const retEl = document.getElementById('summaryReturn');
-        if (retEl) retEl.textContent = localStorage.getItem('reservationReturn') || '—';
+                const retEl = document.getElementById('summaryReturn');
+                if (retEl) retEl.textContent = localStorage.getItem('reservationReturnText') || localStorage.getItem('reservationReturn') || '—';
 
-        const routeEl = document.getElementById('summaryFlightRoute');
-        if (routeEl) routeEl.textContent = localStorage.getItem('reservationFlightRoute') || localStorage.getItem('reservationFlight') || '—';
+                const routeEl = document.getElementById('summaryFlightRoute');
+                if (routeEl) routeEl.textContent = localStorage.getItem('reservationFlightRoute') || localStorage.getItem('reservationFlight') || '—';
 
-        const classEl = document.getElementById('summaryFlightClass');
-        if (classEl) classEl.textContent = localStorage.getItem('reservationFlightClass') || 'Ekonomska';
-        }
+                const classEl = document.getElementById('summaryFlightClass');
+                if (classEl) classEl.textContent = localStorage.getItem('reservationFlightClass') || 'Ekonomska';
+            }
 
-        // Učitavanje pozadinske slike destinacije
-        const photo = document.getElementById('summaryPhoto');
-        const image = localStorage.getItem('reservationImage') || '/assets/bali.jpg';
-        if (photo) {
-        photo.style.background = `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url('${image}') center/cover no-repeat`;
-        }
+            const photo = document.getElementById('summaryPhoto');
+            const image = localStorage.getItem('reservationImage') || '/assets/bali.jpg';
+            if (photo) {
+                photo.style.background = `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url('${image}') center/cover no-repeat`;
+            }
 
-        // Osvježi sve Lucide ikone ubačene u dinamičke elemente sažetka
-        lucide.createIcons();
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
         }
 
         function setFormError(msg) {
-        const el = document.getElementById('formError');
-        if (!el) return;
-        if (!msg) {
-        el.style.display = 'none';
-        el.textContent = '';
-        return;
-        }
-        el.style.display = 'block';
-        el.textContent = msg;
+            const el = document.getElementById('formError');
+            if (!el) return;
+            if (!msg) {
+                el.style.display = 'none';
+                el.textContent = '';
+                return;
+            }
+            el.style.display = 'block';
+            el.textContent = msg;
         }
 
         function validateBlock(block, idx, isLive = false) {
-        const type = block.querySelector('.ptype')?.value || 'adult';
-        const genderEl = block.querySelector('.gender');
-        const birthEl = block.querySelector('.birthdate');
-        const fnameEl = block.querySelector('.fname');
-        const lnameEl = block.querySelector('.lname');
-        const passportEl = block.querySelector('.passport');
-        const nationalityEl = block.querySelector('.nationality');
-        const phoneEl = block.querySelector('.phoneNumber');
+            const type = block.querySelector('.ptype')?.value || 'adult';
+            const genderEl = block.querySelector('.gender');
+            const birthEl = block.querySelector('.birthdate');
+            const fnameEl = block.querySelector('.fname');
+            const lnameEl = block.querySelector('.lname');
+            const passportEl = block.querySelector('.passport');
+            const nationalityEl = block.querySelector('.nationality');
+            const phoneEl = block.querySelector('.phoneNumber');
 
-        const errorColor = '#dc2626';
+            const errorColor = '#dc2626';
 
-        [genderEl, birthEl, fnameEl, lnameEl, passportEl, nationalityEl, phoneEl].forEach(el => {
-        if (el) el.style.borderColor = '';
-        });
+            if (!isLive) {
+                [genderEl, birthEl, fnameEl, lnameEl, passportEl, nationalityEl, phoneEl].forEach(el => {
+                    if (el) el.style.borderColor = '';
+                });
+            }
 
-        if (fnameEl && !fnameEl.value.trim()) {
-        if (!isLive) fnameEl.style.borderColor = errorColor;
-        return { ok: false, msg: `Unesite ime za putnika ${idx + 1}.` };
-        }
+            if (fnameEl && !fnameEl.value.trim()) {
+                if (!isLive) fnameEl.style.borderColor = errorColor;
+                return { ok: false, msg: `Unesite ime za putnika ${idx + 1}.` };
+            }
 
-        if (lnameEl && !lnameEl.value.trim()) {
-        if (!isLive) lnameEl.style.borderColor = errorColor;
-        return { ok: false, msg: `Unesite prezime za putnika ${idx + 1}.` };
-        }
+            if (lnameEl && !lnameEl.value.trim()) {
+                if (!isLive) lnameEl.style.borderColor = errorColor;
+                return { ok: false, msg: `Unesite prezime za putnika ${idx + 1}.` };
+            }
 
-        if (genderEl && !genderEl.value) {
-        if (!isLive) genderEl.style.borderColor = errorColor;
-        return { ok: false, msg: `Odaberite pol za putnika ${idx + 1}.` };
-        }
+            if (genderEl && !genderEl.value) {
+                if (!isLive) genderEl.style.borderColor = errorColor;
+                return { ok: false, msg: `Odaberite pol za putnika ${idx + 1}.` };
+            }
 
-        const birthDate = birthEl?.value;
-        if (!birthDate) {
-        if (!isLive && birthEl) birthEl.style.borderColor = errorColor;
-        return { ok: false, msg: `Unesite datum rođenja za putnika ${idx + 1}.` };
-        }
+            const birthDate = birthEl?.value;
+            if (!birthDate) {
+                if (!isLive && birthEl) birthEl.style.borderColor = errorColor;
+                return { ok: false, msg: `Unesite datum rođenja za putnika ${idx + 1}.` };
+            }
 
-        const inputYear = parseInt(birthDate.split('-')[0], 10);
-        const currentYear = new Date().getFullYear();
+            const inputYear = parseInt(birthDate.split('-')[0], 10);
+            const currentYear = new Date().getFullYear();
 
-        if (inputYear < 1900 || inputYear > currentYear) {
-        if (birthEl) birthEl.style.borderColor = errorColor;
-        return { ok: false, msg: `Godina rođenja za putnika ${idx + 1} mora biti između 1900. i ${currentYear}. godine.` };
-        }
+            if (inputYear < 1900 || inputYear > currentYear) {
+                if (birthEl) birthEl.style.borderColor = errorColor;
+                return { ok: false, msg: `Godina rođenja za putnika ${idx + 1} mora biti između 1900. i ${currentYear}. godine.` };
+            }
 
-        const age = calcAgeYears(birthDate);
-        if (age === null) return { ok: false, msg: `Datum rođenja za putnika ${idx + 1} nije ispravan.` };
-        if (type === 'adult' && age < 18) {
-        if (birthEl) birthEl.style.borderColor = errorColor;
-        return { ok: false, msg: `Putnik ${idx + 1} ima ${age} god. Ako je Odrasli, mora imati 18+ godina.` };
-        }
+            const age = calcAgeYears(birthDate);
+            if (age === null) return { ok: false, msg: `Datum rođenja za putnika ${idx + 1} nije ispravan.` };
+            if (type === 'adult' && age < 18) {
+                if (birthEl) birthEl.style.borderColor = errorColor;
+                return { ok: false, msg: `Putnik ${idx + 1} ima ${age} god. Ako je Odrasli, mora imati 18+ godina.` };
+            }
 
-        if (type === 'child' && age >= 18) {
-        if (birthEl) birthEl.style.borderColor = errorColor;
-        return { ok: false, msg: `Putnik ${idx + 1} ima ${age} god. Ako je Dijete, mora imati manje od 18 godina.` };
-        }
+            if (type === 'child' && age >= 18) {
+                if (birthEl) birthEl.style.borderColor = errorColor;
+                return { ok: false, msg: `Putnik ${idx + 1} ima ${age} god. Ako je Dijete, mora imati manje od 18 godina.` };
+            }
 
-        const phoneCode = block.querySelector('.phoneCode')?.value || '';
-        const phoneDigits = onlyDigits(phoneEl?.value || '');
+            const phoneCode = block.querySelector('.phoneCode')?.value || '';
+            const phoneDigits = onlyDigits(phoneEl?.value || '');
 
-        if (!phoneCode) {
-        return { ok: false, msg: `Odaberite pozivni broj za putnika ${idx + 1}.` };
-        }
+            if (!phoneCode) {
+                if (!isLive && block.querySelector('.phoneCode')) block.querySelector('.phoneCode').style.borderColor = errorColor;
+                return { ok: false, msg: `Odaberite pozivni broj za putnika ${idx + 1}.` };
+            }
 
-        const rule = getCountryRuleByDial(phoneCode);
-        const expected = rule?.digits ?? 9;
+            const rule = getCountryRuleByDial(phoneCode);
+            const expected = rule?.digits ?? 9;
 
-        if (phoneDigits.length !== expected) {
-        if (!isLive && phoneEl) phoneEl.style.borderColor = errorColor;
-        return { ok: false, msg: `Broj telefona za putnika ${idx + 1} mora imati tačno ${expected} cifara.` };
-        }
+            if (phoneDigits.length !== expected) {
+                if (!isLive && phoneEl) phoneEl.style.borderColor = errorColor;
+                return { ok: false, msg: `Broj telefona za putnika ${idx + 1} mora imati tačno ${expected} cifara.` };
+            }
 
-        const passport = (passportEl?.value || '').trim();
-        const PASSPORT_LEN = 9;
+            const passport = (passportEl?.value || '').trim();
+            const PASSPORT_LEN = 9;
 
-        if (!passport || passport.length !== PASSPORT_LEN || !/^[A-Z0-9]+$/.test(passport)) {
-        if (!isLive && passportEl) passportEl.style.borderColor = errorColor;
-        return { ok: false, msg: `Broj pasoša za putnika ${idx + 1} mora imati tačno ${PASSPORT_LEN} alfanumeričkih karaktera.` };
-        }
+            if (!passport || passport.length !== PASSPORT_LEN || !/^[A-Z0-9]+$/.test(passport)) {
+                if (!isLive && passportEl) passportEl.style.borderColor = errorColor;
+                return { ok: false, msg: `Broj pasoša za putnika ${idx + 1} mora imati tačno ${PASSPORT_LEN} alfanumeričkih karaktera.` };
+            }
 
-        if (nationalityEl && !nationalityEl.value) {
-        if (!isLive) nationalityEl.style.borderColor = errorColor;
-        return { ok: false, msg: `Odaberite državljanstvo za putnika ${idx + 1}.` };
-        }
+            if (nationalityEl && !nationalityEl.value) {
+                if (!isLive) nationalityEl.style.borderColor = errorColor;
+                return { ok: false, msg: `Odaberite državljanstvo za putnika ${idx + 1}.` };
+            }
 
-        return { ok: true, msg: '' };
+            return { ok: true, msg: '' };
         }
 
         function goToPayment() {
-        setFormError('');
-        const passengers = [];
-        const blocks = document.querySelectorAll('.passenger-block');
+            setFormError('');
+            const passengers = [];
+            const blocks = document.querySelectorAll('.passenger-block');
 
-        let countAdultsForm = 0;
-        let countChildrenForm = 0;
-        for (let idx = 0; idx < blocks.length; idx++) {
-        const block = blocks[idx];
-        const res = validateBlock(block, idx, false);
-        if (!res.ok) {
-        setFormError(res.msg || "Provjerite podatke putnika.");
-        return;
-        }
+            let countAdultsForm = 0;
+            let countChildrenForm = 0;
 
-        const type = block.querySelector('.ptype')?.value || 'adult';
-        if (type === 'adult') countAdultsForm++;
-        if (type === 'child') countChildrenForm++;
+            for (let idx = 0; idx < blocks.length; idx++) {
+                const block = blocks[idx];
+                const res = validateBlock(block, idx, false);
+                if (!res.ok) {
+                    setFormError(res.msg || "Provjerite podatke putnika.");
+                    block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
 
-        const nationalityEl = block.querySelector('.nationality');
-        const phoneCode = block.querySelector('.phoneCode')?.value || '';
-        const phoneDigits = onlyDigits(block.querySelector('.phoneNumber')?.value || '');
+                const type = block.querySelector('.ptype')?.value || 'adult';
+                if (type === 'adult') countAdultsForm++;
+                if (type === 'child') countChildrenForm++;
 
-        const phoneFormatted = phoneCode ? formatFullPhone(phoneCode, phoneDigits) : "";
-        const p = {
-        type,
-        gender: block.querySelector('.gender')?.value || "",
-        firstName: block.querySelector('.fname').value.trim(),
-        lastName: block.querySelector('.lname').value.trim(),
-        birthDate: block.querySelector('.birthdate').value,
-        passport: block.querySelector('.passport').value.trim(),
-        nationality: nationalityEl?.value || "",
-        phone: phoneFormatted,
-        freqFlyer: block.querySelector('.freqFlyer')?.value.trim() || "",
-        bedPreference: block.querySelector('.bedPreference')?.value || "no-preference",
-        requests: block.querySelector('.requests').value.trim()
-        };
-        passengers.push(p);
-        }
+                const nationalityEl = block.querySelector('.nationality');
+                const phoneCode = block.querySelector('.phoneCode')?.value || '';
+                const phoneDigits = onlyDigits(block.querySelector('.phoneNumber')?.value || '');
 
-        const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '0', 10);
-        const expectedChildren = parseInt(localStorage.getItem('reservationChildren') || '0', 10);
+                const phoneFormatted = phoneCode ? formatFullPhone(phoneCode, phoneDigits) : "";
+                
+                const fnameVal = block.querySelector('.fname')?.value || "";
+                const lnameVal = block.querySelector('.lname')?.value || "";
+                const birthdateVal = block.querySelector('.birthdate')?.value || "";
+                const passportVal = block.querySelector('.passport')?.value || "";
+                const freqFlyerVal = block.querySelector('.freqFlyer')?.value || "";
+                const bedPrefVal = block.querySelector('.bedPreference')?.value || "no-preference";
+                const requestsVal = block.querySelector('.requests')?.value || "";
 
-        if (localStorage.getItem('reservationAdults') !== null || localStorage.getItem('reservationChildren') !== null) {
-        if (countAdultsForm !== expectedAdults || countChildrenForm !== expectedChildren) {
-        setFormError(`Struktura putnika ne odgovara rezervaciji! Izabrano: ${countAdultsForm} odraslih, ${countChildrenForm} djece. Očekivano: ${expectedAdults} odraslih, ${expectedChildren} djece.`);
-        return;
-        }
-        }
+                const p = {
+                    type,
+                    gender: block.querySelector('.gender')?.value || "",
+                    firstName: fnameVal.trim(),
+                    lastName: lnameVal.trim(),
+                    birthDate: birthdateVal,
+                    passport: passportVal.trim(),
+                    nationality: nationalityEl?.value || "",
+                    phone: phoneFormatted,
+                    freqFlyer: freqFlyerVal.trim(),
+                    bedPreference: bedPrefVal,
+                    requests: requestsVal.trim()
+                };
+                passengers.push(p);
+            }
 
-        localStorage.setItem('savedPassengers', JSON.stringify(passengers));
-        const paketId = localStorage.getItem('reservationPaketId');
-        window.location.href = paketId ? (`/Placanje?paketId=${encodeURIComponent(paketId)}`) : '/Placanje';
+            const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '0', 10);
+            const expectedChildren = parseInt(localStorage.getItem('reservationChildren') || '0', 10);
+
+            if (localStorage.getItem('reservationAdults') !== null || localStorage.getItem('reservationChildren') !== null) {
+                if (countAdultsForm !== expectedAdults || countChildrenForm !== expectedChildren) {
+                    setFormError(`Struktura putnika ne odgovara rezervaciji! Izabrano: ${countAdultsForm} odraslih, ${countChildrenForm} djece. Očekivano: ${expectedAdults} odraslih, ${expectedChildren} djece.`);
+                    return;
+                }
+            }
+
+            localStorage.setItem('savedPassengers', JSON.stringify(passengers));
+            const paketId = localStorage.getItem('reservationPaketId');
+            window.location.href = paketId ? (`/Placanje?paketId=${encodeURIComponent(paketId)}`) : '/Placanje';
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-        generatePassengers();
-        loadSummary();
+            generatePassengers();
+            loadSummary();
         });
     </script>
 </body>

@@ -327,88 +327,88 @@
                         }
 
             .summary-card {
+                background: #ffffff;
+                border-radius: 16px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                border: 1px solid #e5e7eb;
+                overflow: hidden;
                 position: sticky;
-                top: 105px;
+                top: 20px;
             }
 
             .summary-photo {
-                height: 180px;
+                height: 160px;
                 position: relative;
+                background-size: cover;
+                background-position: center;
+                display: flex;
+                align-items: flex-end;
+                padding: 20px;
+                background-color: #cbd5e0;
             }
 
                 .summary-photo::before {
-                    content: "";
+                    content: '';
                     position: absolute;
                     top: 0;
                     left: 0;
                     right: 0;
                     bottom: 0;
-                    background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%);
+                    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 100%);
                     z-index: 1;
                 }
 
-            .summary-rating {
-                position: absolute;
-                top: 16px;
-                right: 16px;
-                background: rgba(255, 255, 255, 0.9);
-                padding: 4px 10px;
-                border-radius: 30px;
-                font-size: 12px;
-                color: #d97706;
-                font-weight: 700;
-                z-index: 2;
-                backdrop-filter: blur(4px);
-            }
-
             .summary-place {
-                position: absolute;
-                left: 20px;
-                bottom: 20px;
-                font-weight: 700;
-                font-size: 22px;
-                color: #fff;
+                position: relative;
                 z-index: 2;
+                font-weight: 700;
+                font-size: 20px;
+                color: #ffffff !important;
             }
-
-                .summary-place small {
-                    display: block;
-                    font-size: 13px;
-                    color: #e2e8f0;
-                    font-weight: 400;
-                    margin-top: 2px;
-                }
 
             .summary-body {
-                padding: 28px;
-            }
-
-            .summary-title {
-                color: var(--dark);
-                font-size: 12px;
-                font-weight: 700;
-                margin-bottom: 20px;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
+                padding: 24px;
             }
 
             .summary-row {
                 display: flex;
                 justify-content: space-between;
-                gap: 16px;
-                margin-bottom: 14px;
+                margin-bottom: 12px;
                 font-size: 14px;
-                color: var(--text-main);
+                color: var(--text-muted);
+                border-bottom: 1px dashed var(--border-color);
+                padding-bottom: 8px;
             }
 
-                .summary-row span {
-                    color: var(--text-muted);
-                }
-
-                .summary-row strong {
-                    color: var(--dark);
+                .summary-row span:first-child {
                     font-weight: 500;
                 }
+
+                .summary-row strong, .summary-row span:last-child {
+                    color: var(--brand-dark);
+                    font-weight: 600;
+                }
+
+            .price-line {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 20px;
+                padding-top: 16px;
+                border-top: 1px solid var(--border-color);
+            }
+
+                .price-line span:first-child {
+                    font-weight: 600;
+                    color: var(--brand-dark);
+                    font-size: 14px;
+                }
+
+            .total {
+                color: var(--brand-primary);
+                font-size: 24px;
+                font-weight: 800;
+            }
 
             .coupon-wrapper {
                 margin: 20px 0;
@@ -417,15 +417,7 @@
                 border-bottom: 1px dashed var(--border-color);
             }
 
-            .price-line {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-top: 16px;
-                color: var(--dark);
-                font-weight: 600;
-                font-size: 15px;
-            }
+        
 
             .total {
                 color: var(--primary);
@@ -517,7 +509,6 @@
                 <div class="step-divider"></div>
                 <div class="step"><div class="circle">4</div>Potvrda</div>
             </div>
-
             <div class="booking-grid">
                 <div class="panel panel-pad">
                     <h2 class="panel-title">Odaberite način plaćanja</h2>
@@ -581,11 +572,12 @@
 
                     <div id="bankFields" style="display:none;">
                         <label class="field-label">Instrukcije za deviznu/žiralnu uplatu</label>
-                        <div class="bank-info-box">
+                        <div class="bank-info-box" style="background: #f3f4f6; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
                             <div><strong>Primalac:</strong> InterTrips d.o.o.</div>
                             <div><strong>Banka:</strong> UniCredit Bank d.d.</div>
                             <div><strong>Broj računa:</strong> 154-1234567890-12</div>
                             <div><strong>IBAN:</strong> BA39 1541 2345 6789 0123</div>
+                            <div style="color: #6b7280; font-size: 12px; margin-top: 5px;">*Uplate vikendom biće procesirane narednog radnog dana.</div>
                         </div>
                         <label class="field-label" for="bankProof">Učitajte uplatnicu / dokaz o uplati (opcionalno)</label>
                         <input class="input" type="file" id="bankProof" style="padding-top: 10px;">
@@ -628,16 +620,54 @@
                             <div class="summary-place" id="summaryDest">Destinacija <small id="summaryCountry">—</small></div>
                         </div>
                         <div class="summary-body">
-                            <div class="summary-title">Sažetak Vaše Rezervacije</div>
-                            <div class="summary-row"><span>Polazak:</span><strong id="summaryDeparture">—</strong></div>
-                            <div class="summary-row"><span>Povratak:</span><strong id="summaryReturn">—</strong></div>
-                            <div class="summary-row"><span>Trajanje stacionara:</span><strong id="summaryDuration">—</strong></div>
-                            <div class="summary-row"><span>Struktura putnika:</span><strong id="summaryTravelers">—</strong></div>
-                            <div class="summary-row"><span>Tip sobe:</span><strong id="summaryRoom">—</strong></div>
-                            <div class="summary-row"><span>Avio let:</span><strong id="summaryFlight">—</strong></div>
-                            <div class="summary-row"><span>Autobuski transfer:</span><strong id="summaryBus">—</strong></div>
-                            <div id="summaryHotelContainer" class="summary-row" style="display:none;"><span>Hotel:</span><strong id="summaryHotel">—</strong></div>
+                            <div class="summary-row">
+                                <span><i data-lucide="users" class="summary-icon"></i> Putnici</span>
+                                <strong id="summaryTravelers">—</strong>
+                            </div>
+                            <div class="summary-row">
+                                <span><i data-lucide="calendar" class="summary-icon"></i> Trajanje</span>
+                                <strong id="summaryNights">—</strong>
+                            </div>
+                            <div class="summary-row">
+                                <span><i data-lucide="hotel" class="summary-icon"></i> Hotel</span>
+                                <strong id="summaryHotelName">—</strong>
+                            </div>
+                            <div class="summary-row">
+                                <span><i data-lucide="door-open" class="summary-icon"></i> Smještaj</span>
+                                <strong id="summaryRoom">—</strong>
+                            </div>
 
+                            <hr class="summary-divider">
+
+                            <div id="flightSummarySection">
+                                <div class="summary-row">
+                                    <span><i data-lucide="plane" class="summary-icon"></i> Let</span>
+                                    <strong id="summaryFlightRoute">—</strong>
+                                </div>
+                                <div class="summary-row">
+                                    <span><i data-lucide="plane-takeoff" class="summary-icon"></i> Polazak</span>
+                                    <strong id="summaryDeparture">—</strong>
+                                </div>
+                                <div class="summary-row">
+                                    <span><i data-lucide="plane-landing" class="summary-icon"></i> Povratak</span>
+                                    <strong id="summaryReturn">—</strong>
+                                </div>
+                            </div>
+
+                            <div id="busSummarySection" style="display: none;">
+                                <div class="summary-row">
+                                    <span><i data-lucide="bus" class="summary-icon"></i> Prevoz</span>
+                                    <strong>Autobuski aranžman</strong>
+                                </div>
+                                <div class="summary-row">
+                                    <span><i data-lucide="calendar-days" class="summary-icon"></i> Polazak</span>
+                                    <strong id="summaryBusDeparture">—</strong>
+                                </div>
+                                <div class="summary-row">
+                                    <span><i data-lucide="calendar-days" class="summary-icon"></i> Povratak</span>
+                                    <strong id="summaryBusReturn">—</strong>
+                                </div>
+                            </div>
                             <div class="coupon-wrapper">
                                 <label class="field-label" style="margin-top: 0; margin-bottom: 8px;" for="couponCode">Imate promo kod ili kupon?</label>
                                 <div style="display: flex; gap: 8px;">
@@ -679,6 +709,10 @@
                 } else {
                     const subWrap = document.getElementById('ratesSubMethod');
                     if (subWrap) subWrap.style.display = 'none';
+
+                    if (type !== 'card') {
+                        document.getElementById('cardFields').style.display = 'none';
+                    }
                 }
             }
 
@@ -751,6 +785,206 @@
                 localStorage.setItem('ratesMonthly', String(rata));
             }
 
+            async function applyCoupon() {
+                const unesenKod = document.getElementById('couponCode').value.trim();
+                const msgEl = document.getElementById('couponMessage');
+                const totalEl = document.getElementById('summaryTotal');
+
+                if (unesenKod === "") {
+                    msgEl.style.color = "#dc2626";
+                    msgEl.textContent = "Molimo unesite kod kupona.";
+                    msgEl.style.display = "block";
+                    localStorage.removeItem('koristeniKuponKod'); // Poništi ako ostane prazno polje
+                    return;
+                }
+
+                const vecIskoristenUTokomOveSesije = localStorage.getItem('koristeniKuponKod');
+                if (vecIskoristenUTokomOveSesije) {
+                    msgEl.style.color = "#dc2626";
+                    msgEl.textContent = "Dozvoljen je samo jedan kupon po osobi/rezervaciji.";
+                    msgEl.style.display = "block";
+                    return;
+                }
+
+                const trenutniKorisnik = await currentUserKey();
+                const lokalneRezervacije = JSON.parse(localStorage.getItem('reservations') || '[]');
+
+                const kuponVecIskoristenRanije = lokalneRezervacije.some(r =>
+                    r.userName === trenutniKorisnik &&
+                    r.PromoKod &&
+                    r.PromoKod.toLowerCase() === unesenKod.toLowerCase()
+                );
+
+                if (kuponVecIskoristenRanije) {
+                    msgEl.style.color = "#dc2626";
+                    msgEl.textContent = "Već ste iskoristili ovaj kupon u nekoj od Vaših prethodnih rezervacija!";
+                    msgEl.style.display = "block";
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/Kuponi/ProvjeriKupon?kod=${unesenKod}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.validan) {
+                            const totalRaw = localStorage.getItem('reservationTotal') || '0';
+                            let trenutnaCijena = parseTotalKM(totalRaw);
+                            let popust = trenutnaCijena * (data.popustProcenat / 100);
+                            let novaCijena = trenchesCijena - popust;
+
+                            totalEl.textContent = `${novaCijena.toFixed(2)} KM`;
+                            msgEl.style.color = "#16a34a";
+                            msgEl.textContent = `Kupon uspješno primijenjen! Ušteđeno: ${popust.toFixed(2)} KM (${data.popustProcenat}%).`;
+                            msgEl.style.display = "block";
+
+                            localStorage.setItem('reservationTotal', `${novaCijena.toFixed(2)} KM`);
+                            localStorage.setItem('koristeniKuponKod', unesenKod);
+
+                            if (selectedPaymentType === 'rates') {
+                                updateRatesPreview();
+                            }
+                        } else {
+                            msgEl.style.color = "#dc2626";
+                            msgEl.textContent = data.poruka || "Kupon nije validan ili je iskorišten.";
+                            msgEl.style.display = "block";
+                        }
+                    }
+                } catch (error) {
+                    console.error("Greška pri provjeri kupona:", error);
+                }
+            }
+
+            function isCardExpired(expiryString) {
+                if (!expiryString || !expiryString.includes('/')) return true;
+                const parts = expiryString.split('/');
+                if (parts.length !== 2) return true;
+
+                const inputMonth = parseInt(parts[0], 10);
+                let inputYear = parseInt(parts[1], 10);
+
+                if (isNaN(inputMonth) || isNaN(inputYear) || inputMonth < 1 || inputMonth > 12) return true;
+
+                if (parts[1].length === 2) {
+                    inputYear = 2000 + inputYear;
+                }
+
+                const now = new Date();
+                const currentMonth = now.getMonth() + 1;
+                const currentYear = now.getFullYear();
+
+                if (inputYear < currentYear) return true;
+                if (inputYear === currentYear && inputMonth < currentMonth) return true;
+                return false;
+            }
+
+            function validateCardInputs() {
+                const cardName = document.getElementById('cardName').value.trim();
+                const cardNumber = document.getElementById('cardNumber').value.trim();
+                const cardExpiry = document.getElementById('cardExpiry')?.value.trim() || '';
+                const cardCvv = document.getElementById('cardCvv')?.value.trim() || '';
+                const billingZip = document.getElementById('billingZip')?.value.trim() || '';
+
+                const cleanCardNumber = cardNumber.replace(/\D/g, '');
+                const cleanCvv = cardCvv.replace(/\D/g, '');
+                const cleanZip = billingZip.replace(/\D/g, '');
+
+                if (!cardName || cleanCardNumber.length < 13 || isCardExpired(cardExpiry) || cleanCvv.length !== 3 || cleanZip.length < 4) {
+                    return false;
+                }
+                return true;
+            }
+
+            async function payNow() {
+                let subMethod = null;
+
+                if (selectedPaymentType === 'card') {
+                    if (!validateCardInputs()) {
+                        window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Kartica je odbijena (nevalidni podaci, CVV ili poštanski broj).");
+                        return;
+                    }
+                }
+
+                if (selectedPaymentType === 'rates') {
+                    const monthsVal = document.getElementById('ratesMonths')?.value || '';
+                    const months = parseInt(monthsVal, 10);
+                    const checked = document.querySelector('input[name="rateSubMethod"]:checked');
+                    subMethod = checked ? checked.value : 'Karticom';
+
+                    if (!monthsVal || isNaN(months) || months < 1 || months > 60) {
+                        alert("Unesite validan broj mjeseci (1-60).");
+                        return;
+                    }
+
+                    if (subMethod === 'Karticom' && !validateCardInputs()) {
+                        window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Kartica je odbijena (nevalidni podaci, CVV ili poštanski broj za plaćanje na rate).");
+                        return;
+                    }
+                    localStorage.setItem('paymentType', 'Na rate (' + subMethod + ')');
+                } else {
+                    localStorage.setItem('paymentType', selectedPaymentType === 'card' ? 'Kartica' : (selectedPaymentType === 'cash' ? 'Gotovina' : 'Bankovni prenos'));
+                    localStorage.removeItem('ratesMonths');
+                    localStorage.removeItem('ratesMonthly');
+                }
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const paketId = urlParams.get('paketId') || localStorage.getItem('reservationPaketId') || '1';
+                localStorage.setItem('selectedPackageId', paketId);
+
+                const resCode = 'IT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+                localStorage.setItem('finalReservationCode', resCode);
+                await saveReservationToHistory(resCode);
+
+                const savedPassengers = JSON.parse(localStorage.getItem('savedPassengers') || '[]');
+                const datumPolaskaIso = localStorage.getItem('reservationDeparture');
+                const datumPovratkaIso = localStorage.getItem('reservationReturn');
+
+                const podaciZaServer = {
+                    PaketId: parseInt(paketId, 10),
+                    DatumPolaska: datumPolaskaIso,
+                    DatumPovratka: datumPovratkaIso,
+                    TipSobe: localStorage.getItem('reservationRoom') || '—',
+                    AvioLet: localStorage.getItem('reservationFlight') || '—',
+                    AutobuskiTransfer: localStorage.getItem('reservationBus') || '—',
+                    Hotel: localStorage.getItem('reservationHotel') || '—',
+                    Putnici: savedPassengers.map(p => ({
+                        Ime: p.firstName,
+                        Prezime: p.lastName,
+                        BrojPasosa: p.passport,
+                        Drzavljanstvo: p.nationality,
+                        DatumRodjenja: p.birthDate ? (p.birthDate + "T00:00:00") : null,
+                        Telefon: p.phone || null,
+                        PosebniZahtjevi: p.requests || null
+                    })),
+                    PromoKod: localStorage.getItem('koristeniKuponKod') || null,
+                    BrojRezervacije: resCode,
+                    NacinPlacanja: selectedPaymentType,
+                    UkupanIznos: parseTotalKM(localStorage.getItem('reservationTotal')),
+                    BrojMjeseciRata: selectedPaymentType === 'rates' ? parseInt(document.getElementById('ratesMonths').value, 10) : null,
+                    SubMetodaRata: selectedPaymentType === 'rates' ? (subMethod || "") : ""
+                };
+
+                try {
+                    const response = await fetch('/Rezervacija/KreirajRezervaciju', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(podaciZaServer)
+                    });
+                    if (response.ok) {
+                        localStorage.removeItem('koristeniKuponKod');
+                        localStorage.removeItem('ratesMonths');
+                        localStorage.removeItem('ratesMonthly');
+
+                        window.location.href = "/Placanje/Uspjeh";
+                        return;
+                    }
+                    const text = await response.text();
+                    window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent(text);
+                } catch (err) {
+                    console.error("Fetch error:", err);
+                    window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Serverska greška u povezivanju.");
+                }
+            }
+
             function loadPaymentSummary() {
                 const dest = localStorage.getItem('reservationDestination') || 'Destinacija';
                 const country = localStorage.getItem('reservationCountry') || '—';
@@ -759,18 +993,12 @@
                 document.getElementById('summaryDest').innerHTML = `${dest} <small>${country}</small>`;
                 document.getElementById('summaryDeparture').textContent = localStorage.getItem('reservationDeparture') || '—';
                 document.getElementById('summaryReturn').textContent = localStorage.getItem('reservationReturn') || '—';
-                document.getElementById('summaryDuration').textContent = localStorage.getItem('reservationDuration') || '—';
-                document.getElementById('summaryTravelers').textContent = localStorage.getItem('reservationTravelers') || '—';
-                document.getElementById('summaryRoom').textContent = localStorage.getItem('reservationRoom') || '—';
-                document.getElementById('summaryFlight').textContent = localStorage.getItem('reservationFlight') || '—';
-                document.getElementById('summaryBus').textContent = localStorage.getItem('reservationBus') || '—';
-                document.getElementById('summaryTotal').textContent = localStorage.getItem('reservationTotal') || '0.00 KM';
 
-                const hotelVal = localStorage.getItem('reservationHotel');
-                if (hotelVal && hotelVal !== '—') {
-                    document.getElementById('summaryHotel').textContent = hotelVal;
-                    document.getElementById('summaryHotelContainer').style.display = 'flex';
-                }
+                const nightsEl = document.getElementById('summaryNights');
+                if (nightsEl) nightsEl.textContent = localStorage.getItem('reservationDuration') || '—';
+
+                document.getElementById('summaryTravelers').textContent = localStorage.getItem('reservationTravelers') || '—';
+                document.getElementById('summaryTotal').textContent = localStorage.getItem('reservationTotal') || '0.00 KM';
 
                 const photo = document.getElementById('summaryPhoto');
                 if (photo) {
@@ -815,181 +1043,6 @@
                 };
                 reservations.unshift(reservation);
                 localStorage.setItem('reservations', JSON.stringify(reservations));
-            }
-
-            async function applyCoupon() {
-                const unesenKod = document.getElementById('couponCode').value.trim();
-                const msgEl = document.getElementById('couponMessage');
-                const totalEl = document.getElementById('summaryTotal');
-
-                if (unesenKod === "") {
-                    msgEl.style.color = "#dc2626";
-                    msgEl.textContent = "Molimo unesite kod kupona.";
-                    msgEl.style.display = "block";
-                    return;
-                }
-                try {
-                    const response = await fetch(`/Kuponi/ProvjeriKupon?kod=${unesenKod}`);
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.validan) {
-                            const totalRaw = localStorage.getItem('reservationTotal') || '0';
-                            let trenutnaCijena = parseTotalKM(totalRaw);
-                            let popust = trenutnaCijena * (data.popustProcenat / 100);
-                            let novaCijena = trenutnaCijena - popust;
-
-                            totalEl.textContent = `${novaCijena.toFixed(2)} KM`;
-                            msgEl.style.color = "#16a34a";
-                            msgEl.textContent = `Kupon uspješno primijenjen! Ušteđeno: ${popust.toFixed(2)} KM (${data.popustProcenat}%).`;
-                            msgEl.style.display = "block";
-
-                            localStorage.setItem('reservationTotal', `${novaCijena.toFixed(2)} KM`);
-                            localStorage.setItem('koristeniKuponKod', unesenKod);
-                            if (selectedPaymentType === 'rates') {
-                                updateRatesPreview();
-                            }
-                        } else {
-                            msgEl.style.color = "#dc2626";
-                            msgEl.textContent = data.poruka || "Kupon nije validan ili je iskorišten.";
-                            msgEl.style.display = "block";
-                        }
-                    }
-                } catch (error) {
-                    console.error("Greška pri provjeri kupona:", error);
-                }
-            }
-
-            function isCardExpired(expiryString) {
-                if (!expiryString || !expiryString.includes('/')) return true;
-                const parts = expiryString.split('/');
-                if (parts.length !== 2) return true;
-                const inputMonth = parseInt(parts[0], 10);
-                const inputYear = parseInt('20' + parts[1], 10);
-                if (isNaN(inputMonth) || isNaN(inputYear) || inputMonth < 1 || inputMonth > 12) return true;
-
-                const now = new Date();
-                const currentMonth = now.getMonth() + 1;
-                const currentYear = now.getFullYear();
-
-                if (inputYear < currentYear) return true;
-                if (inputYear === currentYear && inputMonth < currentMonth) return true;
-                return false;
-            }
-
-            function validateCardInputs() {
-                const cardName = document.getElementById('cardName').value.trim();
-                const cardNumber = document.getElementById('cardNumber').value.trim();
-                const cardExpiry = document.getElementById('cardExpiry')?.value.trim() || '';
-                const cardCvv = document.getElementById('cardCvv')?.value.trim() || '';
-                const billingZip = document.getElementById('billingZip')?.value.trim() || '';
-
-                const cleanCardNumber = cardNumber.replace(/\D/g, '');
-                const cleanCvv = cardCvv.replace(/\D/g, '');
-                const cleanZip = billingZip.replace(/\D/g, '');
-
-                if (!cardName || cleanCardNumber.length < 13 || isCardExpired(cardExpiry) || cleanCvv.length !== 3 || cleanZip.length !== 5) {
-                    return false;
-                }
-                return true;
-            }
-
-            async function payNow() {
-                let subMethod = null;
-
-                if (selectedPaymentType === 'card') {
-                    if (!validateCardInputs()) {
-                        window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Kartica je odbijena (nevalidni podaci, CVV ili poštanski broj).");
-                        return;
-                    }
-                }
-
-                if (selectedPaymentType === 'bank') {
-                    const day = new Date().getDay();
-                    if (day === 0 || day === 6) {
-                        window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Banka ne radi subotom i nedjeljom.");
-                        return;
-                    }
-                }
-
-                if (selectedPaymentType === 'rates') {
-                    const monthsVal = document.getElementById('ratesMonths')?.value || '';
-                    const months = parseInt(monthsVal, 10);
-                    const checked = document.querySelector('input[name="rateSubMethod"]:checked');
-                    subMethod = checked ? checked.value : 'Karticom';
-
-                    if (!monthsVal || isNaN(months) || months < 1 || months > 60) {
-                        alert("Unesite validan broj mjeseci (1-60).");
-                        return;
-                    }
-
-                    if (subMethod === 'Karticom' && !validateCardInputs()) {
-                        window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Kartica je odbijena (nevalidni podaci, CVV ili poštanski broj za plaćanje na rate).");
-                        return;
-                    }
-
-                    if (subMethod === 'Bankovni transfer') {
-                        const day = new Date().getDay();
-                        if (day === 0 || day === 6) {
-                            window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Banka ne radi subotom i nedjeljom.");
-                            return;
-                        }
-                    }
-                    localStorage.setItem('paymentType', 'Na rate (' + subMethod + ')');
-                } else {
-                    localStorage.setItem('paymentType', selectedPaymentType === 'card' ? 'Kartica' : (selectedPaymentType === 'cash' ? 'Gotovina' : 'Bankovni prenos'));
-                    localStorage.removeItem('ratesMonths');
-                    localStorage.removeItem('ratesMonthly');
-                }
-
-                const urlParams = new URLSearchParams(window.location.search);
-                const paketId = urlParams.get('paketId') || localStorage.getItem('reservationPaketId') || '1';
-                localStorage.setItem('selectedPackageId', paketId);
-
-                const resCode = 'IT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
-                localStorage.setItem('finalReservationCode', resCode);
-                await saveReservationToHistory(resCode);
-
-                const savedPassengers = JSON.parse(localStorage.getItem('savedPassengers') || '[]');
-                const datumPolaskaIso = localStorage.getItem('reservationDeparture');
-                const datumPovratkaIso = localStorage.getItem('reservationReturn');
-
-                const podaciZaServer = {
-                    PaketId: parseInt(paketId, 10),
-                    DatumPolaska: datumPolaskaIso,
-                    DatumPovratka: datumPovratkaIso,
-                    Putnici: savedPassengers.map(p => ({
-                        Ime: p.firstName,
-                        Prezime: p.lastName,
-                        BrojPasosa: p.passport,
-                        Drzavljanstvo: p.nationality,
-                        DatumRodjenja: p.birthDate ? (p.birthDate + "T00:00:00") : null,
-                        Telefon: p.phone || null,
-                        PosebniZahtjevi: p.requests || null
-                    })),
-                    PromoKod: localStorage.getItem('koristeniKuponKod') || null,
-                    BrojRezervacije: resCode,
-                    NacinPlacanja: selectedPaymentType,
-                    UkupanIznos: parseTotalKM(localStorage.getItem('reservationTotal')),
-                    BrojMjeseciRata: selectedPaymentType === 'rates' ? parseInt(document.getElementById('ratesMonths').value, 10) : null,
-                    SubMetodaRata: selectedPaymentType === 'rates' ? (subMethod || "") : ""
-                };
-
-                try {
-                    const response = await fetch('/Rezervacija/KreirajRezervaciju', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(podaciZaServer)
-                    });
-                    if (response.ok) {
-                        window.location.href = "/Placanje/Uspjeh";
-                        return;
-                    }
-                    const text = await response.text();
-                    window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent(text);
-                } catch (err) {
-                    console.error("Fetch error:", err);
-                    window.location.href = "/Placanje/Neuspjeh?razlog=" + encodeURIComponent("Serverska greška u povezivanju.");
-                }
             }
 
             window.addEventListener('DOMContentLoaded', function () {

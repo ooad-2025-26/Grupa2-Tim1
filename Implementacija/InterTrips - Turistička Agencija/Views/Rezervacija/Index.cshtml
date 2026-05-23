@@ -466,9 +466,11 @@
         }
 
         function planButtonHtml(r) {
-        if (!r || !r.paketId) return '';
+        if (!r) return '';
+        const pId = r.paketId || r.PaketId;
+        if (!pId) return '';
         return `
-        <a class="btn-elegant-action plan" href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(r.paketId)}">
+        <a class="btn-elegant-action plan" href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(pId)}">
         Plan putovanja
         </a>
         `;
@@ -488,6 +490,12 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
+        const danasnjiDan = new Date();
+        const dan = String(danasnjiDan.getDate()).padStart(2, '0');
+        const mjesec = String(danasnjiDan.getMonth() + 1).padStart(2, '0');
+        const godina = danasnjiDan.getFullYear();
+        const ispravanDatumIzdavanja = `${dan}.${mjesec}.${godina}.`;
+
         doc.setFillColor(10, 34, 40);
         doc.rect(0, 0, 210, 40, 'F');
         doc.setFont("helvetica", "bold");
@@ -498,7 +506,7 @@
         doc.setFontSize(11);
         doc.setFont("helvetica", "normal");
         doc.setTextColor(100, 100, 100);
-        doc.text(`Datum izdavanja dokumenta: ${new Date().toLocaleDateString('bs-BA')}`, 15, 50);
+        doc.text(`Datum izdavanja dokumenta: ${ispravanDatumIzdavanja}`, 15, 50);
 
         doc.setDrawColor(95, 181, 187);
         doc.line(15, 55, 195, 55);
@@ -513,7 +521,7 @@
 
         let y = 85;
         const stavke = [
-        { label: "Destinacija:", info: `${ukloniKvacice(pick(r.destinacija, r.Destinacija))} ${r.drzava ? '(' + ukloniKvacice(r.drzava) + ')' : ''}` },
+        { label: "Destinacija:", info: `${ukloniKvacice(pick(r.destinacija, r.Destinacija))} ${r.drzava || r.Drzava ? '(' + ukloniKvacice(pick(r.drzava, r.Drzava)) + ')' : ''}` },
         { label: "Naziv paketa:", info: ukloniKvacice(pick(r.paketNaziv, r.PaketNaziv)) },
         { label: "Datum polaska:", info: pick(r.datumPolaska, r.DatumPolaska) },
         { label: "Datum povratka:", info: pick(r.datumPovratka, r.DatumPovratka) },
@@ -559,10 +567,19 @@
         y = 25;
         }
 
-        const imePrezime = ukloniKvacice(pick(p.imePrezime, p.ImePrezime, p.ime, p.Ime));
+        const imePrezime = ukloniKvacice(pick(p.imePrezime, p.ImePrezime, `${p.ime || ''} ${p.prezime || ''}`.trim()));
         const tel = pick(p.brojTelefona, p.BrojTelefona, p.telefon, p.Telefon);
         const drzavljanstvo = ukloniKvacice(pick(p.drzavljanstvo, p.Drzavljanstvo));
-        const datRodj = pick(p.datumRodjenja, p.DatumRodjenja, p.rodjenje, p.Rodjenje);
+
+        let rawDate = pick(p.datumRodjenja, p.DatumRodjenja, p.rodjenje, p.Rodjenje);
+        let datRodj = rawDate;
+        if (rawDate && rawDate.includes('-')) {
+        const dijelovi = rawDate.split('T')[0].split('-');
+        if (dijelovi.length === 3) {
+        datRodj = `${dijelovi[2]}.${dijelovi[1]}.${dijelovi[0]}.`;
+        }
+        }
+
         const pasos = pick(p.brojPasosa, p.BrojPasosa, p.pasos, p.Pasos);
 
         doc.text(imePrezime, 17, y);
@@ -599,12 +616,13 @@
         ucitaneRezervacije = sveRezervacije.filter(r => {
         const datumString = r.datumPovratka || r.DatumPovratka;
         if (!datumString) return true;
+
         let povratak;
         if (datumString.includes('.')) {
         const parts = datumString.split('.');
         povratak = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
         } else {
-        powratak = new Date(datumString);
+        povratak = new Date(datumString);
         }
         if (isNaN(povratak.getTime())) return true;
         povratak.setHours(0, 0, 0, 0);
@@ -634,6 +652,10 @@
         Preuzmi PDF
         </button>
         `;
+
+        const dest = r.destinacija || r.Destinacija || '—';
+        const drz = r.drzava || r.Drzava ? '(' + (r.drzava || r.Drzava) + ')' : '';
+
         return `
         <div class="r-card">
         <div class="r-top">
@@ -641,7 +663,7 @@
         ${badgeHtml(r.status)}
         </div>
         <div class="r-grid">
-        <div class="r-line"><span>Destinacija</span><strong>${r.destinacija || r.Destinacija || '—'} ${r.drzava ? '(' + r.drzava + ')' : ''}</strong></div>
+        <div class="r-line"><span>Destinacija</span><strong>${dest} ${drz}</strong></div>
         <div class="r-line"><span>Turistički Paket</span><strong>${r.paketNaziv || r.PaketNaziv || '—'}</strong></div>
         <div class="r-line"><span>Period Putovanja</span><strong>${r.datumPolaska || r.DatumPolaska || '—'} - ${r.datumPovratka || r.DatumPovratka || '—'}</strong></div>
         <div class="r-line"><span>Broj Putnika</span><strong>${stvarniBrojPutnika} osobe</strong></div>

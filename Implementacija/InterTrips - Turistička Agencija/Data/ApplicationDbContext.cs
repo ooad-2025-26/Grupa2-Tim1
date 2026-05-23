@@ -32,7 +32,7 @@ namespace InterTrips___Turistička_Agencija.Data
         public DbSet<Kupon> Kupon => Set<Kupon>();
         public DbSet<RataPlacanja> RatePlacanja => Set<RataPlacanja>();
         public DbSet<LogNotifikacija> LogoviNotifikacija => Set<LogNotifikacija>();
-
+        public DbSet<TerminPutovanja> TerminPutovanja { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder); 
