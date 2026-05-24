@@ -446,17 +446,26 @@
             <a asp-controller="Administrator" asp-action="Index" class="nav-item">
                 <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
             </a>
-            <a asp-controller="Administrator" asp-action="Destinacije" class="nav-item">
+            <a href="/Administrator/Destinacije" class="nav-item">
                 <i class="fa-solid fa-map-location-dot"></i> <span>Destinacije</span>
             </a>
-            <a asp-controller="Administrator" asp-action="Paketi" class="nav-item">
+            <a href="/Administrator/Letovi" class="nav-item">
+                <i class="fa-solid fa-plane"></i> <span>Letovi</span>
+            </a>
+            <a href="/Administrator/Hoteli" class="nav-item">
+                <i class="fa-solid fa-hotel"></i> <span>Hoteli</span>
+            </a>
+            <a asp-controller="Administrator" asp-action="Paketi" class="nav-item active">
                 <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
             </a>
             <a asp-controller="Administrator" asp-action="Korisnici" class="nav-item">
                 <i class="fa-solid fa-users"></i> <span>Korisnici</span>
             </a>
-            <a asp-controller="Administrator" asp-action="Rezervacije" class="nav-item active">
+            <a asp-controller="Administrator" asp-action="Rezervacije" class="nav-item">
                 <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            </a>
+            <a href="/Administrator/Izvjestaj" class="nav-item">
+                <i class="fa-solid fa-chart-line"></i> Izvještaji
             </a>
         </nav>
 

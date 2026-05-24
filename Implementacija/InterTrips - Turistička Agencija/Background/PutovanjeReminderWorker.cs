@@ -25,16 +25,15 @@ namespace InterTrips___Turistička_Agencija.Background
             {
                 using (var scope = _services.CreateScope())
                 {
+                    var emailService = scope.ServiceProvider.GetRequiredService<EmailAndDocumentService>();
                     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                    var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
 
                     DateTime ciljaniDatum = DateTime.Today.AddDays(3);
 
-                    var rezervacijeZaPodsjetnik = await context.Rezervacije
+                     var rezervacijeZaPodsjetnik = await context.Rezervacije
                         .Include(r => r.Paket)
                         .Include(r => r.Korisnik)
-                        .Where(r => r.Paket != null &&
-                r.Paket.DatumPolaska.Date == ciljaniDatum)
+                        .Where(r => r.Paket != null && r.Paket.DatumPolaska.Date == ciljaniDatum)
                         .ToListAsync(stoppingToken);
 
                     foreach (var rezervacija in rezervacijeZaPodsjetnik)
@@ -45,13 +44,19 @@ namespace InterTrips___Turistička_Agencija.Background
                         {
                             string naslov = $"Podsjetnik za putovanje: {rezervacija.Paket!.Naziv}";
                             string poruka = $@"
-                               <h3>Poštovani,</h3>
-            <p>Vaše putovanje na destinaciju <strong>{rezervacija.Paket.Naziv}</strong> počinje za 3 dana ({rezervacija.Paket.DatumPolaska.ToString("dd.MM.yyyy")}).</p>
-            <p>Molimo Vas da provjerite Vaše putne dokumente (pasoš, vizu) i plan putovanja.</p>
-            <br>
-            <p>Sretan put želi Vam <strong>InterTrips Agencija</strong>!</p>";
+                                <h3>Poštovani,</h3>
+                                <p>Vaše putovanje na destinaciju <strong>{rezervacija.Paket.Naziv}</strong> počinje za 3 dana ({rezervacija.Paket.DatumPolaska.ToString("dd.MM.yyyy")}).</p>
+                                <p>Molimo Vas da provjerite Vaše putne dokumente (pasoš, vizu) i plan putovanja.</p>
+                                <br>
+                                <p>Sretan put želi Vam <strong>InterTrips Agencija</strong>!</p>";
 
-                            await emailService.SendEmailAsync(klijentEmail, naslov, poruka);
+                            await emailService.PosaljiEmailSaLogomAsync(
+                                klijentEmail,
+                                naslov,
+                                poruka,
+                                rezervacija.Id,
+                                "Podsjetnik za putovanje"
+                            );
                         }
                     }
                 }

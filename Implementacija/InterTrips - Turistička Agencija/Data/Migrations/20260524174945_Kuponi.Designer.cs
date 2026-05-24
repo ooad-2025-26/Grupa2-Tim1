@@ -4,6 +4,7 @@ using InterTrips___Turistička_Agencija.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InterTrips___Turistička_Agencija.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260524174945_Kuponi")]
+    partial class Kuponi
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -337,30 +340,27 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BrojPokusaja")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EmailPrimaoca")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PorukaGreske")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("RezervacijaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TipNotifikacije")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("VrijemeSlanja")
+                    b.Property<DateTime>("DatumSlanja")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DetaljiGreske")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Naslov")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PokusajBroj")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PrimalacEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StatusSlanja")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -407,9 +407,6 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BrojPregleda")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("CijenaOd")
                         .HasColumnType("decimal(18,2)");
 
@@ -438,9 +435,6 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("nvarchar(160)");
-
-                    b.Property<double>("Ocjena")
-                        .HasColumnType("float");
 
                     b.Property<string>("Opis")
                         .HasMaxLength(800)
@@ -494,10 +488,6 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
 
                     b.Property<int>("RezervacijaId")
                         .HasColumnType("int");
-
-                    b.Property<string>("TransakcijskiKod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("VrijemePlacanja")
                         .HasColumnType("datetime2");
@@ -828,21 +818,21 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                         new
                         {
                             Id = "1b63ef27-996b-4b13-98db-00f7e4b9bc10",
-                            ConcurrencyStamp = "f0faa4ec-9434-4998-8b5c-71a92ebcf746",
+                            ConcurrencyStamp = "9f86c3d5-8cc7-4692-ac70-3e28e7149710",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2c74fa38-885b-3b12-87cb-11e8e5c8cd21",
-                            ConcurrencyStamp = "7f035f40-6da2-4c87-80ce-e10fb4290ab0",
+                            ConcurrencyStamp = "9be574d4-0bef-47df-bfb5-8fd7208666f6",
                             Name = "Agent",
                             NormalizedName = "AGENT"
                         },
                         new
                         {
                             Id = "3d85fb49-774b-2b11-76da-22f9e6d9de32",
-                            ConcurrencyStamp = "8e4c2ecd-b827-4707-a066-816b6c499db6",
+                            ConcurrencyStamp = "fd43cefc-b12f-4ffa-848f-0d71db4ba068",
                             Name = "Klijent",
                             NormalizedName = "KLIJENT"
                         });

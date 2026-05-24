@@ -1,18 +1,16 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace InterTrips___Turistička_Agencija.Models
 {
     public class LogNotifikacija
     {
-        [Key]
         public int Id { get; set; }
-        [Required]
-        public string PrimalacEmail { get; set; } = string.Empty;
-        public string Naslov { get; set; } = string.Empty;
-        public DateTime DatumSlanja { get; set; }
-        public string StatusSlanja { get; set; } = "Uspješno"; // Uspješno, Greška, Spam folder
-        public string DetaljiGreske { get; set; } = string.Empty;
-        public int PokusajBroj { get; set; } = 1;
+        public int? RezervacijaId { get; set; }
+        public string EmailPrimaoca { get; set; } = string.Empty;
+        public string TipNotifikacije { get; set; } = string.Empty; 
+        public string Status { get; set; } = string.Empty; 
+        public int BrojPokusaja { get; set; } = 1;
+        public DateTime VrijemeSlanja { get; set; } = DateTime.Now;
+        public string PorukaGreske { get; set; } = string.Empty;
     }
 }

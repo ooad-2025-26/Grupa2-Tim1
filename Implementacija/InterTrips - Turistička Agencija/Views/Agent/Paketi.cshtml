@@ -21,9 +21,10 @@
             :root {
                 --bg-main: #f4f7f6;
                 --sidebar-dark: #0a2228;
+                --sidebar-hover: #133a43;
                 --primary: #1e7f88;
                 --primary-light: #2aa9b0;
-                --primary-accent: rgba(42, 169, 176, 0.04);
+                --primary-accent: rgba(42, 169, 176, 0.05);
                 --text-main: #1f2e3d;
                 --text-muted: #6b7a87;
                 --white: #ffffff;
@@ -43,12 +44,113 @@
                 padding: 0;
                 color: var(--text-main);
                 -webkit-font-smoothing: antialiased;
+                display: flex;
+            }
+
+            .sidebar {
+                width: 260px;
+                background-color: var(--sidebar-dark);
+                color: var(--white);
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 101;
+                box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+            }
+
+            .logo-area {
+                height: 70px;
+                display: flex;
+                align-items: center;
+                padding: 0 24px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .sidebar-logo-text {
+                color: var(--white);
+                font-size: 20px;
+                font-weight: 700;
+                text-decoration: none;
+                letter-spacing: -0.5px;
+            }
+
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                padding: 24px 16px;
+                flex-grow: 1;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 16px;
+                color: #a3b8cc;
+                text-decoration: none;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.2s ease;
+            }
+
+                .nav-item i {
+                    font-size: 16px;
+                    width: 20px;
+                    text-align: center;
+                }
+
+                .nav-item:hover {
+                    background-color: var(--sidebar-hover);
+                    color: var(--white);
+                }
+
+                .nav-item.active {
+                    background-color: var(--primary);
+                    color: var(--white);
+                    font-weight: 600;
+                }
+
+            .sidebar-footer {
+                padding: 16px;
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .sidebar-logout-btn {
+                width: 100%;
+                background: rgba(185, 28, 28, 0.1);
+                color: #ef4444;
+                border: 1px solid rgba(185, 28, 28, 0.2);
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-weight: 500;
+                font-size: 14px;
+                transition: all 0.2s ease;
+            }
+
+            .main-content {
+                margin-left: 260px;
+                flex-grow: 1;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
             }
 
             .page-wrap {
-                padding: 40px 24px;
-                max-width: 1000px;
+                padding: 40px 32px;
+                max-width: 1200px;
                 margin: 0 auto;
+                width: 100%;
+                box-sizing: border-box;
             }
 
             .page-header {
@@ -144,7 +246,7 @@
             }
 
             .badge-mine {
-                background: var(--primary-accent);
+                background: rgba(30, 127, 136, 0.08);
                 color: var(--primary);
                 border: 1px solid rgba(30, 127, 136, 0.2);
                 font-size: 11px;
@@ -153,6 +255,9 @@
                 border-radius: 6px;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
             }
 
             .meta-details {
@@ -165,13 +270,12 @@
             }
 
                 .meta-details span {
-                    display: flex;
+                    display: inline-flex;
                     align-items: center;
                     gap: 6px;
                 }
 
                 .meta-details i {
-                    color: var(--text-muted);
                     font-size: 14px;
                 }
 
@@ -192,6 +296,7 @@
                 display: inline-flex;
                 align-items: center;
                 gap: 8px;
+                white-space: nowrap;
             }
 
             .btn-take {
@@ -216,6 +321,30 @@
                     border-color: var(--danger);
                 }
 
+            .empty-state {
+                color: var(--text-muted);
+                font-style: italic;
+                text-align: center;
+                padding: 40px;
+                background: var(--white);
+                border-radius: 16px;
+                border: 1px solid var(--border-color);
+            }
+
+            @@media (max-width: 992px) {
+                .sidebar {
+                    width: 70px;
+                }
+
+                    .sidebar .sidebar-logo-text, .sidebar .nav-item span, .sidebar .sidebar-logout-btn span {
+                        display: none;
+                    }
+
+                .main-content {
+                    margin-left: 70px;
+                }
+            }
+
             @@media (max-width: 768px) {
                 .item {
                     flex-direction: column;
@@ -223,6 +352,10 @@
                     gap: 20px;
                     padding: 20px 24px;
                 }
+
+                    .item form {
+                        width: 100%;
+                    }
 
                 .action-btn {
                     width: 100%;
@@ -240,75 +373,111 @@
 </head>
 <body>
 
-    <div class="page-wrap">
-
-        <header class="page-header">
-            <h2>Upravljanje paketima agencije</h2>
-            <a href="/Agent?agentId=@Model.AgentId" class="btn-back">
-                <i class="fa-solid fa-arrow-left"></i> Nazad na panel
-            </a>
-        </header>
-
-        <div class="grid-list">
-            @if (Model.SviPaketi != null)
-            {
-                foreach (var p in Model.SviPaketi)
-                {
-                    bool isMine = Model.MojiPaketiIds != null && Model.MojiPaketiIds.Contains(p.Id);
-
-                    <div class="item @(isMine ? "preuzeto" : "")">
-                        <div class="info">
-                            <div class="info-header">
-                                <h3>@p.Naziv</h3>
-                                @if (isMine)
-                                {
-                                    <span class="badge-mine">
-                                        <i class="fa-solid fa-check" style="font-size: 10px; margin-right: 2px;"></i> Moj paket
-                                    </span>
-                                }
-                            </div>
-
-                            <div class="meta-details">
-                                <span>
-                                    <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i>
-                                    @(p.Destinacija?.Naziv ?? "Nespecificirano")
-                                </span>
-                                <span>•</span>
-                                <span>
-                                    <i class="fa-regular fa-moon"></i>
-                                    @p.TrajanjeNoci noći
-                                </span>
-                                <span>•</span>
-                                <span class="price-tag">
-                                    <i class="fa-solid fa-tags"></i>
-                                    @p.CijenaOd BAM
-                                </span>
-                            </div>
-                        </div>
-
-                        <form action="/Agent/TogglePaket" method="post">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="paketId" value="@p.Id" />
-                            <input type="hidden" name="agentId" value="@Model.AgentId" />
-
-                            @if (isMine)
-                            {
-                                <button type="submit" class="action-btn btn-release">
-                                    <i class="fa-solid fa-minus"></i> Pusti paket
-                                </button>
-                            }
-                            else
-                            {
-                                <button type="submit" class="action-btn btn-take">
-                                    <i class="fa-solid fa-plus"></i> Preuzmi paket
-                                </button>
-                            }
-                        </form>
-                    </div>
-                }
-            }
+    <aside class="sidebar">
+        <div class="logo-area">
+            <a href="/" class="sidebar-logo-text">InterTrips</a>
         </div>
 
+        <nav class="nav-links">
+            <a href="/Agent/Index" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
+            </a>
+            <a href="/Agent/Rezervacije?agentId=@Model.AgentId" class="nav-item">
+                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            </a>
+            <a href="/Agent/Paketi?agentId=@Model.AgentId" class="nav-item active">
+                <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
+            </a>
+            <a href="/Agent/Izvjestaj?agentId=@Model.AgentId" class="nav-item ">
+                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <form method="post" action="/Account/Logout" style="display:block; width:100%;">
+                @Html.AntiForgeryToken()
+                <button class="sidebar-logout-btn" type="submit">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span>Odjavi se</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-wrap">
+
+            <header class="page-header">
+                <h2>Upravljanje paketima agencije</h2>
+                <a href="/Agent?agentId=@Model.AgentId" class="btn-back">
+                    <i class="fa-solid fa-arrow-left"></i> Nazad na panel
+                </a>
+            </header>
+
+            <div class="grid-list">
+                @if (Model.SviPaketi != null && Model.SviPaketi.Any())
+                {
+                    foreach (var p in Model.SviPaketi)
+                    {
+                        bool isMine = Model.MojiPaketiIds != null && Model.MojiPaketiIds.Contains(p.Id);
+
+                        <div class="item @(isMine ? "preuzeto" : "")">
+                            <div class="info">
+                                <div class="info-header">
+                                    <h3>@p.Naziv</h3>
+                                    @if (isMine)
+                                    {
+                                        <span class="badge-mine">
+                                            <i class="fa-solid fa-check" style="font-size: 10px;"></i> Moj paket
+                                        </span>
+                                    }
+                                </div>
+
+                                <div class="meta-details">
+                                    <span>
+                                        <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i>
+                                        @(p.Destinacija?.Naziv ?? "Nespecificirano")
+                                    </span>
+                                    <span>•</span>
+                                    <span>
+                                        <i class="fa-regular fa-moon" style="color: var(--primary);"></i>
+                                        @p.TrajanjeNoci noći
+                                    </span>
+                                    <span>•</span>
+                                    <span class="price-tag">
+                                        <i class="fa-solid fa-tags" style="color: var(--text-muted);"></i>
+                                        @p.CijenaOd BAM
+                                    </span>
+                                </div>
+                            </div>
+
+                            <form action="/Agent/TogglePaket" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="paketId" value="@p.Id" />
+                                <input type="hidden" name="agentId" value="@Model.AgentId" />
+
+                                @if (isMine)
+                                {
+                                    <button type="submit" class="action-btn btn-release">
+                                        <i class="fa-solid fa-minus"></i> Pusti paket
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="action-btn btn-take">
+                                        <i class="fa-solid fa-plus"></i> Preuzmi paket
+                                    </button>
+                                }
+                            </form>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="empty-state">Trenutno nema dostupnih paketa u bazi podataka.</p>
+                }
+            </div>
+
+        </div>
     </div>
 
 </body>

@@ -1,0 +1,545 @@
+﻿@model InterTrips___Turistička_Agencija.Models.ViewModels.AgentDashboardVm
+@{
+    ViewData["Title"] = "InterTrips - Izvještaji Agenta";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+            :root {
+                --bg-main: #f4f7f6;
+                --sidebar-dark: #0a2228;
+                --sidebar-hover: #133a43;
+                --primary: #1e7f88;
+                --primary-light: #2aa9b0;
+                --primary-accent: rgba(42, 169, 176, 0.04);
+                --text-main: #1f2e3d;
+                --text-muted: #6b7a87;
+                --white: #ffffff;
+                --border-color: #e2e8f0;
+                --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
+                --shadow-md: 0 10px 25px rgba(10, 34, 40, 0.04);
+                --danger: #b91c1c;
+                --success: #15803d;
+                --success-bg: #f0fdf4;
+                --warning: #b45309;
+                --warning-bg: #fffbeb;
+            }
+
+            body {
+                background-color: var(--bg-main);
+                font-family: 'Inter', sans-serif;
+                min-height: 100vh;
+                margin: 0;
+                padding: 0;
+                color: var(--text-main);
+                -webkit-font-smoothing: antialiased;
+                display: flex;
+            }
+
+            .sidebar {
+                width: 260px;
+                background-color: var(--sidebar-dark);
+                color: var(--white);
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 101;
+                box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+            }
+
+            .logo-area {
+                height: 70px;
+                display: flex;
+                align-items: center;
+                padding: 0 24px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .sidebar-logo-text {
+                color: var(--white);
+                font-size: 20px;
+                font-weight: 700;
+                text-decoration: none;
+                letter-spacing: -0.5px;
+            }
+
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                padding: 24px 16px;
+                flex-grow: 1;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 16px;
+                color: #a3b8cc;
+                text-decoration: none;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.2s ease;
+            }
+
+                .nav-item i {
+                    font-size: 16px;
+                    width: 20px;
+                    text-align: center;
+                }
+
+                .nav-item:hover {
+                    background-color: var(--sidebar-hover);
+                    color: var(--white);
+                }
+
+                .nav-item.active {
+                    background-color: var(--primary);
+                    color: var(--white);
+                    font-weight: 600;
+                }
+
+            .sidebar-footer {
+                padding: 16px;
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .sidebar-logout-btn {
+                width: 100%;
+                background: rgba(185, 28, 28, 0.1);
+                color: #ef4444;
+                border: 1px solid rgba(185, 28, 28, 0.2);
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-weight: 500;
+                font-size: 14px;
+                transition: all 0.2s ease;
+            }
+
+            .main-content {
+                margin-left: 260px;
+                flex-grow: 1;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .dash-topbar {
+                height: 70px;
+                padding: 0 32px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: rgba(255, 255, 255, 0.85);
+                backdrop-filter: blur(12px);
+                border-bottom: 1px solid var(--border-color);
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+
+            .page-title {
+                font-size: 18px;
+                font-weight: 700;
+                color: var(--sidebar-dark);
+                margin: 0;
+            }
+
+            .dash-page {
+                padding: 40px 32px;
+                flex-grow: 1;
+            }
+
+            .dash-shell {
+                max-width: 1200px;
+                margin: 0 auto;
+                width: 100%;
+            }
+
+            .filter-card {
+                background: var(--white);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 30px;
+                box-shadow: var(--shadow-sm);
+            }
+
+            .filter-form {
+                display: flex;
+                gap: 16px;
+                align-items: flex-end;
+                flex-wrap: wrap;
+            }
+
+            .form-group {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+                .form-group label {
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: var(--text-muted);
+                    text-transform: uppercase;
+                }
+
+                .form-group input, .form-group select {
+                    padding: 10px 14px;
+                    border: 1px solid var(--border-color);
+                    border-radius: 8px;
+                    font-family: inherit;
+                    font-size: 14px;
+                    color: var(--text-main);
+                    outline: none;
+                    background: var(--white);
+                    min-width: 180px;
+                }
+
+            .filter-btn {
+                background-color: var(--primary);
+                color: var(--white);
+                border: none;
+                padding: 11px 24px;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.2s;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+                .filter-btn:hover {
+                    background-color: var(--sidebar-dark);
+                }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 24px;
+                margin-bottom: 30px;
+            }
+
+            .stat-box {
+                background: var(--white);
+                border: 1px solid var(--border-color);
+                border-radius: 16px;
+                padding: 24px;
+                box-shadow: var(--shadow-md);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .stat-info h3 {
+                margin: 0 0 6px 0;
+                font-size: 13px;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .stat-info p {
+                margin: 0;
+                font-size: 28px;
+                font-weight: 700;
+                color: var(--sidebar-dark);
+            }
+
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                background: var(--primary-accent);
+                color: var(--primary);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+            }
+
+            .report-card {
+                background: var(--white);
+                border: 1px solid var(--border-color);
+                border-radius: 16px;
+                box-shadow: var(--shadow-md);
+                overflow: hidden;
+            }
+
+            .card-header-area {
+                padding: 24px;
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+                .card-header-area h2 {
+                    margin: 0;
+                    font-size: 16px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    color: var(--sidebar-dark);
+                }
+
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            .table-report {
+                width: 100%;
+                border-collapse: collapse;
+                text-align: left;
+                font-size: 14px;
+            }
+
+                .table-report th {
+                    background: #f8fafc;
+                    padding: 16px 24px;
+                    font-weight: 600;
+                    color: var(--text-muted);
+                    border-bottom: 1px solid var(--border-color);
+                }
+
+                .table-report td {
+                    padding: 16px 24px;
+                    border-bottom: 1px solid var(--border-color);
+                    color: var(--text-main);
+                }
+
+                .table-report tr:last-child td {
+                    border-bottom: none;
+                }
+
+            .badge-status {
+                padding: 4px 10px;
+                border-radius: 6px;
+                font-size: 12px;
+                font-weight: 600;
+                display: inline-block;
+            }
+
+            .status-potvrdjeno {
+                background: var(--success-bg);
+                color: var(--success);
+            }
+
+            .status-na-cekanju {
+                background: var(--warning-bg);
+                color: var(--warning);
+            }
+
+            .print-btn {
+                background: none;
+                border: 1px solid var(--border-color);
+                padding: 8px 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 500;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                color: var(--text-main);
+            }
+
+                .print-btn:hover {
+                    border-color: var(--primary);
+                    color: var(--primary);
+                }
+
+            @@media (max-width: 992px) {
+                .sidebar {
+                    width: 70px;
+                }
+
+                    .sidebar .sidebar-logo-text, .sidebar .nav-item span, .sidebar .sidebar-logout-btn span {
+                        display: none;
+                    }
+
+                .main-content {
+                    margin-left: 70px;
+                }
+            }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo-area">
+            <a href="/" class="sidebar-logo-text">InterTrips</a>
+        </div>
+
+        <nav class="nav-links">
+            <a href="/Agent/Index" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
+            </a>
+            <a href="/Agent/Rezervacije?agentId=@Model.AgentId" class="nav-item">
+                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            </a>
+            <a href="/Agent/Paketi?agentId=@Model.AgentId" class="nav-item">
+                <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
+            </a>
+            <a href="/Agent/Izvjestaj?agentId=@Model.AgentId" class="nav-item active">
+                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <form method="post" action="/Account/Logout" style="display:block; width:100%;">
+                @Html.AntiForgeryToken()
+                <button class="sidebar-logout-btn" type="submit">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span>Odjavi se</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <header class="dash-topbar">
+            <h1 class="page-title">Pregled performansi i izvještaji</h1>
+        </header>
+
+        <main class="dash-page">
+            <div class="dash-shell">
+
+                <div class="filter-card">
+                    <form method="get" action="/Agent/Izvjestaj" class="filter-form">
+                        <input type="hidden" name="agentId" value="@Model.AgentId" />
+
+                        <div class="form-group">
+                            <label>Datum od</label>
+                            <input type="date" name="datumOd" value="@DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Datum do</label>
+                            <input type="date" name="datumDo" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Status rezervacije</label>
+                            <select name="status">
+                                <option value="">Svi statusi</option>
+                                <option value="Potvrdjeno">Potvrđeno</option>
+                                <option value="NaCekanju">Na čekanju</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="filter-btn">
+                            <i class="fa-solid fa-magnifying-glass"></i> Generiši
+                        </button>
+                    </form>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-info">
+                            <h3>Ukupno rezervacija</h3>
+                            <p>@(Model.AktivneRezervacije?.Count ?? 0)</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-box">
+                        <div class="stat-info">
+                            <h3>Aktivni paketi</h3>
+                            <p>@(Model.MojiPaketiIds?.Count ?? 0)</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-box-archive"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-box">
+                        <div class="stat-info">
+                            <h3>Procjena prometa</h3>
+                            <p>@((Model.AktivneRezervacije?.Sum(r => r.Paket?.CijenaOd) ?? 0).ToString("N2")) KM</p>
+                        </div>
+                        <div class="stat-icon" style="color: #16803d; background: #f0fdf4;">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-card">
+                    <div class="card-header-area">
+                        <h2>Istorija i realizacija rezervacija</h2>
+                        <button class="print-btn" onclick="window.print()">
+                            <i class="fa-solid fa-print"></i> Printaj
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table-report">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Klijent</th>
+                                    <th>Naziv paketa</th>
+                                    <th>Cijena po osobi</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.AktivneRezervacije == null || !Model.AktivneRezervacije.Any())
+                                {
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                            Nema pronađenih podataka za odabrani period.
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    foreach (var r in Model.AktivneRezervacije)
+                                    {
+                                        <tr>
+                                            <td><strong>#@r.Id</strong></td>
+                                            <td>@(r.Korisnik?.Email ?? "Nije specificirano")</td>
+                                            <td>@(r.Paket?.Naziv ?? "Nepoznat paket")</td>
+                                            <td><strong>@(r.Paket?.CijenaOd.ToString("N2") ?? "0.00") KM</strong></td>
+                                            <td>
+                                                <span class="badge-status @(r.Status.ToString() == "Potvrdjeno" ? "status-potvrdjeno" : "status-na-cekanju")">
+                                                    @r.Status.ToString()
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

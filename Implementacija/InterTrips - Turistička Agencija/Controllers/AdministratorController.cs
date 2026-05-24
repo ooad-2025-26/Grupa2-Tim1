@@ -60,7 +60,7 @@ public class AdministratorController : Controller
             RezervacijeCount = brojRezervacija
         };
 
-        return View(viewModel);
+        return View("~/Views/Administrator/Destinacije.cshtml", viewModel);
     }
 
     [HttpGet]
@@ -508,7 +508,7 @@ public class AdministratorController : Controller
 
         ViewBag.DestinacijaId = new SelectList(await _db.Destinacije.ToListAsync(), "Id", "Naziv");
 
-        return View(viewModel);
+        return View("~/Views/Administrator/Hoteli.cshtml", viewModel);
     }
 
     [HttpPost]
@@ -566,5 +566,48 @@ public class AdministratorController : Controller
 
         return RedirectToAction("Rezervacije");
     }
- 
+    [HttpGet]
+    public async Task<IActionResult> Izvjestaj()
+    {
+        var prometPotvrdjeno = await _db.Placanja
+        .SumAsync(p => (double?)p.Iznos) ?? 0.0;
+
+        var prometNaCekanju = await _db.Rezervacije
+        .Where(r => r.Status.ToString() == "NaCekanju" && r.Paket != null)
+        .SumAsync(r => (double?)r.Paket.CijenaOd) ?? 0.0;
+
+        var ukupanPrometSve = prometPotvrdjeno + prometNaCekanju;
+        ViewBag.PrometPotvrdjeno = prometPotvrdjeno;
+        ViewBag.PrometNaCekanju = prometNaCekanju;
+        ViewBag.UkupanPrometSve = ukupanPrometSve;
+
+        var paketi = await _db.Paketi
+            .Include(p => p.Rezervacije)
+            .ToListAsync();
+
+        var topDestinacije = paketi.Select(p => {
+            double brojRezervacija = p.Rezervacije?.Count ?? 0;
+            double pregledi = p.BrojPregleda > 0 ? p.BrojPregleda : (brojRezervacija + 10); // Spriječavanje dijeljenja sa 0
+            double stopaKonverzije = (brojRezervacija / pregledi) * 100;
+
+            double prosjecnaOcjena = 4.5;
+            double score = (brojRezervacija * 0.7) + (prosjecnaOcjena * 0.3);
+
+            return new
+            {
+                p.Naziv,
+                Pregledi = (int)pregledi,
+                BrojRezervacija = (int)brojRezervacija,
+                StopaKonverzije = stopaKonverzije,
+                Score = score
+            };
+        })
+        .OrderByDescending(d => d.Score)
+        .Take(10) 
+        .ToList();
+
+        ViewBag.TopDestinacije = topDestinacije;
+        System.Dynamic.ExpandoObject dummyModel = new System.Dynamic.ExpandoObject();
+        return View("~/Views/Administrator/Izvjestaj.cshtml", null);
+    }
 }

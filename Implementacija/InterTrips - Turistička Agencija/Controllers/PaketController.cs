@@ -43,6 +43,22 @@ namespace InterTrips___Turistička_Agencija.Controllers
 
             paket.CijenaOd = IzracunajDinamickuCijenu(paket);
 
+            var strategy = _db.Database.CreateExecutionStrategy();
+            await strategy.ExecuteAsync(async () =>
+            {
+                try
+                {
+                    paket.BrojPregleda += 1;
+                    _db.Entry(paket).State = EntityState.Modified;
+
+                    await _db.SaveChangesAsync();
+                }
+                catch (Exception)
+                {
+                    
+                }
+            });
+
             return View(paket);
         }
 

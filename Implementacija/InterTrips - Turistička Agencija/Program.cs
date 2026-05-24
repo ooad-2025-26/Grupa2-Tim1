@@ -36,7 +36,9 @@ builder.Services.ConfigureApplicationCookie(options => {
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<EmailAndDocumentService>();
+builder.Services.AddScoped<DbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+builder.Services.AddHostedService<PozadinskiProcesiService>();
 builder.Services.AddHostedService<PutovanjeReminderWorker>();
 
 var app = builder.Build();

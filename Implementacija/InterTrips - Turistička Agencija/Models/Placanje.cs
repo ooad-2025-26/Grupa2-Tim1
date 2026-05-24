@@ -19,11 +19,20 @@ public class Placanje
     [Column(TypeName = "decimal(18,2)")]
     public decimal Iznos { get; set; }
 
+ 
     public DateTime VrijemePlacanja { get; set; } = DateTime.UtcNow;
 
     [Required]
     public int RezervacijaId { get; set; }
     public Rezervacija? Rezervacija { get; set; }
     public virtual ICollection<RataPlacanja> Rate { get; set; } = new List<RataPlacanja>();
+    public int? KuponId { get; set; }
 
+    [ForeignKey("KuponId")]
+    public virtual Kupon? Kupon { get; set; }
+
+    [Column(TypeName = "decimal(18,2)")]
+    public decimal? OriginalniIznos { get; set; }
+
+    public string TransakcijskiKod { get; set; } = string.Empty;
 }

@@ -59,5 +59,9 @@ namespace InterTrips___Turistička_Agencija.Models
         public virtual Let? Let { get; set; }
         public VrstaPrevoza DostupniPrevoz { get; set; } = VrstaPrevoza.Oboje;
         public List<TerminPutovanja> DostupniTermini { get; set; } = new List<TerminPutovanja>();
+
+
+        public int BrojPregleda { get; set; } = 0;
+        public double Ocjena { get; set; } = 0.0;
     }
 }

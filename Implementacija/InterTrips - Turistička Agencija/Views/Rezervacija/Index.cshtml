@@ -281,7 +281,6 @@
         font-weight: 600;
         }
 
-        /* Akcije / Dugmad */
         .r-actions {
         margin-top: 20px;
         padding-top: 16px;
@@ -414,10 +413,12 @@
     <script>
         let ucitaneRezervacije = [];
 
-        // Pomoćna funkcija koja obezbjeđuje da se tekst ispravno ponaša u PDF okruženju
         function ukloniKvacice(tekst) {
-        if (!tekst) return '—';
-        return String(tekst);
+        if (tekst === null || tekst === undefined) return '—';
+        let cistTekst = String(tekst);
+        cistTekst = cistTekst.replace(/&amp;/g, '&');
+        cistTekst = cistTekst.replace(/<\/?[^>]+(>|$)/g, "");
+        return cistTekst.trim() === '' ? '—' : cistTekst;
         }
 
         async function getReservationsForCurrentUser() {
@@ -465,10 +466,16 @@
         function planButtonHtml(r) {
         if (!r) return '';
         const pId = r.paketId || r.PaketId;
-        if (!pId) return '';
-        return `<a class="btn-elegant-action plan" href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(pId)}">Plan putovanja</a>`;
-        }
+        const rId = r.id || r.Id;
+        if (!pId || !rId) return '';
 
+        return `
+        <a class="btn-elegant-action plan" href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(pId)}">Plan putovanja</a>
+        <a class="btn btn-outline-danger btn-sm m-1" href="/Rezervacija/PreuzmiItinerer/${encodeURIComponent(rId)}">
+        <i class="fa fa-file-pdf"></i> Preuzmi PDF
+        </a>
+        `;
+        }
         function downloadPdfByIndex(index) {
         const r = ucitaneRezervacije[index];
         if (!r) return;
@@ -500,7 +507,7 @@
         doc.setFont("helvetica", "normal");
         doc.setFontSize(10);
         doc.setTextColor(160, 174, 192);
-        doc.text("ZVANIČNA POTVRDA REZERVACIJE ARANŽMANA", 15, 28);
+        doc.text("ZVANICNA POTVRDA REZERVACIJE ARANZMANA", 15, 28);
 
         doc.setDrawColor(95, 181, 187);
         doc.setLineWidth(1.5);
@@ -510,29 +517,31 @@
         doc.setFont("helvetica", "normal");
         doc.setTextColor(113, 128, 150);
         doc.text(`Datum izdavanja: ${ispravanDatumIzdavanja}`, 140, 52);
-        doc.text(`Broj dokumenta: #IT-${godina}-${pick(r.id, r.Id)}`, 140, 58);
+        doc.text(`Broj dokumenta: #IT-${godina}-${ukloniKvacice(pick(r.id, r.Id))}`, 140, 58);
 
         doc.setFont("helvetica", "bold");
         doc.setFontSize(12);
         doc.setTextColor(10, 34, 40);
-        doc.text("DETALJI REZERVACIJE I ARANŽMANA", 15, 55);
+        doc.text("DETALJI REZERVACIJE I ARANZMANA", 15, 55);
 
         doc.setDrawColor(226, 232, 240);
         doc.setLineWidth(0.5);
         doc.line(15, 59, 195, 59);
 
         const brPutnika = r.brojPutnika || r.BrojPutnika || (r.putnici ? r.putnici.length : 1);
-
-        const hotelNaziv = pick(r.hotelNaziv, r.HotelNaziv, r.smjestaj, r.Smjestaj, 'Uključen prema programu');
-        const letInfo = pick(r.brojLeta, r.BrojLeta, r.letRuta, r.LetRuta, 'Uključen (Čarter let)');
+        const hotelNaziv = pick(r.hotelNaziv, r.HotelNaziv, r.smjestaj, r.Smjestaj, 'Ukljucen prema programu');
+        const letInfo = pick(r.brojLeta, r.BrojLeta, r.letRuta, r.LetRuta, 'Ukljucen (Carter let)');
+        const destNaziv = pick(r.destinacija, r.Destinacija);
+        const drzavaNaziv = r.drzava || r.Drzava ? pick(r.drzava, r.Drzava) : '';
+        const puniNazivDestinacije = drzavaNaziv !== '' ? `${destNaziv} (${drzavaNaziv})` : destNaziv;
 
         let y = 70;
         const stavke = [
         { label: "Kod rezervacije:", info: `#${pick(r.id, r.Id)}`, isBold: true },
         { label: "Trenutni status:", info: pick(r.status, r.Status, 'Aktivna').toUpperCase(), isBold: true },
-        { label: "Odabrana destinacija:", info: `${pick(r.destinacija, r.Destinacija)} ${r.drzava || r.Drzava ? '(' + pick(r.drzava, r.Drzava) + ')' : ''}`, isBold: false },
-        { label: "Turistički paket:", info: pick(r.paketNaziv, r.PaketNaziv), isBold: false },
-        { label: "Ugovoreni smještaj:", info: hotelNaziv, isBold: false },
+        { label: "Odabrana destinacija:", info: puniNazivDestinacije, isBold: false },
+        { label: "Turisticki paket:", info: pick(r.paketNaziv, r.PaketNaziv), isBold: false },
+        { label: "Ugovoreni smjestaj:", info: hotelNaziv, isBold: false },
         { label: "Let / Prevoz:", info: letInfo, isBold: false },
         { label: "Period putovanja:", info: `${pick(r.datumPolaska, r.DatumPolaska)}  do  ${pick(r.datumPovratka, r.DatumPovratka)}`, isBold: false },
         { label: "Ukupan broj putnika:", info: `${brPutnika} osobe`, isBold: false }
@@ -541,7 +550,7 @@
         stavke.forEach(item => {
         doc.setFont("helvetica", "bold");
         doc.setTextColor(10, 34, 40);
-        doc.text(item.label, 15, y);
+        doc.text(ukloniKvacice(item.label), 15, y);
 
         if (item.isBold) {
         doc.setFont("helvetica", "bold");
@@ -551,7 +560,7 @@
         doc.setTextColor(74, 85, 104);
         }
 
-        doc.text(String(item.info), 65, y);
+        doc.text(ukloniKvacice(item.info), 65, y);
 
         doc.setDrawColor(241, 245, 249);
         doc.line(15, y + 4, 195, y + 4);
@@ -576,8 +585,8 @@
 
         doc.text("Ime i Prezime", 18, y);
         doc.text("Kontakt / Email", 65, y);
-        doc.text("Državljanstvo", 120, y);
-        doc.text("Broj Pasoša / Dokumenta", 155, y);
+        doc.text("Drzavljanstvo", 120, y);
+        doc.text("Broj Pasosa / Dokumenta", 155, y);
 
         doc.setDrawColor(203, 213, 224);
         doc.setLineWidth(1);
@@ -603,13 +612,13 @@
 
         doc.setFont("helvetica", "bold");
         doc.setTextColor(10, 34, 40);
-        doc.text(imePrezime, 18, y);
+        doc.text(ukloniKvacice(imePrezime), 18, y);
 
         doc.setFont("helvetica", "normal");
         doc.setTextColor(74, 85, 104);
-        doc.text(tel, 65, y);
-        doc.text(drzavljanstvo, 120, y);
-        doc.text(pasos, 155, y);
+        doc.text(ukloniKvacice(tel), 65, y);
+        doc.text(ukloniKvacice(drzavljanstvo), 120, y);
+        doc.text(ukloniKvacice(pasos), 155, y);
 
         doc.setDrawColor(241, 245, 249);
         doc.line(15, y + 4, 195, y + 4);
@@ -622,7 +631,7 @@
 
         doc.setFont("helvetica", "normal");
         doc.setTextColor(74, 85, 104);
-        doc.text(pick(r.korisnikEmail, r.KorisnikEmail, "—"), 65, y);
+        doc.text(ukloniKvacice(pick(r.korisnikEmail, r.KorisnikEmail, "—")), 65, y);
         doc.text("BiH", 120, y);
         doc.text("Evidentirano sistemom", 155, y);
 
@@ -633,7 +642,7 @@
         doc.setFont("helvetica", "normal");
         doc.setFontSize(8.5);
         doc.setTextColor(160, 174, 192);
-        doc.text("InterTrips Turistička Agencija • Hvala Vam na povjerenju! • Dokument je punovažno generisan elektronskim putem.", 25, 285);
+        doc.text("InterTrips Turisticka Agencija  Hvala Vam na povjerenju!  Dokument je punovazno generisan elektronskim putem.", 25, 285);
 
         doc.save(`Rezervacija_InterTrips_${pick(r.id, r.Id)}.pdf`);
         }
@@ -645,7 +654,6 @@
 
         let sveRezervacije = await getReservationsForCurrentUser();
 
-        // Postavljanje trenutnog datuma za validaciju (Maj 2026)
         const danas = new Date(2026, 4, 24);
         danas.setHours(0, 0, 0, 0);
 

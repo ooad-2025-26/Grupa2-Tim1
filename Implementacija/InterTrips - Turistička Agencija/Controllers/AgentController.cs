@@ -5,6 +5,7 @@ using InterTrips___Turistička_Agencija.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Dynamic;
 
 namespace InterTrips___Turistička_Agencija.Controllers;
 
@@ -136,4 +137,53 @@ namespace InterTrips___Turistička_Agencija.Controllers;
 
             return View(viewModel);
         }
+    [HttpGet]
+    public async Task<IActionResult> Izvjestaj(int agentId, DateTime? datumOd, DateTime? datumDo, string status)
+    {
+        if (agentId == 0)
+        {
+            var emailAgenta = User.Identity?.Name;
+            if (!string.IsNullOrEmpty(emailAgenta))
+            {
+                var agentIzBaze = await _db.Set<Korisnik>().FirstOrDefaultAsync(k => k.Email == emailAgenta);
+                agentId = agentIzBaze?.Id ?? 0;
+            }
+        }
+
+        var mojiPaketiList = await _db.Set<AgentPaket>()
+         .Where(ap => ap.AgentId == agentId)
+         .Select(ap => ap.PaketId)
+         .ToListAsync();
+
+        var query = _db.Rezervacije
+        .Include(r => r.Korisnik)
+        .Include(r => r.Paket)
+        .Where(r => mojiPaketiList.Contains(r.PaketId));
+        if (datumOd.HasValue)
+        {
+            var dateOnlyOd = DateOnly.FromDateTime(datumOd.Value);
+            query = query.Where(r => r.DatumPolaska >= dateOnlyOd);
+        }
+        if (datumDo.HasValue)
+        {
+            var dateOnlyDo = DateOnly.FromDateTime(datumDo.Value);
+            query = query.Where(r => r.DatumPolaska <= dateOnlyDo);
+        }
+
+        if (!string.IsNullOrEmpty(status))
+        {
+            query = query.Where(r => r.Status.ToString() == status);
+        }
+
+        var filtriraneRezervacije = await query.ToListAsync();
+
+        var vm = new AgentDashboardVm
+        {
+            AgentId = agentId,
+            MojiPaketiIds = new HashSet<int>(mojiPaketiList),
+            AktivneRezervacije = filtriraneRezervacije
+        };
+
+        return View(vm);
     }
+}

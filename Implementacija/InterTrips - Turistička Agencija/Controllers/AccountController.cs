@@ -3,75 +3,84 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace InterTrips___Turistička_Agencija.Controllers;
-
-
-[Route("Account")]
-[Route("accounts")]
-public class AccountController : Controller
+namespace InterTrips___Turistička_Agencija.Controllers
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
-
-    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+    [Route("Account")]
+    [Route("accounts")]
+    public class AccountController : Controller
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
-    }
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager; 
 
-    public class LoginDto
-    {
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
+        public AccountController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
+        }
 
-   
+        public class LoginDto
+        {
+            public string Email { get; set; } = string.Empty;
+            public string Password { get; set; } = string.Empty;
+        }
+
         public class RegisterDto
         {
             public string Ime { get; set; } = string.Empty;
             public string Prezime { get; set; } = string.Empty;
             public string Email { get; set; } = string.Empty;
             public string Password { get; set; } = string.Empty;
-       }
-    
-
-    [HttpGet("Login")]
-    public IActionResult Login()
-    {
-        return View();
-    }
-    [HttpPost("Login")]
-    public async Task<IActionResult> Login([FromBody] LoginDto dto)
-    {
-        var user = await _userManager.FindByEmailAsync(dto.Email)
-                ?? await _userManager.FindByNameAsync(dto.Email);
-
-        if (user == null)
-            return Unauthorized(new { success = false, message = "Pogrešan email ili lozinka." });
-
-        var result = await _signInManager.PasswordSignInAsync(user.UserName!, dto.Password, false, false);
-        if (!result.Succeeded)
-            return Unauthorized(new { success = false, message = "Pogrešan email ili lozinka." });
-
-        var roles = await _userManager.GetRolesAsync(user);
-
-        var redirectUrl = roles.Contains("Admin") ? "/Administrator"
-                : roles.Contains("Agent") ? $"/Agent?agentId={user.Id}"
-                : "/";
-
-        return Ok(new { success = true, redirectUrl });
-    }
-
-    [HttpPost("Register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
-    {
-        if (dto == null)
-        {
-            return BadRequest(new { success = false, message = "Podaci nisu ispravno poslani." });
         }
 
-        if (ModelState.IsValid)
+        [HttpGet("Login")]
+        public IActionResult Login()
         {
+            return View();
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        {
+            if (dto == null || string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Password))
+                return BadRequest(new { success = false, message = "Popunite sva polja." });
+
+            var user = await _userManager.FindByEmailAsync(dto.Email)
+                    ?? await _userManager.FindByNameAsync(dto.Email);
+
+            if (user == null)
+                return Unauthorized(new { success = false, message = "Pogrešan email ili lozinka." });
+
+            var result = await _signInManager.PasswordSignInAsync(user.UserName!, dto.Password, false, false);
+            if (!result.Succeeded)
+                return Unauthorized(new { success = false, message = "Pogrešan email ili lozinka." });
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var redirectUrl = roles.Contains("Admin") ? "/Administrator"
+                    : roles.Contains("Agent") ? $"/Agent?agentId={user.Id}"
+                    : "/";
+
+            return Ok(new { success = true, redirectUrl });
+        }
+
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+        {
+            if (dto == null)
+            {
+                return BadRequest(new { success = false, message = "Podaci nisu ispravno poslani." });
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { success = false, message = "Model nije validan." });
+            }
+
             var user = new ApplicationUser
             {
                 UserName = dto.Email,
@@ -84,6 +93,12 @@ public class AccountController : Controller
 
             if (result.Succeeded)
             {
+                if (!await _roleManager.RoleExistsAsync("Klijent"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("Klijent"));
+                }
+                await _userManager.AddToRoleAsync(user, "Klijent");
+
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
                 return Ok(new { success = true, redirectUrl = "/" });
@@ -93,30 +108,30 @@ public class AccountController : Controller
             return BadRequest(new { success = false, message = errors });
         }
 
-        return BadRequest(new { success = false, message = "Model nije validan." });
-    }
-
-    [HttpPost("Logout")]
-    public async Task<IActionResult> Logout()
-    {
-        await _signInManager.SignOutAsync();
-        return RedirectToAction("Index", "Home");
-    }
-
-    [HttpGet("Me")]
-    public IActionResult Me()
-    {
-        if (User?.Identity?.IsAuthenticated != true)
-            return Unauthorized(new { isAuthenticated = false });
-
-        return Ok(new
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout()
         {
-            isAuthenticated = true,
-            userName = User.Identity!.Name
-        });
-    }
-    [HttpGet("AccessDenied")]
-    public IActionResult AccessDenied()
-    { return Content("Pristup odbijen. Nemate administratorske ili agentske ovlasti za ovaj dio stranice.");
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet("Me")]
+        public IActionResult Me()
+        {
+            if (User?.Identity?.IsAuthenticated != true)
+                return Unauthorized(new { isAuthenticated = false });
+
+            return Ok(new
+            {
+                isAuthenticated = true,
+                userName = User.Identity!.Name
+            });
+        }
+
+        [HttpGet("AccessDenied")]
+        public IActionResult AccessDenied()
+        {
+            return Content("Pristup odbijen. Nemate administratorske ili agentske ovlasti za ovaj dio stranice.");
+        }
     }
 }

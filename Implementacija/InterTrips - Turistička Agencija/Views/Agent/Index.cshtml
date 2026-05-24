@@ -21,6 +21,7 @@
             :root {
                 --bg-main: #f4f7f6;
                 --sidebar-dark: #0a2228;
+                --sidebar-hover: #133a43;
                 --primary: #1e7f88;
                 --primary-light: #2aa9b0;
                 --primary-accent: rgba(42, 169, 176, 0.04);
@@ -43,6 +44,111 @@
                 padding: 0;
                 color: var(--text-main);
                 -webkit-font-smoothing: antialiased;
+                display: flex; 
+            }
+
+            .sidebar {
+                width: 260px;
+                background-color: var(--sidebar-dark);
+                color: var(--white);
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 101;
+                box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+            }
+
+            .logo-area {
+                height: 70px;
+                display: flex;
+                align-items: center;
+                padding: 0 24px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .sidebar-logo-text {
+                color: var(--white);
+                font-size: 20px;
+                font-weight: 700;
+                text-decoration: none;
+                letter-spacing: -0.5px;
+            }
+
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                padding: 24px 16px;
+                flex-grow: 1;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 16px;
+                color: #a3b8cc;
+                text-decoration: none;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.2s ease;
+            }
+
+                .nav-item i {
+                    font-size: 16px;
+                    width: 20px;
+                    text-align: center;
+                }
+
+                .nav-item:hover {
+                    background-color: var(--sidebar-hover);
+                    color: var(--white);
+                }
+
+                .nav-item.active {
+                    background-color: var(--primary);
+                    color: var(--white);
+                    font-weight: 600;
+                }
+
+            .sidebar-footer {
+                padding: 16px;
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .sidebar-logout-btn {
+                width: 100%;
+                background: rgba(185, 28, 28, 0.1);
+                color: #ef4444;
+                border: 1px solid rgba(185, 28, 28, 0.2);
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-weight: 500;
+                font-size: 14px;
+                transition: all 0.2s ease;
+            }
+
+                .sidebar-logout-btn:hover {
+                    background: var(--danger);
+                    color: var(--white);
+                    border-color: var(--danger);
+                }
+
+            .main-content {
+                margin-left: 260px; 
+                flex-grow: 1;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
             }
 
             .dash-topbar {
@@ -50,7 +156,7 @@
                 padding: 0 32px;
                 display: flex;
                 align-items: center;
-                justify-content: space-between;
+                justify-content: flex-end; 
                 background: rgba(255, 255, 255, 0.85);
                 backdrop-filter: blur(12px);
                 border-bottom: 1px solid var(--border-color);
@@ -60,11 +166,6 @@
                 box-shadow: var(--shadow-sm);
             }
 
-            .logo {
-                height: 38px;
-                object-fit: contain;
-            }
-
             .topbar-actions {
                 display: flex;
                 gap: 12px;
@@ -72,12 +173,14 @@
             }
 
             .dash-page {
-                padding: 40px 24px;
+                padding: 40px 32px;
+                flex-grow: 1;
             }
 
             .dash-shell {
                 max-width: 1200px;
                 margin: 0 auto;
+                width: 100%;
             }
 
             .dash-hero {
@@ -249,19 +352,6 @@
                     color: var(--primary);
                 }
 
-            .logout-btn {
-                background: var(--danger-bg);
-                color: var(--danger);
-                border-color: var(--danger-border);
-                cursor: pointer;
-            }
-
-                .logout-btn:hover {
-                    background: var(--danger);
-                    color: var(--white);
-                    border-color: var(--danger);
-                }
-
             .select-btn {
                 border: 1px solid var(--primary);
                 border-radius: 8px;
@@ -310,6 +400,20 @@
                 }
 
             @@media (max-width: 992px) {
+                .sidebar {
+                    width: 70px;
+                }
+
+                    .sidebar .sidebar-logo-text,
+                    .sidebar .nav-item span,
+                    .sidebar .sidebar-logout-btn span {
+                        display: none;
+                    }
+
+                .main-content {
+                    margin-left: 70px;
+                }
+
                 .dash-grid {
                     grid-template-columns: 1fr;
                 }
@@ -322,135 +426,166 @@
             }
 
             @@media (max-width: 600px) {
+                .sidebar {
+                    display: none; 
+                }
+
+                .main-content {
+                    margin-left: 0;
+                }
+
                 .dash-topbar {
                     padding: 0 16px;
                 }
 
                 .topbar-actions span {
-                    display: none; 
+                    display: none;
                 }
             }
     </style>
 </head>
 <body>
 
-    <header class="dash-topbar">
-        <a href="/" class="logo-link">
-            <img src="~/assets/logo.png" alt="Logo" class="logo">
-        </a>
-        <div class="topbar-actions">
-            <a href="/Agent/Rezervacije?agentId=@Model.AgentId" class="pill-link">
-                <i class="fa-solid fa-list-check"></i> <span>Pregled svih rezervacija</span>
+    <aside class="sidebar">
+        <div class="logo-area">
+            <a href="/" class="sidebar-logo-text">InterTrips</a>
+        </div>
+
+        <nav class="nav-links">
+            <a href="/Agent/Index" class="nav-item active">
+                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
             </a>
-            <form method="post" action="/Account/Logout" style="display:inline;">
+            <a href="/Agent/Rezervacije?agentId=@Model.AgentId" class="nav-item">
+                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            </a>
+            <a href="/Agent/Paketi?agentId=@Model.AgentId" class="nav-item">
+                <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
+            </a>
+            <a href="/Agent/Izvjestaj?agentId=@Model.AgentId" class="nav-item ">
+                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <form method="post" action="/Account/Logout" style="display:block; width:100%;">
                 @Html.AntiForgeryToken()
-                <button class="pill-link logout-btn" type="submit">
+                <button class="sidebar-logout-btn" type="submit">
                     <i class="fa-solid fa-right-from-bracket"></i> <span>Odjavi se</span>
                 </button>
             </form>
         </div>
-    </header>
+    </aside>
 
-    <main class="dash-page">
-        <div class="dash-shell">
+    <div class="main-content">
+        <header class="dash-topbar">
+            <div class="topbar-actions">
+                <a href="/Agent/Rezervacije?agentId=@Model.AgentId" class="pill-link">
+                    <i class="fa-solid fa-list-check"></i> <span>Pregled svih rezervacija</span>
+                </a>
+            </div>
+        </header>
 
-            <div class="dash-hero">
-                <div class="hero-text-area">
-                    <span class="badge"><i class="fa-solid fa-shield-solid"></i> Turistički Agent</span>
-                    <h1>Dobrodošao nazad,</h1>
-                    <p>Danas imaš <strong>@(Model.AktivneRezervacije?.Count ?? 0)</strong> aktivnih rezervacija koje zahtijevaju tvoju pažnju.</p>
-                </div>
-                <div class="hero-metrics">
-                    <div class="metric-card">
-                        <strong>@(Model.MojiPaketiIds?.Count ?? 0)</strong>
-                        <span>Tvojih paketa</span>
+        <main class="dash-page">
+            <div class="dash-shell">
+
+                <div class="dash-hero">
+                    <div class="hero-text-area">
+                        <span class="badge"><i class="fa-solid fa-user-tie"></i> Turistički Agent</span>
+                        <h1>Dobrodošao nazad,</h1>
+                        <p>Danas imaš <strong>@(Model.AktivneRezervacije?.Count ?? 0)</strong> aktivnih rezervacija koje zahtijevaju tvoju pažnju.</p>
+                    </div>
+                    <div class="hero-metrics">
+                        <div class="metric-card">
+                            <strong>@(Model.MojiPaketiIds?.Count ?? 0)</strong>
+                            <span>Tvojih paketa</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="dash-grid">
+                <div class="dash-grid">
 
-                <div class="dash-card">
-                    <h2>
-                        <span><i class="fa-solid fa-bell" style="color: var(--primary); margin-right: 6px;"></i> Aktivne rezervacije</span>
-                        <a href="/Agent/Rezervacije?agentId=@Model.AgentId">Vidi sve <i class="fa-solid fa-arrow-right" style="font-size: 10px;"></i></a>
-                    </h2>
+                    <div class="dash-card">
+                        <h2>
+                            <span><i class="fa-solid fa-bell" style="color: var(--primary); margin-right: 6px;"></i> Aktivne rezervacije</span>
+                            <a href="/Agent/Rezervacije?agentId=@Model.AgentId">Vidi sve <i class="fa-solid fa-arrow-right" style="font-size: 10px;"></i></a>
+                        </h2>
 
-                    <div class="dest-list">
-                        @if (Model.AktivneRezervacije == null || !Model.AktivneRezervacije.Any())
-                        {
-                            <div class="empty-state">
-                                <i class="fa-solid fa-folder-open"></i>
-                                <p style="margin: 0;">Trenutno nema aktivnih rezervacija.</p>
-                                <small style="color: var(--text-muted);">Preuzmite pakete sa desne strane da pokrenete prodaju.</small>
-                            </div>
-                        }
-                        else
-                        {
-                            foreach (var r in Model.AktivneRezervacije.Take(5))
+                        <div class="dest-list">
+                            @if (Model.AktivneRezervacije == null || !Model.AktivneRezervacije.Any())
                             {
-                                <div class="dest-item">
-                                    <div>
-                                        <strong>#@r.Id — @(r.Korisnik?.Email ?? "Klijent")</strong>
-                                        <small><i class="fa-solid fa-plane-departure" style="font-size: 10px; color: var(--text-muted);"></i> @(r.Paket?.Naziv ?? "Paket") • <span style="font-weight: 600;">@r.Status.ToString()</span></small>
-                                    </div>
-                                    <a class="select-btn" href="/Agent/Rezervacije?agentId=@Model.AgentId">
-                                        Detalji <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
-                                    </a>
+                                <div class="empty-state">
+                                    <i class="fa-solid fa-folder-open"></i>
+                                    <p style="margin: 0;">Trenutno nema aktivnih rezervacija.</p>
+                                    <small style="color: var(--text-muted);">Preuzmite pakete sa desne strane da pokrenete prodaju.</small>
                                 </div>
                             }
-                        }
-                    </div>
-                </div>
-
-                <div class="dash-card">
-                    <h2>
-                        <span><i class="fa-solid fa-cubes" style="color: var(--primary); margin-right: 6px;"></i> Dostupni paketi</span>
-                    </h2>
-
-                    <div class="dest-list">
-                        @if (Model.SviPaketi != null)
-                        {
-                            foreach (var p in Model.SviPaketi.Take(8))
+                            else
                             {
-                                bool isMine = Model.MojiPaketiIds != null && Model.MojiPaketiIds.Contains(p.Id);
-                                <div class="dest-item">
-                                    <div>
-                                        <strong>@p.Naziv</strong>
-                                        <small><i class="fa-solid fa-tags" style="font-size: 10px;"></i> @p.CijenaOd BAM • <i class="fa-regular fa-moon" style="font-size: 10px;"></i> @p.TrajanjeNoci noći</small>
+                                foreach (var r in Model.AktivneRezervacije.Take(5))
+                                {
+                                    <div class="dest-item">
+                                        <div>
+                                            <strong>#@r.Id — @(r.Korisnik?.Email ?? "Klijent")</strong>
+                                            <small><i class="fa-solid fa-plane-departure" style="font-size: 10px; color: var(--text-muted);"></i> @(r.Paket?.Naziv ?? "Paket") • <span style="font-weight: 600;">@r.Status.ToString()</span></small>
+                                        </div>
+                                        <a class="select-btn" href="/Agent/Rezervacije?agentId=@Model.AgentId">
+                                            Detalji <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+                                        </a>
                                     </div>
-                                    <form method="post" action="/Agent/TogglePaket">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="agentId" value="@Model.AgentId" />
-                                        <input type="hidden" name="paketId" value="@p.Id" />
-                                        @if (isMine)
-                                        {
-                                            <button class="select-btn btn-muted" type="submit">
-                                                <i class="fa-solid fa-xmark"></i> Pusti
-                                            </button>
-                                        }
-                                        else
-                                        {
-                                            <button class="select-btn" type="submit">
-                                                <i class="fa-solid fa-plus"></i> Preuzmi
-                                            </button>
-                                        }
-                                    </form>
-                                </div>
+                                }
                             }
-                        }
+                        </div>
                     </div>
 
-                    <div style="margin-top: 24px;">
-                        <a href="/Agent/Paketi?agentId=@Model.AgentId" class="pill-link" style="display: flex; justify-content: center; width: auto; text-align: center;">
-                            <i class="fa-solid fa-gear"></i> Upravljaj svim paketima
-                        </a>
+                    <div class="dash-card">
+                        <h2>
+                            <span><i class="fa-solid fa-cubes" style="color: var(--primary); margin-right: 6px;"></i> Dostupni paketi</span>
+                        </h2>
+
+                        <div class="dest-list">
+                            @if (Model.SviPaketi != null)
+                            {
+                                foreach (var p in Model.SviPaketi.Take(8))
+                                {
+                                    bool isMine = Model.MojiPaketiIds != null && Model.MojiPaketiIds.Contains(p.Id);
+                                    <div class="dest-item">
+                                        <div>
+                                            <strong>@p.Naziv</strong>
+                                            <small><i class="fa-solid fa-tags" style="font-size: 10px;"></i> @p.CijenaOd BAM • <i class="fa-regular fa-moon" style="font-size: 10px;"></i> @p.TrajanjeNoci noći</small>
+                                        </div>
+                                        <form method="post" action="/Agent/TogglePaket">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="agentId" value="@Model.AgentId" />
+                                            <input type="hidden" name="paketId" value="@p.Id" />
+                                            @if (isMine)
+                                            {
+                                                <button class="select-btn btn-muted" type="submit">
+                                                    <i class="fa-solid fa-xmark"></i> Pusti
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button class="select-btn" type="submit">
+                                                    <i class="fa-solid fa-plus"></i> Preuzmi
+                                                </button>
+                                            }
+                                        </form>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                        <div style="margin-top: 24px;">
+                            <a href="/Agent/Paketi?agentId=@Model.AgentId" class="pill-link" style="display: flex; justify-content: center; width: auto; text-align: center;">
+                                <i class="fa-solid fa-gear"></i> Upravljaj svim paketima
+                            </a>
+                        </div>
                     </div>
+
                 </div>
-
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
 </body>
 </html>

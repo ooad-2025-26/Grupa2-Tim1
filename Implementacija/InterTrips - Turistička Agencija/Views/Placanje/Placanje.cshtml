@@ -677,7 +677,7 @@
                             </div>
                         </div>
                     </div>
-
+                    @Html.AntiForgeryToken()
                     <div class="btn-row">
                         <button class="secondary-btn" type="button" onclick="history.back()">← Nazad na putnike</button>
                         <button class="main-btn" type="button" onclick="payNow()">Potvrdi i plati</button>
@@ -778,7 +778,6 @@
     <script>
         let selectedPaymentType = 'card';
 
-        // USKLAĐENO: HTML poziva selectPayment(this, 'card') -> preuzimamo element pa metodu
         function selectPayment(element, method) {
         selectPaymentMethod(method, element);
         }
@@ -787,21 +786,17 @@
         selectedPaymentType = method;
         localStorage.setItem('paymentType', method);
 
-        // USKLAĐENO: Klasa u HTML-u je .payment-option, a ne .method-card
         document.querySelectorAll('.payment-option').forEach(card => {
         card.classList.remove('active');
         });
 
-        // Ako je element proslijeđen (preko klika), aktiviraj ga
         if (element && element.classList) {
         element.classList.add('active');
         } else {
-        // Ako se pokreće automatski pri učitavanju, pronađi karticu ručno na osnovu metode
         const targetCard = document.querySelector(`.payment-option[onclick*="'${method}'"]`);
         if (targetCard) targetCard.classList.add('active');
         }
 
-        // Prikaz/skrivanje odgovarajućih polja
         const cardFields = document.getElementById('cardFields');
         const bankFields = document.getElementById('bankFields');
         const ratesFields = document.getElementById('ratesFields');
@@ -880,12 +875,20 @@
         });
 
         const photoEl = document.getElementById('summaryPhoto');
-if (photoEl && slika) {
-    if (!slika.startsWith('/') && !slika.startsWith('assets')) {
+        if (photoEl) {
+
+        if (!slika || slika === 'null' || slika === 'undefined') {
+        slika = '/assets/bali.jpg';
+        }
+
+        if (!slika.startsWith('/')) {
         slika = '/assets/' + slika;
-    }
-    photoEl.style.backgroundImage = `url('${slika}')`;
-}
+        }
+
+        photoEl.style.backgroundImage = `url('${slika}')`;
+        photoEl.style.backgroundSize = 'cover';
+        photoEl.style.backgroundPosition = 'center';
+        }
 
         const busSection = document.getElementById('busSummarySection');
         const flightSection = document.getElementById('flightSummarySection');
@@ -1014,6 +1017,15 @@ if (photoEl && slika) {
         if (cardCvv.length !== 3) { alert("CVV kod mora sadržavati tačno 3 cifre."); return; }
         if (zipCode.length !== 5) { alert("Poštanski broj računa mora sadržavati tačno 5 cifara."); return; }
         }
+        if (selectedPaymentType === 'rates') {
+        const monthsInput = document.getElementById('ratesMonths');
+        const months = parseInt(monthsInput?.value, 10);
+
+        if (!months || isNaN(months) || months < 1 || months > 60) {
+        alert("Molimo unesite ispravan broj mjeseci za otplatu rata (između 1 i 60).");
+        return;
+        }
+        }
 
         const btn = document.querySelector('.btn-row .main-btn');
         if (btn) {
@@ -1029,14 +1041,22 @@ if (photoEl && slika) {
         const returnRaw = localStorage.getItem('reservationReturn');
 
         const parseDate = (dateStr) => {
-        if (!dateStr || dateStr === '—') return new Date().toISOString();
-        const parts = dateStr.split('.');
-        if (parts.length >= 3) {
-        return new Date(parts[2], parts[1] - 1, parts[0]).toISOString();
+        if (!dateStr || dateStr === '—') {
+        return new Date().toISOString().split('T')[0];
         }
-        return new Date(dateStr).toISOString();
-        };
 
+        const parts = dateStr.split('.');
+
+        if (parts.length >= 3) {
+        const day = parts[0].padStart(2, '0');
+        const month = parts[1].padStart(2, '0');
+        const year = parts[2];
+
+        return `${year}-${month}-${day}`;
+        }
+
+        return new Date(dateStr).toISOString().split('T')[0];
+        };
         const payload = {
         PaketId: paketId,
         DatumPolaska: parseDate(departureRaw),
@@ -1057,21 +1077,22 @@ if (photoEl && slika) {
         };
 
         try {
-        const response = await fetch('/KreirajRezervaciju', {
+        const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+
+        const response = await fetch('/Rezervacija/KreirajRezervaciju', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
-        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ""
+        'RequestVerificationToken': tokenInput ? tokenInput.value : ""
         },
         body: JSON.stringify(payload)
         });
-
-        if (response.ok) {
+        if(response.ok) {
         const result = await response.json();
         const finalCode = result.id || 'IT-' + Math.floor(1000 + Math.random() * 9000);
         localStorage.setItem('finalReservationCode', finalCode);
 
-        window.location.href = '/Rezervacija/Uspjeh';
+        window.location.href = '/Placanje/Uspjeh';
         } else {
         const errorData = await response.text();
         alert("Greška prilikom procesiranja plaćanja: " + errorData);

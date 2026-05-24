@@ -1,13 +1,14 @@
 using InterTrips___Turistička_Agencija.Data;
-using InterTrips___Turistička_Agencija.Models;
 using InterTrips___Turistička_Agencija.Enums;
+using InterTrips___Turistička_Agencija.Models;
+using InterTrips___Turistička_Agencija.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace InterTrips___Turistička_Agencija.Controllers
 {
@@ -29,23 +30,23 @@ namespace InterTrips___Turistička_Agencija.Controllers
         [HttpGet]
         public async Task<IActionResult> Rezervacija(int? paketId)
         {
-            var paketi =  _db.Paketi
+            var paketi = _db.Paketi
                 .Include(p => p.Destinacija)
-    .Include(p => p.DostupniTermini) 
-    .Include(p => p.Hotel)
-    .Include(p => p.Let)
-    .Where(p => p.Status != StatusPaketa.Rasprodan)
-    .ToList();
+                .Include(p => p.DostupniTermini)
+                .Include(p => p.Hotel)
+                .Include(p => p.Let)
+                .Where(p => p.Status != StatusPaketa.Rasprodan)
+                .ToList();
 
             ViewBag.SviPaketi = paketi ?? new List<Paket>();
 
             Paket? selektovaniPaket = null;
-            if (paketId.HasValue)
+            if (paketId.HasValue && paketi != null)
             {
                 selektovaniPaket = paketi.FirstOrDefault(p => p.Id == paketId.Value);
             }
 
-            if (selektovaniPaket == null && paketi.Any())
+            if (selektovaniPaket == null && paketi != null && paketi.Any())
             {
                 selektovaniPaket = paketi.First();
             }
@@ -63,7 +64,6 @@ namespace InterTrips___Turistička_Agencija.Controllers
 
         [HttpPost]
         [Authorize]
-      
         public async Task<IActionResult> KreirajRezervaciju([FromBody] NovaRezervacijaDto model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -97,6 +97,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
 
             int brojPutnika = model.Putnici.Count;
             decimal konacnaCijena = baznaCijena * brojPutnika;
+            int? primijenjenKuponId = null;
 
             if (model.DatumPovratka < model.DatumPolaska)
                 return BadRequest(new { poruka = "Datum povratka ne može biti prije datuma polaska." });
@@ -114,6 +115,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
 
                     kupon.Iskoristen = true;
                     _db.Entry(kupon).State = EntityState.Modified;
+                    primijenjenKuponId = kupon.Id;
                 }
                 else
                 {
@@ -121,7 +123,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 }
             }
 
-           if (paket.Kapacitet < brojPutnika)
+            if (paket.Kapacitet < brojPutnika)
             {
                 return BadRequest(new { poruka = "Nema dovoljno slobodnih mjesta na ovom turističkom paketu." });
             }
@@ -147,7 +149,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 }
             }
 
-           var strategy = _db.Database.CreateExecutionStrategy();
+            var strategy = _db.Database.CreateExecutionStrategy();
 
             return await strategy.ExecuteAsync(async () =>
             {
@@ -185,6 +187,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
                         RezervacijaId = novaRezervacija.Id,
                         Iznos = model.UkupanIznos > 0 ? model.UkupanIznos : konacnaCijena,
                         Metoda = enumMetoda,
+                        KuponId = primijenjenKuponId,
                         VrijemePlacanja = DateTime.UtcNow
                     };
 
@@ -241,6 +244,12 @@ namespace InterTrips___Turistička_Agencija.Controllers
                     await _db.SaveChangesAsync();
                     await transaction.CommitAsync();
 
+                    novoPlacanje.TransakcijskiKod = "TRX-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+                    _db.Entry(novoPlacanje).State = EntityState.Modified;
+                    await _db.SaveChangesAsync();
+
+                    PozadinskiProcesiService.DodajRezervacijuURed(novaRezervacija.Id);
+
                     return Ok(new
                     {
                         id = novaRezervacija.Id,
@@ -255,6 +264,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 }
             });
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetMojeRezervacije()
@@ -297,7 +307,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
 
                 var siroveRezervacije = await _db.Rezervacije
                     .Include(r => r.Paket)
-                        .ThenInclude(p => p.Destinacija)
+                        .ThenInclude(p => p!.Destinacija)
                     .Include(r => r.Putnici)
                     .Where(r => r.KorisnikId == korisnik.Id)
                     .ToListAsync();
@@ -338,53 +348,82 @@ namespace InterTrips___Turistička_Agencija.Controllers
         [HttpPost]
         public async Task<IActionResult> OtkaziRezervaciju(int id)
         {
-            try
+            var strategy = _db.Database.CreateExecutionStrategy();
+
+            return await strategy.ExecuteAsync<IActionResult>(async () =>
             {
-                var emailKorisnika = User.Identity?.Name;
-                var korisnik = await _db.Korisnici.FirstOrDefaultAsync(k => k.Email == emailKorisnika);
-                if (korisnik == null) return Unauthorized("Korisnik nije pronađen.");
-
-                var rezervacija = await _db.Rezervacije
-                    .Include(r => r.Putnici)
-                    .Include(r => r.Paket)
-                    .FirstOrDefaultAsync(r => r.Id == id && r.KorisnikId == korisnik.Id);
-
-                if (rezervacija == null) return NotFound("Rezervacija nije pronađena.");
-                if (rezervacija.Status == StatusRezervacije.Otkazana) return BadRequest("Rezervacija je već otkazana.");
-
-                int brojPutnika = rezervacija.Putnici?.Count ?? 1;
-                var paket = rezervacija.Paket;
-
-                if (paket != null)
+                await using var transaction = await _db.Database.BeginTransactionAsync();
+                try
                 {
-                    paket.Kapacitet += brojPutnika;
-                    _db.Entry(paket).State = EntityState.Modified;
+                    var emailKorisnika = User.Identity?.Name;
+                    var korisnik = await _db.Korisnici.FirstOrDefaultAsync(k => k.Email == emailKorisnika);
+                    if (korisnik == null) return Unauthorized("Korisnik nije pronađen.");
 
-                    if (paket.HotelId.HasValue)
-                    {
-                        var hotel = await _db.Hoteli.FindAsync(paket.HotelId.Value);
-                        if (hotel != null) hotel.DostupnoSoba += brojPutnika;
-                    }
+                    var rezervacija = await _db.Rezervacije
+                        .Include(r => r.Putnici)
+                        .Include(r => r.Paket)
+                        .FirstOrDefaultAsync(r => r.Id == id && r.KorisnikId == korisnik.Id);
 
-                    if (paket.DostupniPrevoz == VrstaPrevoza.SamoAvion || paket.DostupniPrevoz == VrstaPrevoza.Oboje)
+                    if (rezervacija == null) return NotFound("Rezervacija nije pronađena.");
+                    if (rezervacija.Status == StatusRezervacije.Otkazana) return BadRequest("Rezervacija je već otkazana.");
+
+                    var placanje = await _db.Placanja.FirstOrDefaultAsync(p => p.RezervacijaId == rezervacija.Id);
+                    if (placanje != null && placanje.KuponId.HasValue)
                     {
-                        if (paket.LetId.HasValue)
+                        var kuponZaVracanje = await _db.Kupon.FindAsync(placanje.KuponId.Value);
+                        if (kuponZaVracanje != null)
                         {
-                            var let = await _db.Letovi.FindAsync(paket.LetId.Value);
-                            if (let != null) let.SlobodnaSjedista += brojPutnika;
+                            kuponZaVracanje.Iskoristen = false;
+                            _db.Entry(kuponZaVracanje).State = EntityState.Modified;
                         }
                     }
+
+                    int brojPutnika = rezervacija.Putnici?.Count ?? 1;
+                    var paket = rezervacija.Paket;
+
+                    if (paket != null)
+                    {
+                        paket.Kapacitet += brojPutnika;
+                        _db.Entry(paket).State = EntityState.Modified;
+
+                        if (paket.HotelId.HasValue)
+                        {
+                            var hotel = await _db.Hoteli.FindAsync(paket.HotelId.Value);
+                            if (hotel != null)
+                            {
+                                hotel.DostupnoSoba += brojPutnika;
+                                _db.Entry(hotel).State = EntityState.Modified;
+                            }
+                        }
+
+                        if (paket.DostupniPrevoz == VrstaPrevoza.SamoAvion || paket.DostupniPrevoz == VrstaPrevoza.Oboje)
+                        {
+                            if (paket.LetId.HasValue)
+                            {
+                                var let = await _db.Letovi.FindAsync(paket.LetId.Value);
+                                if (let != null)
+                                {
+                                    let.SlobodnaSjedista += brojPutnika;
+                                    _db.Entry(let).State = EntityState.Modified;
+                                }
+                            }
+                        }
+                    }
+
+                    rezervacija.Status = StatusRezervacije.Otkazana;
+                    _db.Entry(rezervacija).State = EntityState.Modified;
+
+                    await _db.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return Ok(new { message = "Rezervacija je uspješno otkazana, a kapaciteti i kupon su oslobođeni." });
                 }
-
-                rezervacija.Status = StatusRezervacije.Otkazana;
-                await _db.SaveChangesAsync();
-
-                return Ok(new { message = "Rezervacija je uspješno otkazana, a kapaciteti su oslobođeni." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { greska = ex.Message });
-            }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    return BadRequest(new { greska = "Greška prilikom otkazivanja: " + ex.Message });
+                }
+            });
         }
 
         [HttpGet]
@@ -424,6 +463,30 @@ namespace InterTrips___Turistička_Agencija.Controllers
             }
 
             return NotFound(new { validan = false, poruka = "Uneseni kupon ne postoji u bazi podataka." });
+        }
+
+        [Authorize]
+        [HttpGet("PreuzmiItinerer/{id}")]
+        public async Task<IActionResult> PreuzmiItinerer(int id)
+        {
+            var emailKorisnika = User.Identity?.Name;
+            var rezervacija = await _db.Rezervacije
+                .Include(r => r.Paket)
+                .FirstOrDefaultAsync(r => r.Id == id && r.Korisnik.Email == emailKorisnika);
+
+            if (rezervacija == null) return NotFound("Rezervacija nije pronađena.");
+
+            var emailService = HttpContext.RequestServices.GetRequiredService<EmailAndDocumentService>();
+
+            string detaljiMapeIPlana = $@"
+                <p><b>Destinacija:</b> {rezervacija.Paket?.Naziv ?? "Neznato"}</p>
+                <p><b>Trajanje:</b> Fleksibilan aranžman</p>
+                <p><b>Plan putovanja:</b> Dan 1: Okupljanje i let. Dan 2: Obilazak znamenitosti i hotel. Dan 3: Slobodne aktivnosti.</p>
+                <p><b>Hitni kontakt:</b> +387 33 000-000</p>";
+
+            byte[] pdfBajtovi = emailService.GenerisiPdfDokument("DETALJNI PLAN PUTOVANJA (ITINERER)", detaljiMapeIPlana);
+
+            return File(pdfBajtovi, "application/pdf", $"Itinerer_Rezervacija_{id}.pdf");
         }
     }
 }
