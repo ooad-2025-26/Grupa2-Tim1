@@ -17,5 +17,7 @@ namespace InterTrips___Turistička_Agencija.Models
         public int SlobodnaSjedista { get; set; }
         public string Polazak { get; set; }
         public string Odrediste { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore] 
+        public virtual ICollection<Paket> Paketi { get; set; } = new List<Paket>();
     }
 }

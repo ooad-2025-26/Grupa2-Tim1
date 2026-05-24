@@ -537,6 +537,7 @@
         regularB64 = await loadFontAsBase64('/fonts/DejaVuSans.ttf');
         boldB64 = await loadFontAsBase64('/fonts/DejaVuSans-Bold.ttf');
         fontsReady = !!regularB64;
+        console.log("Učitavanje fontova završeno. Uspješno?", fontsReady);
         }
 
         function safe(key, fallback = '—') {
@@ -558,9 +559,9 @@
         .replace(/Đ/g, "DJ");
         }
 
+        // GLAVNA FUNKCIJA KOJA SE POKREĆE ODMAH
         async function loadUi() {
-        await preloadFonts(); 
-
+        // 1. Prvo popunjavamo UI podatke iz lokalne memorije da korisnik ne gleda prazne crtice
         const dest = safe('reservationDestination', 'Destinacija');
         const country = safe('reservationCountry', '—');
         const image = safe('reservationImage', '/assets/bali.jpg');
@@ -595,8 +596,10 @@
         }
         }
 
+        // 2. ODMAH šaljemo podatke na server (Bez čekanja fontova!)
         try {
-        const paketIdIzMemorije = safe('selectedPackageId', '1');
+        // Ispravljen ključ na 'reservationPaketId' kako bi odgovarao bazi i prethodnim stranicama
+        const paketIdIzMemorije = safe('reservationPaketId', safe('selectedPackageId', '1'));
         const datumPolaskaRaw = safe('reservationDepartureText', '');
         const datumPovratkaRaw = safe('reservationReturnText', '');
 
@@ -636,12 +639,17 @@
 
         if (response.ok) {
         console.log("Rezervacija je uspješno upisana u bazu.");
+        // Ovdje možete očistiti privremeni localStorage ako je potrebno
         } else {
         console.error("Server je vratio grešku prilikom upisivanja rezervacije.");
         }
         } catch (error) {
         console.error("Greška u komunikaciji sa serverom:", error);
         }
+
+        // 3. Tek na samom kraju, u pozadini (asinhrono) pokrećemo učitavanje fontova za PDF
+        // Na ovaj način fontovi ne blokiraju niti UI niti upis u bazu podataka!
+        preloadFonts();
         }
 
         async function generatePDF(resCode) {
@@ -686,7 +694,7 @@
         doc.setFontSize(10);
         if (fontsReady) doc.setFont('DejaVuSans', 'normal');
         doc.text(`Broj dokumenta: ${resCode}`, 20, 65);
-        doc.text(`Datum izdavanja: ${ispravanDatum}`, 20, 71); 
+        doc.text(`Datum izdavanja: ${ispravanDatum}`, 20, 71);
         doc.setDrawColor(200, 220, 220);
         doc.line(20, 77, 190, 77);
 
@@ -698,7 +706,7 @@
         doc.text(`Smještaj: ${safe('reservationRoom', '')}`, 20, 112);
         doc.text(`Broj putnika: ${safe('reservationTravelers', '')}`, 20, 119);
 
-        const tipPrevozaIzMemorije = safe('prevozTip', 'Autobus'); 
+        const tipPrevozaIzMemorije = safe('prevozTip', 'Autobus');
         let prevozIspis = 'Autobuski prevoz uključen u cijenu';
 
         if (tipPrevozaIzMemorije === 'Avion') {
@@ -856,14 +864,14 @@
         btn.disabled = false;
         btn.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-        </svg>
-        Preuzmi potvrdu (PDF)
-        `;
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            Preuzmi potvrdu (PDF)
+            `;
         }
-        }
+    }
 
-        window.addEventListener('DOMContentLoaded', loadUi);
-    </script>
+    window.addEventListener('DOMContentLoaded', loadUi);
+</script>
 </body>
 </html>

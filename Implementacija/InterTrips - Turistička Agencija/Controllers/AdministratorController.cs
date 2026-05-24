@@ -159,15 +159,50 @@ public class AdministratorController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> PaketCreate(int? destinacijaId)
+    public async Task<IActionResult> PaketCreate()
     {
-        await FillPaketDropdowns(destinacijaId ?? 0, StatusPaketa.Dostupan);
+        ViewBag.Destinacije = await _db.Destinacije
+            .Select(d => new SelectListItem { Value = d.Id.ToString(), Text = d.Naziv })
+            .ToListAsync();
 
-        var paket = new Paket();
-        if (destinacijaId.HasValue)
-            paket.DestinacijaId = destinacijaId.Value;
+        ViewBag.Hoteli = await _db.Hoteli
+            .Select(h => new SelectListItem { Value = h.Id.ToString(), Text = h.Naziv })
+            .ToListAsync();
 
-        return View("~/Views/Administrator/PaketForm.cshtml", paket);
+        ViewBag.Letovi = await _db.Letovi
+            .Select(l => new SelectListItem { Value = l.Id.ToString(), Text = $"{l.BrojLeta} ({l.Polazak} - {l.Odrediste})" })
+            .ToListAsync();
+
+        ViewBag.Statusi = Enum.GetValues(typeof(StatusPaketa))
+            .Cast<StatusPaketa>()
+            .Select(s => new SelectListItem { Value = s.ToString(), Text = s.ToString() });
+
+        return View("PaketForm", new Paket());
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> PaketEdit(int id)
+    {
+        var paket = await _db.Paketi.FindAsync(id);
+        if (paket == null) return NotFound();
+
+        ViewBag.Destinacije = await _db.Destinacije
+            .Select(d => new SelectListItem { Value = d.Id.ToString(), Text = d.Naziv })
+            .ToListAsync();
+
+        ViewBag.Hoteli = await _db.Hoteli
+            .Select(h => new SelectListItem { Value = h.Id.ToString(), Text = h.Naziv })
+            .ToListAsync();
+
+        ViewBag.Letovi = await _db.Letovi
+            .Select(l => new SelectListItem { Value = l.Id.ToString(), Text = $"{l.BrojLeta} ({l.Polazak} - {l.Odrediste})" })
+            .ToListAsync();
+
+        ViewBag.Statusi = Enum.GetValues(typeof(StatusPaketa))
+            .Cast<StatusPaketa>()
+            .Select(s => new SelectListItem { Value = s.ToString(), Text = s.ToString() });
+
+        return View("PaketForm", paket);
     }
 
     [HttpPost]
@@ -176,23 +211,28 @@ public class AdministratorController : Controller
     {
         if (ModelState.IsValid)
         {
-            _db.Paketi.Add(paket); 
+            _db.Paketi.Add(paket);
             await _db.SaveChangesAsync();
             return RedirectToAction(nameof(Paketi));
         }
 
-        ViewBag.Destinacije = new SelectList(_db.Destinacije, "Id", "Naziv", paket.DestinacijaId);
-        return View(paket);
-    }
+        ViewBag.Destinacije = await _db.Destinacije
+            .Select(d => new SelectListItem { Value = d.Id.ToString(), Text = d.Naziv })
+            .ToListAsync();
 
-    [HttpGet]
-    public async Task<IActionResult> PaketEdit(int id)
-    {
-        var p = await _db.Paketi.FirstOrDefaultAsync(x => x.Id == id);
-        if (p == null) return NotFound();
+        ViewBag.Hoteli = await _db.Hoteli
+            .Select(h => new SelectListItem { Value = h.Id.ToString(), Text = h.Naziv })
+            .ToListAsync();
 
-        await FillPaketDropdowns(p.DestinacijaId, p.Status);
-        return View("~/Views/Administrator/PaketForm.cshtml", p);
+        ViewBag.Letovi = await _db.Letovi
+            .Select(l => new SelectListItem { Value = l.Id.ToString(), Text = $"{l.BrojLeta} ({l.Polazak} - {l.Odrediste})" })
+            .ToListAsync();
+
+        ViewBag.Statusi = Enum.GetValues(typeof(StatusPaketa))
+            .Cast<StatusPaketa>()
+            .Select(s => new SelectListItem { Value = s.ToString(), Text = s.ToString() });
+
+        return View("PaketForm", paket);
     }
 
     [HttpPost]
@@ -215,7 +255,12 @@ public class AdministratorController : Controller
             }
             return RedirectToAction(nameof(Paketi));
         }
-        return View(paket);
+        ViewBag.Destinacije = await _db.Destinacije.Select(d => new SelectListItem { Value = d.Id.ToString(), Text = d.Naziv }).ToListAsync();
+        ViewBag.Hoteli = await _db.Hoteli.Select(h => new SelectListItem { Value = h.Id.ToString(), Text = h.Naziv }).ToListAsync();
+        ViewBag.Letovi = await _db.Letovi.Select(l => new SelectListItem { Value = l.Id.ToString(), Text = l.BrojLeta }).ToListAsync();
+        ViewBag.Statusi = Enum.GetValues(typeof(StatusPaketa)).Cast<StatusPaketa>().Select(s => new SelectListItem { Value = s.ToString(), Text = s.ToString() });
+
+        return View("PaketForm", paket);
     }
 
     [HttpPost]
@@ -509,10 +554,7 @@ public class AdministratorController : Controller
             await _db.Database.ExecuteSqlRawAsync("DELETE FROM Rezervacije; DBCC CHECKIDENT ('Rezervacije', RESEED, 0);");
 
             var hoteli = await _db.Hoteli.ToListAsync();
-            foreach (var hotel in hoteli)
-            {
-                hotel.DostupnoSoba = hotel.UkupnoSoba;
-            }
+            
 
             await _db.SaveChangesAsync();
             TempData["Success"] = "Sve rezervacije su uspješno obrisane, a kapaciteti hotela su resetovani!";

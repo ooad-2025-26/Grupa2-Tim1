@@ -18,15 +18,15 @@
 
     <style>
         :root {
-        --brand-primary: #0f766e; 
-        --brand-dark: #111827; 
-        --brand-light: #f0fdfa; 
-        --brand-accent: #0d9488; 
-        --text-main: #374151; 
+        --brand-primary: #0f766e;
+        --brand-dark: #111827;
+        --brand-light: #f0fdfa;
+        --brand-accent: #0d9488;
+        --text-main: #374151;
         --text-muted: #6b7280;
-        --bg-page: #f8fafc; 
-        --border-color: #e2e8f0; 
-        --error-color: #dc2626; 
+        --bg-page: #f8fafc;
+        --border-color: #e2e8f0;
+        --error-color: #dc2626;
         --success-bg: #f0fdf4;
         --success-color: #166534;
         --radius-lg: 16px;
@@ -254,39 +254,65 @@
         top: 20px;
         }
 
-        .summary-photo {
-        height: 160px;
+        #summaryPhoto, .summary-photo {
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        height: 160px !important;
+        min-height: 160px !important;
+        display: block !important;
+        width: 100% !important;
         position: relative;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: flex-end;
-        padding: 20px;
         background-color: #cbd5e0;
         }
 
-        .summary-photo::before {
+        #summaryPhoto::before, .summary-photo::before {
         content: '';
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 100%);
+        background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 100%);
         z-index: 1;
         }
 
-        
         .summary-place {
-        position: relative;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
         z-index: 2;
         font-weight: 700;
         font-size: 20px;
         color: #ffffff !important;
+        padding: 15px 20px;
+        box-sizing: border-box;
+        }
+
+        .summary-place span {
+        display: block;
+        letter-spacing: -0.3px;
+        }
+
+        .summary-place small {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        color: #e2e8f0;
+        margin-top: 2px;
         }
 
         .summary-body {
         padding: 24px;
+        }
+
+        .summary-icon {
+        width: 16px;
+        height: 16px;
+        vertical-align: middle;
+        margin-right: 6px;
+        color: var(--text-muted, #6b7280);
         }
 
         .summary-row {
@@ -294,11 +320,16 @@
         justify-content: space-between;
         margin-bottom: 12px;
         font-size: 14px;
-        color: var(--text-muted);
-        border-bottom: 1px dashed var(--border-color);
+        color: var(--text-muted, #6b7280);
+        border-bottom: 1px dashed #e2e8f0;
         padding-bottom: 8px;
+        align-items: center;
         }
 
+        .summary-row strong {
+        color: var(--brand-dark, #111827);
+        font-weight: 600;
+        }
         .summary-row span:first-child {
         font-weight: 500;
         }
@@ -314,19 +345,19 @@
         align-items: center;
         margin-top: 20px;
         padding-top: 16px;
-        border-top: 1px solid var(--border-color);
+        border-top: 1px solid #e2e8f0;
         }
 
         .price-line span:first-child {
         font-weight: 600;
-        color: var(--brand-dark);
+        color: var(--brand-dark, #111827);
         font-size: 14px;
         }
 
         .total {
-        color: var(--brand-primary);
+        color: var(--brand-primary, #0f766e);
         font-size: 24px;
-        font-weight: 800;
+        font-weight: 700;
         }
 
         .btn-row {
@@ -374,12 +405,21 @@
         border-color: var(--text-muted);
         }
 
+        .summary-divider {
+        border: 0;
+        border-top: 1px solid #e2e8f0;
+        margin: 16px 0;
+        }
+
         @@media (max-width: 1024px) {
         .booking-grid {
         grid-template-columns: 1fr;
         }
 
-        .
+        .summary-card {
+        position: static;
+        }
+        }
 
         @@media (max-width: 768px) {
         .row {
@@ -430,7 +470,7 @@
             <div class="booking-grid">
                 <div class="left-col">
                     <div class="panel panel-pad">
-                        <h3 class="panel-title" id="passengerPanelTitle">Podaci o putnicima (Letovi i Hoteli)</h3>
+                        <h3 class="panel-title" id="passengerPanelTitle">Podaci o putnicima</h3>
 
                         <div id="passengerContainer"></div>
 
@@ -449,11 +489,13 @@
 
                 <div class="right-column">
                     <div class="panel summary-card">
-                        <div class="summary-photo" id="summaryPhoto">
-                            <div class="summary-place" id="summaryDest">Destinacija <small id="summaryCountry">—</small></div>
+                        <div class="summary-photo" id="summaryPhoto" style="background-image: url('/assets/bali.jpg'); min-height: 150px; background-size: cover; background-position: center; display: flex; align-items: flex-end;">
+                            <div class="summary-place" id="summaryDestination" style="color: #fff; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); padding: 16px 20px; font-weight: bold; font-size: 20px; width: 100%; box-sizing: border-box;">
+                                Odaberite destinaciju
+                            </div>
                         </div>
-                        <div class="summary-body">
 
+                        <div class="summary-body">
                             <div class="summary-row">
                                 <span><i data-lucide="users" class="summary-icon"></i> Putnici</span>
                                 <strong id="summaryTravelers">—</strong>
@@ -464,19 +506,23 @@
                             </div>
                             <div class="summary-row">
                                 <span><i data-lucide="hotel" class="summary-icon"></i> Hotel</span>
-                                <strong id="summaryHotelName">—</strong>
+                                <strong id="summaryHotel">—</strong>
                             </div>
                             <div class="summary-row">
                                 <span><i data-lucide="door-open" class="summary-icon"></i> Smještaj</span>
                                 <strong id="summaryRoom">—</strong>
+                            </div>
+                            <div class="summary-row">
+                                <span><i data-lucide="navigation" class="summary-icon"></i> Odabrani prevoz</span>
+                                <strong id="summaryPrevoz">—</strong>
                             </div>
 
                             <hr class="summary-divider">
 
                             <div id="flightSummarySection">
                                 <div class="summary-row">
-                                    <span><i data-lucide="plane" class="summary-icon"></i> Let</span>
-                                    <strong id="summaryFlightRoute">—</strong>
+                                    <span><i data-lucide="plane" class="summary-icon"></i> Detalji leta</span>
+                                    <strong id="summaryLet">—</strong>
                                 </div>
                                 <div class="summary-row">
                                     <span><i data-lucide="plane-takeoff" class="summary-icon"></i> Polazak</span>
@@ -505,7 +551,6 @@
 
                             <hr class="summary-divider">
 
-
                             <div class="price-line">
                                 <span>Ukupna cijena aranžmana:</span>
                                 <span class="total" id="summaryTotal">0.00 KM</span>
@@ -524,9 +569,9 @@
             <div class="form-group row">
                 <div>
                     <label class="field-label">Tip putnika <span class="required">*</span></label>
-                    <select class="input ptype">
-                        <option value="adult">Odrasli (18+)</option>
-                        <option value="child">Dijete (0-17)</option>
+                    <select class="ptype input">
+                        <option value="Odrasli">Odrasli</option>
+                        <option value="Dijete">Dijete</option>
                     </select>
                 </div>
                 <div>
@@ -607,490 +652,455 @@
 
     <script>
         if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
+        lucide.createIcons();
         }
 
         const countries = [
-            { name: "Bosna i Hercegovina", flag: "🇧🇦", dial: "+387", digits: 8 },
-            { name: "Hrvatska", flag: "🇭🇷", dial: "+385", digits: 9 },
-            { name: "Srbija", flag: "🇷🇸", dial: "+381", digits: 9 },
-            { name: "Crna Gora", flag: "🇲🇪", dial: "+382", digits: 8 },
-            { name: "Slovenija", flag: "🇸🇮", dial: "+386", digits: 8 },
-            { name: "Njemačka", flag: "🇩🇪", dial: "+49", digits: 9 },
-            { name: "Austrija", flag: "🇦🇹", dial: "+43", digits: 9 },
-            { name: "Italija", flag: "🇮🇹", dial: "+39", digits: 9 },
-            { name: "Francuska", flag: "🇫🇷", dial: "+33", digits: 9 },
-            { name: "Švicarska", flag: "🇨🇭", dial: "+41", digits: 9 },
-            { name: "Švedska", flag: "🇸🇪", dial: "+46", digits: 9 },
-            { name: "Turska", flag: "🇹🇷", dial: "+90", digits: 10 },
-            { name: "Ujedinjeni Arapski Emirati", flag: "🇦🇪", dial: "+971", digits: 9 },
-            { name: "SAD", flag: "🇺🇸", dial: "+1", digits: 10 }
+        { name: "Bosna i Hercegovina", flag: "🇧🇦", dial: "+387", digits: 8 },
+        { name: "Hrvatska", flag: "🇭🇷", dial: "+385", digits: 9 },
+        { name: "Srbija", flag: "🇷🇸", dial: "+381", digits: 9 },
+        { name: "Crna Gora", flag: "🇲🇪", dial: "+382", digits: 8 },
+        { name: "Slovenija", flag: "🇸🇮", dial: "+386", digits: 8 },
+        { name: "Njemačka", flag: "🇩🇪", dial: "+49", digits: 9 },
+        { name: "Austrija", flag: "🇦🇹", dial: "+43", digits: 9 },
+        { name: "Italija", flag: "🇮🇹", dial: "+39", digits: 9 },
+        { name: "Francuska", flag: "🇫🇷", dial: "+33", digits: 9 },
+        { name: "Švicarska", flag: "🇨🇭", dial: "+41", digits: 9 },
+        { name: "Švedska", flag: "🇸🇪", dial: "+46", digits: 9 },
+        { name: "Turska", flag: "🇹🇷", dial: "+90", digits: 10 },
+        { name: "Ujedinjeni Arapski Emirati", flag: "🇦🇪", dial: "+971", digits: 9 },
+        { name: "SAD", flag: "🇺🇸", dial: "+1", digits: 10 }
         ].sort((a, b) => a.name.localeCompare(b.name));
 
-        function formatFullPhone(code, digits) {
-            return `${code} ${digits}`;
-        }
-
         function calcAgeYears(isoDate) {
-            if (!isoDate) return null;
-            const dob = new Date(isoDate + "T00:00:00");
-            if (isNaN(dob.getTime())) return null;
+        if (!isoDate) return null;
+        const dob = new Date(isoDate + "T00:00:00");
+        if (isNaN(dob.getTime())) return null;
 
-            const today = new Date();
-            let age = today.getFullYear() - dob.getFullYear();
-            const m = today.getMonth() - dob.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-            return age;
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const m = today.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+        return age;
         }
 
         function onlyDigits(s) {
-            return (s || "").replace(/\D/g, "");
+        return (s || "").replace(/\D/g, "");
         }
 
         function formatLocalPhone(digits) {
-            if (!digits) return "";
-            const parts = [];
-            parts.push(digits.slice(0, 2));
-            if (digits.length > 2) parts.push(digits.slice(2, 5));
-            if (digits.length > 5) parts.push(digits.slice(5, 8));
-            if (digits.length > 8) parts.push(digits.slice(8));
-            return parts.filter(Boolean).join(" ");
+        if (!digits) return "";
+        const parts = [];
+        parts.push(digits.slice(0, 2));
+        if (digits.length > 2) parts.push(digits.slice(2, 5));
+        if (digits.length > 5) parts.push(digits.slice(5, 8));
+        if (digits.length > 8) parts.push(digits.slice(8));
+        return parts.filter(Boolean).join(" ");
         }
 
         function getCountryRuleByName(name) {
-            return countries.find(c => c.name === name) || null;
+        return countries.find(c => c.name === name) || null;
         }
 
         function getCountryRuleByDial(dial) {
-            return countries.find(c => c.dial === dial) || null;
-        }
-
-        function generatePassengers() {
-            const container = document.getElementById('passengerContainer');
-            const template = document.getElementById('passengerTemplate');
-
-            if (!container || !template) {
-                console.error("Missing container or template element!");
-                return;
-            }
-
-            const count = parseInt(localStorage.getItem('reservationTravelers') || '1', 10) || 1;
-            const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '1', 10) || 1;
-
-            let savedPassengers = [];
-            try {
-                savedPassengers = JSON.parse(localStorage.getItem('savedPassengers') || '[]');
-            } catch (e) {
-                savedPassengers = [];
-            }
-            if (savedPassengers.length !== count) {
-        savedPassengers = [];
-        localStorage.removeItem('savedPassengers'); 
-        }
-        container.innerHTML = '';
-        for (let i = 1; i <= count; i++) {
-        const clone = template.content.cloneNode(true);
-
-        const titleEl = clone.querySelector('.p-title');
-        if (titleEl) titleEl.textContent = `Putnik ${i}`;
-
-                const selectNat = clone.querySelector('.nationality');
-                if (selectNat) {
-                    countries.forEach(c => {
-                        const opt = document.createElement('option');
-                        opt.value = c.name;
-                        opt.textContent = `${c.flag} ${c.name}`;
-                        selectNat.appendChild(opt);
-                    });
-                }
-
-                const phoneCodeEl = clone.querySelector('.phoneCode');
-                if (phoneCodeEl) {
-                    countries.forEach(c => {
-                        const opt = document.createElement('option');
-                        opt.value = c.dial;
-                        opt.textContent = `${c.flag} ${c.dial}`;
-                        phoneCodeEl.appendChild(opt);
-                    });
-                }
-
-                const wrapper = document.createElement('div');
-                wrapper.appendChild(clone);
-                const block = wrapper.querySelector('.passenger-block');
-
-                const pTypeEl = block.querySelector('.ptype');
-                if (pTypeEl) {
-                    if (i <= expectedAdults) {
-                        pTypeEl.value = 'adult';
-                    } else {
-                        pTypeEl.value = 'child';
-                    }
-                }
-
-                if (savedPassengers && savedPassengers[i - 1]) {
-                    const sp = savedPassengers[i - 1];
-                    if (pTypeEl && sp.type) pTypeEl.value = sp.type;
-                    
-                    const genderEl = block.querySelector('.gender');
-                    if (genderEl && sp.gender) genderEl.value = sp.gender;
-                    
-                    const fnameEl = block.querySelector('.fname');
-                    if (fnameEl && sp.firstName) fnameEl.value = sp.firstName;
-                    
-                    const lnameEl = block.querySelector('.lname');
-                    if (lnameEl && sp.lastName) lnameEl.value = sp.lastName;
-                    
-                    const birthdateEl = block.querySelector('.birthdate');
-                    if (birthdateEl && sp.birthDate) birthdateEl.value = sp.birthDate;
-                    
-                    const passportEl = block.querySelector('.passport');
-                    if (passportEl && sp.passport) passportEl.value = sp.passport;
-                    
-                    if (selectNat && sp.nationality) selectNat.value = sp.nationality;
-                    
-                    const freqFlyerEl = block.querySelector('.freqFlyer');
-                    if (freqFlyerEl && sp.freqFlyer) freqFlyerEl.value = sp.freqFlyer;
-                    
-                    const bedPrefEl = block.querySelector('.bedPreference');
-                    if (bedPrefEl && sp.bedPreference) bedPrefEl.value = sp.bedPreference;
-                    
-                    const requestsEl = block.querySelector('.requests');
-                    if (requestsEl && sp.requests) requestsEl.value = sp.requests;
-                    
-                    const phoneNumEl = block.querySelector('.phoneNumber');
-                    if (sp.phone && phoneNumEl) {
-                        const phoneParts = sp.phone.split(' ');
-                        if (phoneParts.length > 1) {
-                            if (phoneCodeEl) phoneCodeEl.value = phoneParts[0];
-                            phoneNumEl.value = formatLocalPhone(phoneParts.slice(1).join(''));
-                        }
-                    }
-                }
-
-                const doLiveValidate = (element) => {
-                    if (element) element.style.borderColor = '';
-                    validateBlock(block, i - 1, true);
-                };
-
-                const passportEl = block.querySelector('.passport');
-                if (passportEl) {
-                    passportEl.addEventListener('input', () => {
-                        passportEl.value = passportEl.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 9);
-                        doLiveValidate(passportEl);
-                    });
-                }
-
-                const phoneCode = block.querySelector('.phoneCode');
-                const phoneNumber = block.querySelector('.phoneNumber');
-                const nationality = block.querySelector('.nationality');
-
-                function applyPhoneRuleFromNationality() {
-                    const rule = getCountryRuleByName(nationality?.value);
-                    if (!rule) return;
-                    if (phoneCode && !phoneCode.value) phoneCode.value = rule.dial;
-                    if (phoneNumber) {
-                        const maxDigits = rule.digits;
-                        const digits = onlyDigits(phoneNumber.value).slice(0, maxDigits);
-                        phoneNumber.value = formatLocalPhone(digits);
-                    }
-                }
-
-                nationality?.addEventListener('change', () => {
-                    applyPhoneRuleFromNationality();
-                    doLiveValidate(nationality);
-                });
-
-                phoneNumber?.addEventListener('input', () => {
-                    const rule = getCountryRuleByDial(phoneCode?.value) || getCountryRuleByName(nationality?.value);
-                    const maxDigits = rule?.digits ?? 9;
-                    const digits = onlyDigits(phoneNumber.value).slice(0, maxDigits);
-                    phoneNumber.value = formatLocalPhone(digits);
-                    doLiveValidate(phoneNumber);
-                });
-
-                phoneCode?.addEventListener('change', () => {
-                    const rule = getCountryRuleByDial(phoneCode.value);
-                    if (!rule || !phoneNumber) return;
-
-                    if (nationality && !nationality.value) {
-                        nationality.value = rule.name;
-                    }
-
-                    const digits = onlyDigits(phoneNumber.value).slice(0, rule.digits);
-                    phoneNumber.value = formatLocalPhone(digits);
-                    doLiveValidate(phoneCode);
-                });
-
-                block.querySelector('.ptype')?.addEventListener('change', () => doLiveValidate(block.querySelector('.ptype')));
-                block.querySelector('.gender')?.addEventListener('change', () => doLiveValidate(block.querySelector('.gender')));
-                block.querySelector('.birthdate')?.addEventListener('change', () => doLiveValidate(block.querySelector('.birthdate')));
-
-                const fnameEl = block.querySelector('.fname');
-                if (fnameEl) {
-                    fnameEl.addEventListener('input', () => {
-                        fnameEl.value = fnameEl.value.replace(/[0-9]/g, '');
-                        doLiveValidate(fnameEl);
-                    });
-                }
-
-                const lnameEl = block.querySelector('.lname');
-                if (lnameEl) {
-                    lnameEl.addEventListener('input', () => {
-                        lnameEl.value = lnameEl.value.replace(/[0-9]/g, '');
-                        doLiveValidate(lnameEl);
-                    });
-                }
-
-                container.appendChild(block);
-            }
-        }
-
-        function loadSummary() {
-            const summaryDest = document.getElementById('summaryDest');
-            if (summaryDest) {
-                summaryDest.innerHTML = `${localStorage.getItem('reservationDestination') || 'Destinacija'} <small id="summaryCountry">${localStorage.getItem('reservationCountry') || '—'}</small>`;
-            }
-
-            const hotelEl = document.getElementById('summaryHotelName');
-            if (hotelEl) hotelEl.textContent = localStorage.getItem('reservationHotelName') || '—';
-
-            const roomEl = document.getElementById('summaryRoom');
-            if (roomEl) roomEl.textContent = localStorage.getItem('reservationRoom') || '—';
-
-            const nightsEl = document.getElementById('summaryNights');
-            if (nightsEl) nightsEl.textContent = localStorage.getItem('reservationNights') || localStorage.getItem('reservationDuration') || '—';
-
-            const travelersEl = document.getElementById('summaryTravelers');
-            if (travelersEl) {
-                const adults = localStorage.getItem('reservationAdults');
-                const children = localStorage.getItem('reservationChildren');
-                if (adults && parseInt(adults, 10) > 0) {
-                    travelersEl.textContent = `${adults}x Odrasli${children && parseInt(children, 10) > 0 ? `, ${children}x Djeca` : ''}`;
-                } else {
-                    travelersEl.textContent = localStorage.getItem('reservationTravelers') || '—';
-                }
-            }
-
-            const totalEl = document.getElementById('summaryTotal');
-            if (totalEl) totalEl.textContent = localStorage.getItem('reservationTotal') || '0 KM';
-
-            const prevozTip = localStorage.getItem('reservationPrevozTip') || '';
-            const autobusRezervisan = localStorage.getItem('reservationBus');
-
-            const flightSection = document.getElementById('flightSummarySection');
-            const busSection = document.getElementById('busSummarySection');
-            const passengerTitle = document.getElementById('passengerPanelTitle');
-
-            if (prevozTip.toLowerCase().includes('autobus') || (autobusRezervisan && autobusRezervisan !== '—' && autobusRezervisan.trim() !== '')) {
-                if (flightSection) flightSection.style.display = 'none';
-                if (busSection) busSection.style.display = 'block';
-                if (passengerTitle) passengerTitle.textContent = "Podaci o putnicima (Autobus i Hotel)";
-
-                const busDep = document.getElementById('summaryBusDeparture');
-                const busRet = document.getElementById('summaryBusReturn');
-                if (busDep) busDep.textContent = localStorage.getItem('reservationDepartureText') || localStorage.getItem('reservationDeparture') || '—';
-                if (busRet) busRet.textContent = localStorage.getItem('reservationReturnText') || localStorage.getItem('reservationReturn') || '—';
-            } else {
-                if (flightSection) flightSection.style.display = 'block';
-                if (busSection) busSection.style.display = 'none';
-                if (passengerTitle) passengerTitle.textContent = "Podaci o putnicima (Letovi i Hoteli)";
-
-                const depEl = document.getElementById('summaryDeparture');
-                if (depEl) depEl.textContent = localStorage.getItem('reservationDepartureText') || localStorage.getItem('reservationDeparture') || '—';
-
-                const retEl = document.getElementById('summaryReturn');
-                if (retEl) retEl.textContent = localStorage.getItem('reservationReturnText') || localStorage.getItem('reservationReturn') || '—';
-
-                const routeEl = document.getElementById('summaryFlightRoute');
-                if (routeEl) routeEl.textContent = localStorage.getItem('reservationFlightRoute') || localStorage.getItem('reservationFlight') || '—';
-
-                const classEl = document.getElementById('summaryFlightClass');
-                if (classEl) classEl.textContent = localStorage.getItem('reservationFlightClass') || 'Ekonomska';
-            }
-
-            const photo = document.getElementById('summaryPhoto');
-            const image = localStorage.getItem('reservationImage') || '/assets/bali.jpg';
-            if (photo) {
-                photo.style.background = `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url('${image}') center/cover no-repeat`;
-            }
-
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
+        return countries.find(c => c.dial === dial) || null;
         }
 
         function setFormError(msg) {
-            const el = document.getElementById('formError');
-            if (!el) return;
-            if (!msg) {
-                el.style.display = 'none';
-                el.textContent = '';
-                return;
-            }
-            el.style.display = 'block';
-            el.textContent = msg;
+        const errEl = document.getElementById('formError');
+        if (errEl) {
+        if (msg) {
+        errEl.innerText = msg;
+        errEl.style.display = 'block';
+        } else {
+        errEl.innerText = '';
+        errEl.style.display = 'none';
+        }
+        }
         }
 
-        function validateBlock(block, idx, isLive = false) {
-            const type = block.querySelector('.ptype')?.value || 'adult';
-            const genderEl = block.querySelector('.gender');
-            const birthEl = block.querySelector('.birthdate');
-            const fnameEl = block.querySelector('.fname');
-            const lnameEl = block.querySelector('.lname');
-            const passportEl = block.querySelector('.passport');
-            const nationalityEl = block.querySelector('.nationality');
-            const phoneEl = block.querySelector('.phoneNumber');
+        function loadSummary() {
+        try {
+        const destinacija = localStorage.getItem('reservationDestination') || '—';
+        const drzava = localStorage.getItem('reservationCountry') || '';
+        const ukupno = localStorage.getItem('reservationTotal') || '0.00 KM';
+        const trajanje = localStorage.getItem('reservationNights') || '—';
+        const hotel = localStorage.getItem('reservationHotelName') || '—';
+        const soba = localStorage.getItem('reservationRoom') || '—';
+        const prevoz = localStorage.getItem('reservationPrevozTip') || '—';
+        const letInfo = localStorage.getItem('reservationFlightRoute') || '—';
+        const polazak = localStorage.getItem('reservationDeparture') || '—';
+        const povratak = localStorage.getItem('reservationReturn') || '—';
+        const odrasli = localStorage.getItem('reservationAdults') || '1';
+        const djeca = localStorage.getItem('reservationChildren') || '0';
+        const slika = localStorage.getItem('reservationImage');
 
-            const errorColor = '#dc2626';
+        const destinationEl = document.getElementById('summaryDestination');
+        if (destinationEl) {
+        destinationEl.innerText = drzava ? `${destinacija}, ${drzava}` : destinacija;
+        }
 
-            if (!isLive) {
-                [genderEl, birthEl, fnameEl, lnameEl, passportEl, nationalityEl, phoneEl].forEach(el => {
-                    if (el) el.style.borderColor = '';
-                });
-            }
+        const travelersEl = document.getElementById('summaryTravelers');
+        if (travelersEl) {
+        travelersEl.innerText = `Odrasli: ${odrasli}, Djeca: ${djeca}`;
+        }
 
-            if (fnameEl && !fnameEl.value.trim()) {
-                if (!isLive) fnameEl.style.borderColor = errorColor;
-                return { ok: false, msg: `Unesite ime za putnika ${idx + 1}.` };
-            }
+        const nightsEl = document.getElementById('summaryNights');
+        if (nightsEl) {
+        nightsEl.innerText = trajanje;
+        }
 
-            if (lnameEl && !lnameEl.value.trim()) {
-                if (!isLive) lnameEl.style.borderColor = errorColor;
-                return { ok: false, msg: `Unesite prezime za putnika ${idx + 1}.` };
-            }
+        const hotelEl = document.getElementById('summaryHotel');
+        if (hotelEl) {
+        hotelEl.innerText = hotel;
+        }
 
-            if (genderEl && !genderEl.value) {
-                if (!isLive) genderEl.style.borderColor = errorColor;
-                return { ok: false, msg: `Odaberite pol za putnika ${idx + 1}.` };
-            }
+        const roomEl = document.getElementById('summaryRoom');
+        if (roomEl) {
+        roomEl.innerText = soba.charAt(0).toUpperCase() + soba.slice(1);
+        }
 
-            const birthDate = birthEl?.value;
-            if (!birthDate) {
-                if (!isLive && birthEl) birthEl.style.borderColor = errorColor;
-                return { ok: false, msg: `Unesite datum rođenja za putnika ${idx + 1}.` };
-            }
+        const prevozEl = document.getElementById('summaryPrevoz');
+        if (prevozEl) {
+        if ((prevoz || '').toLowerCase().includes('avion')) {
+        prevozEl.innerText = '✈️ Avion';
+        } else if ((prevoz || '').toLowerCase().includes('autobus')) {
+        prevozEl.innerText = '🚌 Autobus';
+        } else {
+        prevozEl.innerText = prevoz;
+        }
+        }
 
-            const inputYear = parseInt(birthDate.split('-')[0], 10);
-            const currentYear = new Date().getFullYear();
+        const busSection = document.getElementById('busSummarySection');
+        const flightSection = document.getElementById('flightSummarySection');
 
-            if (inputYear < 1900 || inputYear > currentYear) {
-                if (birthEl) birthEl.style.borderColor = errorColor;
-                return { ok: false, msg: `Godina rođenja za putnika ${idx + 1} mora biti između 1900. i ${currentYear}. godine.` };
-            }
+        if ((prevoz || '').toLowerCase().includes('autobus')) {
+        if (busSection) busSection.style.display = 'block';
+        if (flightSection) flightSection.style.display = 'none';
+        const busDep = document.getElementById('summaryBusDeparture');
+        const busRet = document.getElementById('summaryBusReturn');
+        if (busDep) busDep.innerText = polazak;
+        if (busRet) busRet.innerText = povratak;
+        } else {
+        if (busSection) busSection.style.display = 'none';
+        if (flightSection) flightSection.style.display = 'block';
+        const letEl = document.getElementById('summaryLet');
+        if (letEl) {
+        letEl.innerText = letInfo !== '—' ? letInfo : 'Uključen let';
+        }
+        const departureEl = document.getElementById('summaryDeparture');
+        if (departureEl) departureEl.innerText = polazak;
+        const returnEl = document.getElementById('summaryReturn');
+        if (returnEl) returnEl.innerText = povratak;
+        }
 
-            const age = calcAgeYears(birthDate);
-            if (age === null) return { ok: false, msg: `Datum rođenja za putnika ${idx + 1} nije ispravan.` };
-            if (type === 'adult' && age < 18) {
-                if (birthEl) birthEl.style.borderColor = errorColor;
-                return { ok: false, msg: `Putnik ${idx + 1} ima ${age} god. Ako je Odrasli, mora imati 18+ godina.` };
-            }
+        const totalEl = document.getElementById('summaryTotal');
+        if (totalEl) {
+        totalEl.innerText = ukupno;
+        }
 
-            if (type === 'child' && age >= 18) {
-                if (birthEl) birthEl.style.borderColor = errorColor;
-                return { ok: false, msg: `Putnik ${idx + 1} ima ${age} god. Ako je Dijete, mora imati manje od 18 godina.` };
-            }
+        const photoEl = document.getElementById('summaryPhoto');
+        if (photoEl) {
+        if (slika && slika.trim() !== "" && slika !== "none") {
+        photoEl.style.backgroundImage = `url('${slika}')`;
+        } else {
+        photoEl.style.backgroundImage = "url('/assets/bali.jpg')";
+        }
+        }
+        } catch (e) {
+        console.error("Greška prilikom učitavanja sažetka:", e);
+        }
+        }
 
-            const phoneCode = block.querySelector('.phoneCode')?.value || '';
-            const phoneDigits = onlyDigits(phoneEl?.value || '');
+        // POTPUNO IMPLEMENTIRANE RESTRIKCIJE ZA VALIDACIJU SVAKE STAVKE
+        function validateBlock(block, idx, isLive) {
+        const type = block.querySelector('.ptype')?.value || 'Odrasli';
+        const fname = block.querySelector('.fname')?.value.trim();
+        const lname = block.querySelector('.lname')?.value.trim();
+        const gender = block.querySelector('.gender')?.value;
+        const birthdate = block.querySelector('.birthdate')?.value;
+        const passport = block.querySelector('.passport')?.value.trim();
+        const nationality = block.querySelector('.nationality')?.value;
+        const phoneDigits = onlyDigits(block.querySelector('.phoneNumber')?.value || '');
 
-            if (!phoneCode) {
-                if (!isLive && block.querySelector('.phoneCode')) block.querySelector('.phoneCode').style.borderColor = errorColor;
-                return { ok: false, msg: `Odaberite pozivni broj za putnika ${idx + 1}.` };
-            }
+        if (!isLive) {
+        if (!gender) return { ok: false, msg: `Putnik ${idx + 1}: Molimo odaberite pol.` };
+        if (!fname) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ime.` };
+        if (!lname) return { ok: false, msg: `Putnik ${idx + 1}: Unesite prezime.` };
+        if (!birthdate) return { ok: false, msg: `Putnik ${idx + 1}: Unesite datum rođenja.` };
+        if (!passport || passport.length < 5) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ispravan broj pasoša.` };
+        if (!nationality) return { ok: false, msg: `Putnik ${idx + 1}: Odaberite državljanstvo.` };
+        if (!phoneDigits || phoneDigits.length < 6) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ispravan broj telefona.` };
+        }
 
-            const rule = getCountryRuleByDial(phoneCode);
-            const expected = rule?.digits ?? 9;
+        if (birthdate) {
+        const birthYear = new Date(birthdate).getFullYear();
 
-            if (phoneDigits.length !== expected) {
-                if (!isLive && phoneEl) phoneEl.style.borderColor = errorColor;
-                return { ok: false, msg: `Broj telefona za putnika ${idx + 1} mora imati tačno ${expected} cifara.` };
-            }
+        // Restrikcija godina između 1900 i 2026
+        if (birthYear < 1900 || birthYear > 2026) {
+        return { ok: false, msg: `Putnik ${idx + 1}: Godina rođenja mora biti između 1900. i 2026. godine.` };
+        }
 
-            const passport = (passportEl?.value || '').trim();
-            const PASSPORT_LEN = 9;
+        const age = calcAgeYears(birthdate);
+        if (age !== null) {
+        // Odrasli mora imati 18 ili više godina (18+)
+        if (type === 'Odrasli' && age < 18) {
+        return { ok: false, msg: `Putnik ${idx + 1}: Označen je kao "Odrasli", ali ima manje od 18 godina (${age} god).` };
+        }
+        // Dijete mora imati manje od 18 godina (18<)
+        if (type === 'Dijete' && age >= 18) {
+        return { ok: false, msg: `Putnik ${idx + 1}: Označen je kao "Dijete", ali ima 18 ili više godina (${age} god).` };
+        }
+        }
+        }
+        return { ok: true };
+        }
 
-            if (!passport || passport.length !== PASSPORT_LEN || !/^[A-Z0-9]+$/.test(passport)) {
-                if (!isLive && passportEl) passportEl.style.borderColor = errorColor;
-                return { ok: false, msg: `Broj pasoša za putnika ${idx + 1} mora imati tačno ${PASSPORT_LEN} alfanumeričkih karaktera.` };
-            }
+        function generatePassengers() {
+        const container = document.getElementById('passengerContainer');
+        const template = document.getElementById('passengerTemplate');
+        if (!container || !template) {
+        console.error("Missing container or template element!");
+        return;
+        }
 
-            if (nationalityEl && !nationalityEl.value) {
-                if (!isLive) nationalityEl.style.borderColor = errorColor;
-                return { ok: false, msg: `Odaberite državljanstvo za putnika ${idx + 1}.` };
-            }
+        const count = parseInt(localStorage.getItem('reservationTravelers') || '1', 10) || 1;
+        const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '1', 10) || 1;
+        let savedPassengers = [];
 
-            return { ok: true, msg: '' };
+        try {
+        savedPassengers = JSON.parse(localStorage.getItem('savedPassengers') || '[]');
+        } catch (e) {
+        savedPassengers = [];
+        }
+
+        if (savedPassengers.length !== count) {
+        savedPassengers = [];
+        localStorage.removeItem('savedPassengers');
+        }
+
+        container.innerHTML = '';
+
+        for (let i = 1; i <= count; i++) {
+        const clone = template.content.cloneNode(true);
+        const titleEl = clone.querySelector('.p-title');
+        if (titleEl) titleEl.textContent = `Putnik ${i}`;
+
+        const selectNat = clone.querySelector('.nationality');
+        if (selectNat) {
+        countries.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.name;
+        opt.textContent = `${c.flag} ${c.name}`;
+        selectNat.appendChild(opt);
+        });
+        }
+
+        const phoneCodeEl = clone.querySelector('.phoneCode');
+        if (phoneCodeEl) {
+        countries.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.dial;
+        opt.textContent = `${c.flag} ${c.dial}`;
+        phoneCodeEl.appendChild(opt);
+        });
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.appendChild(clone);
+        const block = wrapper.querySelector('.passenger-block');
+        const pTypeEl = block.querySelector('.ptype');
+
+        if (pTypeEl) {
+        if (i <= expectedAdults) {
+        pTypeEl.value = 'Odrasli';
+        } else {
+        pTypeEl.value = 'Dijete';
+        }
+        }
+
+        if (savedPassengers && savedPassengers[i - 1]) {
+        const sp = savedPassengers[i - 1];
+        if (pTypeEl && sp.type) {
+        pTypeEl.value = (sp.type === 'adult' || sp.type === 'Odrasli') ? 'Odrasli' : 'Dijete';
+        }
+        if (block.querySelector('.gender') && sp.gender) block.querySelector('.gender').value = sp.gender;
+        if (block.querySelector('.fname') && sp.firstName) block.querySelector('.fname').value = sp.firstName;
+        if (block.querySelector('.lname') && sp.lastName) block.querySelector('.lname').value = sp.lastName;
+        if (block.querySelector('.birthdate') && sp.birthDate) block.querySelector('.birthdate').value = sp.birthDate;
+        if (block.querySelector('.passport') && sp.passport) block.querySelector('.passport').value = sp.passport;
+        if (selectNat && sp.nationality) selectNat.value = sp.nationality;
+        if (block.querySelector('.freqFlyer') && sp.freqFlyer) block.querySelector('.freqFlyer').value = sp.freqFlyer;
+        if (block.querySelector('.bedPreference') && sp.bedPreference) block.querySelector('.bedPreference').value = sp.bedPreference;
+        if (block.querySelector('.requests') && sp.requests) block.querySelector('.requests').value = sp.requests;
+
+        const phoneNumEl = block.querySelector('.phoneNumber');
+        if (sp.phone && phoneNumEl) {
+        const phoneParts = sp.phone.split(' ');
+        if (phoneParts.length > 1) {
+        if (phoneCodeEl) phoneCodeEl.value = phoneParts[0];
+        phoneNumEl.value = formatLocalPhone(phoneParts.slice(1).join(''));
+        }
+        }
+        }
+
+        const triggerLiveValidate = () => {
+        const res = validateBlock(block, i - 1, true);
+        if (!res.ok) {
+        setFormError(res.msg);
+        } else {
+        let hasOtherError = false;
+        const allBlocks = document.querySelectorAll('.passenger-block');
+        for (let bIdx = 0; bIdx < allBlocks.length; bIdx++) {
+        if (bIdx !== (i - 1)) {
+        const checkOther = validateBlock(allBlocks[bIdx], bIdx, true);
+        if (!checkOther.ok) {
+        hasOtherError = true;
+        setFormError(checkOther.msg);
+        break;
+        }
+        }
+        }
+        if (!hasOtherError) setFormError('');
+        }
+        };
+
+        // RESTRIKCJA: IME I PREZIME NE SMIJU IMATI BROJEVE (Brišu se u hodu)
+        const fnameInput = block.querySelector('.fname');
+        const lnameInput = block.querySelector('.lname');
+
+        if (fnameInput) {
+        fnameInput.addEventListener('input', () => {
+        fnameInput.value = fnameInput.value.replace(/[0-9]/g, '');
+        triggerLiveValidate();
+        });
+        }
+        if (lnameInput) {
+        lnameInput.addEventListener('input', () => {
+        lnameInput.value = lnameInput.value.replace(/[0-9]/g, '');
+        triggerLiveValidate();
+        });
+        }
+
+        const passportEl = block.querySelector('.passport');
+        if (passportEl) {
+        passportEl.addEventListener('input', () => {
+        passportEl.value = passportEl.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 9);
+        triggerLiveValidate();
+        });
+        }
+
+        const phoneCode = block.querySelector('.phoneCode');
+        const phoneNumber = block.querySelector('.phoneNumber');
+        const nationality = block.querySelector('.nationality');
+
+        // AUTOMATIZACIJA: Kada se izabere državljanstvo, automatski postavlja i pozivni broj
+        nationality?.addEventListener('change', () => {
+        const rule = getCountryRuleByName(nationality.value);
+        if (rule && phoneCode) {
+        phoneCode.value = rule.dial;
+        if (phoneNumber) {
+        const digits = onlyDigits(phoneNumber.value).slice(0, rule.digits);
+        phoneNumber.value = formatLocalPhone(digits);
+        }
+        }
+        triggerLiveValidate();
+        });
+
+        // AUTOMATIZACIJA: Kada se izabere pozivni broj telefona, automatski postavlja i državljanstvo
+        phoneCode?.addEventListener('change', () => {
+        const rule = getCountryRuleByDial(phoneCode.value);
+        if (rule) {
+        if (nationality) nationality.value = rule.name;
+        if (phoneNumber) {
+        const digits = onlyDigits(phoneNumber.value).slice(0, rule.digits);
+        phoneNumber.value = formatLocalPhone(digits);
+        }
+        }
+        triggerLiveValidate();
+        });
+
+        phoneNumber?.addEventListener('input', () => {
+        const rule = getCountryRuleByDial(phoneCode?.value) || getCountryRuleByName(nationality?.value);
+        const maxDigits = rule?.digits ?? 9;
+        const digits = onlyDigits(phoneNumber.value).slice(0, maxDigits);
+        phoneNumber.value = formatLocalPhone(digits);
+        triggerLiveValidate();
+        });
+
+        block.querySelector('.ptype')?.addEventListener('change', triggerLiveValidate);
+        block.querySelector('.gender')?.addEventListener('change', triggerLiveValidate);
+        block.querySelector('.birthdate')?.addEventListener('change', triggerLiveValidate);
+
+        container.appendChild(block);
+        }
         }
 
         function goToPayment() {
-            setFormError('');
-            const passengers = [];
-            const blocks = document.querySelectorAll('.passenger-block');
+        setFormError('');
+        const blocks = document.querySelectorAll('.passenger-block');
+        const passengers = [];
+        let countAdultsForm = 0;
+        let countChildrenForm = 0;
 
-            let countAdultsForm = 0;
-            let countChildrenForm = 0;
-
-            for (let idx = 0; idx < blocks.length; idx++) {
-                const block = blocks[idx];
-                const res = validateBlock(block, idx, false);
-                if (!res.ok) {
-                    setFormError(res.msg || "Provjerite podatke putnika.");
-                    block.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    return;
-                }
-
-                const type = block.querySelector('.ptype')?.value || 'adult';
-                if (type === 'adult') countAdultsForm++;
-                if (type === 'child') countChildrenForm++;
-
-                const nationalityEl = block.querySelector('.nationality');
-                const phoneCode = block.querySelector('.phoneCode')?.value || '';
-                const phoneDigits = onlyDigits(block.querySelector('.phoneNumber')?.value || '');
-
-                const phoneFormatted = phoneCode ? formatFullPhone(phoneCode, phoneDigits) : "";
-                
-                const fnameVal = block.querySelector('.fname')?.value || "";
-                const lnameVal = block.querySelector('.lname')?.value || "";
-                const birthdateVal = block.querySelector('.birthdate')?.value || "";
-                const passportVal = block.querySelector('.passport')?.value || "";
-                const freqFlyerVal = block.querySelector('.freqFlyer')?.value || "";
-                const bedPrefVal = block.querySelector('.bedPreference')?.value || "no-preference";
-                const requestsVal = block.querySelector('.requests')?.value || "";
-
-                const p = {
-                    type,
-                    gender: block.querySelector('.gender')?.value || "",
-                    firstName: fnameVal.trim(),
-                    lastName: lnameVal.trim(),
-                    birthDate: birthdateVal,
-                    passport: passportVal.trim(),
-                    nationality: nationalityEl?.value || "",
-                    phone: phoneFormatted,
-                    freqFlyer: freqFlyerVal.trim(),
-                    bedPreference: bedPrefVal,
-                    requests: requestsVal.trim()
-                };
-                passengers.push(p);
-            }
-
-            const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '0', 10);
-            const expectedChildren = parseInt(localStorage.getItem('reservationChildren') || '0', 10);
-
-            if (localStorage.getItem('reservationAdults') !== null || localStorage.getItem('reservationChildren') !== null) {
-                if (countAdultsForm !== expectedAdults || countChildrenForm !== expectedChildren) {
-                    setFormError(`Struktura putnika ne odgovara rezervaciji! Izabrano: ${countAdultsForm} odraslih, ${countChildrenForm} djece. Očekivano: ${expectedAdults} odraslih, ${expectedChildren} djece.`);
-                    return;
-                }
-            }
-
-            localStorage.setItem('savedPassengers', JSON.stringify(passengers));
-            const paketId = localStorage.getItem('reservationPaketId');
-            window.location.href = paketId ? (`/Placanje?paketId=${encodeURIComponent(paketId)}`) : '/Placanje';
+        for (let i = 0; i < blocks.length; i++) {
+        const block = blocks[i];
+        const res = validateBlock(block, i, false);
+        if (!res.ok) {
+        setFormError(res.msg);
+        block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
         }
 
+        const type = block.querySelector('.ptype')?.value || 'Odrasli';
+        if (type === 'Odrasli') countAdultsForm++;
+        else countChildrenForm++;
+
+        const fnameVal = block.querySelector('.fname')?.value || "";
+        const lnameVal = block.querySelector('.lname')?.value || "";
+        const birthdateVal = block.querySelector('.birthdate')?.value || "";
+        const passportVal = block.querySelector('.passport')?.value || "";
+        const nationalityEl = block.querySelector('.nationality');
+        const pCode = block.querySelector('.phoneCode')?.value || "";
+        const pNum = onlyDigits(block.querySelector('.phoneNumber')?.value || "");
+        const phoneFormatted = pCode ? `${pCode} ${pNum}` : pNum;
+        const freqFlyerVal = block.querySelector('.freqFlyer')?.value || "";
+        const bedPrefVal = block.querySelector('.bedPreference')?.value || "no-preference";
+        const requestsVal = block.querySelector('.requests')?.value || "";
+
+        const p = {
+        type: type === 'Odrasli' ? 'adult' : 'child',
+        gender: block.querySelector('.gender')?.value || "",
+        firstName: fnameVal.trim(),
+        lastName: lnameVal.trim(),
+        birthDate: birthdateVal,
+        passport: passportVal.trim(),
+        nationality: nationalityEl?.value || "",
+        phone: phoneFormatted,
+        freqFlyer: freqFlyerVal.trim(),
+        bedPreference: bedPrefVal,
+        requests: requestsVal.trim()
+        };
+        passengers.push(p);
+        }
+
+        const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '1', 10);
+        const expectedChildren = parseInt(localStorage.getItem('reservationChildren') || '0', 10);
+
+        if (countAdultsForm !== expectedAdults || countChildrenForm !== expectedChildren) {
+        setFormError(`Struktura putnika ne odgovara rezervaciji! Izabrano: ${countAdultsForm} odraslih, ${countChildrenForm} djece. Očekivano: ${expectedAdults} odraslih, ${expectedChildren} djece.`);
+        return;
+        }
+
+        localStorage.setItem('savedPassengers', JSON.stringify(passengers));
+    const paketId = localStorage.getItem('reservationPaketId');
+
+    window.location.href = paketId ? `/Placanje?paketId=${encodeURIComponent(paketId)}` : '/Placanje';
+}
+
         window.addEventListener('DOMContentLoaded', () => {
-            generatePassengers();
-            loadSummary();
+        loadSummary();
+        generatePassengers();
         });
     </script>
 </body>

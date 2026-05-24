@@ -63,6 +63,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
 
         [HttpPost]
         [Authorize]
+      
         public async Task<IActionResult> KreirajRezervaciju([FromBody] NovaRezervacijaDto model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -73,7 +74,11 @@ namespace InterTrips___Turistička_Agencija.Controllers
             var korisnik = _db.Users.FirstOrDefault(u => u.Email == emailKorisnika);
             if (korisnik == null) return Unauthorized("Korisnik nije pronađen u Identity bazi podataka.");
 
-            var paket = await _db.Paketi.FirstOrDefaultAsync(p => p.Id == model.PaketId);
+            var paket = await _db.Paketi
+                .Include(p => p.Hotel)
+                .Include(p => p.Let)
+                .FirstOrDefaultAsync(p => p.Id == model.PaketId);
+
             if (paket == null)
             {
                 return BadRequest($"Odabrani PaketId ({model.PaketId}) ne postoji u bazi podataka.");
@@ -85,20 +90,17 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 return BadRequest("Korisnik nema kreiran profil u tabeli Korisnici.");
             }
 
-            decimal baznaCijena = 500;
-            var propertyCijena = paket.GetType().GetProperties().FirstOrDefault(p => p.Name.Contains("Cijena") || p.Name.Contains("Price"));
-            if (propertyCijena != null)
-            {
-                var vrijednost = propertyCijena.GetValue(paket);
-                if (vrijednost != null) baznaCijena = Convert.ToDecimal(vrijednost);
-            }
-                 if (model.Putnici == null || model.Putnici.Count == 0)
+            decimal baznaCijena = paket.CijenaOd > 0 ? paket.CijenaOd : 500;
+
+            if (model.Putnici == null || model.Putnici.Count == 0)
                 return BadRequest(new { poruka = "Morate unijeti najmanje jednog putnika." });
 
-            decimal konacnaCijena = baznaCijena * model.Putnici.Count;
-           
+            int brojPutnika = model.Putnici.Count;
+            decimal konacnaCijena = baznaCijena * brojPutnika;
+
             if (model.DatumPovratka < model.DatumPolaska)
                 return BadRequest(new { poruka = "Datum povratka ne može biti prije datuma polaska." });
+
             if (!string.IsNullOrEmpty(model.PromoKod))
             {
                 var kupon = await _db.Kupon.FirstOrDefaultAsync(k => k.Kod.ToUpper() == model.PromoKod.ToUpper());
@@ -119,7 +121,33 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 }
             }
 
-            var strategy = _db.Database.CreateExecutionStrategy();
+           if (paket.Kapacitet < brojPutnika)
+            {
+                return BadRequest(new { poruka = "Nema dovoljno slobodnih mjesta na ovom turističkom paketu." });
+            }
+
+            if (paket.HotelId.HasValue)
+            {
+                var hotel = await _db.Hoteli.FindAsync(paket.HotelId.Value);
+                if (hotel == null || hotel.DostupnoSoba < brojPutnika)
+                {
+                    return BadRequest(new { poruka = "Nema dovoljno slobodnog kapaciteta u odabranom hotelu." });
+                }
+            }
+
+            if (paket.DostupniPrevoz == VrstaPrevoza.SamoAvion || paket.DostupniPrevoz == VrstaPrevoza.Oboje)
+            {
+                if (paket.LetId.HasValue)
+                {
+                    var let = await _db.Letovi.FindAsync(paket.LetId.Value);
+                    if (let == null || let.SlobodnaSjedista < brojPutnika)
+                    {
+                        return BadRequest(new { poruka = "Nema dovoljno slobodnih sjedišta na odabranom letu." });
+                    }
+                }
+            }
+
+           var strategy = _db.Database.CreateExecutionStrategy();
 
             return await strategy.ExecuteAsync(async () =>
             {
@@ -159,6 +187,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
                         Metoda = enumMetoda,
                         VrijemePlacanja = DateTime.UtcNow
                     };
+
                     _db.Placanja.Add(novoPlacanje);
                     await _db.SaveChangesAsync();
 
@@ -176,29 +205,36 @@ namespace InterTrips___Turistička_Agencija.Controllers
                                 IsUplaceno = false
                             });
                         }
+                        await _db.SaveChangesAsync();
                     }
 
-                    int brojPutnika = model.Putnici.Count;
-                    var paketLocal = await _db.Paketi.AsNoTracking().FirstOrDefaultAsync(p => p.Id == model.PaketId);
-                    if (paketLocal == null)
-                        return BadRequest(new { poruka = $"Odabrani PaketId ({model.PaketId}) ne postoji u bazi podataka." });
-                    if (paket.HotelId.HasValue)
+                    var trackedPaket = await _db.Paketi.FindAsync(paket.Id);
+                    if (trackedPaket != null)
                     {
-                        var hotel = await _db.Hoteli.FindAsync(paket.HotelId.Value);
-                        if (hotel != null)
+                        trackedPaket.Kapacitet -= brojPutnika;
+                        _db.Entry(trackedPaket).State = EntityState.Modified;
+
+                        if (trackedPaket.HotelId.HasValue)
                         {
-                            hotel.DostupnoSoba -= brojPutnika;
-                            _db.Entry(hotel).State = EntityState.Modified;
+                            var hotel = await _db.Hoteli.FindAsync(trackedPaket.HotelId.Value);
+                            if (hotel != null)
+                            {
+                                hotel.DostupnoSoba -= brojPutnika;
+                                _db.Entry(hotel).State = EntityState.Modified;
+                            }
                         }
-                    }
 
-                    if (paket.LetId.HasValue)
-                    {
-                        var let = await _db.Letovi.FindAsync(paket.LetId.Value);
-                        if (let != null)
+                        if (trackedPaket.DostupniPrevoz == VrstaPrevoza.SamoAvion || trackedPaket.DostupniPrevoz == VrstaPrevoza.Oboje)
                         {
-                            let.SlobodnaSjedista -= brojPutnika;
-                            _db.Entry(let).State = EntityState.Modified;
+                            if (trackedPaket.LetId.HasValue)
+                            {
+                                var let = await _db.Letovi.FindAsync(trackedPaket.LetId.Value);
+                                if (let != null)
+                                {
+                                    let.SlobodnaSjedista -= brojPutnika;
+                                    _db.Entry(let).State = EntityState.Modified;
+                                }
+                            }
                         }
                     }
 
@@ -209,7 +245,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
                     {
                         id = novaRezervacija.Id,
                         cijenaZaPlacanje = novoPlacanje.Iznos,
-                        message = "Rezervacija i podaci o plaćanju uspješno spašeni!"
+                        message = "Rezervacija uspješno kreirana, kapaciteti ažurirani!"
                     });
                 }
                 catch (Exception ex)
@@ -219,7 +255,6 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 }
             });
         }
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetMojeRezervacije()
@@ -307,17 +342,44 @@ namespace InterTrips___Turistička_Agencija.Controllers
             {
                 var emailKorisnika = User.Identity?.Name;
                 var korisnik = await _db.Korisnici.FirstOrDefaultAsync(k => k.Email == emailKorisnika);
-
                 if (korisnik == null) return Unauthorized("Korisnik nije pronađen.");
 
-                var rezervacija = await _db.Rezervacije.FirstOrDefaultAsync(r => r.Id == id && r.KorisnikId == korisnik.Id);
+                var rezervacija = await _db.Rezervacije
+                    .Include(r => r.Putnici)
+                    .Include(r => r.Paket)
+                    .FirstOrDefaultAsync(r => r.Id == id && r.KorisnikId == korisnik.Id);
 
-                if (rezervacija == null) return NotFound("Rezervacija nije pronađena ili nemate pravo da je otkažete.");
+                if (rezervacija == null) return NotFound("Rezervacija nije pronađena.");
+                if (rezervacija.Status == StatusRezervacije.Otkazana) return BadRequest("Rezervacija je već otkazana.");
+
+                int brojPutnika = rezervacija.Putnici?.Count ?? 1;
+                var paket = rezervacija.Paket;
+
+                if (paket != null)
+                {
+                    paket.Kapacitet += brojPutnika;
+                    _db.Entry(paket).State = EntityState.Modified;
+
+                    if (paket.HotelId.HasValue)
+                    {
+                        var hotel = await _db.Hoteli.FindAsync(paket.HotelId.Value);
+                        if (hotel != null) hotel.DostupnoSoba += brojPutnika;
+                    }
+
+                    if (paket.DostupniPrevoz == VrstaPrevoza.SamoAvion || paket.DostupniPrevoz == VrstaPrevoza.Oboje)
+                    {
+                        if (paket.LetId.HasValue)
+                        {
+                            var let = await _db.Letovi.FindAsync(paket.LetId.Value);
+                            if (let != null) let.SlobodnaSjedista += brojPutnika;
+                        }
+                    }
+                }
 
                 rezervacija.Status = StatusRezervacije.Otkazana;
                 await _db.SaveChangesAsync();
 
-                return Ok(new { message = "Rezervacija je uspješno otkazana." });
+                return Ok(new { message = "Rezervacija je uspješno otkazana, a kapaciteti su oslobođeni." });
             }
             catch (Exception ex)
             {

@@ -49,10 +49,13 @@ namespace InterTrips___Turistička_Agencija.Models
 
         [MaxLength(800)]
         public string? Opis { get; set; }
+
         public int? HotelId { get; set; }
+        [ForeignKey("HotelId")]
         public virtual Hotel? Hotel { get; set; }
 
         public int? LetId { get; set; }
+        [ForeignKey("LetId")] 
         public virtual Let? Let { get; set; }
         public VrstaPrevoza DostupniPrevoz { get; set; } = VrstaPrevoza.Oboje;
         public List<TerminPutovanja> DostupniTermini { get; set; } = new List<TerminPutovanja>();

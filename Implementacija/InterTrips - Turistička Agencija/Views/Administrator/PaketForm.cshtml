@@ -7,7 +7,8 @@
 
     var destinacije = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Destinacije;
     var statusi = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Statusi;
-
+    var hoteli = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Hoteli ?? new List<SelectListItem>();
+    var letovi = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Letovi ?? new List<SelectListItem>();
     var renderModel = Model ?? new InterTrips___Turistička_Agencija.Models.Paket();
 
     if (renderModel.DatumPolaska == DateTime.MinValue)
@@ -477,6 +478,21 @@
                         <input class="input-custom" asp-for="Kapacitet" value="@renderModel.Kapacitet" type="number" min="1" max="1000" placeholder="Npr. 30" required />
                         <span class="err-custom" asp-validation-for="Kapacitet"></span>
                     </div>
+                    <div class="form-group-custom">
+                        <label class="field-label-custom">Dodijeli Hotel paketu</label>
+                        <select class="select-custom" asp-for="HotelId" asp-items="hoteli">
+                            <option value="">-- Bez hotela --</option>
+                        </select>
+                        <span class="err-custom" asp-validation-for="HotelId"></span>
+                    </div>
+
+                    <div class="form-group-custom">
+                        <label class="field-label-custom">Dodijeli Let paketu</label>
+                        <select class="select-custom" asp-for="LetId" asp-items="letovi">
+                            <option value="">-- Bez leta (Autobus) --</option>
+                        </select>
+                        <span class="err-custom" asp-validation-for="LetId"></span>
+                    </div>
 
                     <div class="form-group-custom">
                         <label class="field-label-custom">Dozvoljeni tip prevoza</label>
@@ -506,7 +522,6 @@
 
     <script>
         $(document).ready(function () {
-        // Popravka nekompatibilnosti jQuery unobtrusive validacije sa standardnim HTML5 date formatom
         if ($.validator && $.validator.methods) {
         $.validator.methods.date = function (value, element) {
         return this.optional(element) || !isNaN(Date.parse(value)) || /^\d{4}-\d{2}-\d{2}$/.test(value);
@@ -528,7 +543,6 @@
         var noviDatumPovratka = `${godina}-${mjesec}-${dan}`;
         $('#DatumPovratka').val(noviDatumPovratka);
 
-        // Trigger validacije nakon automatske promjene datuma
         if ($('#paketModalForm').validate) {
         $('#DatumPovratka').valid();
         }

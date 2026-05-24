@@ -33,9 +33,10 @@ namespace InterTrips___Turistička_Agencija.Data
         public DbSet<RataPlacanja> RatePlacanja => Set<RataPlacanja>();
         public DbSet<LogNotifikacija> LogoviNotifikacija => Set<LogNotifikacija>();
         public DbSet<TerminPutovanja> TerminPutovanja { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); 
+            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Korisnik>().ToTable("Korisnik");
             modelBuilder.Entity<Destinacija>().ToTable("Destinacija");
@@ -49,8 +50,6 @@ namespace InterTrips___Turistička_Agencija.Data
             modelBuilder.Entity<StavkaPlana>().ToTable("StavkaPlana");
             modelBuilder.Entity<AgentPaket>().ToTable("AgentPaket");
 
-            
-            modelBuilder.Entity<Hotel>().Property(h => h.CijenaPoNoci).HasPrecision(18, 2);
             modelBuilder.Entity<RataPlacanja>().Property(r => r.IznosRate).HasPrecision(18, 2);
             modelBuilder.Entity<Let>().ToTable("Let");
             modelBuilder.Entity<Dobavljac>().ToTable("Dobavljac");
@@ -58,10 +57,10 @@ namespace InterTrips___Turistička_Agencija.Data
             modelBuilder.Entity<LogNotifikacija>().ToTable("LogNotifikacija");
 
             modelBuilder.Entity<PlanPutovanjaTemplate>()
-                      .HasMany(p => p.Stavke)
-                      .WithOne(s => s.PlanPutovanjaTemplate!)
-                      .HasForeignKey(s => s.PlanPutovanjaTemplateId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                .HasMany(p => p.Stavke)
+                .WithOne(s => s.PlanPutovanjaTemplate!)
+                .HasForeignKey(s => s.PlanPutovanjaTemplateId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Rezervacija>()
                 .HasOne(r => r.Placanje)
@@ -98,10 +97,13 @@ namespace InterTrips___Turistička_Agencija.Data
             );
 
             modelBuilder.Entity<Rezervacija>()
-     .HasOne(r => r.Paket)
-     .WithMany(p => p.Rezervacije) 
-     .HasForeignKey(r => r.PaketId)
-     .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(r => r.Paket)
+                .WithMany(p => p.Rezervacije)
+                .HasForeignKey(r => r.PaketId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Paket>()
+                .ToTable(tb => tb.HasTrigger("tr_Paketi_Trigger"));
         }
     }
 }
