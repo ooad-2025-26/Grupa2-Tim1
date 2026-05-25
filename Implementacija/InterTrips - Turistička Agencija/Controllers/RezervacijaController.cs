@@ -83,13 +83,6 @@ namespace InterTrips___Turistička_Agencija.Controllers
             {
                 return BadRequest($"Odabrani PaketId ({model.PaketId}) ne postoji u bazi podataka.");
             }
-
-            var stvarniKorisnikUBazi = _db.Korisnici.FirstOrDefault(k => k.Email == emailKorisnika);
-            if (stvarniKorisnikUBazi == null)
-            {
-                return BadRequest("Korisnik nema kreiran profil u tabeli Korisnici.");
-            }
-
             decimal baznaCijena = paket.CijenaOd > 0 ? paket.CijenaOd : 500;
 
             if (model.Putnici == null || model.Putnici.Count == 0)
@@ -162,7 +155,8 @@ namespace InterTrips___Turistička_Agencija.Controllers
                         DatumPolaska = model.DatumPolaska,
                         DatumPovratka = model.DatumPovratka,
                         Status = StatusRezervacije.Kreirana,
-                        KorisnikId = stvarniKorisnikUBazi.Id,
+                        KorisnikId = korisnik.Id,
+
                         Putnici = model.Putnici.Select(p => new Putnik
                         {
                             Ime = p.Ime,
@@ -278,40 +272,20 @@ namespace InterTrips___Turistička_Agencija.Controllers
                     return Unauthorized(new { greska = "Korisnik nije autorizovan. Molimo prijavite se ponovo." });
                 }
 
-                var korisnik = await _db.Korisnici.FirstOrDefaultAsync(k => k.Email == emailKorisnika);
+                var korisnik = await _db.Users.FirstOrDefaultAsync(u => u.Email == emailKorisnika);
 
                 if (korisnik == null)
                 {
-                    var identityUser = await _db.Users.FirstOrDefaultAsync(u => u.Email == emailKorisnika);
-
-                    if (identityUser != null)
-                    {
-                        var noviKorisnikProfil = new Korisnik
-                        {
-                            Email = emailKorisnika,
-                            Ime = emailKorisnika.Split('@')[0],
-                            Lozinka = "Identity_Managed",
-                            Uloga = Uloga.Klijent
-                        };
-
-                        _db.Korisnici.Add(noviKorisnikProfil);
-                        await _db.SaveChangesAsync();
-
-                        korisnik = noviKorisnikProfil;
-                    }
-                    else
-                    {
-                        return NotFound(new { greska = "Korisnik ne postoji ni u Identity bazi podataka." });
-                    }
+                    return NotFound(new { greska = "Korisnik ne postoji u Identity bazi podataka." });
                 }
 
-                var siroveRezervacije = await _db.Rezervacije
-                    .Include(r => r.Paket)
-                        .ThenInclude(p => p!.Destinacija)
-                    .Include(r => r.Putnici)
-                    .Where(r => r.KorisnikId == korisnik.Id)
-                    .ToListAsync();
 
+                var siroveRezervacije = await _db.Rezervacije
+            .Include(r => r.Paket)
+                .ThenInclude(p => p!.Destinacija)
+            .Include(r => r.Putnici)
+            .Where(r => r.KorisnikId == korisnik.Id)
+            .ToListAsync();
                 var rezultat = siroveRezervacije.Select(r => new
                 {
                     id = r.Id,
@@ -356,7 +330,8 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 try
                 {
                     var emailKorisnika = User.Identity?.Name;
-                    var korisnik = await _db.Korisnici.FirstOrDefaultAsync(k => k.Email == emailKorisnika);
+                    var korisnik = await _db.Users.FirstOrDefaultAsync(u => u.Email == emailKorisnika);
+                    if (korisnik == null) return Unauthorized("Korisnik nije pronađen u sistemu."); 
                     if (korisnik == null) return Unauthorized("Korisnik nije pronađen.");
 
                     var rezervacija = await _db.Rezervacije

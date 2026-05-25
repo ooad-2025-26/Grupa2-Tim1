@@ -24,5 +24,5 @@ public class Korisnik
     [Required]
     public Uloga Uloga { get; set; } = Uloga.Klijent;
 
-    public List<Rezervacija> Rezervacije { get; set; } = new();
+    //public List<Rezervacija> Rezervacije { get; set; } = new();
 }

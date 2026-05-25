@@ -484,7 +484,12 @@
         </section>
     </main>
 
+    @Html.AntiForgeryToken()
+
     <script>
+        // Dohvatanje Antiforgery Tokena generisanog od strane Razor-a
+        const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
         const loginTab = document.getElementById('login-tab');
         const agentTab = document.getElementById('agent-tab');
         const adminTab = document.getElementById('admin-tab');
@@ -560,7 +565,10 @@
         try {
         const res = await fetch('/Account/Login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+        'Content-Type': 'application/json',
+        'RequestVerificationToken': csrfToken
+        },
         credentials: 'same-origin',
         body: JSON.stringify({ Email: email, Password: password })
         });
@@ -587,7 +595,10 @@
         try {
         const res = await fetch('/Account/Login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+        'Content-Type': 'application/json',
+        'RequestVerificationToken': csrfToken
+        },
         credentials: 'same-origin',
         body: JSON.stringify({ Email: email, Password: password })
         });
@@ -611,7 +622,10 @@
         try {
         const res = await fetch('/Account/Login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+        'Content-Type': 'application/json',
+        'RequestVerificationToken': csrfToken
+        },
         credentials: 'same-origin',
         body: JSON.stringify({ Email: email, Password: password })
         });
@@ -649,19 +663,22 @@
         }
         const nameParts = name.split(' ');
         const ime = nameParts[0];
-        const prezime = nameParts.slice(1).join(' ') || ' '; 
+        const prezime = nameParts.slice(1).join(' ') || ' ';
 
         try {
         const res = await fetch('/Account/Register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+        'Content-Type': 'application/json',
+        'RequestVerificationToken': csrfToken
+        },
         credentials: 'same-origin',
         body: JSON.stringify({
         Ime: ime,
         Prezime: prezime,
         Email: email,
         Password: password
-        }) 
+        })
         });
 
         const data = await res.json().catch(() => ({}));

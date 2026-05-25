@@ -38,6 +38,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
         }
 
         [HttpGet("Login")]
+        [ValidateAntiForgeryToken]
         public IActionResult Login()
         {
             return View();
@@ -69,6 +70,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
         }
 
         [HttpPost("Register")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             if (dto == null)

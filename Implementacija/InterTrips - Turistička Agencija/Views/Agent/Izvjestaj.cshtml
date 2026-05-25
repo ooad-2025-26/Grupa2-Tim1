@@ -239,7 +239,7 @@
 
             .stats-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
                 gap: 24px;
                 margin-bottom: 30px;
             }
@@ -265,7 +265,7 @@
 
             .stat-info p {
                 margin: 0;
-                font-size: 28px;
+                font-size: 26px;
                 font-weight: 700;
                 color: var(--sidebar-dark);
             }
@@ -479,10 +479,24 @@
                     <div class="stat-box">
                         <div class="stat-info">
                             <h3>Procjena prometa</h3>
-                            <p>@((Model.AktivneRezervacije?.Sum(r => r.Paket?.CijenaOd) ?? 0).ToString("N2")) KM</p>
+                            @{
+                                decimal ukupanPromet = (decimal)(Model.AktivneRezervacije?.Sum(r => r.Paket?.CijenaOd) ?? 0);
+                                decimal provizijaAgenta = ukupanPromet * 0.10m;
+                            }
+                            <p>@ukupanPromet.ToString("N2") KM</p>
                         </div>
-                        <div class="stat-icon" style="color: #16803d; background: #f0fdf4;">
+                        <div class="stat-icon" style="color: #1e7f88; background: rgba(30, 127, 136, 0.05);">
                             <i class="fa-solid fa-wallet"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-box">
+                        <div class="stat-info">
+                            <h3>Zarada Agenta (10%)</h3>
+                            <p style="color: #15803d;">@provizijaAgenta.ToString("N2") KM</p>
+                        </div>
+                        <div class="stat-icon" style="color: #15803d; background: #f0fdf4;">
+                            <i class="fa-solid fa-percent"></i>
                         </div>
                     </div>
                 </div>
@@ -503,6 +517,7 @@
                                     <th>Klijent</th>
                                     <th>Naziv paketa</th>
                                     <th>Cijena po osobi</th>
+                                    <th>Provizija (10%)</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -510,7 +525,7 @@
                                 @if (Model.AktivneRezervacije == null || !Model.AktivneRezervacije.Any())
                                 {
                                     <tr>
-                                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
                                             Nema pronađenih podataka za odabrani period.
                                         </td>
                                     </tr>
@@ -519,11 +534,14 @@
                                 {
                                     foreach (var r in Model.AktivneRezervacije)
                                     {
+                                        decimal cijenaPaketa = (decimal)(r.Paket?.CijenaOd ?? 0);
+                                        decimal pojedinacnaProvizija = cijenaPaketa * 0.10m;
                                         <tr>
                                             <td><strong>#@r.Id</strong></td>
                                             <td>@(r.Korisnik?.Email ?? "Nije specificirano")</td>
                                             <td>@(r.Paket?.Naziv ?? "Nepoznat paket")</td>
-                                            <td><strong>@(r.Paket?.CijenaOd.ToString("N2") ?? "0.00") KM</strong></td>
+                                            <td><strong>@cijenaPaketa.ToString("N2") KM</strong></td>
+                                            <td style="color: var(--success); font-weight: 600;">+@pojedinacnaProvizija.ToString("N2") KM</td>
                                             <td>
                                                 <span class="badge-status @(r.Status.ToString() == "Potvrdjeno" ? "status-potvrdjeno" : "status-na-cekanju")">
                                                     @r.Status.ToString()

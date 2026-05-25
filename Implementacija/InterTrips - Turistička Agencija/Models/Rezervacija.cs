@@ -1,5 +1,8 @@
 using InterTrips___Turistička_Agencija.Enums;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace InterTrips___Turistička_Agencija.Models;
 
@@ -24,9 +27,10 @@ public class Rezervacija
     public Paket? Paket { get; set; }
 
     [Required]
-    public int KorisnikId { get; set; } 
+    public string KorisnikId { get; set; }
 
-    public Korisnik? Korisnik { get; set; }
+    [ForeignKey("KorisnikId")]
+   public ApplicationUser? Korisnik { get; set; }
 
     public List<Putnik> Putnici { get; set; } = new();
 

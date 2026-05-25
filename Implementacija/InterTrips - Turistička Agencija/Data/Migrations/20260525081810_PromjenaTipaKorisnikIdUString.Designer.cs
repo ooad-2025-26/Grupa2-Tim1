@@ -4,6 +4,7 @@ using InterTrips___Turistička_Agencija.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InterTrips___Turistička_Agencija.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260525081810_PromjenaTipaKorisnikIdUString")]
+    partial class PromjenaTipaKorisnikIdUString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -662,6 +665,8 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("KorisnikId1")
+                        .HasColumnType("int");
 
                     b.Property<int>("PaketId")
                         .HasColumnType("int");
@@ -673,7 +678,7 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
 
                     b.HasIndex("KorisnikId");
 
-                   
+                    b.HasIndex("KorisnikId1");
 
                     b.HasIndex("PaketId");
 
@@ -832,21 +837,21 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                         new
                         {
                             Id = "1b63ef27-996b-4b13-98db-00f7e4b9bc10",
-                            ConcurrencyStamp = "19d056f6-b5ee-46f6-8ad0-7147dfd771d8",
+                            ConcurrencyStamp = "3b260f01-b3f1-42a8-968b-13caad7787ff",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2c74fa38-885b-3b12-87cb-11e8e5c8cd21",
-                            ConcurrencyStamp = "408f14a9-9eae-484f-8a63-c92faf680409",
+                            ConcurrencyStamp = "79d96f9a-36e2-4a86-8fd3-7d4badcedc36",
                             Name = "Agent",
                             NormalizedName = "AGENT"
                         },
                         new
                         {
                             Id = "3d85fb49-774b-2b11-76da-22f9e6d9de32",
-                            ConcurrencyStamp = "38a8f7af-3ff9-4822-895b-71c453837dc9",
+                            ConcurrencyStamp = "66630e3e-75fe-4f95-9389-5112c743b830",
                             Name = "Klijent",
                             NormalizedName = "KLIJENT"
                         });
@@ -1097,7 +1102,10 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                 
+                    b.HasOne("InterTrips___Turistička_Agencija.Models.Korisnik", null)
+                        .WithMany("Rezervacije")
+                        .HasForeignKey("KorisnikId1");
+
                     b.HasOne("InterTrips___Turistička_Agencija.Models.Paket", "Paket")
                         .WithMany("Rezervacije")
                         .HasForeignKey("PaketId")

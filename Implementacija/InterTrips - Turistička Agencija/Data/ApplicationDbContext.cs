@@ -63,10 +63,10 @@ namespace InterTrips___Turistička_Agencija.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Rezervacija>()
-                .HasOne(r => r.Placanje)
-                .WithOne(p => p.Rezervacija!)
-                .HasForeignKey<Placanje>(p => p.RezervacijaId)
-                .OnDelete(DeleteBehavior.Cascade);
+    .HasOne(r => r.Placanje)
+    .WithOne(p => p.Rezervacija!)
+    .HasForeignKey<Placanje>(p => p.RezervacijaId)
+    .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Rezervacija>()
                 .HasOne(r => r.PlanPutovanja)
@@ -97,11 +97,21 @@ namespace InterTrips___Turistička_Agencija.Data
             );
 
             modelBuilder.Entity<Rezervacija>()
-                .HasOne(r => r.Paket)
-                .WithMany(p => p.Rezervacije)
-                .HasForeignKey(r => r.PaketId)
-                .OnDelete(DeleteBehavior.Restrict);
+    .HasOne(r => r.Paket)
+    .WithMany(p => p.Rezervacije)
+    .HasForeignKey(r => r.PaketId)
+    .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Rezervacija>()
+       .Property(r => r.KorisnikId)
+       .HasColumnType("nvarchar(450)"); 
+
+            modelBuilder.Entity<Rezervacija>()
+                .HasOne(r => r.Korisnik)
+                .WithMany()
+                .HasForeignKey(r => r.KorisnikId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Paket>()
                 .ToTable(tb => tb.HasTrigger("tr_Paketi_Trigger"));
         }
