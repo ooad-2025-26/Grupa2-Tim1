@@ -339,7 +339,7 @@ public class AdministratorController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> PlanTemplateDodajStavku(int planId, int redniBroj, string Lazy, string? opis, TimeSpan? vrijeme)
+    public async Task<IActionResult> PlanTemplateDodajStavku(int planId, int redniBroj, string Naziv, string? opis, TimeSpan? vrijeme)
     {
         var plan = await _db.PlanoviPutovanjaTemplate.FirstOrDefaultAsync(p => p.Id == planId);
         if (plan == null) return NotFound();
@@ -348,7 +348,7 @@ public class AdministratorController : Controller
         {
             PlanPutovanjaTemplateId = planId,
             RedniBroj = redniBroj,
-            Naziv = Lazy,
+            Naziv = Naziv, 
             Opis = opis,
             Vrijeme = vrijeme
         });
@@ -356,7 +356,6 @@ public class AdministratorController : Controller
         await _db.SaveChangesAsync();
         return RedirectToAction(nameof(PlanTemplate), new { paketId = plan.PaketId });
     }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> PlanTemplateObrisiStavku(int id)

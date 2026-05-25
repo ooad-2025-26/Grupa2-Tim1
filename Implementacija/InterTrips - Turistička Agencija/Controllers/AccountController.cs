@@ -63,7 +63,6 @@ namespace InterTrips___Turistička_Agencija.Controllers
 
             var roles = await _userManager.GetRolesAsync(user);
 
-            // Prilagođeno rutama vaše aplikacije
             var redirectUrl = roles.Contains("Admin") ? "/Administrator"
                     : roles.Contains("Agent") ? $"/Agent?agentId={user.Id}"
                     : "/";
@@ -71,7 +70,6 @@ namespace InterTrips___Turistička_Agencija.Controllers
             return Ok(new { success = true, redirectUrl });
         }
 
-        // ISPRAVLJENO: Uklonjen [FromBody] i usklađen naziv uloge sa Program.cs ("Client")
         [HttpPost("Register")]
         
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
@@ -92,14 +90,13 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 Email = dto.Email,
                 Ime = dto.Ime,
                 Prezime = dto.Prezime,
-                EmailConfirmed = true // Automatski potvrđujemo email radi lakšeg testiranja
+                EmailConfirmed = true 
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
 
             if (result.Succeeded)
             {
-                // VAŽNO ISPRAVLJENO: Preimenovano iz "Klijent" u "Client" da se poklapa sa ulogama iz Program.cs
                 string klijentUloga = "Client";
                 if (!await _roleManager.RoleExistsAsync(klijentUloga))
                 {

@@ -283,12 +283,10 @@
                         if (!response.ok) return;
 
                         const data = await response.json();
-                        // Popravljeno: Tražimo tačan ID elementa iz HTML-a iznad
                         const badge = document.getElementById('navNavNotificationBadge');
 
                         if (!badge) return;
 
-                        // Podržava i situaciju gdje tvoja akcija vraća objekat sa strukturom { broj: X } ili direktno vrijednost
                         const brojNeprocitanih = data.broj !== undefined ? data.broj : data;
 
                         if (brojNeprocitanih && brojNeprocitanih > 0) {

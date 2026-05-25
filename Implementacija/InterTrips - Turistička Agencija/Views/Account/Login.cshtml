@@ -487,7 +487,6 @@
     @Html.AntiForgeryToken()
 
     <script>
-        // Dohvatanje Antiforgery Tokena generisanog od strane Razor-a
         const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
         const loginTab = document.getElementById('login-tab');

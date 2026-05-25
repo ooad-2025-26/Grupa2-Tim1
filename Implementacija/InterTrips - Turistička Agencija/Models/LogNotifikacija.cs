@@ -14,6 +14,6 @@ namespace InterTrips___Turistička_Agencija.Models
         public string PorukaGreske { get; set; } = string.Empty;
         public bool Procitana { get; set; } = false;
         public DateTime? DatumProcitano { get; set; }
-
+        public virtual Rezervacija? Rezervacija { get; set; }
     }
 }

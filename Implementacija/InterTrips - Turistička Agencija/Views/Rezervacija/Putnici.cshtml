@@ -812,7 +812,6 @@
         }
         }
 
-        // POTPUNO IMPLEMENTIRANE RESTRIKCIJE ZA VALIDACIJU SVAKE STAVKE
         function validateBlock(block, idx, isLive) {
         const type = block.querySelector('.ptype')?.value || 'Odrasli';
         const fname = block.querySelector('.fname')?.value.trim();
@@ -836,18 +835,15 @@
         if (birthdate) {
         const birthYear = new Date(birthdate).getFullYear();
 
-        // Restrikcija godina između 1900 i 2026
         if (birthYear < 1900 || birthYear > 2026) {
         return { ok: false, msg: `Putnik ${idx + 1}: Godina rođenja mora biti između 1900. i 2026. godine.` };
         }
 
         const age = calcAgeYears(birthdate);
         if (age !== null) {
-        // Odrasli mora imati 18 ili više godina (18+)
         if (type === 'Odrasli' && age < 18) {
         return { ok: false, msg: `Putnik ${idx + 1}: Označen je kao "Odrasli", ali ima manje od 18 godina (${age} god).` };
         }
-        // Dijete mora imati manje od 18 godina (18<)
         if (type === 'Dijete' && age >= 18) {
         return { ok: false, msg: `Putnik ${idx + 1}: Označen je kao "Dijete", ali ima 18 ili više godina (${age} god).` };
         }
@@ -965,7 +961,6 @@
         }
         };
 
-        // RESTRIKCJA: IME I PREZIME NE SMIJU IMATI BROJEVE (Brišu se u hodu)
         const fnameInput = block.querySelector('.fname');
         const lnameInput = block.querySelector('.lname');
 
@@ -994,7 +989,6 @@
         const phoneNumber = block.querySelector('.phoneNumber');
         const nationality = block.querySelector('.nationality');
 
-        // AUTOMATIZACIJA: Kada se izabere državljanstvo, automatski postavlja i pozivni broj
         nationality?.addEventListener('change', () => {
         const rule = getCountryRuleByName(nationality.value);
         if (rule && phoneCode) {
@@ -1007,7 +1001,6 @@
         triggerLiveValidate();
         });
 
-        // AUTOMATIZACIJA: Kada se izabere pozivni broj telefona, automatski postavlja i državljanstvo
         phoneCode?.addEventListener('change', () => {
         const rule = getCountryRuleByDial(phoneCode.value);
         if (rule) {

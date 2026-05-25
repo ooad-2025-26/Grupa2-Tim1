@@ -45,7 +45,7 @@
                                 }
                             </div>
                             <div style="color: #a1b3ba; font-size: 13px; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
-                                🕒 @n.VrijemeSlanja.ToString("dd.MM.yyyy. u HH:mm") uš
+                                🕒 @n.VrijemeSlanja.ToString("dd.MM.yyyy. u HH:mm")
                             </div>
                         </div>
 
@@ -65,8 +65,17 @@
                         </div>
                     }
 
-                    <div style="margin-top: 15px; padding-top: 12px; border-top: 1px solid #f1f5f7; color: #8ba2aa; font-size: 12.5px; display: flex; align-items: center; gap: 5px;">
-                        🔑 Referenca rezervacije: <span style="font-weight: 600; color: #5f7c86;">@(n.RezervacijaId?.ToString() ?? "Nema veze sa rezervacijom")</span>
+                    <div style="margin-top: 15px; padding-top: 12px; border-top: 1px solid #f1f5f7; color: #8ba2aa; font-size: 12.5px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            🔑 Referenca rezervacije: <span style="font-weight: 600; color: #5f7c86;">@(n.RezervacijaId?.ToString() ?? "Nema veze sa rezervacijom")</span>
+                        </div>
+
+                        @if (n.Rezervacija?.Paket != null)
+                        {
+                            <div style="background: rgba(42, 169, 176, 0.08); color: #1d3b41; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                                🧳 Aranžman: <span style="color: #2aa9b0;">@n.Rezervacija.Paket.Naziv</span>
+                            </div>
+                        }
                     </div>
                 </div>
             }

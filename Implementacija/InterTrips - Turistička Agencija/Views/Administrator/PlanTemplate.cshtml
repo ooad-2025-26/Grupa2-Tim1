@@ -525,7 +525,7 @@
 
                 <div style="margin-bottom: 16px;">
                     <label class="field-label">Naslov etape ili aktivnosti</label>
-                    <input class="input" name="naziv" maxlength="160" required placeholder="Npr. Dan 1 - Okupljanje grupe na aerodromu i let za destinaciju" />
+                    <input class="input" name="Naziv" maxlength="160" required placeholder="Npr. Dan 1 - Okupljanje grupe na aerodromu i let za destinaciju" />
                 </div>
 
                 <div style="margin-bottom: 20px;">
@@ -567,7 +567,7 @@
                             <span class="field-label" style="font-size: 10px; margin-bottom: 4px;">Satnica</span>
                             @if (s.Vrijeme.HasValue)
                             {
-                                <span class="time-display">@s.Vrijeme.Value.ToString("HH:mm") h</span>
+                                <span class="time-display">@s.Vrijeme.Value.ToString(@"hh\:mm") h</span>
                             }
                             else
                             {

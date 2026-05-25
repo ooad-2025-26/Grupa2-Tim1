@@ -10,16 +10,19 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace InterTrips___Turistička_Agencija.Services
 {
     public class EmailAndDocumentService
     {
+        private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _db;
 
-        public EmailAndDocumentService(ApplicationDbContext db)
+        public EmailAndDocumentService(ApplicationDbContext db, IConfiguration configuration)
         {
             _db = db;
+            _configuration = configuration;
         }
 
         public async Task<bool> PosaljiEmailSaLogomAsync(string primalac, string naslov, string sadrzaj, int? rezervacijaId, string tip)
@@ -42,15 +45,18 @@ namespace InterTrips___Turistička_Agencija.Services
                     poruka.Body = sadrzaj;
                     poruka.IsBodyHtml = true;
 
-                    using (var smtp = new SmtpClient())
+                    using (SmtpClient klijent = new SmtpClient())
                     {
-                        smtp.Host = "smtp.gmail.com";
-                        smtp.Port = 587;
-                        smtp.EnableSsl = true;
-                        smtp.Credentials = new NetworkCredential("vaš-gmail@gmail.com", "vaša-lozinka-aplikacije");
-                        smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        klijent.Host = _configuration["EmailSettings:SmtpServer"] ?? "smtp.gmail.com";
+                        klijent.Port = int.Parse(_configuration["EmailSettings:Port"] ?? "587");
+                        klijent.EnableSsl = true; 
 
-                        await smtp.SendMailAsync(poruka);
+                        string senderEmail = _configuration["EmailSettings:SenderEmail"] ?? "intertrips2@gmail.com";
+                        string appPassword = _configuration["EmailSettings:AppPassword"] ?? "mcslzibvvzoatmnw";
+
+                        klijent.Credentials = new NetworkCredential(senderEmail, appPassword);
+
+                        await klijent.SendMailAsync(poruka);
                     }
                 }
 
