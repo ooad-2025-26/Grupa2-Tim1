@@ -1,10 +1,14 @@
 ﻿using InterTrips___Turistička_Agencija.Data;
 using InterTrips___Turistička_Agencija.Models;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 using System;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace InterTrips___Turistička_Agencija.Services
@@ -33,8 +37,8 @@ namespace InterTrips___Turistička_Agencija.Services
                 using (var poruka = new MailMessage())
                 {
                     poruka.To.Add(new MailAddress(primalac));
-                    poruka.From = new MailAddress("vaš-gmail@gmail.com", "InterTrips Agencija");
-                    poruka.Subject = naslov;
+                    string posiljalacEmail = _configuration["EmailSettings:SenderEmail"] ?? "intertrips2@gmail.com";
+                    poruka.From = new MailAddress(posiljalacEmail, "InterTrips Agencija");
                     poruka.Body = sadrzaj;
                     poruka.IsBodyHtml = true;
 
@@ -51,6 +55,8 @@ namespace InterTrips___Turistička_Agencija.Services
                 }
 
                 log.Status = "Uspjesno";
+                log.Procitana = true;
+                log.DatumProcitano = DateTime.Now;
                 _db.Add(log);
                 await _db.SaveChangesAsync();
                 return true;
@@ -65,176 +71,82 @@ namespace InterTrips___Turistička_Agencija.Services
             }
         }
 
-        public byte[] GenerisiPdfDokument(string naslovDokumenta, string detalji)
+        public byte[] GenerisiPdfDokument(string naslovDokumenta, string detaljiHtml)
         {
-            string htmlSadrzaj = $@"
-                <html>
-                <head>
-                    <meta charset='utf-8' />
-                    <style>
-                        body {{ 
-                            font-family: 'Arial', sans-serif; 
-                            margin: 0; 
-                            padding: 0; 
-                            color: #000000; 
-                            font-size: 14px;
-                        }}
-                        .header {{ 
-                            background-color: #2b7a80; 
-                            color: #ffffff; 
-                            text-align: center; 
-                            padding: 20px 10px;
-                            margin-bottom: 35px;
-                        }}
-                        .header h1 {{ 
-                            margin: 0; 
-                            font-size: 26px; 
-                            letter-spacing: 1px;
-                        }}
-                        .header p {{ 
-                            margin: 5px 0 0 0; 
-                            font-size: 11px; 
-                            opacity: 0.9;
-                        }}
-                        .main-content {{
-                            padding: 0 45px;
-                        }}
-                        .doc-title {{
-                            font-size: 20px;
-                            font-weight: bold;
-                            margin-bottom: 5px;
-                            text-transform: uppercase;
-                        }}
-                        .doc-meta {{
-                            font-size: 12px;
-                            color: #333333;
-                            line-height: 1.5;
-                            margin-bottom: 15px;
-                        }}
-                        .divider {{
-                            border-bottom: 1px solid #c8dcdc;
-                            margin-bottom: 25px;
-                        }}
-                        .grid-container {{
-                            width: 100%;
-                            margin-bottom: 25px;
-                        }}
-                        .grid-col {{
-                            width: 50%;
-                            vertical-align: top;
-                        }}
-                        .section-title {{
-                            font-weight: bold;
-                            font-size: 13px;
-                            margin-bottom: 12px;
-                            text-transform: uppercase;
-                        }}
-                        .info-line {{
-                            font-size: 12px;
-                            margin-bottom: 8px;
-                        }}
-                        .total-amount {{
-                            font-size: 16px;
-                            font-weight: bold;
-                            margin-top: 12px;
-                        }}
-                        .table-title {{
-                            font-weight: bold;
-                            font-size: 13px;
-                            margin-top: 15px;
-                            margin-bottom: 12px;
-                            text-transform: uppercase;
-                        }}
-                        .passengers-table {{
-                            width: 100%;
-                            border-collapse: collapse;
-                            font-size: 11px;
-                            margin-bottom: 30px;
-                        }}
-                        .passengers-table th {{
-                            background-color: #f0f8f8;
-                            text-align: left;
-                            padding: 6px 8px;
-                            font-weight: bold;
-                        }}
-                        .passengers-table td {{
-                            padding: 8px;
-                            border-bottom: 1px solid #e6f0f0;
-                            vertical-align: top;
-                        }}
-                        .note-line {{
-                            font-size: 10px;
-                            color: #555555;
-                            margin-top: 3px;
-                        }}
-                        .footer-container {{
-                            width: 100%;
-                            margin-top: 40px;
-                            margin-bottom: 60px;
-                        }}
-                        .stamp-col {{
-                            width: 50%;
-                            text-align: left;
-                            padding-left: 20px;
-                        }}
-                        .stamp-circle {{
-                            width: 105px;
-                            height: 105px;
-                            border: 2px solid #2b7a80;
-                            border-radius: 50%;
-                            display: inline-block;
-                            text-align: center;
-                            color: #2b7a80;
-                            font-size: 9px;
-                            font-weight: bold;
-                        }}
-                        .stamp-text {{
-                            margin-top: 28px;
-                            line-height: 1.3;
-                        }}
-                        .signature-col {{
-                            width: 50%;
-                            text-align: center;
-                            vertical-align: bottom;
-                            padding-bottom: 15px;
-                        }}
-                        .signature-line {{
-                            width: 180px;
-                            border-bottom: 1px solid #000000;
-                            margin: 0 auto 8px auto;
-                }}
-                        .legal-footer {{
-                            position: absolute;
-                            bottom: 30px;
-                            left: 0;
-                            right: 0;
-                            text-align: center;
-                            font-size: 10px;
-                            color: #969696;
-                            padding: 0 20px;
-                        }}
-                    </style>
-                </head>
-                <body>
-                    <div class='header'>
-                        <h1>INTERTRIPS</h1>
-                        <p>Agencija za turizam | Sarajevo, BiH | www.intertrips.ba</p>
-                    </div>
-                    <div class='main-content'>
-                        {detalji}
-                    </div>
-                </body>
-                </html>";
+            QuestPDF.Settings.License = LicenseType.Community;
 
-            using (var ms = new MemoryStream())
+            var document = Document.Create(container =>
             {
-                using (var writer = new StreamWriter(ms))
+                container.Page(page =>
                 {
-                    writer.Write(htmlSadrzaj);
-                    writer.Flush();
-                    return ms.ToArray();
-                }
-            }
+                    page.Size(PageSizes.A4);
+                    page.Margin(25);
+                    page.DefaultTextStyle(x => x.FontSize(10).FontFamily("Arial"));
+
+                    page.Header().Column(header =>
+                    {
+                        header.Item().Background("#2b7a80").Padding(12).AlignCenter().Text("INTERTRIPS")
+                            .FontSize(20)
+                            .Bold()
+                            .FontColor(Colors.White);
+
+                        header.Item().AlignCenter().Text("Agencija za turizam | Sarajevo, BiH | www.intertrips.ba")
+                            .FontSize(9)
+                            .FontColor(Colors.Grey.Darken2);
+
+                        header.Item().PaddingTop(10).LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+                    });
+
+                    page.Content().PaddingTop(15).Column(content =>
+                    {
+                        content.Item().AlignCenter().Text(naslovDokumenta)
+    .FontSize(16)
+    .Bold()
+    .FontColor("#2b7a80");
+
+                        content.Item().PaddingTop(10).Text(StripHtml(detaljiHtml))
+                            .FontSize(10)
+                            .FontColor(Colors.Black);
+                    });
+
+                    page.Footer().AlignCenter().Text("Ovaj dokument je validan bez pečata i potpisa ukoliko je generisan elektronskim putem.")
+                        .FontSize(8)
+                        .FontColor(Colors.Grey.Darken1);
+                });
+            });
+
+            using var ms = new MemoryStream();
+            document.GeneratePdf(ms);
+            return ms.ToArray();
+        }
+
+        private static string StripHtml(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return string.Empty;
+
+            var sb = new StringBuilder(input);
+
+            sb.Replace("<br />", "\n");
+            sb.Replace("<br>", "\n");
+            sb.Replace("</div>", "\n");
+            sb.Replace("</p>", "\n");
+            sb.Replace("</tr>", "\n");
+            sb.Replace("</td>", " ");
+            sb.Replace("</th>", " ");
+            sb.Replace("<li>", "\n- ");
+            sb.Replace("</li>", "");
+            sb.Replace("</h1>", "\n");
+            sb.Replace("</h2>", "\n");
+            sb.Replace("</h3>", "\n");
+            sb.Replace("</h4>", "\n");
+
+            return System.Text.RegularExpressions.Regex.Replace(sb.ToString(), "<.*?>", string.Empty)
+                .Replace("&nbsp;", " ")
+                .Replace("&amp;", "&")
+                .Replace("&lt;", "<")
+                .Replace("&gt;", ">")
+                .Trim();
         }
     }
 }

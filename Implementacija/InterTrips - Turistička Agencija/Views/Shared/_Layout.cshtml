@@ -230,11 +230,21 @@
             @if (User?.Identity?.IsAuthenticated == true)
             {
                 <li><a asp-controller="Rezervacija" asp-action="Index">Moje rezervacije</a></li>
+
+                <li style="position:relative;">
+                    <a asp-controller="Notifikacije" asp-action="Moje" style="display: flex; align-items: center; gap: 6px;">
+                        <span style="position: relative; display: inline-flex; align-items: center;">
+                            🔔
+                            <span id="navNavNotificationBadge" style="display: none; position: absolute; top: -4px; right: -4px; background: #ff4d4f; color: white; font-size: 10px; font-weight: bold; border-radius: 50%; min-width: 15px; height: 15px; padding: 0 3px; justify-content: center; align-items: center; border: 1.5px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                0
+                            </span>
+                        </span>
+                        Obavijesti
+                    </a>
+                </li>
             }
 
-
-           
-    <li><a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a></li>
+            <li><a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a></li>
         </ul>
 
         <div class="user-area">
@@ -260,6 +270,41 @@
             }
         </div>
     </header>
+
+    @if (User?.Identity?.IsAuthenticated == true)
+    {
+        <script>
+                async function loadNotificationBadge() {
+                    try {
+                        const response = await fetch('/Notifikacije/BrojNeprocitanih', {
+                            credentials: 'same-origin'
+                        });
+
+                        if (!response.ok) return;
+
+                        const data = await response.json();
+                        // Popravljeno: Tražimo tačan ID elementa iz HTML-a iznad
+                        const badge = document.getElementById('navNavNotificationBadge');
+
+                        if (!badge) return;
+
+                        // Podržava i situaciju gdje tvoja akcija vraća objekat sa strukturom { broj: X } ili direktno vrijednost
+                        const brojNeprocitanih = data.broj !== undefined ? data.broj : data;
+
+                        if (brojNeprocitanih && brojNeprocitanih > 0) {
+                            badge.style.display = 'inline-flex';
+                            badge.textContent = brojNeprocitanih;
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    } catch (e) {
+                        console.error('Greška pri učitavanju notifikacija:', e);
+                    }
+                }
+
+                document.addEventListener('DOMContentLoaded', loadNotificationBadge);
+        </script>
+    }
 
     @RenderBody()
 

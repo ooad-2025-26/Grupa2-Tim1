@@ -31,7 +31,7 @@ namespace InterTrips___Turistička_Agencija.Data
         public DbSet<Dobavljac> Dobavljaci => Set<Dobavljac>();
         public DbSet<Kupon> Kupon => Set<Kupon>();
         public DbSet<RataPlacanja> RatePlacanja => Set<RataPlacanja>();
-        public DbSet<LogNotifikacija> LogoviNotifikacija => Set<LogNotifikacija>();
+        public DbSet<LogNotifikacija> LogNotifikacija { get; set; }
         public DbSet<TerminPutovanja> TerminPutovanja { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -56,6 +56,7 @@ namespace InterTrips___Turistička_Agencija.Data
             modelBuilder.Entity<Kupon>().ToTable("Kupon");
             modelBuilder.Entity<LogNotifikacija>().ToTable("LogNotifikacija");
 
+            // Relacije i kaskadna brisanja
             modelBuilder.Entity<PlanPutovanjaTemplate>()
                 .HasMany(p => p.Stavke)
                 .WithOne(s => s.PlanPutovanjaTemplate!)
@@ -63,10 +64,10 @@ namespace InterTrips___Turistička_Agencija.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Rezervacija>()
-    .HasOne(r => r.Placanje)
-    .WithOne(p => p.Rezervacija!)
-    .HasForeignKey<Placanje>(p => p.RezervacijaId)
-    .OnDelete(DeleteBehavior.Cascade);
+                .HasOne(r => r.Placanje)
+                .WithOne(p => p.Rezervacija!)
+                .HasForeignKey<Placanje>(p => p.RezervacijaId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Rezervacija>()
                 .HasOne(r => r.PlanPutovanja)
@@ -86,6 +87,7 @@ namespace InterTrips___Turistička_Agencija.Data
                 .HasForeignKey(r => r.PlacanjeId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Seed-anje uloga
             string adminRoleId = "1b63ef27-996b-4b13-98db-00f7e4b9bc10";
             string agentRoleId = "2c74fa38-885b-3b12-87cb-11e8e5c8cd21";
             string klijentRoleId = "3d85fb49-774b-2b11-76da-22f9e6d9de32";
@@ -97,21 +99,23 @@ namespace InterTrips___Turistička_Agencija.Data
             );
 
             modelBuilder.Entity<Rezervacija>()
-    .HasOne(r => r.Paket)
-    .WithMany(p => p.Rezervacije)
-    .HasForeignKey(r => r.PaketId)
-    .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(r => r.Paket)
+                .WithMany(p => p.Rezervacije)
+                .HasForeignKey(r => r.PaketId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Rezervacija>()
-       .Property(r => r.KorisnikId)
-       .HasColumnType("nvarchar(450)"); 
+                .Property(r => r.KorisnikId)
+                .HasColumnType("nvarchar(450)");
 
             modelBuilder.Entity<Rezervacija>()
                 .HasOne(r => r.Korisnik)
                 .WithMany()
                 .HasForeignKey(r => r.KorisnikId)
+                .HasPrincipalKey(u => u.Id)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Paket>()
                 .ToTable(tb => tb.HasTrigger("tr_Paketi_Trigger"));
         }

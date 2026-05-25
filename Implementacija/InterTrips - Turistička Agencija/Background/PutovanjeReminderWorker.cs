@@ -23,42 +23,51 @@ namespace InterTrips___Turistička_Agencija.Background
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                using (var scope = _services.CreateScope())
+                using var scope = _services.CreateScope();
+
+                var emailService = scope.ServiceProvider.GetRequiredService<EmailAndDocumentService>();
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                var ciljaniDatum = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+
+                var rezervacijeZaPodsjetnik = await context.Rezervacije
+                    .Include(r => r.Korisnik)
+                    .Include(r => r.Paket)
+                    .Where(r => r.DatumPolaska == ciljaniDatum)
+                    .ToListAsync(stoppingToken);
+
+                foreach (var rezervacija in rezervacijeZaPodsjetnik)
                 {
-                    var emailService = scope.ServiceProvider.GetRequiredService<EmailAndDocumentService>();
-                    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                    var klijentEmail = rezervacija.Korisnik?.Email;
+                    if (string.IsNullOrWhiteSpace(klijentEmail))
+                        continue;
 
-                    DateTime ciljaniDatum = DateTime.Today.AddDays(3);
+                    bool vecPoslato = await context.LogNotifikacija.AnyAsync(l =>
+                        l.RezervacijaId == rezervacija.Id &&
+                        l.EmailPrimaoca == klijentEmail &&
+                        l.TipNotifikacije == "Podsjetnik za putovanje" &&
+                        l.Status == "Uspjesno", stoppingToken);
 
-                     var rezervacijeZaPodsjetnik = await context.Rezervacije
-                        .Include(r => r.Paket)
-                        .Include(r => r.Korisnik)
-                        .Where(r => r.Paket != null && r.Paket.DatumPolaska.Date == ciljaniDatum)
-                        .ToListAsync(stoppingToken);
+                    if (vecPoslato)
+                        continue;
 
-                    foreach (var rezervacija in rezervacijeZaPodsjetnik)
-                    {
-                        string klijentEmail = rezervacija.Korisnik?.Email ?? "";
+                    var nazivPaketa = rezervacija.Paket?.Naziv ?? "Vaše putovanje";
 
-                        if (!string.IsNullOrEmpty(klijentEmail))
-                        {
-                            string naslov = $"Podsjetnik za putovanje: {rezervacija.Paket!.Naziv}";
-                            string poruka = $@"
-                                <h3>Poštovani,</h3>
-                                <p>Vaše putovanje na destinaciju <strong>{rezervacija.Paket.Naziv}</strong> počinje za 3 dana ({rezervacija.Paket.DatumPolaska.ToString("dd.MM.yyyy")}).</p>
-                                <p>Molimo Vas da provjerite Vaše putne dokumente (pasoš, vizu) i plan putovanja.</p>
-                                <br>
-                                <p>Sretan put želi Vam <strong>InterTrips Agencija</strong>!</p>";
+                    string naslov = $"Podsjetnik za putovanje: {nazivPaketa}";
+                    string poruka = $@"
+                        <h3>Poštovani,</h3>
+                        <p>Vaše putovanje na destinaciju <strong>{nazivPaketa}</strong> počinje za 3 dana ({rezervacija.DatumPolaska:dd.MM.yyyy}).</p>
+                        <p>Molimo Vas da provjerite Vaše putne dokumente (pasoš, vizu) i plan putovanja.</p>
+                        <br>
+                        <p>Sretan put želi Vam <strong>InterTrips Agencija</strong>!</p>";
 
-                            await emailService.PosaljiEmailSaLogomAsync(
-                                klijentEmail,
-                                naslov,
-                                poruka,
-                                rezervacija.Id,
-                                "Podsjetnik za putovanje"
-                            );
-                        }
-                    }
+                    await emailService.PosaljiEmailSaLogomAsync(
+                        klijentEmail,
+                        naslov,
+                        poruka,
+                        rezervacija.Id,
+                        "Podsjetnik za putovanje"
+                    );
                 }
 
                 await Task.Delay(TimeSpan.FromDays(1), stoppingToken);

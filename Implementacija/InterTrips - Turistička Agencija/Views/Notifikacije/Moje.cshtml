@@ -1,0 +1,109 @@
+@model IEnumerable<InterTrips___Turistička_Agencija.Models.LogNotifikacija>
+@{
+    ViewData["Title"] = "InterTrips - Notifikacije";
+    Layout = "_Layout";
+}
+
+<div style="max-width: 1100px; margin: 50px auto; padding: 0 25px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 35px; border-bottom: 2px solid #f1f5f7; padding-bottom: 20px;">
+        <div>
+            <h1 style="color: #1d3b41; margin: 0 0 8px 0; font-size: 2rem; font-weight: 700; letter-spacing: -0.5px;">Moje obavijesti</h1>
+            <p style="color: #5f7c86; margin: 0; font-size: 15px;">Pregled i praćenje sistemskih notifikacija vezanih za Vaše rezervacije.</p>
+        </div>
+
+        @if (Model != null && Model.Any(n => !n.Procitana))
+        {
+            <button id="markAllReadBtn" style="background: #2aa9b0; color: #fff; border: none; padding: 12px 22px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(42, 169, 176, 0.25);" onmouseover="this.style.background='#228e94'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#2aa9b0'; this.style.transform='translateY(0)';">
+                Označi sve kao pročitane
+            </button>
+        }
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div style="background: #fff; border: 1px solid #e5eef0; border-radius: 20px; padding: 60px 20px; text-align: center; box-shadow: 0 10px 30px rgba(29, 59, 65, 0.03);">
+            <div style="font-size: 50px; margin-bottom: 20px; filter: grayscale(100%); opacity: 0.6;">🔔</div>
+            <h3 style="margin: 0 0 10px 0; color: #1d3b41; font-size: 1.3rem; font-weight: 600;">Sve je čisto!</h3>
+            <p style="color: #5f7c86; margin: 0; font-size: 15px;">Trenutno nemate novih ili starih sistemskih obavijesti.</p>
+        </div>
+    }
+    else
+    {
+        <div style="display: grid; gap: 20px;">
+            @foreach (var n in Model)
+            {
+                <div style="background: #fff; border: 1px solid @(n.Procitana ? "#e5eef0" : "rgba(42, 169, 176, 0.4)"); border-left: 5px solid @(n.Procitana ? "#b9cbd1" : "#2aa9b0"); border-radius: 14px; padding: 22px; position: relative; transition: all 0.2s ease; box-shadow: @(n.Procitana ? "0 4px 15px rgba(0,0,0,0.02)" : "0 8px 25px rgba(42, 169, 176, 0.06)"); opacity: @(n.Procitana ? "0.85" : "1");" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(29, 59, 65, 0.08)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='@(n.Procitana ? "0 4px 15px rgba(0,0,0,0.02)" : "0 8px 25px rgba(42, 169, 176, 0.06)")';">
+
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap;">
+                        <div>
+                            <div style="font-weight: 700; color: #1d3b41; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                                @n.TipNotifikacije
+                                @if (!n.Procitana)
+                                {
+                                    <span style="background: rgba(248, 190, 33, 0.15); color: #d99e00; font-size: 11px; padding: 3px 9px; border-radius: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Nova</span>
+                                }
+                            </div>
+                            <div style="color: #a1b3ba; font-size: 13px; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+                                🕒 @n.VrijemeSlanja.ToString("dd.MM.yyyy. u HH:mm") uš
+                            </div>
+                        </div>
+
+                        <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 5px 12px; border-radius: 50px; background: @(n.Status == "Uspjesno" ? "rgba(43, 138, 62, 0.1)" : "rgba(201, 42, 42, 0.1)"); color: @(n.Status == "Uspjesno" ? "#2b8a3e" : "#c92a2a");">
+                            ● @(n.Status == "Uspjesno" ? "Uspješno poslano" : "Greška pri slanju")
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px; color: #3a565e; font-size: 14.5px; background: #f8fafb; padding: 10px 14px; border-radius: 8px; display: inline-block;">
+                        <span style="color: #7fa1aa; font-weight: 500;">Primalac:</span> <strong style="color: #1d3b41;">@n.EmailPrimaoca</strong>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(n.PorukaGreske))
+                    {
+                        <div style="margin-top: 12px; background: rgba(201, 42, 42, 0.04); border: 1px dashed rgba(201, 42, 42, 0.2); color: #c92a2a; font-size: 13.5px; padding: 12px; border-radius: 8px; font-family: monospace;">
+                            <strong>Log detalji o grešci:</strong> @n.PorukaGreske
+                        </div>
+                    }
+
+                    <div style="margin-top: 15px; padding-top: 12px; border-top: 1px solid #f1f5f7; color: #8ba2aa; font-size: 12.5px; display: flex; align-items: center; gap: 5px;">
+                        🔑 Referenca rezervacije: <span style="font-weight: 600; color: #5f7c86;">@(n.RezervacijaId?.ToString() ?? "Nema veze sa rezervacijom")</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('markAllReadBtn')?.addEventListener('click', async function () {
+            const btn = this;
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Označavanje...';
+
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+                const response = await fetch('/Notifikacije/OznaciSveKaoProcitane', {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token
+                    }
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Greška pri označavanju notifikacija.');
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }
+            } catch (e) {
+                alert('Greška u komunikaciji sa serverom.');
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+    </script>
+}

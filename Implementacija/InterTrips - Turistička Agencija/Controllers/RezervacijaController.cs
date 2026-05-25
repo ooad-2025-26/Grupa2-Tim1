@@ -625,7 +625,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Greška pri generisanju PDF-a: {ex.Message}");
+                return BadRequest($"Greška pri generisanju PDF-a: {ex.Message} | Inner: {ex.InnerException?.Message}");
             }
 
             if (pdfBytes == null || pdfBytes.Length == 0)

@@ -426,6 +426,62 @@
             }
         }
 
+        async function renderReservations() {
+            const listContainer = document.getElementById('reservationsList');
+            const emptyContainer = document.getElementById('emptyMsg');
+
+            if (!listContainer) return;
+
+            listContainer.innerHTML = '<p style="text-align:center; color: var(--text-muted);">Učitavanje Vaših aranžmana...</p>';
+
+            ucitaneRezervacije = await getReservationsForCurrentUser();
+
+            if (!ucitaneRezervacije || ucitaneRezervacije.length === 0) {
+                listContainer.innerHTML = '';
+                if (emptyContainer) emptyContainer.style.display = 'block';
+                return;
+            }
+
+            if (emptyContainer) emptyContainer.style.display = 'none';
+
+            listContainer.innerHTML = ucitaneRezervacije.map((r, index) => {
+                const currentId = r.id || r.Id;
+                const stvarniBrojPutnika = r.brojPutnika || r.BrojPutnika || 1;
+                const dest = r.destinacija || r.Destinacija || '—';
+                const drz = (r.drzava || r.Drzava) ? `(${r.drzava || r.Drzava})` : '';
+                const pNaziv = r.paketNaziv || r.PaketNaziv || '—';
+                const dPolaska = r.datumPolaska || r.DatumPolaska || '—';
+                const dPovratka = r.datumPovratka || r.DatumPovratka || '—';
+
+                const planBtn = planButtonHtml(r);
+
+                const pdfBtn = `<button type="button" class="btn-elegant-action pdf" onclick="downloadPdfByIndex(event, ${index})">📂 Potvrda (PDF)</button>`;
+                const isOtkazana = r.status === 'Otkazana';
+                const cancelBtn = !isOtkazana
+                    ? `<button type="button" class="btn-elegant-action cancel" onclick="cancelReservation(${currentId})">❌ Otkaži</button>`
+                    : '';
+
+                return `
+                            <div class="r-card">
+                                <div class="r-top">
+                                    <div class="r-code">Kod rezervacije: <strong>#${currentId || '—'}</strong></div>
+                                    ${badgeHtml(r.status)}
+                                </div>
+                                <div class="r-grid">
+                                    <div class="r-line"><span>Destinacija</span><strong>${dest} ${drz}</strong></div>
+                                    <div class="r-line"><span>Turistički Paket</span><strong>${pNaziv}</strong></div>
+                                    <div class="r-line"><span>Period Putovanja</span><strong>${dPolaska} - ${dPovratka}</strong></div>
+                                    <div class="r-line"><span>Broj Putnika</span><strong>${stvarniBrojPutnika} osobe</strong></div>
+                                </div>
+                                <div class="r-actions">
+                                    ${planBtn}
+                                    ${pdfBtn}
+                                    ${cancelBtn}
+                                </div>
+                            </div>`;
+            }).join('');
+        }
+
         async function cancelReservation(id) {
             const confirmed = confirm('Da li ste sigurni da želite otkazati ovu rezervaciju?');
             if (!confirmed) return;
@@ -437,7 +493,7 @@
                     method: 'POST',
                     credentials: 'same-origin',
                     headers: {
-                        'RequestVerificationToken': token || '' 
+                        'RequestVerificationToken': token || ''
                     }
                 });
 
@@ -446,7 +502,7 @@
                     await renderReservations(); 
                 } else {
                     const greskaPodaci = await response.json().catch(() => ({}));
-                    alert(greskaPodaci.greska || "Greška pri otkazivanju rezervacije.");
+                    alert(greskaPodaci.greska || greskaPodaci.poruka || "Greška pri otkazivanju rezervacije.");
                 }
             } catch (error) {
                 console.error("Greška:", error);
@@ -456,7 +512,7 @@
 
         function badgeHtml(status) {
             if (status === 'Otkazana') return '<span class="r-badge cancel">Otkazana</span>';
-            if (status === 'Potvrdjena' || status === 'Potvrđena') return '<span class="r-badge success">Potvrđena</span>';
+            if (status === 'Potvrdjena' || status === 'Potvrđena' || status === 'Kreirana') return '<span class="r-badge success">Potvrđena</span>';
             return '<span class="r-badge active">Aktivna</span>';
         }
 
@@ -464,12 +520,10 @@
             if (!r) return '';
             const pId = r.paketId || r.PaketId;
             if (!pId) return '';
-            return `
-                        <a class="btn-elegant-action plan" href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(pId)}">Plan putovanja</a>
-                    `;
+            return `<a class="btn-elegant-action plan" href="/PlanPutovanja/Preview?paketId=${encodeURIComponent(pId)}">Plan putovanja</a>`;
         }
 
-        async function downloadPdfByIndex(index) {
+        async function downloadPdfByIndex(evt, index) {
             const r = ucitaneRezervacije[index];
             if (!r) {
                 alert("Rezervacija nije pronađena u lokalnom nizu.");
@@ -482,31 +536,38 @@
                 return;
             }
 
-            // Pronalazimo dugme koje je kliknuto da mu promijenimo tekst tokom preuzimanja
-            const btn = event.currentTarget || document.querySelectorAll('.btn-elegant-action.pdf')[index];
-            const originalniTekst = btn.innerHTML;
+            const btn = evt?.currentTarget || document.querySelectorAll('.btn-elegant-action.pdf')[index];
+            const originalniTekst = btn ? btn.innerHTML : '';
 
-            btn.disabled = true;
-            btn.textContent = "Preuzimanje...";
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = "Preuzimanje...";
+            }
 
             try {
-                const response = await fetch(`/Rezervacija/PreuzmiItinerer/${stvarniId}`);
+                const response = await fetch(`/Rezervacija/PreuzmiItinerer/${stvarniId}`, {
+                    credentials: 'same-origin'
+                });
 
                 if (!response.ok) {
-                    throw new Error("Greška prilikom generisanja ili preuzimanja PDF-a.");
+                    const text = await response.text().catch(() => '');
+                    throw new Error(text || "Greška prilikom generisanja ili preuzimanja PDF-a.");
                 }
 
                 const blob = await response.blob();
+
+                if (blob.type !== 'application/pdf') {
+                    throw new Error(`Server nije vratio PDF nego: ${blob.type || 'unknown'}`);
+                }
 
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.style.display = 'none';
                 a.href = url;
-
                 a.download = `Potvrda_InterTrips_IT-${stvarniId}.pdf`;
 
                 document.body.appendChild(a);
-                a.click(); 
+                a.click();
 
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
@@ -514,11 +575,14 @@
                 console.error("Greška:", error);
                 alert("Došlo je do greške: " + error.message);
             } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalniTekst;
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalniTekst;
+                }
             }
         }
 
         window.addEventListener('DOMContentLoaded', renderReservations);
     </script>
+}
 }

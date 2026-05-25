@@ -1,12 +1,14 @@
+using InterTrips___Turistička_Agencija.Background;
 using InterTrips___Turistička_Agencija.Data;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using InterTrips___Turistička_Agencija.Models;
 using InterTrips___Turistička_Agencija.Services;
-using InterTrips___Turistička_Agencija.Background;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString, sqlOptions => sqlOptions.EnableRetryOnFailure())
@@ -14,7 +16,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
                Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning
            )));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
     options.Password.RequiredLength = 6;
     options.Password.RequireDigit = false;
     options.Password.RequireUppercase = false;
@@ -25,18 +28,20 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-builder.Services.ConfigureApplicationCookie(options => {
+builder.Services.ConfigureApplicationCookie(options =>
+{
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    options.LoginPath = "/Identity/Account/Login"; 
-    options.LogoutPath = "/Identity/Account/Logout"; 
-    options.AccessDeniedPath = "/Identity/Account/AccessDenied"; 
+    options.LoginPath = "/Identity/Account/Login";
+    options.LogoutPath = "/Identity/Account/Logout";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
 });
+
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddScoped<EmailAndDocumentService>();
-builder.Services.AddScoped<DbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 builder.Services.AddHostedService<PozadinskiProcesiService>();
 builder.Services.AddHostedService<PutovanjeReminderWorker>();
 
@@ -45,6 +50,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
     if (app.Environment.IsDevelopment())
     {
         await db.Database.MigrateAsync();
@@ -56,17 +62,10 @@ using (var scope = app.Services.CreateScope())
     string[] roles = { "Admin", "Agent", "Client" };
     foreach (var r in roles)
     {
-        try
+        var role = await roleManager.FindByNameAsync(r);
+        if (role == null)
         {
-            var role = await roleManager.FindByNameAsync(r);
-            if (role == null)
-            {
-                await roleManager.CreateAsync(new IdentityRole(r));
-            }
-        }
-        catch (Exception)
-        {
-            
+            await roleManager.CreateAsync(new IdentityRole(r));
         }
     }
 
@@ -110,11 +109,13 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapStaticAssets();
+
+app.UseStaticFiles(); 
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+
 app.Run();
