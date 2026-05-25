@@ -29,11 +29,10 @@ builder.Services.ConfigureApplicationCookie(options => {
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    options.LoginPath = "/Account/Login";
-    options.LogoutPath = "/Account/Logout";
-    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.LoginPath = "/Identity/Account/Login"; 
+    options.LogoutPath = "/Identity/Account/Logout"; 
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied"; 
 });
-
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<EmailAndDocumentService>();

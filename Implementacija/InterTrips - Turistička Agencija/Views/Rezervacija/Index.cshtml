@@ -689,7 +689,11 @@
 
         const planBtn = planButtonHtml(r);
         const stvarniBrojPutnika = r.brojPutnika || r.BrojPutnika || (r.putnici ? r.putnici.length : 1);
-        const pdfBtn = `<button class="btn-elegant-action pdf" type="button" onclick="downloadPdfByIndex(${index})">Preuzmi PDF</button>`;
+        const pdfBtn = `
+        <a class="btn-elegant-action pdf" href="/Rezervacija/PreuzmiItinerer/${currentId}">
+        <i class="fa fa-file-pdf"></i> Preuzmi PDF
+        </a>
+        `;
 
         const dest = r.destinacija || r.Destinacija || '—';
         const drz = r.drzava || r.Drzava ? '(' + (r.drzava || r.Drzava) + ')' : '';
