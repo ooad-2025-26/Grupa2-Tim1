@@ -44,6 +44,6 @@ Za pokretanje aplikacije i povezivanje sa centralnom bazom podataka,:
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=sql.SadrzajVasegServera.com;Database=db_ac97b2_intertrips;User Id=db_ac97b2_intertrips_admin;Password=amela123!;TrustServerCertificate=True;"
-  }
+  "DefaultConnection": "Data Source=SQL1004.site4now.net;Initial Catalog=db_ac97b2_intertrips;User Id=db_ac97b2_intertrips_admin;Password=" " ;Encrypt=True;TrustServerCertificate=True;"
+}
 }
