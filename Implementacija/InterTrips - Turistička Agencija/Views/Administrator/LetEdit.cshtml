@@ -1,0 +1,439 @@
+﻿@model InterTrips___Turistička_Agencija.Models.Let
+@{
+    ViewData["Title"] = "InterTrips - Uredi let";
+    Layout = null;
+    var destinacije = ViewBag.Destinacije as IEnumerable<InterTrips___Turistička_Agencija.Models.Destinacija>;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
+    <style>
+            :root {
+                --bg-main: #f8fafc;
+                --sidebar-bg: #0f172a;
+                --sidebar-text: #94a3b8;
+                --sidebar-active: #38bdf8;
+                --text-dark: #0f172a;
+                --text-muted: #64748b;
+                --primary: #0ea5e9;
+                --primary-hover: #0284c7;
+                --border: #e2e8f0;
+                --card-bg: #ffffff;
+                --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
+                --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+                --success: #10b981;
+                --danger: #ef4444;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: var(--bg-main);
+                color: var(--text-dark);
+                display: flex;
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                width: 260px;
+                background-color: var(--sidebar-bg);
+                color: #fff;
+                padding: 24px 16px;
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                height: 100vh;
+                left: 0;
+                top: 0;
+                z-index: 100;
+            }
+
+                .sidebar .logo-area {
+                    padding: 8px 12px 32px;
+                    border-bottom: 1px solid #1e293b;
+                    margin-bottom: 24px;
+                }
+
+            .sidebar-logo-text {
+                font-size: 20px;
+                font-weight: 700;
+                color: #ffffff;
+                text-decoration: none;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                display: block;
+            }
+
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                flex-grow: 1;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                color: var(--sidebar-text);
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 500;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+            }
+
+                .nav-item i {
+                    width: 20px;
+                    margin-right: 12px;
+                    font-size: 16px;
+                    text-align: center;
+                }
+
+                .nav-item:hover {
+                    background: #1e293b;
+                    color: #fff;
+                }
+
+                .nav-item.active {
+                    background: rgba(14, 165, 233, 0.15);
+                    color: var(--sidebar-active);
+                    font-weight: 600;
+                }
+
+            .sidebar-footer {
+                padding-top: 16px;
+                border-top: 1px solid #1e293b;
+            }
+
+            .logout-btn-nav {
+                width: 100%;
+                background: transparent;
+                border: 1px solid rgba(239, 68, 68, 0.25);
+                color: #ef4444;
+                padding: 10px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 13px;
+                transition: all 0.2s;
+            }
+
+                .logout-btn-nav:hover {
+                    background: rgba(239, 68, 68, 0.1);
+                }
+
+            .main-content {
+                margin-left: 260px;
+                flex-grow: 1;
+                padding: 40px 48px;
+                max-width: 900px; /* Smanjeno jer je u pitanju jedna forma */
+            }
+
+            .dash-header {
+                margin-bottom: 32px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+                .dash-header h1 {
+                    font-size: 26px;
+                    font-weight: 700;
+                    color: var(--text-dark);
+                    letter-spacing: -0.5px;
+                }
+
+                .dash-header p {
+                    color: var(--text-muted);
+                    font-size: 14px;
+                    margin-top: 4px;
+                }
+
+            .btn-secondary-top {
+                display: inline-flex;
+                align-items: center;
+                padding: 10px 16px;
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                color: var(--text-dark);
+                font-size: 13px;
+                font-weight: 600;
+                text-decoration: none;
+                box-shadow: var(--shadow);
+                transition: background 0.2s;
+            }
+
+                .btn-secondary-top:hover {
+                    background: #f8fafc;
+                }
+
+            .alert {
+                padding: 14px 20px;
+                border-radius: 8px;
+                margin-bottom: 24px;
+                font-size: 14px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .alert-danger {
+                background: #fef2f2;
+                color: #991b1b;
+                border: 1px solid #fca5a5;
+            }
+
+            .card {
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                box-shadow: var(--shadow);
+                padding: 28px;
+            }
+
+                .card h2 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: var(--text-dark);
+                    margin-bottom: 24px;
+                }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            .field-label {
+                display: block;
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--text-dark);
+                margin-bottom: 6px;
+            }
+
+            .input, .select {
+                width: 100%;
+                background: #fff;
+                border: 1px solid var(--border);
+                color: var(--text-dark);
+                outline: none;
+                border-radius: 8px;
+                height: 42px;
+                padding: 0 14px;
+                font-size: 14px;
+                transition: all 0.15s ease-in-out;
+                font-family: inherit;
+            }
+
+            .select {
+                cursor: pointer;
+                appearance: none;
+                -webkit-appearance: none;
+                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%2364748b' d='M0 0l5 5 5-5z'/></svg>");
+                background-repeat: no-repeat;
+                background-position: right 14px center;
+                padding-right: 40px;
+            }
+
+                .input:focus, .select:focus {
+                    border-color: var(--primary);
+                    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+                }
+
+            .form-actions {
+                display: flex;
+                gap: 12px;
+                margin-top: 24px;
+            }
+
+            .main-btn {
+                flex: 1;
+                height: 44px;
+                border-radius: 8px;
+                border: none;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 14px;
+                background-color: var(--primary);
+                color: #fff;
+                transition: background 0.2s;
+            }
+
+                .main-btn:hover {
+                    background-color: var(--primary-hover);
+                }
+
+            .cancel-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 20px;
+                height: 44px;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                background: #fff;
+                color: var(--text-dark);
+                font-size: 14px;
+                font-weight: 600;
+                text-decoration: none;
+                transition: background 0.2s;
+            }
+
+                .cancel-btn:hover {
+                    background: #f1f5f9;
+                }
+
+            @@media (max-width: 1024px) {
+                .sidebar {
+                    width: 70px;
+                    padding: 24px 8px;
+                }
+
+                    .sidebar .logo-area, .sidebar .nav-item span, .sidebar .logout-btn-nav {
+                        display: none;
+                    }
+
+                .main-content {
+                    margin-left: 70px;
+                    padding: 32px 24px;
+                }
+            }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo-area">
+            <a href="/" class="sidebar-logo-text">InterTrips</a>
+        </div>
+
+        <nav class="nav-links">
+            <a href="/Administrator/Index" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
+            </a>
+            <a href="/Administrator/Destinacije" class="nav-item">
+                <i class="fa-solid fa-map-location-dot"></i> <span>Destinacije</span>
+            </a>
+            <a href="/Administrator/Letovi" class="nav-item active">
+                <i class="fa-solid fa-plane"></i> <span>Letovi</span>
+            </a>
+            <a href="/Administrator/Hoteli" class="nav-item">
+                <i class="fa-solid fa-hotel"></i> <span>Hoteli</span>
+            </a>
+            <a href="/Administrator/Paketi" class="nav-item">
+                <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
+            </a>
+            <a href="/Administrator/Korisnici" class="nav-item">
+                <i class="fa-solid fa-users"></i> <span>Korisnici</span>
+            </a>
+            <a href="/Administrator/Rezervacije" class="nav-item">
+                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            </a>
+            <a href="/Administrator/Izvjestaj" class="nav-item">
+                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <form method="post" action="/Account/Logout">
+                @Html.AntiForgeryToken()
+                <button class="logout-btn-nav" type="submit">Odjavi se</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="dash-header">
+            <div>
+                <h1>Uredi Let: @Model.BrojLeta</h1>
+                <p>Izmijenite podatke o avio-liniji, avioprevozniku i preostalim sjedištima.</p>
+            </div>
+            <div>
+                <a href="/Administrator/Letovi" class="btn-secondary-top">
+                    <i class="fa-solid fa-arrow-left" style="margin-right: 8px;"></i> Nazad na letove
+                </a>
+            </div>
+        </header>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">
+                <i class="fa-solid fa-circle-exclamation"></i> @TempData["Error"]
+            </div>
+        }
+
+        <div class="card">
+            <h2>Podaci o letu</h2>
+            <form asp-controller="Administrator" asp-action="LetEdit" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="Id" />
+
+                <div asp-validation-summary="All" style="color: var(--danger); font-size: 13px; font-weight: 600; margin-bottom: 15px;"></div>
+
+                <div class="form-group">
+                    <label class="field-label">BROJ LETA</label>
+                    <input class="input" asp-for="BrojLeta" type="text" required>
+                    <span asp-validation-for="BrojLeta" style="color:#ef4444; font-size:12px;"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="field-label">POLAZAK SA</label>
+                    <input class="input" asp-for="Polazak" type="text" required>
+                    <span asp-validation-for="Polazak" style="color:#ef4444; font-size:12px;"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="field-label">AVIOKOMPANIJA</label>
+                    <input class="input" asp-for="Aviokompanija" required />
+                    <span asp-validation-for="Aviokompanija" style="color:#ef4444; font-size:12px;"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="field-label">ODREDIŠTE (DESTINACIJA)</label>
+                    <select class="select" asp-for="Odrediste" required>
+                        <option value="">-- Odaberite destinaciju --</option>
+                        @if (destinacije != null)
+                        {
+                            foreach (var d in destinacije)
+                            {
+                                <option value="@d.Naziv">@d.Naziv (@d.Drzava)</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="Odrediste" style="color:#ef4444; font-size:12px;"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="field-label">SLOBODNA SJEDIŠTA (KAPACITET)</label>
+                    <input class="input" asp-for="SlobodnaSjedista" type="number" min="0" required>
+                    <span asp-validation-for="SlobodnaSjedista" style="color:#ef4444; font-size:12px;"></span>
+                </div>
+
+                <div class="form-actions">
+                    <a href="/Administrator/Letovi" class="cancel-btn">Otkaži</a>
+                    <button class="main-btn" type="submit">Spasi izmjene</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+</body>
+</html>

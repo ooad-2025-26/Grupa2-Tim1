@@ -559,9 +559,7 @@
         .replace(/Đ/g, "DJ");
         }
 
-        // GLAVNA FUNKCIJA KOJA SE POKREĆE ODMAH
         async function loadUi() {
-        // 1. Prvo popunjavamo UI podatke iz lokalne memorije da korisnik ne gleda prazne crtice
         const dest = safe('reservationDestination', 'Destinacija');
         const country = safe('reservationCountry', '—');
         const image = safe('reservationImage', '/assets/bali.jpg');
@@ -596,9 +594,7 @@
         }
         }
 
-        // 2. ODMAH šaljemo podatke na server (Bez čekanja fontova!)
         try {
-        // Ispravljen ključ na 'reservationPaketId' kako bi odgovarao bazi i prethodnim stranicama
         const paketIdIzMemorije = safe('reservationPaketId', safe('selectedPackageId', '1'));
         const datumPolaskaRaw = safe('reservationDepartureText', '');
         const datumPovratkaRaw = safe('reservationReturnText', '');
@@ -639,7 +635,6 @@
 
         if (response.ok) {
         console.log("Rezervacija je uspješno upisana u bazu.");
-        // Ovdje možete očistiti privremeni localStorage ako je potrebno
         } else {
         console.error("Server je vratio grešku prilikom upisivanja rezervacije.");
         }
@@ -647,8 +642,6 @@
         console.error("Greška u komunikaciji sa serverom:", error);
         }
 
-        // 3. Tek na samom kraju, u pozadini (asinhrono) pokrećemo učitavanje fontova za PDF
-        // Na ovaj način fontovi ne blokiraju niti UI niti upis u bazu podataka!
         preloadFonts();
         }
 

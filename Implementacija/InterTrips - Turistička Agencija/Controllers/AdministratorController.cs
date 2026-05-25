@@ -587,7 +587,7 @@ public class AdministratorController : Controller
 
         var topDestinacije = paketi.Select(p => {
             double brojRezervacija = p.Rezervacije?.Count ?? 0;
-            double pregledi = p.BrojPregleda > 0 ? p.BrojPregleda : (brojRezervacija + 10); // Spriječavanje dijeljenja sa 0
+            double pregledi = p.BrojPregleda > 0 ? p.BrojPregleda : (brojRezervacija + 10); 
             double stopaKonverzije = (brojRezervacija / pregledi) * 100;
 
             double prosjecnaOcjena = 4.5;
@@ -609,5 +609,37 @@ public class AdministratorController : Controller
         ViewBag.TopDestinacije = topDestinacije;
         System.Dynamic.ExpandoObject dummyModel = new System.Dynamic.ExpandoObject();
         return View("~/Views/Administrator/Izvjestaj.cshtml", null);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> LetEdit(int id)
+    {
+        var let = await _db.Letovi.FindAsync(id);
+        if (let == null)
+        {
+            TempData["Error"] = "Traženi let ne postoji.";
+            return RedirectToAction("Letovi"); 
+        }
+
+        ViewBag.Destinacije = await _db.Destinacije.ToListAsync();
+
+        return View(let);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> LetEdit(Let model)
+    {
+        if (ModelState.IsValid)
+        {
+            _db.Letovi.Update(model);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "Let je uspješno izmijenjen.";
+            return RedirectToAction("Letovi"); 
+        }
+
+        ViewBag.Destinacije = await _db.Destinacije.ToListAsync();
+        TempData["Error"] = "Molimo ispravite greške u formi.";
+        return View(model);
     }
 }
