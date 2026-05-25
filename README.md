@@ -6,49 +6,44 @@
 
 ---
 
-##  O Projektu
+## O Projektu
 
-**InterTrips** je informatički sistem namijenjen upravljanju poslovnim procesima turističke agencije. Sistem omogućava klijentima pregledavanje raznovrsnih turističkih paketa, rezervaciju putovanja, upravljanje plaćanjima i komunikaciju sa agentima. Agenti mogu kreirati i upravljati turističkim paketima s detaljnim informacijama o destinacijama i aktivnostima. Sistem automatski šalje e-mail potvrde, te omogućava  praćenje rezervacija. Sistem generiše izvještaje  popularnosti destinacija i efikasnosti agencije.
+**InterTrips** je informatički sistem namijenjen upravljanju poslovnim procesima turističke agencije u obliku ASP.NET Core MVC web-aplikacije. Sistem omogućava klijentima pregledavanje raznovrsnih turističkih paketa, online rezervaciju putovanja, upravljanje plaćanjima na rate i preuzimanje službenih itinerera u PDF formatu. 
+
+Agenti i administratori kroz napredni pozadinski panel mogu upravljati paketima, letovima, hotelskim smještajem, pratiti uplate, te komunicirati sa klijentima. Aplikacija posjeduje i pozadinske servise (`BackgroundWorker`) koji automatski provjeravaju bazu i šalju e-mail podsjetnike klijentima 3 dana prije polaska na putovanje.
+
+---
+
+## Tech Stack
+
+* **Backend:** .NET 10 (ASP.NET Core MVC)
+* **Baza podataka:** Microsoft SQL Server 
+* **ORM:** Entity Framework Core (EF Core) 10
+* **Autentifikacija:** ASP.NET Core Identity (Sistem uloga: Admin, Agent, Klijent)
+* **Frontend:** Razor Views, HTML5, CSS3 (Elegantni custom UI), JavaScript (Fetch API)
+* **Generisanje dokumenata:** PDF Engine integrisan na backendu 
 
 ---
 
-## Korisnici sistema
-
-| Korisnik | Tip | Opis | Funkcionalnosti |
-|---|---|---|---|
-| **Klijent / Turist** | Korisnik | Koristi sistem za rezervaciju putovanja i plaćanja | Pregled paketa, rezervacija, plaćanja|
-| **Turistički Agent** | Zaposlenik | Upravlja paketima i rezervacijama | Upravljanje paketima, rezervacije |
-| **Administrator** | Administrator | Kontroliše cijeli sistem i pristupa svim funkcijama | Sve funkcionalnosti sa mogućnošću editovanja |
-
----
 ## Testni podaci za prijavu
 
-Za potrebe testiranja funkcionalnosti sistema:
+Aplikacija dolazi sa pre-definisanim (seedovanim) korisničkim računima unutar baze podataka kako bi se olakšalo testiranje autorizacije i funkcionalnosti specifičnih za uloge:
 
-| Uloga | E-mail adresa | Lozinka |
-| :--- | :--- | :--- |
-| **Administrator** | `admin@intertrips.ba` | `admin123` |
-| **Turistički Agent** | `agent@intertrips.ba` | `agent123` |
-| **Klijent / Turist** | `test@intertrips.ba` | `password123` |
+| Uloga | E-mail adresa | Lozinka | Opis i dozvole |
+| :--- | :--- | :--- | :--- |
+| **Administrator** | `admin@intertrips.ba` | `admin123` | Pristup kontrolnoj tabli `/Administrator`, upravljanje svim korisnicima, ulogama i finansijskim izvještajima, dodavanje hotela i letova. |
+| **Turistički Agent** | `agent@intertrips.ba` | `agent123` | Pristup panelu `/Agent`, kreiranje i ažuriranje turističkih paketa |
+| **Klijent / Turist** | `test@intertrips.ba` | `password123` | Profil klijenta, pregled vlastitih rezervacija, kreiranje rezervacija |
 
 ---
-## Tim
 
-**Nastavna grupa:** Grupa 2-Tim1, RI
+## Konekcijski String (Database Connection String)
 
-**Članovi tima:**
+Za pokretanje aplikacije i povezivanje sa centralnom bazom podataka,:
 
-* Amela Obhođaš
-
-* Benjamin Bikić
-
-* Hamza Jašarević
-
-* Zerina Avdušinović
-
-
-
-**Elektrotehnički fakultet Univerzitet**
-
-*Objektno orijentisana analiza i dizajn*
-
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=sql.SadrzajVasegServera.com;Database=db_ac97b2_intertrips;User Id=db_ac97b2_intertrips_admin;Password=amela123!;TrustServerCertificate=True;"
+  }
+}
