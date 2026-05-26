@@ -33,6 +33,10 @@
                 --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
                 --success: #10b981;
                 --danger: #ef4444;
+                --destinacije-color: #f59e0b; 
+                --paketi-color: #6366f1;
+                --korisnici-color: #ec4899; 
+                --rezervacije-color: #06b6d4; 
             }
 
             .nav-item i {
@@ -271,15 +275,12 @@
                 .category-card:hover {
                     transform: translateY(-2px);
                     box-shadow: var(--shadow-md);
-                    border-color: var(--primary);
                 }
 
             .category-icon {
                 width: 48px;
                 height: 48px;
                 border-radius: 10px;
-                background: rgba(14, 165, 233, 0.1);
-                color: var(--primary);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -408,8 +409,8 @@
 
         <section class="categories-grid">
 
-            <a href="/Administrator/Destinacije" class="category-card">
-                <div class="category-icon">
+            <a href="/Administrator/Destinacije" class="category-card" style="border-left: 4px solid var(--destinacije-color);" onmouseover="this.style.borderColor='var(--destinacije-color)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div class="category-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--destinacije-color);">
                     <i class="fa-solid fa-map-location-dot"></i>
                 </div>
                 <div class="category-details">
@@ -418,8 +419,8 @@
                 </div>
             </a>
 
-            <a href="/Administrator/Paketi" class="category-card">
-                <div class="category-icon">
+            <a href="/Administrator/Paketi" class="category-card" style="border-left: 4px solid var(--paketi-color);" onmouseover="this.style.borderColor='var(--paketi-color)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div class="category-icon" style="background: rgba(99, 101, 241, 0.1); color: var(--paketi-color);">
                     <i class="fa-solid fa-cubes"></i>
                 </div>
                 <div class="category-details">
@@ -427,7 +428,8 @@
                     <p>Kreirajte i ažurirajte aranžmane, dodjeljujte letove i hotele, te definišite cijene paketa.</p>
                 </div>
             </a>
-            <a href="/Izvjestaj/Index" class="category-card" style="border-left: 4px solid var(--success);">
+
+            <a href="/Administrator/Izvjestaj" class="category-card" style="border-left: 4px solid var(--success);" onmouseover="this.style.borderColor='var(--success)'" onmouseout="this.style.borderColor='var(--border)'">
                 <div class="category-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
                     <i class="fa-solid fa-chart-line"></i>
                 </div>
@@ -436,8 +438,9 @@
                     <p>Statistički uvid u stopu konverzije aranžmana i automatski proračun popularnosti destinacija kroz OOAD algoritam.</p>
                 </div>
             </a>
-            <a href="/Administrator/Korisnici" class="category-card">
-                <div class="category-icon">
+
+            <a href="/Administrator/Korisnici" class="category-card" style="border-left: 4px solid var(--korisnici-color);" onmouseover="this.style.borderColor='var(--korisnici-color)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div class="category-icon" style="background: rgba(236, 72, 153, 0.1); color: var(--korisnici-color);">
                     <i class="fa-solid fa-users"></i>
                 </div>
                 <div class="category-details">
@@ -446,8 +449,8 @@
                 </div>
             </a>
 
-            <a href="/Administrator/Rezervacije" class="category-card">
-                <div class="category-icon">
+            <a href="/Administrator/Rezervacije" class="category-card" style="border-left: 4px solid var(--rezervacije-color);" onmouseover="this.style.borderColor='var(--rezervacije-color)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div class="category-icon" style="background: rgba(6, 182, 212, 0.1); color: var(--rezervacije-color);">
                     <i class="fa-solid fa-calendar-check"></i>
                 </div>
                 <div class="category-details">
