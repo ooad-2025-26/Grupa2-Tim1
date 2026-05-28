@@ -6,8 +6,8 @@
     var danas = DateOnly.FromDateTime(DateTime.Today);
 
     var aktivneRezervacije = Model.Rezervacije?
-        .Where(r => r.Paket == null || r.DatumPolaska.AddDays(r.Paket.TrajanjeNoci) > danas)
-        .ToList();
+    .Where(r => r.Paket == null || r.DatumPolaska.AddDays(r.Paket?.TrajanjeNoci ?? 0) > danas)
+    .ToList();
 }
 <!DOCTYPE html>
 <html lang="bs">
@@ -33,6 +33,7 @@
                 --card-bg: #ffffff;
                 --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
                 --primary: #0ea5e9;
+                --primary-hover: #0284c7;
                 --danger: #ef4444;
             }
 
@@ -194,6 +195,25 @@
                     color: var(--text-dark);
                 }
 
+            .btn-info {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 12px;
+                background-color: var(--primary);
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background 0.15s;
+            }
+
+                .btn-info:hover {
+                    background-color: var(--primary-hover);
+                }
+
             .table-card {
                 background: var(--card-bg);
                 border: 1px solid var(--border);
@@ -311,6 +331,131 @@
                 color: #0369a1;
                 margin-bottom: 8px;
             }
+
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(15, 23, 42, 0.6);
+                backdrop-filter: blur(4px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.25s ease;
+            }
+
+                .modal-overlay.active {
+                    opacity: 1;
+                    visibility: visible;
+                }
+
+            .modal-box {
+                background: #fff;
+                width: 100%;
+                max-width: 650px;
+                border-radius: 12px;
+                box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+                overflow: hidden;
+                transform: scale(0.95);
+                transition: transform 0.25s ease;
+            }
+
+            .modal-overlay.active .modal-box {
+                transform: scale(1);
+            }
+
+            .modal-header {
+                padding: 20px 24px;
+                background: #f8fafc;
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+                .modal-header h3 {
+                    font-size: 16px;
+                    font-weight: 700;
+                    color: var(--text-dark);
+                }
+
+            .close-modal {
+                background: transparent;
+                border: none;
+                font-size: 18px;
+                color: var(--text-muted);
+                cursor: pointer;
+            }
+
+                .close-modal:hover {
+                    color: var(--danger);
+                }
+
+            .modal-body {
+                padding: 24px;
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+
+            .details-section {
+                margin-bottom: 20px;
+            }
+
+                .details-section h4 {
+                    font-size: 12px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    color: var(--primary);
+                    margin-bottom: 10px;
+                    border-bottom: 1px solid #f1f5f9;
+                    padding-bottom: 4px;
+                }
+
+            .info-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .info-item {
+                font-size: 13px;
+            }
+
+            .info-label {
+                color: var(--text-muted);
+                margin-bottom: 2px;
+                font-size: 11px;
+                text-transform: uppercase;
+            }
+
+            .info-value {
+                font-weight: 600;
+                color: var(--text-dark);
+            }
+
+            .passengers-list {
+                background: #f8fafc;
+                border-radius: 8px;
+                padding: 12px;
+                border: 1px solid var(--border);
+            }
+
+            .passenger-row {
+                font-size: 13px;
+                padding: 6px 0;
+                border-bottom: 1px solid #f1f5f9;
+                display: flex;
+                justify-content: space-between;
+            }
+
+                .passenger-row:last-child {
+                    border-bottom: none;
+                }
 
             @@media (max-width: 1024px) {
                 .sidebar {
@@ -440,6 +585,7 @@
                                 <th>Destinacija</th>
                                 <th>Broj Putnika</th>
                                 <th>Status</th>
+                                <th style="text-align: right;">Akcije</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -473,6 +619,22 @@
                                     <td>
                                         <span class="status-pill">@r.Status.ToString().ToLower()</span>
                                     </td>
+
+                                    <td style="text-align: right;">
+                                        <button class="btn-info btn-pogledaj-detalje"
+                                                data-id="@r.Id"
+                                                data-email="@(r.Korisnik?.Email ?? "Neznato")"
+                                                data-status="@r.Status"
+                                                data-paket="@(r.Paket?.Naziv ?? "Nespecificirano")"
+                                                data-destinacija="@(r.Paket?.Destinacija != null ? $"{r.Paket.Destinacija.Naziv}, {r.Paket.Destinacija.Drzava}" : "—")"
+                                                data-polazak="@r.DatumPolaska.ToString("dd.MM.yyyy")"
+                                                data-povratak="@(r.Paket != null ? r.DatumPolaska.AddDays(r.Paket.TrajanjeNoci).ToString("dd.MM.yyyy") : "—")"
+                                                data-hotel="@(r.Paket?.Hotel != null ? r.Paket.Hotel.Naziv : "Nije uključeno")"
+                                                data-let="@(r.Paket?.Let != null ? $"{r.Paket.Let.Aviokompanija} ({r.Paket.Let.BrojLeta})" : "Nije uključeno")"
+                                                data-putnici='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(r.Putnici?.Select(p => new { p.Ime, p.Prezime, p.BrojPasosa }).ToList()))'>
+                                            <i class="fa-solid fa-eye"></i> Detalji
+                                        </button>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -482,5 +644,142 @@
         </div>
     </main>
 
+    <div class="modal-overlay" id="detaljiModalOverlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Detalji rezervacije <span id="modalResId"></span></h3>
+                <button class="close-modal" id="btnZatvoriModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="details-section">
+                    <h4>Osnovne Informacije</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Korisnik (Kupac)</div>
+                            <div class="info-value" id="modalKorisnik"></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Status rezervacije</div>
+                            <div class="info-value" id="modalStatus"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <h4>Aranžman & Destinacija</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Naziv Paketa</div>
+                            <div class="info-value" id="modalPaket"></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Lokacija</div>
+                            <div class="info-value" id="modalDestinacija"></div>
+                        </div>
+                        <div class="info-item" style="margin-top: 8px;">
+                            <div class="info-label">Datum polaska</div>
+                            <div class="info-value" id="modalPolazak"></div>
+                        </div>
+                        <div class="info-item" style="margin-top: 8px;">
+                            <div class="info-label">Datum povratka</div>
+                            <div class="info-value" id="modalPovratak"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <h4>Logistika</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Smještaj (Hotel)</div>
+                            <div class="info-value" id="modalHotel"></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Informacije o letu</div>
+                            <div class="info-value" id="modalLet"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <h4>Prijavljeni putnici (Manifest)</h4>
+                    <div class="passengers-list" id="modalPutniciLista">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const modalOverlay = document.getElementById("detaljiModalOverlay");
+                const btnZatvori = document.getElementById("btnZatvoriModal");
+                const detaljiButtons = document.querySelectorAll(".btn-pogledaj-detalje");
+
+                const modalResId = document.getElementById("modalResId");
+                const modalKorisnik = document.getElementById("modalKorisnik");
+                const modalStatus = document.getElementById("modalStatus");
+                const modalPaket = document.getElementById("modalPaket");
+                const modalDestinacija = document.getElementById("modalDestinacija");
+                const modalPolazak = document.getElementById("modalPolazak");
+                const modalPovratak = document.getElementById("modalPovratak");
+                const modalHotel = document.getElementById("modalHotel");
+                const modalLet = document.getElementById("modalLet");
+                const modalPutniciLista = document.getElementById("modalPutniciLista");
+
+                detaljiButtons.forEach(button => {
+                    button.addEventListener("click", function () {
+                        const id = this.getAttribute("data-id");
+                        const email = this.getAttribute("data-email");
+                        const paket = this.getAttribute("data-paket");
+                        const destinacija = this.getAttribute("data-destinacija");
+                        const polazak = this.getAttribute("data-polazak");
+                        const povratak = this.getAttribute("data-povratak");
+                        const status = this.getAttribute("data-status");
+                        const hotel = this.getAttribute("data-hotel");
+                        const letInfo = this.getAttribute("data-let");
+                        const putniciData = JSON.parse(this.getAttribute("data-putnici") || "[]");
+
+                        modalResId.innerText = "#" + id;
+                        modalKorisnik.innerText = email;
+                        modalStatus.innerHTML = `<span class="status-pill">${status ? status.toLowerCase() : "nepoznato"}</span>`;
+                        modalPaket.innerText = paket;
+                        modalDestinacija.innerText = destinacija;
+                        modalPolazak.innerText = polazak;
+                        modalPovratak.innerText = povratak;
+                        modalHotel.innerText = hotel;
+                        modalLet.innerText = letInfo;
+
+                        modalPutniciLista.innerHTML = "";
+                        if (putniciData.length === 0) {
+                            modalPutniciLista.innerHTML = `<div style="color: var(--text-muted); font-size: 13px;">Nema dodatnih registrovanih putnika (Samo nosilac rezervacije).</div>`;
+                        } else {
+                            putniciData.forEach((p, index) => {
+                                modalPutniciLista.innerHTML += `
+                                            <div class="passenger-row">
+                                                <strong>${index + 1}. ${p.Ime} ${p.Prezime}</strong>
+                                                            <span style="color: var(--text-muted);">Pasoš: ${p.BrojPasosa || '—'}</span>
+                                            </div>
+                                        `;
+                            });
+                        }
+
+                        modalOverlay.classList.add("active");
+                    });
+                });
+
+                btnZatvori.addEventListener("click", function () {
+                    modalOverlay.classList.remove("active");
+                });
+
+                modalOverlay.addEventListener("click", function (e) {
+                    if (e.target === modalOverlay) {
+                        modalOverlay.classList.remove("active");
+                    }
+                });
+            });
+    </script>
 </body>
 </html>

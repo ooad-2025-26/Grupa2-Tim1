@@ -554,7 +554,7 @@
         backToUserFromAgent?.addEventListener('click', e => { e.preventDefault(); showLogin(); });
         backToUserFromAdmin?.addEventListener('click', e => { e.preventDefault(); showLogin(); });
 
-        // LOGIN: Korisnik
+        // LOGIN: Korisnik (Klijent = 0)
         document.getElementById('loginBtn').addEventListener('click', async function () {
         const email = document.getElementById('loginEmail').value.trim();
         const password = document.getElementById('loginPassword').value.trim();
@@ -569,7 +569,7 @@
         'RequestVerificationToken': csrfToken
         },
         credentials: 'same-origin',
-        body: JSON.stringify({ Email: email, Password: password })
+        body: JSON.stringify({ Email: email, Password: password, Uloga: 0 })
         });
 
         const data = await res.json().catch(() => ({}));
@@ -584,7 +584,7 @@
         }
         });
 
-        // LOGIN: Agent
+        // LOGIN: Agent (Agent = 1)
         document.getElementById('agentBtn').addEventListener('click', async function () {
         const email = document.getElementById('agentEmail').value.trim();
         const password = document.getElementById('agentPassword').value.trim();
@@ -599,7 +599,7 @@
         'RequestVerificationToken': csrfToken
         },
         credentials: 'same-origin',
-        body: JSON.stringify({ Email: email, Password: password })
+        body: JSON.stringify({ Email: email, Password: password, Uloga: 1 })
         });
 
         const data = await res.json().catch(() => ({}));
@@ -611,7 +611,7 @@
         }
         });
 
-        // LOGIN: Admin
+        // LOGIN: Admin (Admin = 2)
         document.getElementById('adminBtn').addEventListener('click', async function () {
         const email = document.getElementById('adminUsername').value.trim();
         const password = document.getElementById('adminPassword').value.trim();
@@ -626,7 +626,7 @@
         'RequestVerificationToken': csrfToken
         },
         credentials: 'same-origin',
-        body: JSON.stringify({ Email: email, Password: password })
+        body: JSON.stringify({ Email: email, Password: password, Uloga: 2 })
         });
 
         const data = await res.json().catch(() => ({}));

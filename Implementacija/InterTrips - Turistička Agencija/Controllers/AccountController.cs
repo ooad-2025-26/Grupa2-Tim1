@@ -1,4 +1,5 @@
-﻿using InterTrips___Turistička_Agencija.Models;
+﻿using InterTrips___Turistička_Agencija.Enums;
+using InterTrips___Turistička_Agencija.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
         {
             public string Email { get; set; } = string.Empty;
             public string Password { get; set; } = string.Empty;
+            public Uloga Uloga { get; set; }
         }
 
         public class RegisterDto
@@ -44,7 +46,6 @@ namespace InterTrips___Turistička_Agencija.Controllers
         {
             return View();
         }
-
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
@@ -57,15 +58,29 @@ namespace InterTrips___Turistička_Agencija.Controllers
             if (user == null)
                 return Unauthorized(new { success = false, message = "Pogrešan email ili lozinka." });
 
+           string zahtijevanaUlogaString = dto.Uloga switch
+            {
+                Uloga.Klijent => "Client", 
+                Uloga.Agent => "Agent",
+                Uloga.Admin => "Admin",
+                _ => string.Empty
+            };
+
+            if (string.IsNullOrEmpty(zahtijevanaUlogaString) || !await _userManager.IsInRoleAsync(user, zahtijevanaUlogaString))
+            {
+                return Unauthorized(new { success = false, message = "Zabranjen pristup! Pokušavate se prijaviti preko pogrešne forme." });
+            }
+
             var result = await _signInManager.PasswordSignInAsync(user.UserName!, dto.Password, false, false);
             if (!result.Succeeded)
                 return Unauthorized(new { success = false, message = "Pogrešan email ili lozinka." });
 
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var redirectUrl = roles.Contains("Admin") ? "/Administrator"
-                    : roles.Contains("Agent") ? $"/Agent?agentId={user.Id}"
-                    : "/";
+            var redirectUrl = zahtijevanaUlogaString switch
+            {
+                "Admin" => "/Administrator",
+                "Agent" => $"/Agent?agentId={user.Id}",
+                _ => "/"
+            };
 
             return Ok(new { success = true, redirectUrl });
         }

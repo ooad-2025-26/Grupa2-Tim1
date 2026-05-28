@@ -379,10 +379,14 @@ public class AdministratorController : Controller
     {
         var query = _db.Rezervacije
            .Include(r => r.Paket)
-               .ThenInclude(p => p!.Destinacija)
+           .ThenInclude(p => p!.Destinacija)
            .Include(r => r.Korisnik)
            .Include(r => r.Putnici)
            .Include(r => r.Placanje)
+           .Include(r => r.Paket)
+        .ThenInclude(p => p.Hotel) 
+    .Include(r => r.Paket)
+        .ThenInclude(p => p.Let)
            .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(emailPretraga))
@@ -550,21 +554,37 @@ public class AdministratorController : Controller
     {
         try
         {
-            await _db.Database.ExecuteSqlRawAsync("DELETE FROM Rezervacije; DBCC CHECKIDENT ('Rezervacije', RESEED, 0);");
+            var sveRezervacije = await _db.Rezervacije.Include(r => r.Putnici).ToListAsync();
+
+            if (sveRezervacije.Any())
+            {
+                _db.Rezervacije.RemoveRange(sveRezervacije);
+            }
 
             var hoteli = await _db.Hoteli.ToListAsync();
-            
+            foreach (var hotel in hoteli)
+            {
+                 hotel.DostupnoSoba = 400;
+            }
+
+            var paketi = await _db.Paketi.ToListAsync();
+            foreach (var paket in paketi)
+            {
+            }
 
             await _db.SaveChangesAsync();
+
             TempData["Success"] = "Sve rezervacije su uspješno obrisane, a kapaciteti hotela su resetovani!";
         }
         catch (Exception ex)
         {
-            TempData["Error"] = "Došlo je do greške: " + ex.Message;
+            var greska = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+            TempData["Error"] = "Došlo je do greške pri resetovanju: " + greska;
         }
 
         return RedirectToAction("Rezervacije");
     }
+
     [HttpGet]
     public async Task<IActionResult> Izvjestaj()
     {

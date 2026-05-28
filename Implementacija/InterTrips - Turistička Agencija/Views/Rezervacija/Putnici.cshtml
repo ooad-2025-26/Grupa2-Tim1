@@ -586,7 +586,7 @@
 
             <div class="form-group row">
                 <div>
-                    <label class="field-label">Ime <span class="required">*</span></label>
+                   <label class="field-label">Ime <span class="required">*</span></label>
                     <input class="input fname" placeholder="Unesite ime (kao u pasošu)">
                 </div>
                 <div>
@@ -628,21 +628,6 @@
                 </div>
             </div>
 
-            <div class="form-group row">
-                <div>
-                    <label class="field-label">Česti putnik (Frequent Flyer broj)</label>
-                    <input class="input freqFlyer" placeholder="Opcionalno (npr. Miles & More)">
-                </div>
-                <div>
-                    <label class="field-label">Željeni tip kreveta (Hotel)</label>
-                    <select class="input bedPreference">
-                        <option value="no-preference">Bez preferencije</option>
-                        <option value="double">Jedan veliki bračni krevet</option>
-                        <option value="twin">Dva odvojena kreveta</option>
-                    </select>
-                </div>
-            </div>
-
             <div class="form-group">
                 <label class="field-label">Posebni zahtjevi (ishrana, alergije, napomene za hotel/let)</label>
                 <textarea class="textarea requests" placeholder="Napomena (npr. vegetarijanski meni na letu, soba na tihoj strani, pristupačnost...)"></textarea>
@@ -652,448 +637,451 @@
 
     <script>
         if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
+            lucide.createIcons();
         }
 
         const countries = [
-        { name: "Bosna i Hercegovina", flag: "🇧🇦", dial: "+387", digits: 8 },
-        { name: "Hrvatska", flag: "🇭🇷", dial: "+385", digits: 9 },
-        { name: "Srbija", flag: "🇷🇸", dial: "+381", digits: 9 },
-        { name: "Crna Gora", flag: "🇲🇪", dial: "+382", digits: 8 },
-        { name: "Slovenija", flag: "🇸🇮", dial: "+386", digits: 8 },
-        { name: "Njemačka", flag: "🇩🇪", dial: "+49", digits: 9 },
-        { name: "Austrija", flag: "🇦🇹", dial: "+43", digits: 9 },
-        { name: "Italija", flag: "🇮🇹", dial: "+39", digits: 9 },
-        { name: "Francuska", flag: "🇫🇷", dial: "+33", digits: 9 },
-        { name: "Švicarska", flag: "🇨🇭", dial: "+41", digits: 9 },
-        { name: "Švedska", flag: "🇸🇪", dial: "+46", digits: 9 },
-        { name: "Turska", flag: "🇹🇷", dial: "+90", digits: 10 },
-        { name: "Ujedinjeni Arapski Emirati", flag: "🇦🇪", dial: "+971", digits: 9 },
-        { name: "SAD", flag: "🇺🇸", dial: "+1", digits: 10 }
+            { name: "Bosna i Hercegovina", flag: "🇧🇦", dial: "+387", digits: 8 },
+            { name: "Hrvatska", flag: "🇭🇷", dial: "+385", digits: 9 },
+            { name: "Srbija", flag: "🇷🇸", dial: "+381", digits: 9 },
+            { name: "Crna Gora", flag: "🇲🇪", dial: "+382", digits: 8 },
+            { name: "Slovenija", flag: "🇸🇮", dial: "+386", digits: 8 },
+            { name: "Njemačka", flag: "🇩🇪", dial: "+49", digits: 9 },
+            { name: "Austrija", flag: "🇦🇹", dial: "+43", digits: 9 },
+            { name: "Italija", flag: "🇮🇹", dial: "+39", digits: 9 },
+            { name: "Francuska", flag: "🇫🇷", dial: "+33", digits: 9 },
+            { name: "Švicarska", flag: "🇨🇭", dial: "+41", digits: 9 },
+            { name: "Švedska", flag: "🇸🇪", dial: "+46", digits: 9 },
+            { name: "Turska", flag: "🇹🇷", dial: "+90", digits: 10 },
+            { name: "Ujedinjeni Arapski Emirati", flag: "🇦🇪", dial: "+971", digits: 9 },
+            { name: "SAD", flag: "🇺🇸", dial: "+1", digits: 10 }
         ].sort((a, b) => a.name.localeCompare(b.name));
 
         function calcAgeYears(isoDate) {
-        if (!isoDate) return null;
-        const dob = new Date(isoDate + "T00:00:00");
-        if (isNaN(dob.getTime())) return null;
+            if (!isoDate) return null;
+            const dob = new Date(isoDate + "T00:00:00");
+            if (isNaN(dob.getTime())) return null;
 
-        const today = new Date();
-        let age = today.getFullYear() - dob.getFullYear();
-        const m = today.getMonth() - dob.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-        return age;
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+            return age;
         }
 
         function onlyDigits(s) {
-        return (s || "").replace(/\D/g, "");
+            return (s || "").replace(/\D/g, "");
         }
-
+        function isValidNameFormat(str) {
+            if (!str) return true; 
+            const nameRegex = /^[A-ZČĆŽŠĐ][a-zčćžšđ]+$/;
+            return nameRegex.test(str);
+        }
         function formatLocalPhone(digits) {
-        if (!digits) return "";
-        const parts = [];
-        parts.push(digits.slice(0, 2));
-        if (digits.length > 2) parts.push(digits.slice(2, 5));
-        if (digits.length > 5) parts.push(digits.slice(5, 8));
-        if (digits.length > 8) parts.push(digits.slice(8));
-        return parts.filter(Boolean).join(" ");
+            if (!digits) return "";
+            const parts = [];
+            parts.push(digits.slice(0, 2));
+            if (digits.length > 2) parts.push(digits.slice(2, 5));
+            if (digits.length > 5) parts.push(digits.slice(5, 8));
+            if (digits.length > 8) parts.push(digits.slice(8));
+            return parts.filter(Boolean).join(" ");
         }
 
         function getCountryRuleByName(name) {
-        return countries.find(c => c.name === name) || null;
+            return countries.find(c => c.name === name) || null;
         }
 
         function getCountryRuleByDial(dial) {
-        return countries.find(c => c.dial === dial) || null;
-        }
-
-        function setFormError(msg) {
-        const errEl = document.getElementById('formError');
-        if (errEl) {
-        if (msg) {
-        errEl.innerText = msg;
-        errEl.style.display = 'block';
-        } else {
-        errEl.innerText = '';
-        errEl.style.display = 'none';
-        }
-        }
-        }
-
-        function loadSummary() {
-        try {
-        const destinacija = localStorage.getItem('reservationDestination') || '—';
-        const drzava = localStorage.getItem('reservationCountry') || '';
-        const ukupno = localStorage.getItem('reservationTotal') || '0.00 KM';
-        const trajanje = localStorage.getItem('reservationNights') || '—';
-        const hotel = localStorage.getItem('reservationHotelName') || '—';
-        const soba = localStorage.getItem('reservationRoom') || '—';
-        const prevoz = localStorage.getItem('reservationPrevozTip') || '—';
-        const letInfo = localStorage.getItem('reservationFlightRoute') || '—';
-        const polazak = localStorage.getItem('reservationDeparture') || '—';
-        const povratak = localStorage.getItem('reservationReturn') || '—';
-        const odrasli = localStorage.getItem('reservationAdults') || '1';
-        const djeca = localStorage.getItem('reservationChildren') || '0';
-        const slika = localStorage.getItem('reservationImage');
-
-        const destinationEl = document.getElementById('summaryDestination');
-        if (destinationEl) {
-        destinationEl.innerText = drzava ? `${destinacija}, ${drzava}` : destinacija;
-        }
-
-        const travelersEl = document.getElementById('summaryTravelers');
-        if (travelersEl) {
-        travelersEl.innerText = `Odrasli: ${odrasli}, Djeca: ${djeca}`;
-        }
-
-        const nightsEl = document.getElementById('summaryNights');
-        if (nightsEl) {
-        nightsEl.innerText = trajanje;
-        }
-
-        const hotelEl = document.getElementById('summaryHotel');
-        if (hotelEl) {
-        hotelEl.innerText = hotel;
-        }
-
-        const roomEl = document.getElementById('summaryRoom');
-        if (roomEl) {
-        roomEl.innerText = soba.charAt(0).toUpperCase() + soba.slice(1);
-        }
-
-        const prevozEl = document.getElementById('summaryPrevoz');
-        if (prevozEl) {
-        if ((prevoz || '').toLowerCase().includes('avion')) {
-        prevozEl.innerText = '✈️ Avion';
-        } else if ((prevoz || '').toLowerCase().includes('autobus')) {
-        prevozEl.innerText = '🚌 Autobus';
-        } else {
-        prevozEl.innerText = prevoz;
-        }
-        }
-
-        const busSection = document.getElementById('busSummarySection');
-        const flightSection = document.getElementById('flightSummarySection');
-
-        if ((prevoz || '').toLowerCase().includes('autobus')) {
-        if (busSection) busSection.style.display = 'block';
-        if (flightSection) flightSection.style.display = 'none';
-        const busDep = document.getElementById('summaryBusDeparture');
-        const busRet = document.getElementById('summaryBusReturn');
-        if (busDep) busDep.innerText = polazak;
-        if (busRet) busRet.innerText = povratak;
-        } else {
-        if (busSection) busSection.style.display = 'none';
-        if (flightSection) flightSection.style.display = 'block';
-        const letEl = document.getElementById('summaryLet');
-        if (letEl) {
-        letEl.innerText = letInfo !== '—' ? letInfo : 'Uključen let';
-        }
-        const departureEl = document.getElementById('summaryDeparture');
-        if (departureEl) departureEl.innerText = polazak;
-        const returnEl = document.getElementById('summaryReturn');
-        if (returnEl) returnEl.innerText = povratak;
-        }
-
-        const totalEl = document.getElementById('summaryTotal');
-        if (totalEl) {
-        totalEl.innerText = ukupno;
-        }
-
-        const photoEl = document.getElementById('summaryPhoto');
-        if (photoEl) {
-        if (slika && slika.trim() !== "" && slika !== "none") {
-        photoEl.style.backgroundImage = `url('${slika}')`;
-        } else {
-        photoEl.style.backgroundImage = "url('/assets/bali.jpg')";
-        }
-        }
-        } catch (e) {
-        console.error("Greška prilikom učitavanja sažetka:", e);
-        }
+            return countries.find(c => c.dial === dial) || null;
         }
 
         function validateBlock(block, idx, isLive) {
-        const type = block.querySelector('.ptype')?.value || 'Odrasli';
-        const fname = block.querySelector('.fname')?.value.trim();
-        const lname = block.querySelector('.lname')?.value.trim();
-        const gender = block.querySelector('.gender')?.value;
-        const birthdate = block.querySelector('.birthdate')?.value;
-        const passport = block.querySelector('.passport')?.value.trim();
-        const nationality = block.querySelector('.nationality')?.value;
-        const phoneDigits = onlyDigits(block.querySelector('.phoneNumber')?.value || '');
+            const type = block.querySelector('.ptype')?.value || 'Odrasli';
+            const fname = block.querySelector('.fname')?.value.trim();
+            const lname = block.querySelector('.lname')?.value.trim();
+            const gender = block.querySelector('.gender')?.value;
+            const birthdate = block.querySelector('.birthdate')?.value;
+            const passport = block.querySelector('.passport')?.value.trim();
+            const nationality = block.querySelector('.nationality')?.value;
+            const phoneDigits = onlyDigits(block.querySelector('.phoneNumber')?.value || '');
+            if (fname && !isValidNameFormat(fname)) {
+                return { ok: false, msg: `Putnik ${idx + 1}: Ime mora početi velikim slovom, a ostala slova moraju biti mala (npr. Niko).` };
+            }
+            if (lname && !isValidNameFormat(lname)) {
+                return { ok: false, msg: `Putnik ${idx + 1}: Prezime mora početi velikim slovom, a ostala slova moraju biti mala (npr. Nikić).` };
+            }
+            if (!isLive) {
+                if (!gender) return { ok: false, msg: `Putnik ${idx + 1}: Molimo odaberite pol.` };
+                if (!fname) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ime.` };
+                if (!lname) return { ok: false, msg: `Putnik ${idx + 1}: Unesite prezime.` };
+                if (!birthdate) return { ok: false, msg: `Putnik ${idx + 1}: Unesite datum rođenja.` };
+                if (!passport || passport.length < 5) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ispravan broj pasoša.` };
+                if (!nationality) return { ok: false, msg: `Putnik ${idx + 1}: Odaberite državljanstvo.` };
+                if (!phoneDigits || phoneDigits.length < 6) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ispravan broj telefona.` };
+            }
 
-        if (!isLive) {
-        if (!gender) return { ok: false, msg: `Putnik ${idx + 1}: Molimo odaberite pol.` };
-        if (!fname) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ime.` };
-        if (!lname) return { ok: false, msg: `Putnik ${idx + 1}: Unesite prezime.` };
-        if (!birthdate) return { ok: false, msg: `Putnik ${idx + 1}: Unesite datum rođenja.` };
-        if (!passport || passport.length < 5) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ispravan broj pasoša.` };
-        if (!nationality) return { ok: false, msg: `Putnik ${idx + 1}: Odaberite državljanstvo.` };
-        if (!phoneDigits || phoneDigits.length < 6) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ispravan broj telefona.` };
+            if (birthdate) {
+                const birthYear = new Date(birthdate).getFullYear();
+
+                if (birthYear < 1900 || birthYear > 2026) {
+                    return { ok: false, msg: `Putnik ${idx + 1}: Godina rođenja mora biti između 1900. i 2026. godine.` };
+                }
+
+                const age = calcAgeYears(birthdate);
+                if (age !== null) {
+                    if (type === 'Odrasli' && age < 18) {
+                        return { ok: false, msg: `Putnik ${idx + 1}: Označen je kao "Odrasli", ali ima manje od 18 godina (${age} god).` };
+                    }
+                    if (type === 'Dijete' && age >= 18) {
+                        return { ok: false, msg: `Putnik ${idx + 1}: Označen je kao "Dijete", ali ima 18 ili više godina (${age} god).` };
+                    }
+                }
+            }
+            return { ok: true };
         }
 
-        if (birthdate) {
-        const birthYear = new Date(birthdate).getFullYear();
-
-        if (birthYear < 1900 || birthYear > 2026) {
-        return { ok: false, msg: `Putnik ${idx + 1}: Godina rođenja mora biti između 1900. i 2026. godine.` };
+        function setFormError(msg) {
+            const errEl = document.getElementById('formError');
+            if (errEl) {
+                if (msg) {
+                    errEl.innerText = msg;
+                    errEl.style.display = 'block';
+                } else {
+                    errEl.innerText = '';
+                    errEl.style.display = 'none';
+                }
+            }
         }
 
-        const age = calcAgeYears(birthdate);
-        if (age !== null) {
-        if (type === 'Odrasli' && age < 18) {
-        return { ok: false, msg: `Putnik ${idx + 1}: Označen je kao "Odrasli", ali ima manje od 18 godina (${age} god).` };
-        }
-        if (type === 'Dijete' && age >= 18) {
-        return { ok: false, msg: `Putnik ${idx + 1}: Označen je kao "Dijete", ali ima 18 ili više godina (${age} god).` };
-        }
-        }
-        }
-        return { ok: true };
+        function loadSummary() {
+            try {
+                const destinacija = localStorage.getItem('reservationDestination') || '—';
+                const drzava = localStorage.getItem('reservationCountry') || '';
+                const ukupno = localStorage.getItem('reservationTotal') || '0.00 KM';
+                const trajanje = localStorage.getItem('reservationNights') || '—';
+                const hotel = localStorage.getItem('reservationHotelName') || '—';
+                const soba = localStorage.getItem('reservationRoom') || '—';
+                const prevoz = localStorage.getItem('reservationPrevozTip') || '—';
+                const letInfo = localStorage.getItem('reservationFlightRoute') || '—';
+                const polazak = localStorage.getItem('reservationDeparture') || '—';
+                const povratak = localStorage.getItem('reservationReturn') || '—';
+                const odrasli = localStorage.getItem('reservationAdults') || '1';
+                const djeca = localStorage.getItem('reservationChildren') || '0';
+                const slika = localStorage.getItem('reservationImage');
+
+                const destinationEl = document.getElementById('summaryDestination');
+                if (destinationEl) {
+                    destinationEl.innerText = drzava ? `${destinacija}, ${drzava}` : destinacija;
+                }
+
+                const travelersEl = document.getElementById('summaryTravelers');
+                if (travelersEl) {
+                    travelersEl.innerText = `Odrasli: ${odrasli}, Djeca: ${djeca}`;
+                }
+
+                const nightsEl = document.getElementById('summaryNights');
+                if (nightsEl) {
+                    nightsEl.innerText = trajanje;
+                }
+
+                const hotelEl = document.getElementById('summaryHotel');
+                if (hotelEl) {
+                    hotelEl.innerText = hotel;
+                }
+
+                const roomEl = document.getElementById('summaryRoom');
+                if (roomEl) {
+                    roomEl.innerText = soba.charAt(0).toUpperCase() + soba.slice(1);
+                }
+
+                const prevozEl = document.getElementById('summaryPrevoz');
+                if (prevozEl) {
+                    if ((prevoz || '').toLowerCase().includes('avion')) {
+                        prevozEl.innerText = '✈️ Avion';
+                    } else if ((prevoz || '').toLowerCase().includes('autobus')) {
+                        prevozEl.innerText = '🚌 Autobus';
+                    } else {
+                        prevozEl.innerText = prevoz;
+                    }
+                }
+
+                const busSection = document.getElementById('busSummarySection');
+                const flightSection = document.getElementById('flightSummarySection');
+
+                if ((prevoz || '').toLowerCase().includes('autobus')) {
+                    if (busSection) busSection.style.display = 'block';
+                    if (flightSection) flightSection.style.display = 'none';
+                    const busDep = document.getElementById('summaryBusDeparture');
+                    const busRet = document.getElementById('summaryBusReturn');
+                    if (busDep) busDep.innerText = polazak;
+                    if (busRet) busRet.innerText = povratak;
+                } else {
+                    if (busSection) busSection.style.display = 'none';
+                    if (flightSection) flightSection.style.display = 'block';
+                    const letEl = document.getElementById('summaryLet');
+                    if (letEl) {
+                        letEl.innerText = letInfo !== '—' ? letInfo : 'Uključen let';
+                    }
+                    const departureEl = document.getElementById('summaryDeparture');
+                    if (departureEl) departureEl.innerText = polazak;
+                    const returnEl = document.getElementById('summaryReturn');
+                    if (returnEl) returnEl.innerText = povratak;
+                }
+
+                const totalEl = document.getElementById('summaryTotal');
+                if (totalEl) {
+                    totalEl.innerText = ukupno;
+                }
+
+                const photoEl = document.getElementById('summaryPhoto');
+                if (photoEl) {
+                    if (slika && slika.trim() !== "" && slika !== "none") {
+                        photoEl.style.backgroundImage = `url('${slika}')`;
+                    } else {
+                        photoEl.style.backgroundImage = "url('/assets/bali.jpg')";
+                    }
+                }
+            } catch (e) {
+                console.error("Greška prilikom učitavanja sažetka:", e);
+            }
         }
 
         function generatePassengers() {
-        const container = document.getElementById('passengerContainer');
-        const template = document.getElementById('passengerTemplate');
-        if (!container || !template) {
-        console.error("Missing container or template element!");
-        return;
-        }
+            const container = document.getElementById('passengerContainer');
+            const template = document.getElementById('passengerTemplate');
+            if (!container || !template) {
+                console.error("Missing container or template element!");
+                return;
+            }
 
-        const count = parseInt(localStorage.getItem('reservationTravelers') || '1', 10) || 1;
-        const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '1', 10) || 1;
-        let savedPassengers = [];
+            const count = parseInt(localStorage.getItem('reservationTravelers') || '1', 10) || 1;
+            const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '1', 10) || 1;
+            let savedPassengers = [];
 
-        try {
-        savedPassengers = JSON.parse(localStorage.getItem('savedPassengers') || '[]');
-        } catch (e) {
-        savedPassengers = [];
-        }
+            try {
+                savedPassengers = JSON.parse(localStorage.getItem('savedPassengers') || '[]');
+            } catch (e) {
+                savedPassengers = [];
+            }
 
-        if (savedPassengers.length !== count) {
-        savedPassengers = [];
-        localStorage.removeItem('savedPassengers');
-        }
+            if (savedPassengers.length !== count) {
+                savedPassengers = [];
+                localStorage.removeItem('savedPassengers');
+            }
 
-        container.innerHTML = '';
+            container.innerHTML = '';
 
-        for (let i = 1; i <= count; i++) {
-        const clone = template.content.cloneNode(true);
-        const titleEl = clone.querySelector('.p-title');
-        if (titleEl) titleEl.textContent = `Putnik ${i}`;
+            for (let i = 1; i <= count; i++) {
+                const clone = template.content.cloneNode(true);
+                const titleEl = clone.querySelector('.p-title');
+                if (titleEl) titleEl.textContent = `Putnik ${i}`;
 
-        const selectNat = clone.querySelector('.nationality');
-        if (selectNat) {
-        countries.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.name;
-        opt.textContent = `${c.flag} ${c.name}`;
-        selectNat.appendChild(opt);
-        });
-        }
+                const selectNat = clone.querySelector('.nationality');
+                if (selectNat) {
+                    countries.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.name;
+                        opt.textContent = `${c.flag} ${c.name}`;
+                        selectNat.appendChild(opt);
+                    });
+                }
 
-        const phoneCodeEl = clone.querySelector('.phoneCode');
-        if (phoneCodeEl) {
-        countries.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.dial;
-        opt.textContent = `${c.flag} ${c.dial}`;
-        phoneCodeEl.appendChild(opt);
-        });
-        }
+                const phoneCodeEl = clone.querySelector('.phoneCode');
+                if (phoneCodeEl) {
+                    countries.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.dial;
+                        opt.textContent = `${c.flag} ${c.dial}`;
+                        phoneCodeEl.appendChild(opt);
+                    });
+                }
 
-        const wrapper = document.createElement('div');
-        wrapper.appendChild(clone);
-        const block = wrapper.querySelector('.passenger-block');
-        const pTypeEl = block.querySelector('.ptype');
+                const wrapper = document.createElement('div');
+                wrapper.appendChild(clone);
+                const block = wrapper.querySelector('.passenger-block');
+                const pTypeEl = block.querySelector('.ptype');
 
-        if (pTypeEl) {
-        if (i <= expectedAdults) {
-        pTypeEl.value = 'Odrasli';
-        } else {
-        pTypeEl.value = 'Dijete';
-        }
-        }
+                if (pTypeEl) {
+                    if (i <= expectedAdults) {
+                        pTypeEl.value = 'Odrasli';
+                    } else {
+                        pTypeEl.value = 'Dijete';
+                    }
+                }
 
-        if (savedPassengers && savedPassengers[i - 1]) {
-        const sp = savedPassengers[i - 1];
-        if (pTypeEl && sp.type) {
-        pTypeEl.value = (sp.type === 'adult' || sp.type === 'Odrasli') ? 'Odrasli' : 'Dijete';
-        }
-        if (block.querySelector('.gender') && sp.gender) block.querySelector('.gender').value = sp.gender;
-        if (block.querySelector('.fname') && sp.firstName) block.querySelector('.fname').value = sp.firstName;
-        if (block.querySelector('.lname') && sp.lastName) block.querySelector('.lname').value = sp.lastName;
-        if (block.querySelector('.birthdate') && sp.birthDate) block.querySelector('.birthdate').value = sp.birthDate;
-        if (block.querySelector('.passport') && sp.passport) block.querySelector('.passport').value = sp.passport;
-        if (selectNat && sp.nationality) selectNat.value = sp.nationality;
-        if (block.querySelector('.freqFlyer') && sp.freqFlyer) block.querySelector('.freqFlyer').value = sp.freqFlyer;
-        if (block.querySelector('.bedPreference') && sp.bedPreference) block.querySelector('.bedPreference').value = sp.bedPreference;
-        if (block.querySelector('.requests') && sp.requests) block.querySelector('.requests').value = sp.requests;
+                if (savedPassengers && savedPassengers[i - 1]) {
+                    const sp = savedPassengers[i - 1];
+                    if (pTypeEl && sp.type) {
+                        pTypeEl.value = (sp.type === 'adult' || sp.type === 'Odrasli') ? 'Odrasli' : 'Dijete';
+                    }
+                    if (block.querySelector('.gender') && sp.gender) block.querySelector('.gender').value = sp.gender;
+                    if (block.querySelector('.fname') && sp.firstName) block.querySelector('.fname').value = sp.firstName;
+                    if (block.querySelector('.lname') && sp.lastName) block.querySelector('.lname').value = sp.lastName;
+                    if (block.querySelector('.birthdate') && sp.birthDate) block.querySelector('.birthdate').value = sp.birthDate;
+                    if (block.querySelector('.passport') && sp.passport) block.querySelector('.passport').value = sp.passport;
+                    if (selectNat && sp.nationality) selectNat.value = sp.nationality;
+                    if (block.querySelector('.requests') && sp.requests) block.querySelector('.requests').value = sp.requests;
 
-        const phoneNumEl = block.querySelector('.phoneNumber');
-        if (sp.phone && phoneNumEl) {
-        const phoneParts = sp.phone.split(' ');
-        if (phoneParts.length > 1) {
-        if (phoneCodeEl) phoneCodeEl.value = phoneParts[0];
-        phoneNumEl.value = formatLocalPhone(phoneParts.slice(1).join(''));
-        }
-        }
-        }
+                    const phoneNumEl = block.querySelector('.phoneNumber');
+                    if (sp.phone && phoneNumEl) {
+                        const phoneParts = sp.phone.split(' ');
+                        if (phoneParts.length > 1) {
+                            if (phoneCodeEl) phoneCodeEl.value = phoneParts[0];
+                            phoneNumEl.value = formatLocalPhone(phoneParts.slice(1).join(''));
+                        }
+                    }
+                }
 
-        const triggerLiveValidate = () => {
-        const res = validateBlock(block, i - 1, true);
-        if (!res.ok) {
-        setFormError(res.msg);
-        } else {
-        let hasOtherError = false;
-        const allBlocks = document.querySelectorAll('.passenger-block');
-        for (let bIdx = 0; bIdx < allBlocks.length; bIdx++) {
-        if (bIdx !== (i - 1)) {
-        const checkOther = validateBlock(allBlocks[bIdx], bIdx, true);
-        if (!checkOther.ok) {
-        hasOtherError = true;
-        setFormError(checkOther.msg);
-        break;
-        }
-        }
-        }
-        if (!hasOtherError) setFormError('');
-        }
-        };
+                const triggerLiveValidate = () => {
+                    const res = validateBlock(block, i - 1, true);
+                    if (!res.ok) {
+                        setFormError(res.msg);
+                    } else {
+                        let hasOtherError = false;
+                        const allBlocks = document.querySelectorAll('.passenger-block');
+                        for (let bIdx = 0; bIdx < allBlocks.length; bIdx++) {
+                            if (bIdx !== (i - 1)) {
+                                const checkOther = validateBlock(allBlocks[bIdx], bIdx, true);
+                                if (!checkOther.ok) {
+                                    hasOtherError = true;
+                                    setFormError(checkOther.msg);
+                                    break;
+                                }
+                            }
+                        }
+                        if (!hasOtherError) setFormError('');
+                    }
+                };
 
-        const fnameInput = block.querySelector('.fname');
-        const lnameInput = block.querySelector('.lname');
+                const fnameInput = block.querySelector('.fname');
+                const lnameInput = block.querySelector('.lname');
 
-        if (fnameInput) {
-        fnameInput.addEventListener('input', () => {
-        fnameInput.value = fnameInput.value.replace(/[0-9]/g, '');
-        triggerLiveValidate();
-        });
-        }
-        if (lnameInput) {
-        lnameInput.addEventListener('input', () => {
-        lnameInput.value = lnameInput.value.replace(/[0-9]/g, '');
-        triggerLiveValidate();
-        });
-        }
+                if (fnameInput) {
+                    fnameInput.addEventListener('input', () => {
+                        fnameInput.value = fnameInput.value.replace(/[0-9]/g, '');
+                        triggerLiveValidate();
+                    });
+                }
+                if (lnameInput) {
+                    lnameInput.addEventListener('input', () => {
+                        lnameInput.value = lnameInput.value.replace(/[0-9]/g, '');
+                        triggerLiveValidate();
+                    });
+                }
 
-        const passportEl = block.querySelector('.passport');
-        if (passportEl) {
-        passportEl.addEventListener('input', () => {
-        passportEl.value = passportEl.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 9);
-        triggerLiveValidate();
-        });
-        }
+                const passportEl = block.querySelector('.passport');
+                if (passportEl) {
+                    passportEl.addEventListener('input', () => {
+                        passportEl.value = passportEl.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 9);
+                        triggerLiveValidate();
+                    });
+                }
 
-        const phoneCode = block.querySelector('.phoneCode');
-        const phoneNumber = block.querySelector('.phoneNumber');
-        const nationality = block.querySelector('.nationality');
+                const phoneCode = block.querySelector('.phoneCode');
+                const phoneNumber = block.querySelector('.phoneNumber');
+                const nationality = block.querySelector('.nationality');
 
-        nationality?.addEventListener('change', () => {
-        const rule = getCountryRuleByName(nationality.value);
-        if (rule && phoneCode) {
-        phoneCode.value = rule.dial;
-        if (phoneNumber) {
-        const digits = onlyDigits(phoneNumber.value).slice(0, rule.digits);
-        phoneNumber.value = formatLocalPhone(digits);
-        }
-        }
-        triggerLiveValidate();
-        });
+                nationality?.addEventListener('change', () => {
+                    const rule = getCountryRuleByName(nationality.value);
+                    if (rule && phoneCode) {
+                        phoneCode.value = rule.dial;
+                        if (phoneNumber) {
+                            const digits = onlyDigits(phoneNumber.value).slice(0, rule.digits);
+                            phoneNumber.value = formatLocalPhone(digits);
+                        }
+                    }
+                    triggerLiveValidate();
+                });
 
-        phoneCode?.addEventListener('change', () => {
-        const rule = getCountryRuleByDial(phoneCode.value);
-        if (rule) {
-        if (nationality) nationality.value = rule.name;
-        if (phoneNumber) {
-        const digits = onlyDigits(phoneNumber.value).slice(0, rule.digits);
-        phoneNumber.value = formatLocalPhone(digits);
-        }
-        }
-        triggerLiveValidate();
-        });
+                phoneCode?.addEventListener('change', () => {
+                    const rule = getCountryRuleByDial(phoneCode.value);
+                    if (rule) {
+                        if (nationality) nationality.value = rule.name;
+                        if (phoneNumber) {
+                            const digits = onlyDigits(phoneNumber.value).slice(0, rule.digits);
+                            phoneNumber.value = formatLocalPhone(digits);
+                        }
+                    }
+                    triggerLiveValidate();
+                });
 
-        phoneNumber?.addEventListener('input', () => {
-        const rule = getCountryRuleByDial(phoneCode?.value) || getCountryRuleByName(nationality?.value);
-        const maxDigits = rule?.digits ?? 9;
-        const digits = onlyDigits(phoneNumber.value).slice(0, maxDigits);
-        phoneNumber.value = formatLocalPhone(digits);
-        triggerLiveValidate();
-        });
+                phoneNumber?.addEventListener('input', () => {
+                    const rule = getCountryRuleByDial(phoneCode?.value) || getCountryRuleByName(nationality?.value);
+                    const maxDigits = rule?.digits ?? 9;
+                    const digits = onlyDigits(phoneNumber.value).slice(0, maxDigits);
+                    phoneNumber.value = formatLocalPhone(digits);
+                    triggerLiveValidate();
+                });
 
-        block.querySelector('.ptype')?.addEventListener('change', triggerLiveValidate);
-        block.querySelector('.gender')?.addEventListener('change', triggerLiveValidate);
-        block.querySelector('.birthdate')?.addEventListener('change', triggerLiveValidate);
+                block.querySelector('.ptype')?.addEventListener('change', triggerLiveValidate);
+                block.querySelector('.gender')?.addEventListener('change', triggerLiveValidate);
+                block.querySelector('.birthdate')?.addEventListener('change', triggerLiveValidate);
 
-        container.appendChild(block);
-        }
+                container.appendChild(block);
+            }
         }
 
         function goToPayment() {
-        setFormError('');
-        const blocks = document.querySelectorAll('.passenger-block');
-        const passengers = [];
-        let countAdultsForm = 0;
-        let countChildrenForm = 0;
+            setFormError('');
+            const blocks = document.querySelectorAll('.passenger-block');
+            const passengers = [];
+            let countAdultsForm = 0;
+            let countChildrenForm = 0;
 
-        for (let i = 0; i < blocks.length; i++) {
-        const block = blocks[i];
-        const res = validateBlock(block, i, false);
-        if (!res.ok) {
-        setFormError(res.msg);
-        block.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                const res = validateBlock(block, i, false);
+                if (!res.ok) {
+                    setFormError(res.msg);
+                    block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+
+                const type = block.querySelector('.ptype')?.value || 'Odrasli';
+                if (type === 'Odrasli') countAdultsForm++;
+                else countChildrenForm++;
+
+                const fnameVal = block.querySelector('.fname')?.value || "";
+                const lnameVal = block.querySelector('.lname')?.value || "";
+                const birthdateVal = block.querySelector('.birthdate')?.value || "";
+                const passportVal = block.querySelector('.passport')?.value || "";
+                const nationalityEl = block.querySelector('.nationality');
+                const pCode = block.querySelector('.phoneCode')?.value || "";
+                const pNum = onlyDigits(block.querySelector('.phoneNumber')?.value || "");
+                const phoneFormatted = pCode ? `${pCode} ${pNum}` : pNum;
+                const requestsVal = block.querySelector('.requests')?.value || "";
+
+                const p = {
+                    type: type === 'Odrasli' ? 'adult' : 'child',
+                    gender: block.querySelector('.gender')?.value || "",
+                    firstName: fnameVal.trim(),
+                    lastName: lnameVal.trim(),
+                    birthDate: birthdateVal,
+                    passport: passportVal.trim(),
+                    nationality: nationalityEl?.value || "",
+                    phone: phoneFormatted,
+                    requests: requestsVal.trim()
+                };
+                passengers.push(p);
+            }
+
+            const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '1', 10);
+            const expectedChildren = parseInt(localStorage.getItem('reservationChildren') || '0', 10);
+
+            if (countAdultsForm !== expectedAdults || countChildrenForm !== expectedChildren) {
+                setFormError(`Struktura putnika ne odgovara rezervaciji! Izabrano: ${countAdultsForm} odraslih, ${countChildrenForm} djece. Očekivano: ${expectedAdults} odraslih, ${expectedChildren} djece.`);
+                return;
+            }
+
+            localStorage.setItem('savedPassengers', JSON.stringify(passengers));
+            const paketId = localStorage.getItem('reservationPaketId');
+
+            window.location.href = paketId ? `/Placanje?paketId=${encodeURIComponent(paketId)}` : '/Placanje';
         }
-
-        const type = block.querySelector('.ptype')?.value || 'Odrasli';
-        if (type === 'Odrasli') countAdultsForm++;
-        else countChildrenForm++;
-
-        const fnameVal = block.querySelector('.fname')?.value || "";
-        const lnameVal = block.querySelector('.lname')?.value || "";
-        const birthdateVal = block.querySelector('.birthdate')?.value || "";
-        const passportVal = block.querySelector('.passport')?.value || "";
-        const nationalityEl = block.querySelector('.nationality');
-        const pCode = block.querySelector('.phoneCode')?.value || "";
-        const pNum = onlyDigits(block.querySelector('.phoneNumber')?.value || "");
-        const phoneFormatted = pCode ? `${pCode} ${pNum}` : pNum;
-        const freqFlyerVal = block.querySelector('.freqFlyer')?.value || "";
-        const bedPrefVal = block.querySelector('.bedPreference')?.value || "no-preference";
-        const requestsVal = block.querySelector('.requests')?.value || "";
-
-        const p = {
-        type: type === 'Odrasli' ? 'adult' : 'child',
-        gender: block.querySelector('.gender')?.value || "",
-        firstName: fnameVal.trim(),
-        lastName: lnameVal.trim(),
-        birthDate: birthdateVal,
-        passport: passportVal.trim(),
-        nationality: nationalityEl?.value || "",
-        phone: phoneFormatted,
-        freqFlyer: freqFlyerVal.trim(),
-        bedPreference: bedPrefVal,
-        requests: requestsVal.trim()
-        };
-        passengers.push(p);
-        }
-
-        const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '1', 10);
-        const expectedChildren = parseInt(localStorage.getItem('reservationChildren') || '0', 10);
-
-        if (countAdultsForm !== expectedAdults || countChildrenForm !== expectedChildren) {
-        setFormError(`Struktura putnika ne odgovara rezervaciji! Izabrano: ${countAdultsForm} odraslih, ${countChildrenForm} djece. Očekivano: ${expectedAdults} odraslih, ${expectedChildren} djece.`);
-        return;
-        }
-
-        localStorage.setItem('savedPassengers', JSON.stringify(passengers));
-    const paketId = localStorage.getItem('reservationPaketId');
-
-    window.location.href = paketId ? `/Placanje?paketId=${encodeURIComponent(paketId)}` : '/Placanje';
-}
 
         window.addEventListener('DOMContentLoaded', () => {
-        loadSummary();
-        generatePassengers();
+            loadSummary();
+            generatePassengers();
         });
     </script>
 </body>

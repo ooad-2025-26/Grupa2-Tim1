@@ -561,12 +561,14 @@
 <section class="section">
     <div class="container">
 
-        @if (Model != null && Model.Any())
+        @if (ViewBag.OoadTop10 != null)
         {
+            var top10Paketi = (List<InterTrips___Turistička_Agencija.Models.Paket>)ViewBag.OoadTop10;
+
             <div class="top10-wrapper">
                 <div class="top10-header">
                     <div>
-                        <span style="color: var(--top10-gold); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">PREPORUČENO ZA VAS</span>
+                        <span style="color: var(--top10-gold); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">ALGORITAMSKI RANGIRANO • TOP 10 NAJTRAŽENIJIH</span>
                         <h3 class="top10-title" style="color: #ffffff;">Ekskluzivni <em style="color: var(--top10-gold); font-style: normal; font-weight: 800;">Top 10</em> Paketi</h3>
                     </div>
                     <div class="top10-controls">
@@ -579,22 +581,28 @@
                     <div class="top10-slider" id="top10Slider">
                         @{
                             int brojac = 1;
-                            var top10Paketi = Model.Take(10);
                         }
                         @foreach (var p in top10Paketi)
                         {
                             int rezervisanoTop = p.Rezervacije?.Count ?? 0;
-                            bool jePopunjenTop = rezervisanoTop >= p.Kapacitet;
+                            bool jePopunjenTop = p.Kapacitet > 0 && rezervisanoTop >= p.Kapacitet;
+
+                            double fiksnaOcjena = 4.8;
+                            double izracunatiScore = (rezervisanoTop * 0.7) + (fiksnaOcjena * 0.3);
 
                             <div class="top10-card">
-                                <div class="badge-rank">#@brojac TOP PONUDA</div>
+                                <div class="badge-rank">
+                                    <span style="color:var(--top10-gold); font-weight:900;">#@brojac</span> RANG LISTA
+                                </div>
                                 <div class="top10-img-container">
                                     <img src="@(string.IsNullOrEmpty(p.Destinacija?.SlikaUrl) ? "/assets/destination1.jpg" : p.Destinacija.SlikaUrl)" alt="@p.Naziv">
                                 </div>
                                 <div class="top10-body">
                                     <div class="top10-meta">
                                         <span>@(string.IsNullOrWhiteSpace(p.Destinacija?.Kategorija) ? "Premium" : p.Destinacija.Kategorija)</span>
-                                        <span style="color: #ffffff;">★ 4.9</span>
+                                        <span style="color: var(--top10-gold); background: rgba(248,190,33,0.15); padding: 2px 8px; border-radius: 12px; font-size:10px;">
+                                            Score: @izracunatiScore.ToString("0.0")
+                                        </span>
                                     </div>
                                     <h4>@p.Naziv</h4>
                                     <div class="top10-loc">
@@ -612,13 +620,6 @@
                                             <span class="time">@(p.DatumPolaska != null ? ((DateTime)p.DatumPolaska).AddDays(p.TrajanjeNoci).ToString("dd.MM.yyyy.") : "--:--")</span>
                                         </div>
                                     </div>
-
-                                    @if (jePopunjenTop)
-                                    {
-                                        <div style="color: #ff8fa3; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-top: 4px;">
-                                            Popunjeno
-                                        </div>
-                                    }
 
                                     <div class="top10-footer">
                                         <div class="top10-price">@p.CijenaOd.ToString("0.##") BAM</div>
@@ -734,22 +735,17 @@
         <div>
             <h4>Istraži</h4>
             <a asp-controller="Destinacije" asp-action="Index">Destinacije</a>
-            <a href="#">Putni vodiči</a>
-            <a href="#">Najbolja iskustva</a>
         </div>
 
         <div>
             <h4>Kompanija</h4>
             <a asp-controller="Home" asp-action="ONama">O nama</a>
-            <a href="#">Karijere</a>
             <a asp-controller="Home" asp-action="Kontakt">Kontakt</a>
         </div>
 
         <div>
             <h4>Podrška</h4>
-            <a href="#">Centar za pomoć</a>
             <a asp-controller="Home" asp-action="Privacy">Politika privatnosti</a>
-            <a href="#">Uvjeti korištenja</a>
         </div>
     </div>
     <div class="footer-bottom">© 2026 InterTrips. Sva prava zadržana.</div>

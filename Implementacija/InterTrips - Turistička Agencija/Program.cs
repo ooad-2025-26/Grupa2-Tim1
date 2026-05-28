@@ -4,6 +4,7 @@ using InterTrips___Turistička_Agencija.Models;
 using InterTrips___Turistička_Agencija.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using InterTrips___Turistička_Agencija.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +40,12 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddRazorPages();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+        options.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
+    });
 
 builder.Services.AddScoped<EmailAndDocumentService>();
 builder.Services.AddHostedService<PozadinskiProcesiService>();

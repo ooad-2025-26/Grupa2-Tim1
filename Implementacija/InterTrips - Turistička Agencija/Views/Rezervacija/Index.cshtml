@@ -26,16 +26,6 @@
     z-index: 1;
     }
 
-   
-
-    .hero-content h1 {
-    font-size: 1.4rem; 
-    font-weight: 800;
-    margin: 0;
-    letter-spacing: 0.5px;
-    color: #ffffff;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
-    }
 
 
     .section-container {
@@ -248,15 +238,15 @@
     font-weight: 800;
     margin: 0 0 8px 0;
     letter-spacing: 0.5px;
-    color: #ffffff;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+    color: #0a2228;
+    text-shadow: none;
     }
 
     .hero-content p {
     font-size: 0.95rem;
-    color: #f1f6f7;
+    color: #435d62;
     margin: 0;
-    font-weight: 300;
+    font-weight: 400;
     }
     .status-badge {
     padding: 3px 8px;
@@ -448,15 +438,16 @@
     <div class="details-grid">
     <div class="detail-item">
     <div class="detail-label">Smještajni objekat</div>
-    <div class="detail-value">${r.hotelNaziv || 'Smještaj po programu'}</div>
+    <div class="detail-value">
+    ${r.paket && r.paket.hotel ? r.paket.hotel.naziv : (r.hotelNaziv || 'Smještaj po programu')}
+    </div>
     </div>
     <div class="detail-item">
     <div class="detail-label">Ugovoreni prevoz</div>
-    <div class="detail-value">${r.prevozTekst || 'Uključen prevoz'}</div>
+    <div class="detail-value">
+    ${r.paket ? mapirajPrevoz(r.paket.dostupniPrevoz) : (r.prevozTekst || 'Uključen prevoz')}
     </div>
-    <div class="detail-item">
-    <div class="detail-label">Ukupan finansijski saldo</div>
-    <div class="detail-value" style="color:#1e7f88;">${r.iznos ? r.iznos.toFixed(2) + ' BAM' : 'Na upit'}</div>
+    </div>
     </div>
     </div>
 
@@ -542,4 +533,12 @@
     }
 
     window.addEventListener('DOMContentLoaded', renderReservations);
+
+    function mapirajPrevoz(prevoz) {
+    if (prevoz === 0 || prevoz === "Avion") return "Avionski prevoz";
+    if (prevoz === 1 || prevoz === "Autobus") return "Autobuski prevoz";
+    if (prevoz === 2 || prevoz === "Oboje") return "Kombinovani prevoz (Avion/Autobus)";
+
+    return "Uključen prevoz po programu";
+    }
 </script>

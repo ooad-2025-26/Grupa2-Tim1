@@ -82,29 +82,50 @@ namespace InterTrips___Turistička_Agencija.Controllers;
             return View("Rezervacije", vm);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> TogglePaket(int agentId, int paketId)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> TogglePaket(int agentId, int paketId)
+    {
+        var postojecaVeza = await _db.Set<AgentPaket>()
+            .FirstOrDefaultAsync(ap => ap.AgentId == agentId && ap.PaketId == paketId);
+
+        if (postojecaVeza != null)
         {
-            var postojecaVeza = await _db.Set<AgentPaket>()
-                .FirstOrDefaultAsync(ap => ap.AgentId == agentId && ap.PaketId == paketId);
+            _db.Set<AgentPaket>().Remove(postojecaVeza);
+        }
+        else
+        {
+            var noviPaket = await _db.Set<Paket>().FindAsync(paketId);
+            if (noviPaket == null) return NotFound();
 
-            if (postojecaVeza != null)
+            var mojiTrenutniPaketi = await _db.Set<AgentPaket>()
+                .Where(ap => ap.AgentId == agentId)
+                .Select(ap => ap.Paket) 
+                .ToListAsync();
+
+           
+            foreach (var postojeci in mojiTrenutniPaketi)
             {
-                _db.Set<AgentPaket>().Remove(postojecaVeza);
-            }
-            else
-            {
-                var novaVeza = new AgentPaket { AgentId = agentId, PaketId = paketId };
-                await _db.Set<AgentPaket>().AddAsync(novaVeza);
+                if (noviPaket.DatumPolaska < postojeci.DatumPovratka &&
+                    noviPaket.DatumPovratka > postojeci.DatumPolaska)
+                {
+                    TempData["ErrorPoruka"] = $"Greška! Paket '{noviPaket.Naziv}' se preklapa sa " +
+                        $"paketom '{postojeci.Naziv}' koji ste već preuzeli " +
+                        $"({postojeci.DatumPolaska:dd.MM.yyyy} - {postojeci.DatumPovratka:dd.MM.yyyy}).";
+
+                    return RedirectToAction("Paketi", new { agentId = agentId });
+                }
             }
 
-            await _db.SaveChangesAsync();
-
-            return RedirectToAction("Index", new { agentId = agentId });
+            var novaVeza = new AgentPaket { AgentId = agentId, PaketId = paketId };
+            await _db.Set<AgentPaket>().AddAsync(novaVeza);
         }
 
-        [HttpGet]
+        await _db.SaveChangesAsync();
+
+        return RedirectToAction("Paketi", new { agentId = agentId });
+    }
+    [HttpGet]
         public async Task<IActionResult> Detalji(int id)
         {
             var rezervacija = await _db.Rezervacije

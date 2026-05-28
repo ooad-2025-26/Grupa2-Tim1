@@ -410,7 +410,7 @@
                 box-shadow: none;
             }
             
-            .
+            
 
             .summary-place {
                 position: relative;
@@ -656,27 +656,39 @@
 
                     <div id="ratesFields" style="display:none;">
                         <label class="field-label" for="ratesMonths">Željeni broj mjesečnih rata</label>
-                        <input class="input" id="ratesMonths" type="number" min="1" max="60" placeholder="Unesite broj mjeseci (npr. 12)">
+                        <input class="input" id="ratesMonths" type="number" min="1" max="60" placeholder="Unesite broj mjeseci (npr. 12)" oninput="updateRatesPreview()">
                         <p id="ratesMessage" style="font-size:14px; font-weight: 600; margin-top:12px;"></p>
 
-                        <div id="ratesSubMethod" style="display:none; margin-top:20px; padding-top: 16px; border-top: 1px dashed var(--border-color, #ccc);">
+                        <div id="ratesSubMethod" style="display:none; margin-top:20px; padding-top:16px; border-top:1px dashed var(--border-color, #ccc);">
                             <label class="field-label">Odaberite metodu za otplatu rata</label>
-                            <div style="display:flex; flex-direction:column; gap:12px; margin-top: 10px;">
+
+                            <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px;">
                                 <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; font-weight:500;">
-                                    <input type="radio" name="rateSubMethod" value="Karticom" checked onchange="onRateSubMethodChange()" style="transform: scale(1.15);" />
-                                    Automatski tereti karticu mjesečno
+                                    <input type="radio" name="rateSubMethod" value="Kartica" checked onchange="onRateSubMethodChange()" style="transform: scale(1.15);" />
+                                    Kartica
                                 </label>
-                                <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; font-weight:500;">
-                                    <input type="radio" name="rateSubMethod" value="Gotovinom" onchange="onRateSubMethodChange()" style="transform: scale(1.15);" />
-                                    Donosiću gotovinu u poslovnicu
-                                </label>
+
                                 <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; font-weight:500;">
                                     <input type="radio" name="rateSubMethod" value="Bankovni transfer" onchange="onRateSubMethodChange()" style="transform: scale(1.15);" />
-                                    Ručni mjesečni nalog (banka/e-banking)
+                                    Bankovni transfer
                                 </label>
+
+                                <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; font-weight:500;">
+                                    <input type="radio" name="rateSubMethod" value="Gotovina" onchange="onRateSubMethodChange()" style="transform: scale(1.15);" />
+                                    Gotovina
+                                </label>
+                            </div>
+
+                            <div id="rateSubDetails" style="margin-top:20px;"></div>
+                        </div>
+                        <div id="cashFields" style="display:none;">
+                            <label class="field-label">Gotovinsko plaćanje</label>
+                            <div class="bank-info-box" style="background:#f3f4f6; padding:12px; border-radius:6px;">
+                                Plaćanje se vrši u poslovnici agencije prilikom dolaska ili prema dogovoru sa agentom.
                             </div>
                         </div>
                     </div>
+
                     @Html.AntiForgeryToken()
                     <div class="btn-row">
                         <button class="secondary-btn" type="button" onclick="history.back()">← Nazad na putnike</button>
@@ -704,6 +716,8 @@
                                 <span><i data-lucide="calendar" class="summary-icon"></i> Trajanje</span>
                                 <strong id="summaryNights">—</strong>
                             </div>
+                            <div id="selectedTermin" style="display:none;"></div>
+                
                             <div class="summary-row">
                                 <span><i data-lucide="hotel" class="summary-icon"></i> Hotel</span>
                                 <strong id="summaryHotel">—</strong>
@@ -778,6 +792,15 @@
     <script>
         let selectedPaymentType = 'card';
 
+        document.addEventListener('DOMContentLoaded', () => {
+            localStorage.removeItem('koristeniKuponKod');
+
+
+        loadPaymentSummary();
+        setupInputValidations();
+        onRateSubMethodChange();
+        });
+
         function selectPayment(element, method) {
         selectPaymentMethod(method, element);
         }
@@ -807,6 +830,10 @@
 
         if (method === 'rates') {
         updateRatesPreview();
+        setTimeout(() => {
+        const checked = document.querySelector('input[name="rateSubMethod"]:checked');
+        if (checked) onRateSubMethodChange();
+        }, 50);
         }
         }
 
@@ -814,7 +841,11 @@
         try {
         const destinacija = localStorage.getItem('reservationDestination') || '—';
         const drzava = localStorage.getItem('reservationCountry') || '';
-        const ukupno = localStorage.getItem('reservationTotal') || '0.00 BAM';
+
+        let ukupnoRaw = localStorage.getItem('reservationTotal') || '0.00';
+        ukupnoRaw = ukupnoRaw.replace(' KM', '').trim();
+        const ukupno = parseFloat(ukupnoRaw) || 0;
+
         const trajanje = localStorage.getItem('reservationNights') || '—';
         const hotel = localStorage.getItem('reservationHotelName') || '—';
         const soba = localStorage.getItem('reservationRoom') || '—';
@@ -836,58 +867,39 @@
         }
 
         const nightsEl = document.getElementById('summaryNights');
-        if (nightsEl) {
-        nightsEl.innerText = trajanje;
-        }
+        if (nightsEl) { nightsEl.innerText = trajanje; }
 
         const hotelEl = document.getElementById('summaryHotel');
-        if (hotelEl) {
-        hotelEl.innerText = hotel;
-        }
+        if (hotelEl) { hotelEl.innerText = hotel; }
 
         const roomEl = document.getElementById('summaryRoom');
-        if (roomEl) {
-        roomEl.innerText = soba;
-        }
+        if (roomEl) { roomEl.innerText = soba; }
 
         const prevozEl = document.getElementById('summaryPrevoz');
-        if (prevozEl) {
-        prevozEl.innerText = prevoz;
-        }
+        if (prevozEl) { prevozEl.innerText = prevoz; }
 
         const letEl = document.getElementById('summaryLet');
-        if (letEl) {
-        letEl.innerText = letInfo;
-        }
+        if (letEl) { letEl.innerText = letInfo; }
 
         const departureEl = document.getElementById('summaryDeparture');
-        if (departureEl) {
-        departureEl.innerText = polazak;
-        }
+        if (departureEl) { departureEl.innerText = polazak; }
 
         const returnEl = document.getElementById('summaryReturn');
-        if (returnEl) {
-        returnEl.innerText = povratak;
-        }
+        if (returnEl) { returnEl.innerText = povratak; }
 
         document.querySelectorAll('#summaryTotal').forEach(el => {
-        el.innerText = ukupno;
+        el.innerText = `${ukupno.toFixed(2)} KM`;
         });
 
         const photoEl = document.getElementById('summaryPhoto');
         if (photoEl) {
-
         if (!slika || slika === 'null' || slika === 'undefined') {
-        slika = '/assets/bali.jpg';
+        slika = 'bali.jpg';
         }
-
         if (!slika.startsWith('/')) {
         slika = '/assets/' + slika;
         }
-
         photoEl.style.backgroundImage = `url('${slika}')`;
-        photoEl.style.backgroundSize = 'cover';
-        photoEl.style.backgroundPosition = 'center';
         }
 
         const busSection = document.getElementById('busSummarySection');
@@ -914,11 +926,15 @@
 
         function updateRatesPreview() {
         const monthsInput = document.getElementById('ratesMonths');
-        const previewEl = document.getElementById('ratesMessage'); 
+        const previewEl = document.getElementById('ratesMessage');
         if (!monthsInput || !previewEl) return;
 
         const months = parseInt(monthsInput.value, 10) || 1;
-        const total = parseFloat(localStorage.getItem('reservationTotal') || '0');
+
+        let totalRaw = localStorage.getItem('reservationTotal') || '0';
+        totalRaw = totalRaw.replace(' KM', '').trim();
+        const total = parseFloat(totalRaw) || 0;
+
         const monthly = total / months;
 
         localStorage.setItem('ratesMonths', months.toString());
@@ -934,25 +950,82 @@
 
         function onRateSubMethodChange() {
         const selectedRadio = document.querySelector('input[name="rateSubMethod"]:checked');
-        if (selectedRadio) {
-        localStorage.setItem('ratesSubMethod', selectedRadio.value);
+        const container = document.getElementById('rateSubDetails');
+        if (!selectedRadio || !container) return;
+
+        const method = selectedRadio.value;
+        localStorage.setItem('ratesSubMethod', method);
+
+        if (method === 'Kartica') {
+        container.innerHTML = `
+        <label class="field-label" for="rateCardNumber">Broj kartice</label>
+        <input class="input" id="rateCardNumber" placeholder="1234 5678 9012 3456">
+        <div class="row">
+        <div>
+        <label class="field-label" for="rateCardName">Ime na kartici</label>
+        <input class="input" id="rateCardName" placeholder="Ime i prezime">
+        </div>
+        <div>
+        <label class="field-label" for="rateCardCvv">CVV / CVC</label>
+        <input class="input" id="rateCardCvv" placeholder="123" maxlength="3">
+        </div>
+        </div>
+        <div class="row">
+        <div>
+        <label class="field-label" for="rateCardExpiry">Rok trajanja</label>
+        <input class="input" id="rateCardExpiry" placeholder="MM/GG" maxlength="5">
+        </div>
+        <div>
+        <label class="field-label" for="rateBillingZip">Poštanski broj računa</label>
+        <input class="input" id="rateBillingZip" placeholder="71000">
+        </div>
+        </div>
+        `;
         }
+        else if (method === 'Bankovni transfer') {
+        container.innerHTML = `
+        <label class="field-label">Instrukcije za deviznu/žiralnu uplatu</label>
+        <div class="bank-info-box" style="background:#f3f4f6; padding:12px; border-radius:6px; margin-bottom:12px;">
+        <div><strong>Primalac:</strong> InterTrips d.o.o.</div>
+        <div><strong>Banka:</strong> UniCredit Bank d.d.</div>
+        <div><strong>Broj računa:</strong> 154-1234567890-12</div>
+        <div><strong>IBAN:</strong> BA39 1541 2345 6789 0123</div>
+        <div style="color:#6b7280; font-size:12px; margin-top:5px;">
+        *Uplate vikendom biće procesirane narednog radnog dana.
+        </div>
+        </div>
+        `;
+        }
+        else if (method === 'Gotovina') {
+        container.innerHTML = `
+        <label class="field-label">Gotovinsko plaćanje</label>
+        <div class="bank-info-box" style="background:#f3f4f6; padding:12px; border-radius:6px;">
+        <div><strong>Napomena:</strong> Plaćanje gotovinom je moguće u poslovnici InterTrips agencije.</div>
+        <div><strong>Obavezno:</strong> Ponesite broj rezervacije ili potvrdu rezervacije.</div>
+        </div>
+        `;
+        }
+
+        setupInputValidations();
         }
 
         function setupInputValidations() {
-        const cardNumberInput = document.getElementById('cardNumber');
-        if (cardNumberInput) {
-        cardNumberInput.addEventListener('input', function (e) {
+        ['cardNumber', 'rateCardNumber'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+        input.addEventListener('input', function (e) {
         let value = e.target.value.replace(/\D/g, '');
         if (value.length > 16) value = value.slice(0, 16);
         let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
         e.target.value = formatted;
         });
         }
+        });
 
-        const cardExpiryInput = document.getElementById('cardExpiry');
-        if (cardExpiryInput) {
-        cardExpiryInput.addEventListener('input', function (e) {
+        ['cardExpiry', 'rateCardExpiry'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+        input.addEventListener('input', function (e) {
         let value = e.target.value.replace(/\D/g, '');
         if (value.length > 4) value = value.slice(0, 4);
         if (value.length > 2) {
@@ -962,24 +1035,29 @@
         }
         });
         }
+        });
 
-        const cardCvvInput = document.getElementById('cardCvv');
-        if (cardCvvInput) {
-        cardCvvInput.addEventListener('input', function (e) {
+        ['cardCvv', 'rateCardCvv'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+        input.addEventListener('input', function (e) {
         let value = e.target.value.replace(/\D/g, '');
         if (value.length > 3) value = value.slice(0, 3);
         e.target.value = value;
         });
         }
+        });
 
-        const zipCodeInput = document.getElementById('billingZip');
-        if (zipCodeInput) {
-        zipCodeInput.addEventListener('input', function (e) {
+        ['billingZip', 'rateBillingZip'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+        input.addEventListener('input', function (e) {
         let value = e.target.value.replace(/\D/g, '');
         if (value.length > 5) value = value.slice(0, 5);
         e.target.value = value;
         });
         }
+        });
         }
 
         function validateCardExpiry(expiryValue) {
@@ -1036,15 +1114,21 @@
         const paketId = parseInt(localStorage.getItem('reservationPaketId'), 10);
         const totalAmount = parseFloat(localStorage.getItem('reservationTotal') || '0');
         const savedPassengers = JSON.parse(localStorage.getItem('savedPassengers') || '[]');
-        const promoKod = localStorage.getItem('koristeniKuponKod') || "";
+        const promoKodStorage = localStorage.getItem('koristeniKuponKod');
+
+        const promoKod =
+        promoKodStorage &&
+        promoKodStorage !== "null" &&
+        promoKodStorage !== "undefined"
+        ? promoKodStorage
+        : "";
         const departureRaw = localStorage.getItem('reservationDeparture');
         const returnRaw = localStorage.getItem('reservationReturn');
 
         const parseDate = (dateStr) => {
         if (!dateStr || dateStr === '—') {
-        return new Date().toISOString().split('T')[0];
+        return null;
         }
-
         const parts = dateStr.split('.');
 
         if (parts.length >= 3) {
@@ -1057,26 +1141,47 @@
 
         return new Date(dateStr).toISOString().split('T')[0];
         };
+        const departureDate = parseDate(departureRaw);
+        const returnDate = parseDate(returnRaw);
+        if (!departureDate || !returnDate) {
+        alert("Datumi polaska i povratka nisu pronađeni.");
+
+        if (btn) {
+        btn.disabled = false;
+        btn.innerText = "Potvrdi i plati";
+        }
+
+        return;
+        }
         const payload = {
         PaketId: paketId,
-        DatumPolaska: parseDate(departureRaw),
-        DatumPovratka: parseDate(returnRaw),
+        DatumPolaska: departureDate,
+        DatumPovratka: returnDate,
         PromoKod: promoKod,
         NacinPlacanja: selectedPaymentType,
         UkupanIznos: totalAmount,
-        BrojMjeseciRata: selectedPaymentType === 'rates' ? parseInt(localStorage.getItem('ratesMonths'), 10) : null,
+        BrojMjeseciRata: selectedPaymentType === 'rates'
+        ? parseInt(localStorage.getItem('ratesMonths'), 10)
+        : null,
         Putnici: savedPassengers.map(p => ({
         Ime: p.firstName,
         Prezime: p.lastName,
         BrojPasosa: p.passport || "—",
         Drzavljanstvo: p.nationality || "BiH",
-        DatumRodjenja: p.birthDate ? new Date(p.birthDate).toISOString() : new Date().toISOString(),
+        DatumRodjenja: p.birthDate
+        ? new Date(p.birthDate).toISOString()
+        : null,
         PosebniZahtjevi: p.requests || "",
         Telefon: p.phone || ""
         }))
         };
+        console.log("RAW POLAZAK:", departureRaw);
+        console.log("RAW POVRATAK:", returnRaw);
 
-        try {
+        console.log("FORMAT POLAZAK:", departureDate);
+        console.log("FORMAT POVRATAK:", returnDate);
+console.log("PROMO KOD:", promoKod);
+try {
         const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
 
         const response = await fetch('/Rezervacija/KreirajRezervaciju', {
@@ -1087,11 +1192,11 @@
         },
         body: JSON.stringify(payload)
         });
-        if(response.ok) {
+        if (response.ok) {
         const result = await response.json();
         const finalCode = result.id || 'IT-' + Math.floor(1000 + Math.random() * 9000);
         localStorage.setItem('finalReservationCode', finalCode);
-
+        localStorage.removeItem('koristeniKuponKod');
         window.location.href = '/Placanje/Uspjeh';
         } else {
         const errorData = await response.text();
@@ -1111,36 +1216,92 @@
         }
         }
 
-        function applyCoupon() {
+
+        async function applyCoupon() {
         const codeInput = document.getElementById('couponCode');
         const msgEl = document.getElementById('couponMessage');
+        const submitBtn = document.querySelector('.coupon-form-group button');
+
         if (!codeInput || !msgEl) return;
+
+        if (localStorage.getItem('koristeniKuponKod')) {
+        msgEl.style.color = "#dc2626";
+        msgEl.innerText = "Već ste primijenili kupon za ovu rezervaciju.";
+        return;
+        }
 
         const kod = codeInput.value.trim();
         if (!kod) {
         alert("Unesite promo kod!");
         return;
         }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const paketId = parseInt(urlParams.get('paketId')) || parseInt(localStorage.getItem('reservationPaketId')) || 0;
+        const putniciCount = parseInt(localStorage.getItem('reservationTravelers'), 10) || 1;
+
+        if (!paketId) {
+        alert("Greška: Nije pronađen ID paketa.");
+        return;
+        }
+
         msgEl.style.display = "block";
         msgEl.style.color = "#0f766e";
-        msgEl.innerText = "Kod poslat na provjeru...";
-        }
+        msgEl.innerText = "Provjera koda...";
 
-        window.addEventListener('DOMContentLoaded', function () {
-        loadPaymentSummary();
-        setupInputValidations();
+        try {
+        const url = `/Rezervacija/ProvjeriKupon?kod=${encodeURIComponent(kod)}&paketId=${paketId}&brojPutnika=${putniciCount}`;
 
-        selectPaymentMethod('card', null);
-
-        const monthsEl = document.getElementById('ratesMonths');
-        if (monthsEl) {
-        monthsEl.addEventListener('input', updateRatesPreview);
-        monthsEl.addEventListener('change', updateRatesPreview);
-        }
-
-        if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
+        const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+        'X-Requested-With': 'XMLHttpRequest'
         }
         });
+
+        let result = null;
+        try {
+        result = await response.json();
+        } catch {
+        result = null;
+        }
+
+        if (response.ok && result) {
+        if (result.validan) {
+        const ukupnaNovaCijena = result.novaUkupnaCijena;
+
+        document.querySelectorAll('#summaryTotal').forEach(el => {
+        el.innerText = `${ukupnaNovaCijena.toFixed(2)} KM`;
+        });
+
+        localStorage.setItem('koristeniKuponKod', kod);
+        localStorage.setItem('reservationTotal', ukupnaNovaCijena.toFixed(2));
+
+        if (selectedPaymentType === 'rates') {
+        updateRatesPreview();
+        }
+
+        msgEl.style.color = "#16a34a";
+        msgEl.innerText = result.poruka;
+
+        codeInput.disabled = true;
+        if (submitBtn) submitBtn.disabled = true;
+        } else {
+        msgEl.style.color = "#dc2626";
+        msgEl.innerText = result.poruka;
+        }
+        } else {
+        let greskaPoruka = "Kupon nije važeći.";
+        if (result && result.poruka) greskaPoruka = result.poruka;
+        msgEl.style.color = "#dc2626";
+        msgEl.innerText = greskaPoruka;
+        }
+        } catch (e) {
+        console.error(e);
+        msgEl.style.color = "#dc2626";
+        msgEl.innerText = "Greška na serveru prilikom provjere kupona.";
+        }
+        }
     </script>
-</body></html>
+</body>
+</html>

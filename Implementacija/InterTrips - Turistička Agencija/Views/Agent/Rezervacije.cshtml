@@ -25,7 +25,7 @@
                 --sidebar-hover: #133a43;
                 --primary: #1e7f88;
                 --primary-light: #2aa9b0;
-                --primary-accent: rgba(42, 169, 176, 0.04);
+                --primary-accent: rgba(42, 169, 176, 0.05);
                 --text-main: #1f2e3d;
                 --text-muted: #6b7a87;
                 --white: #ffffff;
@@ -42,6 +42,9 @@
                 --status-obrisana-txt: #475569;
                 --priority-bg: #fffbeb;
                 --priority-border: #f59e0b;
+                --danger: #b91c1c;
+                --danger-bg: #fef2f2;
+                --danger-border: #fecaca;
             }
 
             body {
@@ -465,11 +468,14 @@
             <a href="/Agent/Index" class="nav-item">
                 <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
             </a>
-            <a href="/Agent/Paketi" class="nav-item">
+            <a href="/Agent/Rezervacije?agentId=@Model.AgentId" class="nav-item active">
+                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            </a>
+            <a href="/Agent/Paketi?agentId=@Model.AgentId" class="nav-item">
                 <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
             </a>
-            <a href="/Agent/Rezervacije" class="nav-item active">
-                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            <a href="/Agent/Izvjestaj?agentId=@Model.AgentId" class="nav-item">
+                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
             </a>
         </nav>
 

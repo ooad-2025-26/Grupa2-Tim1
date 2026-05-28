@@ -13,7 +13,8 @@ using System.Threading.Tasks;
 
 namespace InterTrips___Turistička_Agencija.Controllers
 {
-    [Authorize] 
+    [Authorize]
+
     public class RezervacijaController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -68,10 +69,19 @@ namespace InterTrips___Turistička_Agencija.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> KreirajRezervaciju([FromBody] NovaRezervacijaDto model)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+            {
+                var greske = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return BadRequest(new { poruka = "Validacija nije prošla: " + greske });
+            }
+
+            if (model.Putnici == null || model.Putnici.Count == 0)
+                return BadRequest(new { poruka = "Morate unijeti najmanje jednog putnika." });
+
+            int brojPutnika = model.Putnici.Count;
 
             string? emailKorisnika = User.Identity?.Name;
             if (string.IsNullOrEmpty(emailKorisnika)) return Unauthorized("Korisnik nije ulogovan.");
@@ -90,37 +100,38 @@ namespace InterTrips___Turistička_Agencija.Controllers
             }
 
             decimal baznaCijena = paket.CijenaOd > 0 ? paket.CijenaOd : 500;
-
-            if (model.Putnici == null || model.Putnici.Count == 0)
-                return BadRequest(new { poruka = "Morate unijeti najmanje jednog putnika." });
-
-            int brojPutnika = model.Putnici.Count;
             decimal konacnaCijena = baznaCijena * brojPutnika;
             int? primijenjenKuponId = null;
 
             if (model.DatumPovratka < model.DatumPolaska)
                 return BadRequest(new { poruka = "Datum povratka ne može biti prije datuma polaska." });
 
-            if (!string.IsNullOrEmpty(model.PromoKod))
+            Kupon? kupon = null;
+
+            if (!string.IsNullOrWhiteSpace(model.PromoKod) && model.PromoKod.Trim().ToLower() != "null")
             {
-                var kupon = await _db.Kupon.FirstOrDefaultAsync(k => k.Kod.ToUpper() == model.PromoKod.ToUpper());
-                if (kupon != null)
-                {
-                    if (kupon.Iskoristen) return BadRequest("Ovaj kupon je već iskorišten.");
-                    if (kupon.VaziDo < DateTime.UtcNow) return BadRequest("Rok trajanja ovog kupona je istekao.");
+                kupon = await _db.Kupon.FirstOrDefaultAsync(k => k.Kod.Trim().ToUpper() == model.PromoKod.Trim().ToUpper());
 
-                    decimal popust = konacnaCijena * (kupon.PopustProcenat / 100m);
-                    konacnaCijena -= popust;
-
-                    kupon.Iskoristen = true;
-                    _db.Entry(kupon).State = EntityState.Modified;
-                    primijenjenKuponId = kupon.Id;
-                }
-                else
-                {
+                if (kupon == null)
                     return BadRequest("Uneseni promo kod nije važeći.");
-                }
+
+                if (kupon.Iskoristen)
+                    return BadRequest("Ovaj kupon je već iskorišten.");
+
+                if (kupon.VaziDo < DateTime.UtcNow)
+                    return BadRequest("Rok trajanja ovog kupona je istekao.");
+
+                decimal popust = konacnaCijena * (kupon.PopustProcenat / 100m);
+                konacnaCijena -= popust;
+                primijenjenKuponId = kupon.Id;
             }
+
+
+            if (paket == null)
+            {
+                return BadRequest($"Odabrani PaketId ({model.PaketId}) ne postoji u bazi podataka.");
+            }
+            decimal iznosZaPlacanje = kupon != null ? konacnaCijena : (model.UkupanIznos > 0 ? model.UkupanIznos : konacnaCijena);
 
             if (paket.Kapacitet < brojPutnika)
             {
@@ -153,6 +164,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 await using var transaction = await _db.Database.BeginTransactionAsync();
                 try
                 {
+
                     var novaRezervacija = new Rezervacija
                     {
                         PaketId = model.PaketId,
@@ -173,14 +185,14 @@ namespace InterTrips___Turistička_Agencija.Controllers
                     };
 
                     _db.Rezervacije.Add(novaRezervacija);
-                    await _db.SaveChangesAsync(); 
+                    await _db.SaveChangesAsync();
 
                     MetodaPlacanja enumMetoda = model.NacinPlacanja == "rates" ? MetodaPlacanja.Rate : MetodaPlacanja.Kartica;
 
                     var novoPlacanje = new Placanje
                     {
                         RezervacijaId = novaRezervacija.Id,
-                        Iznos = model.UkupanIznos > 0 ? model.UkupanIznos : konacnaCijena,
+                        Iznos = iznosZaPlacanje, 
                         Metoda = enumMetoda,
                         KuponId = primijenjenKuponId,
                         VrijemePlacanja = DateTime.UtcNow,
@@ -188,7 +200,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
                     };
 
                     _db.Placanja.Add(novoPlacanje);
-                    await _db.SaveChangesAsync(); 
+                    await _db.SaveChangesAsync();
 
                     if (enumMetoda == MetodaPlacanja.Rate && model.BrojMjeseciRata.HasValue && model.BrojMjeseciRata.Value > 0)
                     {
@@ -222,8 +234,13 @@ namespace InterTrips___Turistička_Agencija.Controllers
                         _db.Entry(paket.Let).State = EntityState.Modified;
                     }
 
-                    await _db.SaveChangesAsync();
+                    if (kupon != null)
+                    {
+                        kupon.Iskoristen = true;
+                        _db.Entry(kupon).State = EntityState.Modified;
+                    }
 
+                    await _db.SaveChangesAsync();
                     await transaction.CommitAsync();
 
                     PozadinskiProcesiService.DodajRezervacijuURed(novaRezervacija.Id);
@@ -245,6 +262,53 @@ namespace InterTrips___Turistička_Agencija.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ProvjeriKupon(string kod, int paketId, int brojPutnika = 1)
+        {
+            if (string.IsNullOrWhiteSpace(kod))
+                return BadRequest(new { poruka = "Kod nije unesen." });
+
+            kod = kod.Trim();
+
+            var paket = await _db.Paketi.FindAsync(paketId);
+            if (paket == null)
+                return BadRequest(new { poruka = "Odabrani paket ne postoji." });
+
+            if (brojPutnika < 1)
+                brojPutnika = 1;
+
+            decimal cijenaPoOsobi = paket.CijenaOd > 0 ? paket.CijenaOd : 500;
+            decimal osnovnaUkupnaCijena = cijenaPoOsobi * brojPutnika;
+
+            var kupon = await _db.Kupon.FirstOrDefaultAsync(k => k.Kod.Trim().ToUpper() == kod.ToUpper());
+
+            if (kupon != null)
+            {
+                if (kupon.Iskoristen)
+                    return BadRequest(new { poruka = "Ovaj kupon je već iskorišten." });
+
+                if (kupon.VaziDo < DateTime.UtcNow)
+                    return BadRequest(new { poruka = "Rok trajanja ovog kupona je istekao." });
+
+                decimal popustIznos = osnovnaUkupnaCijena * (kupon.PopustProcenat / 100m);
+                decimal novaUkupnaCijena = osnovnaUkupnaCijena - popustIznos;
+
+                return Ok(new
+                {
+                    validan = true,
+                    poruka = $"Kupon uspješno primijenjen! Popust: {kupon.PopustProcenat}%",
+                    cijenaPoOsobi = cijenaPoOsobi,
+                    osnovnaUkupnaCijena = osnovnaUkupnaCijena,
+                    novaUkupnaCijena = novaUkupnaCijena,
+                    usteda = popustIznos,
+                    popustProcenat = kupon.PopustProcenat
+                });
+            }
+
+            return NotFound(new { poruka = "Uneseni kupon ne postoji u bazi podataka." });
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetMojeRezervacije()
         {
             try
@@ -262,34 +326,55 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 }
 
                 var siroveRezervacije = await _db.Rezervacije
-                    .Include(r => r.Paket)
-                        .ThenInclude(p => p!.Destinacija)
-                    .Include(r => r.Putnici)
-                    .Where(r => r.KorisnikId == korisnik.Id)
-                    .ToListAsync();
+            .Include(r => r.Paket)
+                .ThenInclude(p => p!.Destinacija)
+            .Include(r => r.Paket)
+                .ThenInclude(p => p!.Hotel)
+            .Include(r => r.Paket)
+                .ThenInclude(p => p!.Let)
+            .Include(r => r.Putnici)
+            .Where(r => r.KorisnikId == korisnik.Id)
+            .ToListAsync();
 
-                var rezultat = siroveRezervacije.Select(r => new
-                {
-                    id = r.Id,
-                    status = r.Status.ToString(),
-                    destinacija = r.Paket?.Destinacija?.Naziv ?? "—",
-                    drzava = r.Paket?.Destinacija?.Drzava ?? "—",
-                    paketNaziv = r.Paket?.Naziv ?? "—",
-                    paketId = r.PaketId,
-                    datumPolaska = r.DatumPolaska.ToString("dd.MM.yyyy"),
-                    datumPovratka = r.DatumPovratka.ToString("dd.MM.yyyy"),
-                    brojPutnika = r.Putnici != null ? r.Putnici.Count : 1,
+                var rezultat = siroveRezervacije.Select(r => {
+                    string resCode = $"IT-{r.Id:D4}-{r.DatumPolaska.Year}";
 
-                    putnici = (r.Putnici ?? new List<Putnik>()).Select(p => new
+                    string prevozIspis = "Uključen prevoz po programu";
+                    if (r.Paket != null)
                     {
-                        ime = p.Ime,
-                        prezime = p.Prezime,
-                        brojPasosa = p.BrojPasosa ?? "—",
-                        drzavljanstvo = p.Drzavljanstvo ?? "—",
-                        telefon = p.Telefon ?? "—",
-                        datumRodjenja = p.DatumRodjenja.HasValue ? p.DatumRodjenja.Value.ToString("dd.MM.yyyy") : "—",
-                        posebniZahtjevi = p.PosebniZahtjevi ?? "Nema"
-                    }).ToList()
+                        if (r.Paket.DostupniPrevoz == VrstaPrevoza.SamoAvion) prevozIspis = "Avionski prevoz";
+                        else if (r.Paket.DostupniPrevoz == VrstaPrevoza.SamoAutobus) prevozIspis = "Autobuski prevoz";
+                        else if (r.Paket.DostupniPrevoz == VrstaPrevoza.Oboje) prevozIspis = "Kombinovani prevoz (Avion/Autobus)";
+                    }
+
+                    return new
+                    {
+                        id = r.Id,
+                        resCode = resCode, 
+                        status = r.Status.ToString(),
+                        destinacija = r.Paket?.Destinacija?.Naziv ?? "—",
+                        drzava = r.Paket?.Destinacija?.Drzava ?? "—",
+                        paketNaziv = r.Paket?.Naziv ?? "—",
+                        paketId = r.PaketId,
+                        datumPolaska = r.DatumPolaska.ToString("dd.MM.yyyy"),
+                        datumPovratka = r.DatumPovratka.ToString("dd.MM.yyyy"),
+                        period = $"{r.DatumPolaska:dd.MM.yyyy} - {r.DatumPovratka:dd.MM.yyyy}", // Dodat kompletan period
+                        brojPutnika = r.Putnici != null ? r.Putnici.Count : 1,
+
+                        hotelNaziv = r.Paket?.Hotel?.Naziv ?? "Smještaj po programu",
+                        prevozTekst = prevozIspis,
+
+                        putnici = (r.Putnici ?? new List<Putnik>()).Select(p => new
+                        {
+                            ime = p.Ime,
+                            prezime = p.Prezime,
+                            brojPasosa = p.BrojPasosa ?? "—",
+                            drzavljanstvo = p.Drzavljanstvo ?? "—",
+                            telefon = p.Telefon ?? "—",
+                            datumRodjenja = p.DatumRodjenja.HasValue ? p.DatumRodjenja.Value.ToString("dd.MM.yyyy") : "—",
+                            posebniZahtjevi = p.PosebniZahtjevi ?? "Nema"
+                        }).ToList()
+                    };
                 }).ToList();
 
                 return Ok(rezultat);
@@ -382,43 +467,8 @@ namespace InterTrips___Turistička_Agencija.Controllers
             });
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> ProvjeriKupon(string kod, int paketId)
-        {
-            if (string.IsNullOrEmpty(kod)) return BadRequest("Kod nije unesen.");
-            kod = kod.Trim();
+       
 
-            var paket = await _db.Paketi.FindAsync(paketId);
-            if (paket == null) return BadRequest("Odabrani paket ne postoji.");
-
-            decimal staraCijena = paket.CijenaOd > 0 ? paket.CijenaOd : 500;
-
-            var kupon = await _db.Kupon.FirstOrDefaultAsync(k => k.Kod.Trim().ToUpper() == kod.ToUpper());
-
-            if (kupon != null)
-            {
-                if (kupon.Iskoristen)
-                    return Ok(new { validan = false, poruka = "Ovaj kupon je već iskorišten." });
-
-                if (kupon.VaziDo < DateTime.Now)
-                    return Ok(new { validan = false, poruka = "Rok trajanja kupona je istekao." });
-
-                decimal popustIznos = staraCijena * (kupon.PopustProcenat / 100m);
-                decimal novaCijena = staraCijena - popustIznos;
-
-                return Ok(new
-                {
-                    validan = true,
-                    poruka = $"Kupon uspješno primijenjen! Popust: {kupon.PopustProcenat}%",
-                    novaCijena = novaCijena,
-                    usteda = popustIznos,
-                    popustProcenat = kupon.PopustProcenat
-                });
-            }
-
-            return NotFound(new { validan = false, poruka = "Uneseni kupon ne postoji u bazi podataka." });
-        }
         [HttpGet]
         [Route("Rezervacija/PreuzmiItinerer/{id}")]
         public async Task<IActionResult> PreuzmiItinerer(int id)
