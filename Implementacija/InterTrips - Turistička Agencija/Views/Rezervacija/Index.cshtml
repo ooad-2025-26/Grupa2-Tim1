@@ -5,6 +5,7 @@
 }
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
     .reservations-main {
@@ -13,8 +14,6 @@
     padding-bottom: 60px;
     }
 
-    
-
     .hero-overlay {
     position: absolute;
     top: 0;
@@ -22,7 +21,7 @@
     width: 100%;
     height: 100%;
     background: url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021') center/cover no-repeat;
-    opacity: 0.12; 
+    opacity: 0.12;
     z-index: 1;
     }
 
@@ -52,6 +51,10 @@
     color: #0a2228;
     margin: 0;
     font-weight: 700;
+    }
+
+    .section-header-elegant h3 span {
+    color: #1e7f88;
     }
 
     .section-header-elegant h3 span {
@@ -120,7 +123,7 @@
     .res-actions-wrapper {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
     }
 
     .qr-container-box {
@@ -201,6 +204,7 @@
     .elegant-table tr:last-child td {
     border-bottom: none;
     }
+
     .hero--reservations {
     position: relative;
     background: linear-gradient(135deg, #051418 0%, #0a2228 100%);
@@ -238,7 +242,7 @@
     font-weight: 800;
     margin: 0 0 8px 0;
     letter-spacing: 0.5px;
-    color: #0a2228;
+    color: #ffffff;
     text-shadow: none;
     }
 
@@ -248,6 +252,7 @@
     margin: 0;
     font-weight: 400;
     }
+
     .status-badge {
     padding: 3px 8px;
     border-radius: 4px;
@@ -270,11 +275,11 @@
     font-weight: 600;
     border-radius: 8px;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, transform 0.1s;
     }
 
     .btn-download:hover {
@@ -283,6 +288,29 @@
 
     .btn-download:disabled {
     background-color: #a4bcc0;
+    }
+
+    .btn-cancel {
+    background-color: #fff;
+    color: #dc3545;
+    border: 1px solid #f8d7da;
+    padding: 10px 16px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    }
+
+    .btn-cancel:hover {
+    background-color: #dc3545;
+    color: #ffffff;
+    border-color: #dc3545;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
     }
 
     .empty-state-box {
@@ -333,9 +361,8 @@
     .res-actions-wrapper {
     width: 100%;
     justify-content: space-between;
+    flex-wrap: wrap;
     }
-
-   
     }
 </style>
 
@@ -344,9 +371,10 @@
     <div class="hero-content">
         <span class="badge">KORISNIČKI PANEL</span>
         <h1>Moje rezervacije</h1>
-        <p>Pregledajte aktivne aranžmane, provjerite podatke putnika ili preuzmite itinerer.</p>
+        <p>Pregledajte aktivne aranžmane, provjerite podatke putnika ili pogledajte plan putovanja.</p>
     </div>
 </header>
+
 <main class="reservations-main">
     <section class="section">
         <div class="section-container">
@@ -378,8 +406,11 @@
     const empty = document.getElementById('emptyMsg');
 
     if (!data || data.length === 0) {
+    list.innerHTML = "";
     empty.style.display = 'block';
     return;
+    } else {
+    empty.style.display = 'none';
     }
 
     list.innerHTML = data.map(r => {
@@ -388,11 +419,13 @@
     let putniciHtml = '';
     if (r.putnici && r.putnici.length > 0) {
     r.putnici.forEach((p, idx) => {
+    const tipZackica = p.tipPutnika ? ` <span style="font-size: 0.75rem; background: #e4ecee; padding: 2px 6px; border-radius: 4px; color: #1e7f88;">${p.tipPutnika}</span>` : '';
+    const polZackica = p.pol ? ` (${p.pol})` : '';
     putniciHtml += `
     <tr>
     <td style="text-align:center; font-weight:bold;">${idx + 1}.</td>
-    <td><b>${p.ime} ${p.prezime}</b></td>
-    <td>${p.datumRodjenja || '—'}</td>
+    <td><b>${p.ime} ${p.prezime}</b>${polZackica}${tipZackica}</td>
+    <td>${p.datumRodjenja ? formatirajDatum(p.datumRodjenja) : '—'}</td>
     <td style="font-family:monospace; font-weight:600;">${p.brojPasosa || '—'}</td>
     <td>${p.drzavljanstvo || '—'}</td>
     <td>${p.telefon || '—'}</td>
@@ -407,7 +440,7 @@
     const statusTekst = 'Uplaćeno';
 
     return `
-    <div class="reservation-panel">
+    <div class="reservation-panel" id="panel_${r.id}">
     <div class="res-card-header">
     <div class="res-info-block">
     <h4>${r.paketNaziv}</h4>
@@ -418,7 +451,7 @@
     </div>
     <div class="meta-pill">
     <i class="fa-regular fa-calendar-days"></i>
-    <span>${r.period || (r.datumPolaska + ' - ' + r.datumPovratka)}</span>
+    <span>${r.period || (formatirajDatum(r.datumPolaska) + ' - ' + formatirajDatum(r.datumPovratka))}</span>
     </div>
     <div class="meta-pill">
     <span class="status-badge ${statusKlasa}">${statusTekst}</span>
@@ -431,28 +464,37 @@
     <button class="btn-download" onclick="preuzmiPdf(${r.id}, this)">
     <i class="fa-solid fa-file-pdf"></i> Preuzmi Itinerer
     </button>
+    <button class="btn-cancel" onclick="otkaziAranzman(${r.id}, '${resCode}')">
+    <i class="fa-solid fa-trash-can"></i> Otkaži putovanje
+    </button>
     </div>
     </div>
 
     <div class="res-card-details">
     <div class="details-grid">
     <div class="detail-item">
-    <div class="detail-label">Smještajni objekat</div>
+    <div class="detail-label">Odabrani Smještaj & Soba</div>
     <div class="detail-value">
-    ${r.paket && r.paket.hotel ? r.paket.hotel.naziv : (r.hotelNaziv || 'Smještaj po programu')}
+    <i class="fa-solid fa-hotel" style="color: #1e7f88; margin-right: 5px;"></i>
+    ${r.hotelNaziv || 'Smještaj po programu'} ${r.odabranaSoba ? `(${r.odabranaSoba})` : ''}
     </div>
     </div>
     <div class="detail-item">
-    <div class="detail-label">Ugovoreni prevoz</div>
+    <div class="detail-label">Odabrani Način Prevoza</div>
     <div class="detail-value">
-    ${r.paket ? mapirajPrevoz(r.paket.dostupniPrevoz) : (r.prevozTekst || 'Uključen prevoz')}
+    ${r.odabraniPrevoz === 'Avion'
+    ? `<i class="fa-solid fa-plane" style="color: #1e7f88; margin-right: 5px;"></i> Avionski prevoz`
+    : r.odabraniPrevoz === 'Autobus'
+    ? `<i class="fa-solid fa-bus" style="color: #1e7f88; margin-right: 5px;"></i> Autobuski prevoz`
+    : `<i class="fa-solid fa-van-shuttle" style="color: #1e7f88; margin-right: 5px;"></i> Uključen prevoz po programu`
+    }
     </div>
     </div>
     </div>
     </div>
 
-    <div style="margin-bottom:8px; font-size:0.8rem; font-weight:700; color:#0a2228; letter-spacing:0.3px;">MANIFEST / POPIS PRIJAVLJENIH PUTNIKA</div>
-    <div class="table-responsive">
+    <div style="margin: 15px 20px 8px 20px; font-size:0.8rem; font-weight:700; color:#0a2228; letter-spacing:0.3px;">MANIFEST / POPIS PRIJAVLJENIH PUTNIKA</div>
+    <div class="table-responsive" style="margin: 0 20px 20px 20px; width: calc(100% - 40px);">
     <table class="elegant-table">
     <thead>
     <tr>
@@ -468,7 +510,6 @@
     ${putniciHtml}
     </tbody>
     </table>
-    </div>
     </div>
     </div>
     `;
@@ -491,6 +532,67 @@
 
     } catch (e) {
     console.error(e);
+    }
+    }
+
+    function formatirajDatum(datumStr) {
+    if (!datumStr) return '—';
+    try {
+    const d = new Date(datumStr);
+    if (isNaN(d.getTime())) return datumStr;
+    return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}.`;
+    } catch {
+    return datumStr;
+    }
+    }
+
+    async function otkaziAranzman(id, resCode) {
+    const rezultat = await Swal.fire({
+    title: 'Da li ste sigurni?',
+    text: `Želite li otkazati rezervaciju ${resCode}? Ova akcija će osloboditi vaša mjesta i vratiti iskorišteni kupon ako ste ga imali.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#dc3545',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Da, otkaži putovanje',
+    cancelButtonText: 'Odustani'
+    });
+
+    if (rezultat.isConfirmed) {
+    try {
+   const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value
+    || document.querySelector('[headers*="RequestVerificationToken"]')?.value;
+
+    const response = await fetch(`/Rezervacija/OtkaziRezervaciju/${id}`, {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/json',
+    'RequestVerificationToken': token 
+    }
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (response.ok) {
+    await Swal.fire({
+    title: 'Uspješno otkazano!',
+    text: data.message || 'Rezervacija je uspješno otkazana.',
+    icon: 'success',
+    confirmButtonColor: '#1e7f88'
+    });
+
+    renderReservations();
+    } else {
+    throw new Error(data.greska || data.message || "Došlo je do greške prilikom otkazivanja.");
+    }
+    } catch (error) {
+    Swal.fire({
+    title: 'Greška!',
+    text: error.message,
+    icon: 'error',
+    confirmButtonColor: '#1e7f88'
+    });
+    }
     }
     }
 

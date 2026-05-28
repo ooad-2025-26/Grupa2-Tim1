@@ -34,8 +34,8 @@
                 --shadow-md: 0 10px 25px rgba(10, 34, 40, 0.04);
                 --status-kreirana-bg: #eff6ff;
                 --status-kreirana-txt: #1d4ed8;
-                --status-potvrdjena-bg: #f0fdf4;
-                --status-potvrdjena-txt: #15803d;
+                --status-potvrdjena-bg: #ecfdf5;
+                --status-potvrdjena-txt: #047857;
                 --status-otkazana-bg: #fef2f2;
                 --status-otkazana-txt: #b91c1c;
                 --status-obrisana-bg: #f8fafc;
@@ -78,6 +78,7 @@
                 align-items: center;
                 padding: 0 24px;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                flex-shrink: 0;
             }
 
             .sidebar-logo-text {
@@ -88,12 +89,13 @@
                 letter-spacing: -0.5px;
             }
 
-            .nav-links {
+            .nav-menu {
                 display: flex;
                 flex-direction: column;
                 gap: 4px;
                 padding: 24px 16px;
                 flex-grow: 1;
+                overflow-y: auto;
             }
 
             .nav-item {
@@ -129,6 +131,7 @@
             .sidebar-footer {
                 padding: 16px;
                 border-top: 1px solid rgba(255, 255, 255, 0.08);
+                flex-shrink: 0;
             }
 
             .sidebar-logout-btn {
@@ -154,6 +157,15 @@
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
+                background-color: var(--bg-main); 
+            }
+
+            .dashboard-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                width: 100%;
+                padding: 40px 32px;
+                box-sizing: border-box;
             }
 
             .dash-page {
@@ -417,7 +429,9 @@
                     width: 70px;
                 }
 
-                    .sidebar .sidebar-logo-text, .sidebar .nav-item span, .sidebar .sidebar-logout-btn span {
+                    .sidebar .sidebar-logo-text,
+                    .sidebar .nav-menu span,
+                    .sidebar .sidebar-logout-btn span {
                         display: none;
                     }
 
@@ -461,11 +475,11 @@
 
     <aside class="sidebar">
         <div class="logo-area">
-            <a href="/" class="sidebar-logo-text">InterTrips</a>
+            <a href="/Agent/Index?agentId=@Model.AgentId" class="sidebar-logo-text">InterTrips</a>
         </div>
 
-        <nav class="nav-links">
-            <a href="/Agent/Index" class="nav-item">
+        <nav class="nav-menu">
+            <a href="/Agent/Index?agentId=@Model.AgentId" class="nav-item">
                 <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
             </a>
             <a href="/Agent/Rezervacije?agentId=@Model.AgentId" class="nav-item active">
@@ -496,7 +510,7 @@
 
                 <div class="dash-header">
                     <div>
-                        <a href="/Agent/Index" class="btn-back">
+                        <a href="/Agent/Index?agentId=@Model.AgentId" class="btn-back">
                             <i class="fa-solid fa-arrow-left"></i> Nazad na Dashboard
                         </a>
                         <h1>Sve rezervacije</h1>

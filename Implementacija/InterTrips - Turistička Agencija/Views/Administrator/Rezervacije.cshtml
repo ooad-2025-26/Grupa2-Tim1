@@ -570,7 +570,7 @@
             @if (aktivneRezervacije == null || !aktivneRezervacije.Any())
             {
                 <div style="text-align:center; padding: 48px; color: var(--text-muted); font-size: 14px; border: 1px dashed var(--border); border-radius: 8px;">
-                    Trenutno nema aktivnih evidentiranih rezervacija u sistemu za korisnika <strong style="color: var(--text-dark);">@Model.KorisnikEmail</strong>.
+                    Trenutno nema aktivnih osiguranih rezervacija u sistemu za korisnika <strong style="color: var(--text-dark);">@Model.KorisnikEmail</strong>.
                 </div>
             }
             else
@@ -623,7 +623,7 @@
                                     <td style="text-align: right;">
                                         <button class="btn-info btn-pogledaj-detalje"
                                                 data-id="@r.Id"
-                                                data-email="@(r.Korisnik?.Email ?? "Neznato")"
+                                                data-email="@(r.Korisnik?.Email ?? "Nepoznato")"
                                                 data-status="@r.Status"
                                                 data-paket="@(r.Paket?.Naziv ?? "Nespecificirano")"
                                                 data-destinacija="@(r.Paket?.Destinacija != null ? $"{r.Paket.Destinacija.Naziv}, {r.Paket.Destinacija.Drzava}" : "—")"
@@ -631,7 +631,17 @@
                                                 data-povratak="@(r.Paket != null ? r.DatumPolaska.AddDays(r.Paket.TrajanjeNoci).ToString("dd.MM.yyyy") : "—")"
                                                 data-hotel="@(r.Paket?.Hotel != null ? r.Paket.Hotel.Naziv : "Nije uključeno")"
                                                 data-let="@(r.Paket?.Let != null ? $"{r.Paket.Let.Aviokompanija} ({r.Paket.Let.BrojLeta})" : "Nije uključeno")"
-                                                data-putnici='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(r.Putnici?.Select(p => new { p.Ime, p.Prezime, p.BrojPasosa }).ToList()))'>
+                                                data-putnici='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(r.Putnici?.Select(p => new
+                                                {
+                                                    p.Ime,
+                                                    p.Prezime,
+                                                    p.BrojPasosa,
+                                                    p.Pol,
+                                                    p.Drzavljanstvo,
+                                                    p.Telefon,
+                                                    DatumRodjenja = p.DatumRodjenja.ToString("dd.MM.yyyy"),
+                                                    p.PosebniZahtjevi
+                                                }).ToList()))'>
                                             <i class="fa-solid fa-eye"></i> Detalji
                                         </button>
                                     </td>
@@ -645,7 +655,7 @@
     </main>
 
     <div class="modal-overlay" id="detaljiModalOverlay">
-        <div class="modal-box">
+        <div class="modal-box" style="max-width: 750px;">
             <div class="modal-header">
                 <h3>Detalji rezervacije <span id="modalResId"></span></h3>
                 <button class="close-modal" id="btnZatvoriModal"><i class="fa-solid fa-xmark"></i></button>
@@ -704,7 +714,7 @@
 
                 <div class="details-section">
                     <h4>Prijavljeni putnici (Manifest)</h4>
-                    <div class="passengers-list" id="modalPutniciLista">
+                    <div class="passengers-list" id="modalPutniciLista" style="display: flex; flex-direction: column; gap: 12px;">
                     </div>
                 </div>
 
@@ -757,10 +767,20 @@
                             modalPutniciLista.innerHTML = `<div style="color: var(--text-muted); font-size: 13px;">Nema dodatnih registrovanih putnika (Samo nosilac rezervacije).</div>`;
                         } else {
                             putniciData.forEach((p, index) => {
+                                const zahtjeviHtml = p.PosebniZahtjevi ? `<div style="margin-top:4px; font-size:12px; color:#b91c1c; background:#fef2f2; padding:4px 8px; border-radius:4px;"><strong>Napomena:</strong> ${p.PosebniZahtjevi}</div>` : '';
+
                                 modalPutniciLista.innerHTML += `
-                                            <div class="passenger-row">
-                                                <strong>${index + 1}. ${p.Ime} ${p.Prezime}</strong>
-                                                            <span style="color: var(--text-muted);">Pasoš: ${p.BrojPasosa || '—'}</span>
+                                            <div class="passenger-row" style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                                                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                                    <strong>${index + 1}. ${p.Ime} ${p.Prezime} <span style="font-size:11px; font-weight:normal; background:#e2e8f0; padding:2px 6px; border-radius:10px; margin-left:6px;">${p.TipPutnika} (${p.Pol})</span></strong>
+                                                    <span style="color: var(--text-muted); font-size:13px;">Pasoš: <strong>${p.BrojPasosa || '—'}</strong></span>
+                                                </div>
+                                                <div style="font-size: 12px; color: #64748b; display:flex; gap:15px; flex-wrap:wrap;">
+                                                    <span>Državljanstvo: ${p.Drzavljanstvo || '—'}</span>
+                                                    <span>Datum rođenja: ${p.DatumRodjenja}</span>
+                                                    <span>Tel: ${p.Telefon || '—'}</span>
+                                                </div>
+                                                ${zahtjeviHtml}
                                             </div>
                                         `;
                             });

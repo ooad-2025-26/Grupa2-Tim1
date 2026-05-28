@@ -31,6 +31,11 @@ public class Rezervacija
 
     [ForeignKey("KorisnikId")]
    public ApplicationUser? Korisnik { get; set; }
+    [Required]
+    public string TipSobe { get; set; } = "Standardna soba";
+
+    [Required]
+    public VrstaPrevoza TipPrevoza { get; set; }
 
     public List<Putnik> Putnici { get; set; } = new();
 

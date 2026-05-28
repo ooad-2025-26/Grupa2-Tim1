@@ -470,16 +470,16 @@
         </div>
         <nav class="nav-menu">
             <a href="/Agent/Index?agentId=@agentId" class="nav-item">
-                <i class="fa-solid fa-chart-simple"></i> <span>Dashboard</span>
-            </a>
-            <a href="/Agent/Paketi?agentId=@agentId" class="nav-item">
-                <i class="fa-solid fa-boxes-packing"></i> <span>Paketi</span>
+                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
             </a>
             <a href="/Agent/Rezervacije?agentId=@agentId" class="nav-item active">
-                <i class="fa-solid fa-receipt"></i> <span>Rezervacije</span>
+                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            </a>
+            <a href="/Agent/Paketi?agentId=@agentId" class="nav-item">
+                <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
             </a>
             <a href="/Agent/Izvjestaj?agentId=@agentId" class="nav-item">
-                <i class="fa-solid fa-file-invoice-dollar"></i> <span>Izvještaji</span>
+                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
             </a>
         </nav>
         <div class="sidebar-footer">
@@ -496,227 +496,242 @@
         <div class="dashboard-container">
 
             <div class="top-meta">
-                <a href="/Agent/Rezervacije?agentr=@agentId" class="btn-back">
+                <a href="/Agent/Rezervacije?agentId=@agentId" class="btn-back">
                     <i class="fa-solid fa-arrow-left"></i> Nazad na listu rezervacija
                 </a>
             </div>
 
-            <header class="dashboard-header">
-                <div class="header-title-area">
-                    <h1>Rezervacija #@Model.Id</h1>
-                    <p>Pregled detaljnih informacija i rute klijenta</p>
-                </div>
-                <div>
-                    <span class="status-badge status-@statusKlasa">
-                        <i class="fa-solid fa-circle" style="font-size: 8px; margin-right: 4px;"></i> @Model.Status
-                    </span>
-                </div>
-            </header>
-
-            <main>
-                <div class="dashboard-grid">
-
-                    <div class="dashboard-card">
-                        <h2 class="card-title">
-                            <i class="fa-solid fa-compass"></i> Podaci o Aranžmanu
-                        </h2>
-                        <div class="info-list">
-                            <div class="info-item">
-                                <label>Naziv paketa</label>
-                                <span>@(Model.Paket?.Naziv ?? "Nezaveden aranžman")</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Destinacija</label>
-                                <span>@(Model.Paket?.Destinacija?.Naziv ?? "—")</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Datum polaska</label>
-                                <span><i class="fa-regular fa-calendar-days" style="font-size:13px; margin-right:4px; color:var(--text-muted)"></i> @Model.DatumPolaska.ToString("dd. MM. yyyy.")</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Trajanje aranžmana</label>
-                                <span>@(Model.Paket?.TrajanjeNoci) noćenja</span>
-                            </div>
-                        </div>
+            @if (Model != null)
+            {
+                <header class="dashboard-header">
+                    <div class="header-title-area">
+                        <h1>Rezervacija #@Model.Id</h1>
+                        <p>Pregled detaljnih informacija i rute klijenta</p>
                     </div>
-
-                    <div class="dashboard-card">
-                        <h2 class="card-title">
-                            <i class="fa-solid fa-user-tie"></i> Nosilac rezervacije
-                        </h2>
-                        <div class="info-list">
-                            <div class="info-item">
-                                <label>Ime i prezime klijenta</label>
-                                <span style="font-weight: 600;">@imeKlijenta</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Email adresa</label>
-                                <span>@emailKlijenta</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Ukupno prijavljenih</label>
-                                <span><i class="fa-solid fa-users" style="font-size:13px; margin-right:4px; color:var(--text-muted)"></i> @(Model.Putnici?.Count ?? 0) osoba</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Kreirano preko agenta</label>
-                                <span>ID: @agentId</span>
-                            </div>
-                        </div>
+                    <div>
+                        <span class="status-badge status-@statusKlasa">
+                            <i class="fa-solid fa-circle" style="font-size: 8px; margin-right: 4px;"></i> @Model.Status
+                        </span>
                     </div>
+                </header>
 
-                    <div class="dashboard-card">
-                        <h2 class="card-title">
-                            <i class="fa-solid fa-hotel"></i> Podaci o smještaju (Hotel)
-                        </h2>
-                        <div class="info-list">
-                            @if (Model.Paket?.Hotel != null)
-                            {
+                <main>
+                    <div class="dashboard-grid">
+
+                        <div class="dashboard-card">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-compass"></i> Podaci o Aranžmanu
+                            </h2>
+                            <div class="info-list">
                                 <div class="info-item">
-                                    <label>Naziv hotela</label>
-                                    <span style="font-weight:600;">@Model.Paket.Hotel.Naziv</span>
+                                    <label>Naziv paketa</label>
+                                    <span>@(Model.Paket?.Naziv ?? "Nezaveden aranžman")</span>
                                 </div>
                                 <div class="info-item">
-                                    <label>Kategorizacija</label>
-                                    <span>
-                                        @for (int i = 0; i < Model.Paket.Hotel.BrojZvjezdica; i++)
-                                        {
-                                            <i class="fa-solid fa-star" style="color: #eab308; font-size: 12px;"></i>
-                                        }
-                                        @if (Model.Paket.Hotel.BrojZvjezdica == 0)
-                                        {
-                                            <text>—</text>
-                                        }
+                                    <label>Destinacija</label>
+                                    <span>@(Model.Paket?.Destinacija?.Naziv ?? "—")</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Datum polaska</label>
+                                    <span><i class="fa-regular fa-calendar-days" style="font-size:13px; margin-right:4px; color:var(--text-muted)"></i> @Model.DatumPolaska.ToString("dd. MM. yyyy.")</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Trajanje aranžmana</label>
+                                    <span>@(Model.Paket?.TrajanjeNoci ?? 0) noćenja</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-user-tie"></i> Nosilac rezervacije
+                            </h2>
+                            <div class="info-list">
+                                <div class="info-item">
+                                    <label>Ime klijenta</label>
+                                    <span style="font-weight: 600;">
+                                        @(string.IsNullOrEmpty(imeKlijenta) ? "—" : imeKlijenta.Split(' ')[0])
                                     </span>
                                 </div>
-                                <div class="info-item" style="grid-column: span 2;">
-                                    <label>Adresa i lokacija</label>
-                                    <span><i class="fa-solid fa-location-dot" style="color:var(--text-muted); margin-right:4px;"></i> @(Model.Paket.Hotel.Lokacija ?? "Nije unesena lokacija")</span>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="info-item" style="grid-column: span 2;">
-                                    <p class="empty-state" style="padding: 10px 0;">Nema definisanog smještaja za ovaj aranžman.</p>
-                                </div>
-                            }
-                        </div>
-                    </div>
-
-                    <div class="dashboard-card">
-                        <h2 class="card-title">
-                            <i class="fa-solid fa-plane-departure"></i> Podaci o letu
-                        </h2>
-                        <div class="info-list">
-                            @if (Model.Paket?.Let != null)
-                            {
                                 <div class="info-item">
-                                    <label>Avio kompanija</label>
-                                    <span style="font-weight:600;">@(Model.Paket.Let.Aviokompanija ?? "—")</span>
+                                    <label>Email adresa</label>
+                                    <span>@emailKlijenta</span>
                                 </div>
                                 <div class="info-item">
-                                    <label>Relacija</label>
-                                    <span>@(Model.Paket.Let.Polazak ?? "Polazak") <i class="fa-solid fa-arrow-right" style="font-size:11px; margin: 0 4px; color: var(--primary);"></i> @(Model.Paket.Let.Odrediste ?? "Odredište")</span>
+                                    <label>Ukupno prijavljenih</label>
+                                    <span><i class="fa-solid fa-users" style="font-size:13px; margin-right:4px; color:var(--text-muted)"></i> @(Model.Putnici?.Count ?? 0) osoba</span>
                                 </div>
                                 <div class="info-item">
-                                    <label>Vrijeme polaska</label>
-                                    <span><i class="fa-regular fa-clock" style="color:var(--text-muted); margin-right:4px;"></i> @(Model.Paket.Let.VrijemePolaska.ToString("HH:mm") ?? "—") h</span>
+                                    <label>Kreirano preko agenta</label>
+                                    <span>ID: @agentId</span>
                                 </div>
-                                <div class="info-item">
-                                    <label>Klasa leta</label>
-                                    <span>Ekonomska / Standardna</span>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="info-item" style="grid-column: span 2;">
-                                    <p class="empty-state" style="padding: 10px 0;">Nema povezanih informacija o letu (npr. autobuski prevoz ili sopstveni).</p>
-                                </div>
-                            }
-                        </div>
-                    </div>
-
-                    <div class="dashboard-card full-width">
-                        <h2 class="card-title">
-                            <i class="fa-solid fa-money-check-dollar"></i> Finansijski pregled i Plaćanje
-                        </h2>
-                        <div class="info-list" style="grid-template-columns: repeat(4, 1fr);">
-                            <div class="info-item">
-                                <label>Cijena po osobi</label>
-                                <span style="font-weight: 600; color: var(--primary);">@(Model.Paket?.CijenaOd.ToString("0.00") ?? "0.00") KM</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Broj putnika</label>
-                                <span>@(Model.Putnici?.Count ?? 1)x</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Ukupna vrijednost</label>
-                                <span style="font-weight: 700; font-size: 17px; color: var(--sidebar-dark);">
-                                    @(((Model.Paket?.CijenaOd ?? 0) * (Model.Putnici?.Count ?? 1)).ToString("0.00")) KM
-                                </span>
-                            </div>
-                            <div class="info-item">
-                                <label>Status uplate</label>
-                                <span style="font-weight:600; color: #059669;"><i class="fa-solid fa-circle-check"></i> Plaćeno u cijelosti</span>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="dashboard-card full-width">
-                        <h2 class="card-title">
-                            <i class="fa-solid fa-passport"></i> Detaljni podaci o saputnicima / putnicima
-                        </h2>
-                        <div class="table-wrapper">
-                            @if (Model.Putnici == null || !Model.Putnici.Any())
-                            {
-                                <p class="empty-state">Nema registrovanih saputnika za ovu rezervaciju.</p>
-                            }
-                            else
-                            {
-                                <table class="passengers-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Oznaka</th>
-                                            <th>Ime i prezime</th>
-                                            <th>Državljanstvo</th>
-                                            <th>Datum rođenja</th>
-                                            <th>Broj pasoša</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @{
-                                            int brojac = 1;
-                                        }
-                                        @foreach (var putnik in Model.Putnici)
-                                        {
+                        <div class="dashboard-card">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-hotel"></i> Podaci o smještaju (Hotel)
+                            </h2>
+                            <div class="info-list">
+                                @if (Model.Paket != null && Model.Paket.Hotel != null)
+                                {
+                                    <div class="info-item">
+                                        <label>Naziv hotela</label>
+                                        <span style="font-weight:600;">@Model.Paket.Hotel.Naziv</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Kategorizacija</label>
+                                        <span>
+                                            @if (Model.Paket.Hotel.BrojZvjezdica > 0)
+                                            {
+                                                @for (int i = 0; i < Model.Paket.Hotel.BrojZvjezdica; i++)
+                                                {
+                                                    <i class="fa-solid fa-star" style="color: #eab308; font-size: 12px;"></i>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <text>—</text>
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="info-item" style="grid-column: span 2;">
+                                        <label>Adresa i lokacija</label>
+                                        <span>
+                                            <i class="fa-solid fa-location-dot" style="color:var(--text-muted); margin-right:4px;"></i>
+                                            @(string.IsNullOrWhiteSpace(Model.Paket.Hotel.Lokacija) ? "Nije unesena lokacija" : Model.Paket.Hotel.Lokacija)
+                                        </span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="info-item" style="grid-column: span 2;">
+                                        <p class="empty-state" style="padding: 10px 0;">Nema definisanog smještaja za ovaj aranžman.</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-plane-departure"></i> Podaci o letu
+                            </h2>
+                            <div class="info-list">
+                                @if (Model.Paket?.Let != null)
+                                {
+                                    <div class="info-item">
+                                        <label>Avio kompanija</label>
+                                        <span style="font-weight:600;">@(string.IsNullOrWhiteSpace(Model.Paket.Let.Aviokompanija) ? "—" : Model.Paket.Let.Aviokompanija)</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Relacija</label>
+                                        <span>
+                                            @(string.IsNullOrWhiteSpace(Model.Paket.Let.Polazak) ? "Polazak" : Model.Paket.Let.Polazak)
+                                            <i class="fa-solid fa-arrow-right" style="font-size:11px; margin: 0 4px; color: var(--primary);"></i>
+                                            @(string.IsNullOrWhiteSpace(Model.Paket.Let.Odrediste) ? "Odredište" : Model.Paket.Let.Odrediste)
+                                        </span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Vrijeme polaska</label>
+                                        <span>
+                                            <i class="fa-regular fa-clock" style="color:var(--text-muted); margin-right:4px;"></i>
+                                            @Model.Paket.Let.VrijemePolaska.ToString("HH:mm") h
+                                        </span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Klasa leta</label>
+                                        <span>Ekonomska / Standardna</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="info-item" style="grid-column: span 2;">
+                                        <p class="empty-state" style="padding: 10px 0;">Nema povezanih informacija o letu (npr. autobuski prevoz ili sopstveni).</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card full-width">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-money-check-dollar"></i> Finansijski pregled i Plaćanje
+                            </h2>
+                            <div class="info-list" style="grid-template-columns: repeat(4, 1fr);">
+                                <div class="info-item">
+                                    <label>Cijena po osobi</label>
+                                    <span style="font-weight: 600; color: var(--primary);">@(Model.Paket?.CijenaOd.ToString("0.00") ?? "0.00") KM</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Broj putnika</label>
+                                    <span>@(Model.Putnici?.Count ?? 1)x</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Ukupna vrijednost</label>
+                                    <span style="font-weight: 700; font-size: 17px; color: var(--sidebar-dark);">
+                                        @(((Model.Paket?.CijenaOd ?? 0) * (Model.Putnici?.Count ?? 1)).ToString("0.00")) KM
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Status uplate</label>
+                                    <span style="font-weight:600; color: #059669;"><i class="fa-solid fa-circle-check"></i> Plaćeno u cijelosti</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card full-width">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-passport"></i> Detaljni podaci o saputnicima / putnicima
+                            </h2>
+                            <div class="table-wrapper">
+                                @if (Model.Putnici == null || !Model.Putnici.Any())
+                                {
+                                    <p class="empty-state">Nema registrovanih saputnika za ovu rezervaciju.</p>
+                                }
+                                else
+                                {
+                                    <table class="passengers-table">
+                                        <thead>
                                             <tr>
-                                                <td>#0@(brojac)</td>
-                                                <td class="passenger-name">@putnik.Ime @putnik.Prezime</td>
-                                                <td>@(string.IsNullOrEmpty(putnik.Drzavljanstvo) ? "—" : putnik.Drzavljanstvo)</td>
-                                                <td>@(putnik.DatumRodjenja.HasValue ? putnik.DatumRodjenja.Value.ToString("dd.MM.yyyy.") : "—")</td>
-                                                <td>
-                                                    <code style="font-family:monospace; font-size:13px; background:#f1f5f9; padding:3px 6px; border-radius:4px; color:var(--sidebar-dark)">
-                                                        @(string.IsNullOrEmpty(putnik.BrojPasosa) ? "—" : putnik.BrojPasosa)
-                                                    </code>
-                                                </td>
+                                                <th>Oznaka</th>
+                                                <th>Ime i prezime</th>
+                                                <th>Državljanstvo</th>
+                                                <th>Datum rođenja</th>
+                                                <th>Broj pasoša</th>
                                             </tr>
-                                            brojac++;
-                                        }
-                                    </tbody>
-                                </table>
-                            }
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                int brojac = 1;
+                                            }
+                                            @foreach (var putnik in Model.Putnici)
+                                            {
+                                                <tr>
+                                                    <td>#@brojac.ToString("D2")</td>
+                                                    <td class="passenger-name">@putnik.Ime @putnik.Prezime</td>
+                                                    <td>@(string.IsNullOrEmpty(putnik.Drzavljanstvo) ? "—" : putnik.Drzavljanstvo)</td>
+                                                    <td>@putnik.DatumRodjenja.ToString("dd.MM.yyyy.")</td>
+                                                    <td>
+                                                        <code style="font-family:monospace; font-size:13px; background:#f1f5f9; padding:3px 6px; border-radius:4px; color:var(--sidebar-dark)">
+                                                            @(string.IsNullOrEmpty(putnik.BrojPasosa) ? "—" : putnik.BrojPasosa)
+                                                        </code>
+                                                    </td>
+                                                </tr>
+                                                brojac++;
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
+                            </div>
                         </div>
+
                     </div>
+                </main>
+            }
+            else
+            {
+                <div class="alert alert-danger" style="margin-top: 20px;">Podaci o rezervaciji nisu uspješno učitani.</div>
+            }
 
-                </div>
-
-                <div class="action-footer">
-                    <a href="/Rezervacija/PreuzmiItinerer/@Model.Id" class="btn-action btn-print">
-                        <i class="fa-solid fa-file-pdf"></i> Preuzmi PDF Potvrdu
-                    </a>
-
-           
-                </div>
-            </main>
         </div>
     </div>
 

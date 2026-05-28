@@ -8,8 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+
 
 namespace InterTrips___Turistička_Agencija.Controllers
 {
@@ -18,10 +20,11 @@ namespace InterTrips___Turistička_Agencija.Controllers
     public class RezervacijaController : Controller
     {
         private readonly ApplicationDbContext _db;
-
-        public RezervacijaController(ApplicationDbContext context)
+        private readonly EmailAndDocumentService _emailService;
+        public RezervacijaController(ApplicationDbContext db, EmailAndDocumentService emailService)
         {
-            _db = context;
+            _db = db;
+            _emailService = emailService; 
         }
 
         [HttpGet]
@@ -68,200 +71,222 @@ namespace InterTrips___Turistička_Agencija.Controllers
             return View("~/Views/Rezervacija/Putnici.cshtml");
         }
 
-        [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> KreirajRezervaciju([FromBody] NovaRezervacijaDto model)
+
+        public class PutnikDto
         {
-            if (!ModelState.IsValid)
-            {
-                var greske = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                return BadRequest(new { poruka = "Validacija nije prošla: " + greske });
-            }
+            [Required(ErrorMessage = "Ime je obavezno.")]
+            public string Ime { get; set; } = string.Empty;
 
-            if (model.Putnici == null || model.Putnici.Count == 0)
-                return BadRequest(new { poruka = "Morate unijeti najmanje jednog putnika." });
+            [Required(ErrorMessage = "Prezime je obavezno.")]
+            public string Prezime { get; set; } = string.Empty;
 
-            int brojPutnika = model.Putnici.Count;
+            [Required(ErrorMessage = "Pol je obavezan.")]
+            public string Pol { get; set; } = string.Empty; 
 
-            string? emailKorisnika = User.Identity?.Name;
-            if (string.IsNullOrEmpty(emailKorisnika)) return Unauthorized("Korisnik nije ulogovan.");
+            [Required(ErrorMessage = "Broj pasoša je obavezan.")]
+            public string BrojPasosa { get; set; } = string.Empty;
 
-            var korisnik = await _db.Users.FirstOrDefaultAsync(u => u.Email == emailKorisnika);
-            if (korisnik == null) return Unauthorized("Korisnik nije pronađen u bazi podataka.");
+            [Required(ErrorMessage = "Državljanstvo je obavezno.")]
+            public string Drzavljanstvo { get; set; } = string.Empty;
 
-            var paket = await _db.Paketi
-                .Include(p => p.Hotel)
-                .Include(p => p.Let)
-                .FirstOrDefaultAsync(p => p.Id == model.PaketId);
+            [Required(ErrorMessage = "Datum rođenja je obavezan.")]
+            public DateTime? DatumRodjenja { get; set; }
 
-            if (paket == null)
-            {
-                return BadRequest($"Odabrani PaketId ({model.PaketId}) ne postoji u bazi podataka.");
-            }
-
-            decimal baznaCijena = paket.CijenaOd > 0 ? paket.CijenaOd : 500;
-            decimal konacnaCijena = baznaCijena * brojPutnika;
-            int? primijenjenKuponId = null;
-
-            if (model.DatumPovratka < model.DatumPolaska)
-                return BadRequest(new { poruka = "Datum povratka ne može biti prije datuma polaska." });
-
-            Kupon? kupon = null;
-
-            if (!string.IsNullOrWhiteSpace(model.PromoKod) && model.PromoKod.Trim().ToLower() != "null")
-            {
-                kupon = await _db.Kupon.FirstOrDefaultAsync(k => k.Kod.Trim().ToUpper() == model.PromoKod.Trim().ToUpper());
-
-                if (kupon == null)
-                    return BadRequest("Uneseni promo kod nije važeći.");
-
-                if (kupon.Iskoristen)
-                    return BadRequest("Ovaj kupon je već iskorišten.");
-
-                if (kupon.VaziDo < DateTime.UtcNow)
-                    return BadRequest("Rok trajanja ovog kupona je istekao.");
-
-                decimal popust = konacnaCijena * (kupon.PopustProcenat / 100m);
-                konacnaCijena -= popust;
-                primijenjenKuponId = kupon.Id;
-            }
+            public string? Telefon { get; set; }
+            public string? PosebniZahtjevi { get; set; }
+        }
+    
 
 
-            if (paket == null)
-            {
-                return BadRequest($"Odabrani PaketId ({model.PaketId}) ne postoji u bazi podataka.");
-            }
-            decimal iznosZaPlacanje = kupon != null ? konacnaCijena : (model.UkupanIznos > 0 ? model.UkupanIznos : konacnaCijena);
-
-            if (paket.Kapacitet < brojPutnika)
-            {
-                return BadRequest(new { poruka = "Nema dovoljno slobodnih mjesta na ovom turističkom paketu." });
-            }
-
-            if (paket.HotelId.HasValue)
-            {
-                if (paket.Hotel == null || paket.Hotel.DostupnoSoba < brojPutnika)
-                {
-                    return BadRequest(new { poruka = "Nema dovoljno slobodnog kapaciteta u odabranom hotelu." });
-                }
-            }
-
-            if (paket.DostupniPrevoz == VrstaPrevoza.SamoAvion || paket.DostupniPrevoz == VrstaPrevoza.Oboje)
-            {
-                if (paket.LetId.HasValue)
-                {
-                    if (paket.Let == null || paket.Let.SlobodnaSjedista < brojPutnika)
-                    {
-                        return BadRequest(new { poruka = "Nema dovoljno slobodnih sjedišta na odabranom letu." });
-                    }
-                }
-            }
-
-            var strategy = _db.Database.CreateExecutionStrategy();
-
-            return await strategy.ExecuteAsync(async () =>
-            {
-                await using var transaction = await _db.Database.BeginTransactionAsync();
-                try
-                {
-
-                    var novaRezervacija = new Rezervacija
-                    {
-                        PaketId = model.PaketId,
-                        DatumPolaska = model.DatumPolaska,
-                        DatumPovratka = model.DatumPovratka,
-                        Status = StatusRezervacije.Kreirana,
-                        KorisnikId = korisnik.Id,
-                        Putnici = model.Putnici.Select(p => new Putnik
-                        {
-                            Ime = p.Ime,
-                            Prezime = p.Prezime,
-                            BrojPasosa = p.BrojPasosa,
-                            Drzavljanstvo = p.Drzavljanstvo,
-                            DatumRodjenja = p.DatumRodjenja,
-                            PosebniZahtjevi = p.PosebniZahtjevi,
-                            Telefon = p.Telefon
-                        }).ToList()
-                    };
-
-                    _db.Rezervacije.Add(novaRezervacija);
-                    await _db.SaveChangesAsync();
-
-                    MetodaPlacanja enumMetoda = model.NacinPlacanja == "rates" ? MetodaPlacanja.Rate : MetodaPlacanja.Kartica;
-
-                    var novoPlacanje = new Placanje
-                    {
-                        RezervacijaId = novaRezervacija.Id,
-                        Iznos = iznosZaPlacanje, 
-                        Metoda = enumMetoda,
-                        KuponId = primijenjenKuponId,
-                        VrijemePlacanja = DateTime.UtcNow,
-                        TransakcijskiKod = "TRX-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper()
-                    };
-
-                    _db.Placanja.Add(novoPlacanje);
-                    await _db.SaveChangesAsync();
-
-                    if (enumMetoda == MetodaPlacanja.Rate && model.BrojMjeseciRata.HasValue && model.BrojMjeseciRata.Value > 0)
-                    {
-                        decimal iznosRate = novoPlacanje.Iznos / model.BrojMjeseciRata.Value;
-
-                        for (int i = 1; i <= model.BrojMjeseciRata.Value; i++)
-                        {
-                            _db.RatePlacanja.Add(new RataPlacanja
-                            {
-                                PlacanjeId = novoPlacanje.Id,
-                                IznosRate = iznosRate,
-                                RokZaUplatu = DateTime.UtcNow.AddMonths(i),
-                                IsUplaceno = false
-                            });
-                        }
-                        await _db.SaveChangesAsync();
-                    }
-
-                    paket.Kapacitet -= brojPutnika;
-                    _db.Entry(paket).State = EntityState.Modified;
-
-                    if (paket.Hotel != null)
-                    {
-                        paket.Hotel.DostupnoSoba -= brojPutnika;
-                        _db.Entry(paket.Hotel).State = EntityState.Modified;
-                    }
-
-                    if ((paket.DostupniPrevoz == VrstaPrevoza.SamoAvion || paket.DostupniPrevoz == VrstaPrevoza.Oboje) && paket.Let != null)
-                    {
-                        paket.Let.SlobodnaSjedista -= brojPutnika;
-                        _db.Entry(paket.Let).State = EntityState.Modified;
-                    }
-
-                    if (kupon != null)
-                    {
-                        kupon.Iskoristen = true;
-                        _db.Entry(kupon).State = EntityState.Modified;
-                    }
-
-                    await _db.SaveChangesAsync();
-                    await transaction.CommitAsync();
-
-                    PozadinskiProcesiService.DodajRezervacijuURed(novaRezervacija.Id);
-
-                    return Ok(new
-                    {
-                        id = novaRezervacija.Id,
-                        cijenaZaPlacanje = novoPlacanje.Iznos,
-                        transakcijskiKod = novoPlacanje.TransakcijskiKod,
-                        message = "Rezervacija uspješno kreirana, kapaciteti ažurirani!"
-                    });
-                }
-                catch (Exception ex)
-                {
-                    await transaction.RollbackAsync();
-                    return StatusCode(500, new { poruka = "Greška prilikom čuvanja podataka i ažuriranja kapaciteta: " + ex.Message });
-                }
-            });
+    [HttpPost]
+    public async Task<IActionResult> KreirajRezervaciju([FromBody] NovaRezervacijaDto model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var greske = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+            return BadRequest(new { poruka = "Validacija nije prošla: " + greske });
         }
 
-        [HttpGet]
+        if (model.Putnici == null || model.Putnici.Count == 0)
+            return BadRequest(new { poruka = "Morate unijeti najmanje jednog putnika." });
+
+        int brojPutnika = model.Putnici.Count;
+
+        string? emailKorisnika = User.Identity?.Name;
+        if (string.IsNullOrEmpty(emailKorisnika)) return Unauthorized("Korisnik nije ulogovan.");
+
+        var korisnik = await _db.Users.FirstOrDefaultAsync(u => u.Email == emailKorisnika);
+        if (korisnik == null) return Unauthorized("Korisnik nije pronađen u bazi podataka.");
+
+        var paket = await _db.Paketi
+            .Include(p => p.Hotel)
+            .Include(p => p.Let)
+            .FirstOrDefaultAsync(p => p.Id == model.PaketId);
+
+        if (paket == null)
+        {
+            return BadRequest(new { poruka = $"Odabrani PaketId ({model.PaketId}) ne postoji u bazi podataka." });
+        }
+
+        if (model.DatumPovratka < model.DatumPolaska)
+            return BadRequest(new { poruka = "Datum povratka ne može biti prije datuma polaska." });
+
+        decimal baznaCijena = paket.CijenaOd > 0 ? paket.CijenaOd : 500;
+        decimal konacnaCijena = baznaCijena * brojPutnika;
+        int? primijenjenKuponId = null;
+
+        Kupon? kupon = null;
+
+        if (!string.IsNullOrWhiteSpace(model.PromoKod) && model.PromoKod.Trim().ToLower() != "null")
+        {
+            kupon = await _db.Kupon.FirstOrDefaultAsync(k => k.Kod.Trim().ToUpper() == model.PromoKod.Trim().ToUpper());
+
+            if (kupon == null)
+                return BadRequest(new { poruka = "Uneseni promo kod nije važeći." });
+
+            if (kupon.Iskoristen)
+                return BadRequest(new { poruka = "Ovaj kupon je već iskorišten." });
+
+            if (kupon.VaziDo < DateTime.UtcNow)
+                return BadRequest(new { poruka = "Rok trajanja ovog kupona je istekao." });
+
+            decimal popust = konacnaCijena * (kupon.PopustProcenat / 100m);
+            konacnaCijena -= popust;
+            primijenjenKuponId = kupon.Id;
+        }
+
+        decimal iznosZaPlacanje = kupon != null ? konacnaCijena : (model.UkupanIznos > 0 ? model.UkupanIznos : konacnaCijena);
+
+        if (paket.Kapacitet < brojPutnika)
+        {
+            return BadRequest(new { poruka = "Nema dovoljno slobodnih mjesta na ovom turističkom paketu." });
+        }
+
+        if (paket.HotelId.HasValue)
+        {
+            if (paket.Hotel == null || paket.Hotel.DostupnoSoba < brojPutnika)
+            {
+                return BadRequest(new { poruka = "Nema dovoljno slobodnog kapaciteta u odabranom hotelu." });
+            }
+        }
+
+        if (paket.DostupniPrevoz == VrstaPrevoza.SamoAvion || paket.DostupniPrevoz == VrstaPrevoza.Oboje)
+        {
+            if (paket.LetId.HasValue)
+            {
+                if (paket.Let == null || paket.Let.SlobodnaSjedista < brojPutnika)
+                {
+                    return BadRequest(new { poruka = "Nema dovoljno slobodnih sjedišta na odabranom letu." });
+                }
+            }
+        }
+
+        var strategy = _db.Database.CreateExecutionStrategy();
+
+        return await strategy.ExecuteAsync(async () =>
+        {
+            await using var transaction = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                var novaRezervacija = new Rezervacija
+                {
+                    PaketId = model.PaketId,
+                    DatumPolaska = model.DatumPolaska,
+                    DatumPovratka = model.DatumPovratka,
+                    Status = StatusRezervacije.Kreirana,
+                    KorisnikId = korisnik.Id,
+                    TipSobe = model.TipSobe ?? "Standardna soba",
+                    TipPrevoza = model.TipPrevoza == "Avion" ? VrstaPrevoza.SamoAvion : VrstaPrevoza.SamoAutobus,
+                    Putnici = model.Putnici.Select(p => new Putnik
+                    {
+                        Ime = p.Ime,
+                        Prezime = p.Prezime,
+                        BrojPasosa = p.BrojPasosa,
+                        Drzavljanstvo = p.Drzavljanstvo,
+                        DatumRodjenja = p.DatumRodjenja.GetValueOrDefault(DateTime.Now), 
+                        PosebniZahtjevi = p.PosebniZahtjevi,
+                        Telefon = p.Telefon,
+                        Pol = p.Pol
+                    }).ToList()
+                };
+
+                _db.Rezervacije.Add(novaRezervacija);
+                await _db.SaveChangesAsync();
+
+                MetodaPlacanja enumMetoda = model.NacinPlacanja == "rates" ? MetodaPlacanja.Rate : MetodaPlacanja.Kartica;
+
+                var novoPlacanje = new Placanje
+                {
+                    RezervacijaId = novaRezervacija.Id,
+                    Iznos = iznosZaPlacanje,
+                    Metoda = enumMetoda,
+                    KuponId = primijenjenKuponId,
+                    VrijemePlacanja = DateTime.UtcNow,
+                    TransakcijskiKod = "TRX-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper()
+                };
+
+                _db.Placanja.Add(novoPlacanje);
+                await _db.SaveChangesAsync();
+
+                if (enumMetoda == MetodaPlacanja.Rate && model.BrojMjeseciRata.HasValue && model.BrojMjeseciRata.Value > 0)
+                {
+                    decimal iznosRate = novoPlacanje.Iznos / model.BrojMjeseciRata.Value;
+
+                    for (int i = 1; i <= model.BrojMjeseciRata.Value; i++)
+                    {
+                        _db.RatePlacanja.Add(new RataPlacanja
+                        {
+                            PlacanjeId = novoPlacanje.Id,
+                            IznosRate = iznosRate,
+                            RokZaUplatu = DateTime.UtcNow.AddMonths(i),
+                            IsUplaceno = false
+                        });
+                    }
+                    await _db.SaveChangesAsync();
+                }
+
+                paket.Kapacitet -= brojPutnika;
+                _db.Entry(paket).State = EntityState.Modified;
+
+                if (paket.Hotel != null)
+                {
+                    paket.Hotel.DostupnoSoba -= brojPutnika;
+                    _db.Entry(paket.Hotel).State = EntityState.Modified;
+                }
+
+                if ((paket.DostupniPrevoz == VrstaPrevoza.SamoAvion || paket.DostupniPrevoz == VrstaPrevoza.Oboje) && paket.Let != null)
+                {
+                    paket.Let.SlobodnaSjedista -= brojPutnika;
+                    _db.Entry(paket.Let).State = EntityState.Modified;
+                }
+
+                if (kupon != null)
+                {
+                    kupon.Iskoristen = true;
+                    _db.Entry(kupon).State = EntityState.Modified;
+                }
+
+                await _db.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                PozadinskiProcesiService.DodajRezervacijuURed(novaRezervacija.Id);
+
+                return Ok(new
+                {
+                    id = novaRezervacija.Id,
+                    cijenaZaPlacanje = novoPlacanje.Iznos,
+                    transakcijskiKod = novoPlacanje.TransakcijskiKod,
+                    message = "Rezervacija uspješno kreirana, kapaciteti ažurirani!"
+                });
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, new { poruka = "Greška prilikom čuvanja podataka i ažuriranja kapaciteta: " + ex.Message });
+            }
+        });
+    }
+    [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> ProvjeriKupon(string kod, int paketId, int brojPutnika = 1)
         {
@@ -326,31 +351,32 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 }
 
                 var siroveRezervacije = await _db.Rezervacije
-            .Include(r => r.Paket)
-                .ThenInclude(p => p!.Destinacija)
-            .Include(r => r.Paket)
-                .ThenInclude(p => p!.Hotel)
-            .Include(r => r.Paket)
-                .ThenInclude(p => p!.Let)
-            .Include(r => r.Putnici)
-            .Where(r => r.KorisnikId == korisnik.Id)
-            .ToListAsync();
+                    .Include(r => r.Paket)
+                        .ThenInclude(p => p!.Destinacija)
+                    .Include(r => r.Paket)
+                        .ThenInclude(p => p!.Hotel)
+                    .Include(r => r.Paket)
+                        .ThenInclude(p => p!.Let)
+                    .Include(r => r.Putnici)
+                    .Where(r => r.KorisnikId == korisnik.Id)
+                    .ToListAsync();
 
                 var rezultat = siroveRezervacije.Select(r => {
                     string resCode = $"IT-{r.Id:D4}-{r.DatumPolaska.Year}";
 
-                    string prevozIspis = "Uključen prevoz po programu";
-                    if (r.Paket != null)
+                    string stvarniPrevoz = "Uključen prevoz";
+                    if (r.TipPrevoza == VrstaPrevoza.SamoAvion || r.TipPrevoza.ToString() == "SamoAvion")
                     {
-                        if (r.Paket.DostupniPrevoz == VrstaPrevoza.SamoAvion) prevozIspis = "Avionski prevoz";
-                        else if (r.Paket.DostupniPrevoz == VrstaPrevoza.SamoAutobus) prevozIspis = "Autobuski prevoz";
-                        else if (r.Paket.DostupniPrevoz == VrstaPrevoza.Oboje) prevozIspis = "Kombinovani prevoz (Avion/Autobus)";
+                        stvarniPrevoz = "Avion";
                     }
-
+                    else if (r.TipPrevoza == VrstaPrevoza.SamoAutobus || r.TipPrevoza.ToString() == "SamoAutobus")
+                    {
+                        stvarniPrevoz = "Autobus";
+                    }
                     return new
                     {
                         id = r.Id,
-                        resCode = resCode, 
+                        resCode = resCode,
                         status = r.Status.ToString(),
                         destinacija = r.Paket?.Destinacija?.Naziv ?? "—",
                         drzava = r.Paket?.Destinacija?.Drzava ?? "—",
@@ -358,11 +384,13 @@ namespace InterTrips___Turistička_Agencija.Controllers
                         paketId = r.PaketId,
                         datumPolaska = r.DatumPolaska.ToString("dd.MM.yyyy"),
                         datumPovratka = r.DatumPovratka.ToString("dd.MM.yyyy"),
-                        period = $"{r.DatumPolaska:dd.MM.yyyy} - {r.DatumPovratka:dd.MM.yyyy}", // Dodat kompletan period
+                        period = $"{r.DatumPolaska:dd.MM.yyyy} - {r.DatumPovratka:dd.MM.yyyy}",
                         brojPutnika = r.Putnici != null ? r.Putnici.Count : 1,
 
                         hotelNaziv = r.Paket?.Hotel?.Naziv ?? "Smještaj po programu",
-                        prevozTekst = prevozIspis,
+                        odabranaSoba = r.TipSobe.ToString(), 
+
+                        odabraniPrevoz = stvarniPrevoz,
 
                         putnici = (r.Putnici ?? new List<Putnik>()).Select(p => new
                         {
@@ -371,8 +399,11 @@ namespace InterTrips___Turistička_Agencija.Controllers
                             brojPasosa = p.BrojPasosa ?? "—",
                             drzavljanstvo = p.Drzavljanstvo ?? "—",
                             telefon = p.Telefon ?? "—",
-                            datumRodjenja = p.DatumRodjenja.HasValue ? p.DatumRodjenja.Value.ToString("dd.MM.yyyy") : "—",
-                            posebniZahtjevi = p.PosebniZahtjevi ?? "Nema"
+                            datumRodjenja = p.DatumRodjenja.ToString("dd.MM.yyyy"),
+                            posebniZahtjevi = p.PosebniZahtjevi ?? "Nema",
+
+                            pol = p.Pol ?? "—",
+                            tipPutnika = p.TipPutnika ?? "Odrasli"
                         }).ToList()
                     };
                 }).ToList();
@@ -391,22 +422,27 @@ namespace InterTrips___Turistička_Agencija.Controllers
         {
             var strategy = _db.Database.CreateExecutionStrategy();
 
-            return await strategy.ExecuteAsync<IActionResult>(async () =>
+            string emailKorisnikaZaNotifikaciju = null;
+            string nazivPaketaZaNotifikaciju = "Nije specificirano";
+
+            var ishodTransakcije = await strategy.ExecuteAsync<bool>(async () =>
             {
                 await using var transaction = await _db.Database.BeginTransactionAsync();
                 try
                 {
                     var emailKorisnika = User.Identity?.Name;
                     var korisnik = await _db.Users.FirstOrDefaultAsync(u => u.Email == emailKorisnika);
-                    if (korisnik == null) return Unauthorized("Korisnik nije pronađen u sistemu.");
+                    if (korisnik == null) return false;
 
                     var rezervacija = await _db.Rezervacije
                         .Include(r => r.Putnici)
                         .Include(r => r.Paket)
                         .FirstOrDefaultAsync(r => r.Id == id && r.KorisnikId == korisnik.Id);
 
-                    if (rezervacija == null) return NotFound("Rezervacija nije pronađena.");
-                    if (rezervacija.Status == StatusRezervacije.Otkazana) return BadRequest("Rezervacija je već otkazana.");
+                    if (rezervacija == null || rezervacija.Status == StatusRezervacije.Otkazana) return false;
+
+                    emailKorisnikaZaNotifikaciju = korisnik.Email;
+                    nazivPaketaZaNotifikaciju = rezervacija.Paket?.Naziv ?? "Nije specificirano";
 
                     var placanje = await _db.Placanja.FirstOrDefaultAsync(p => p.RezervacijaId == rezervacija.Id);
                     if (placanje != null && placanje.KuponId.HasValue)
@@ -457,17 +493,45 @@ namespace InterTrips___Turistička_Agencija.Controllers
                     await _db.SaveChangesAsync();
                     await transaction.CommitAsync();
 
-                    return Ok(new { message = "Rezervacija je uspješno otkazana, a kapaciteti i kupon su oslobođeni." });
+                    return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     await transaction.RollbackAsync();
-                    return BadRequest(new { greska = "Greška prilikom otkazivanja: " + ex.Message });
+                    return false;
                 }
             });
+
+            if (!ishodTransakcije)
+            {
+                return BadRequest(new { greska = "Greška prilikom otkazivanja rezervacije ili rezervacija ne postoji." });
+            }
+
+            if (!string.IsNullOrEmpty(emailKorisnikaZaNotifikaciju))
+            {
+                string naslovEmaila = "Otkazivanje rezervacije - InterTrips";
+                string sadrzajEmaila = $@"
+            <h3>Poštovani,</h3>
+            <p>Obavještavamo Vas da je Vaša rezervacija za aranžman <strong>{nazivPaketaZaNotifikaciju}</strong> uspješno otkazana.</p>
+            <p>Sva rezervisana mjesta i iskorišteni kuponi (ukoliko ih je bilo) su vraćeni u sistem.</p>
+            <br>
+            <p>Srdačan pozdrav,<br>Vaš <strong>InterTrips</strong> tim</p>";
+
+                _ = Task.Run(async () =>
+                {
+                    await _emailService.PosaljiEmailSaLogomAsync(
+                        emailKorisnikaZaNotifikaciju,
+                        naslovEmaila,
+                        sadrzajEmaila,
+                        id,
+                        "OtkazivanjeRezervacije"
+                    );
+                });
+            }
+
+            return Ok(new { message = "Rezervacija je uspješno otkazana, kapaciteti su oslobođeni, a e-mail potvrda je poslana." });
         }
 
-       
 
         [HttpGet]
         [Route("Rezervacija/PreuzmiItinerer/{id}")]
@@ -487,322 +551,20 @@ namespace InterTrips___Turistička_Agencija.Controllers
 
             if (rezervacija == null) return NotFound("Rezervacija nije pronađena.");
 
-            var placanje = await _db.Placanja.FirstOrDefaultAsync(p => p.RezervacijaId == rezervacija.Id);
-
-            string ispravanDatum = DateTime.Now.ToString("dd.MM.yyyy.");
             string resCode = $"IT-{rezervacija.Id:D4}-{rezervacija.DatumPolaska.Year}";
-            string nazivPaketa = rezervacija.Paket?.Naziv ?? "Nije specificirano";
-            string nazivHotela = rezervacija.Paket?.Hotel?.Naziv ?? "Uključen smještaj po programu";
-            string periodPutovanja = $"{rezervacija.DatumPolaska:dd.MM.yyyy} - {rezervacija.DatumPovratka:dd.MM.yyyy}";
-            int brojPutnika = rezervacija.Putnici?.Count ?? 0;
-            string ukupnaCijena = placanje != null ? $"{placanje.Iznos:F2} BAM" : "Na upit";
-            string statusPlacanja = placanje != null ? "PLAĆENO (Potvrđeno)" : "ČEKA SE UPLATA";
-            string qrCodeUrl = $"https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=https://intertrips.ba/Verifikacija/Rezervacija/{rezervacija.Id}&choe=UTF-8";
+            string verifikacijaUrl = $"https://intertrips.ba/Verifikacija/Rezervacija/{rezervacija.Id}";
 
-            string prevozIspis = "Autobuski prevoz uključen";
-            if (rezervacija.Paket != null)
+            string base64Qr = string.Empty;
+            using (var qrGenerator = new QRCoder.QRCodeGenerator())
+            using (var qrCodeData = qrGenerator.CreateQrCode(verifikacijaUrl, QRCoder.QRCodeGenerator.ECCLevel.H))
+            using (var qrCode = new QRCoder.PngByteQRCode(qrCodeData))
             {
-                if (rezervacija.Paket.DostupniPrevoz == VrstaPrevoza.SamoAvion) prevozIspis = "Avionski prevoz uključen";
-                else if (rezervacija.Paket.DostupniPrevoz == VrstaPrevoza.Oboje) prevozIspis = "Kombinovani prevoz (Avion/Autobus)";
+                byte[] qrBytes = qrCode.GetGraphic(20);
+                base64Qr = Convert.ToBase64String(qrBytes);
             }
-
-            var putniciRows = new System.Text.StringBuilder();
-            if (rezervacija.Putnici != null && rezervacija.Putnici.Any())
-            {
-                int rb = 1;
-                foreach (var p in rezervacija.Putnici)
-                {
-                    putniciRows.Append($@"
-                <tr style=""border-bottom: 1px solid #e4ecee;"">
-                    <td style=""padding: 12px; text-align: center; color: #536e73;"">{rb}.</td>
-                    <td style=""padding: 12px; font-weight: bold; color: #0a2228;"">{p.Ime} {p.Prezime}</td>
-                    <td style=""padding: 12px; color: #133a43;"">
-    {(p.DatumRodjenja.HasValue ? p.DatumRodjenja.Value.ToString("dd.MM.yyyy.") : "—")}
-</td>
-                    <td style=""padding: 12px; color: #133a43; font-family: monospace;"">{p.BrojPasosa ?? "—"}</td>
-                    <td style=""padding: 12px; color: #133a43;"">{p.Drzavljanstvo ?? "—"}</td>
-                    <td style=""padding: 12px; color: #133a43;"">{p.Telefon ?? "—"}</td>
-                </tr>");
-                    rb++;
-                }
-            }
-            else
-            {
-                putniciRows.Append(@"<tr><td colspan=""6"" style=""padding: 20px; text-align: center; color: #a4bcc0;"">Nema registrovanih putnika za ovu rezervaciju.</td></tr>");
-            }
-
-            string htmlSadrzaj = $@"
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset=""UTF-8"">
-    <style>
-        @page {{ size: A4; margin: 16mm; }}
-
-        body {{
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            color: #21363d;
-            margin: 0;
-            padding: 0;
-            line-height: 1.45;
-            font-size: 12px;
-            background: #ffffff;
-        }}
-
-        .header-table {{
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 18px;
-        }}
-
-        .logo-title {{
-            font-size: 20px;
-            font-weight: 700;
-            color: #16343b;
-            letter-spacing: 0.5px;
-        }}
-
-        .logo-accent {{
-            color: #2aa9b0;
-        }}
-
-        .doc-title {{
-            text-align: right;
-            font-size: 11px;
-            color: #6f8a90;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }}
-
-        .divider {{
-            height: 2px;
-            background: linear-gradient(to right, #16343b, #2aa9b0);
-            margin-bottom: 18px;
-        }}
-
-        .meta-table {{
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 18px;
-        }}
-
-        .meta-box {{
-            background: #f7faf9;
-            padding: 12px;
-            border-left: 3px solid #2aa9b0;
-            border-radius: 4px;
-        }}
-
-        .meta-box h4 {{
-            margin: 0 0 5px 0;
-            color: #5f7c86;
-            font-size: 10px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-weight: 700;
-        }}
-
-        .meta-box p {{
-            margin: 0;
-            font-size: 13px;
-            font-weight: 700;
-            color: #16343b;
-        }}
-
-        .section-title {{
-            font-size: 13px;
-            font-weight: 700;
-            color: #16343b;
-            border-bottom: 1.5px solid #2aa9b0;
-            padding-bottom: 5px;
-            margin-top: 18px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }}
-
-        .grid-table {{
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 10px;
-            margin-left: -10px;
-            margin-right: -10px;
-        }}
-
-        .info-card {{
-            background: #ffffff;
-            border: 1px solid #e3ecee;
-            border-radius: 6px;
-            padding: 11px 14px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-        }}
-
-        .info-card-label {{
-            font-size: 9.5px;
-            color: #7a9297;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.4px;
-            margin-bottom: 4px;
-        }}
-
-        .info-card-value {{
-            font-size: 12.5px;
-            color: #16343b;
-            font-weight: 600;
-        }}
-
-        .passengers-table {{
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            border-radius: 6px;
-            overflow: hidden;
-        }}
-
-        .passengers-table th {{
-            background-color: #16343b;
-            color: #ffffff;
-            padding: 10px;
-            font-size: 10px;
-            text-transform: uppercase;
-            font-weight: 700;
-            text-align: left;
-            letter-spacing: 0.5px;
-        }}
-
-        .passengers-table td {{
-            padding: 10px;
-            border-bottom: 1px solid #e7eff1;
-            font-size: 11px;
-            color: #274148;
-            vertical-align: top;
-        }}
-
-        .footer {{
-            margin-top: 28px;
-            text-align: center;
-            font-size: 10px;
-            color: #93a7ab;
-            border-top: 1px solid #e4ecee;
-            padding-top: 12px;
-        }}
-    </style>
-</head>
-<body>
-
-    <table class=""header-table"">
-        <tr>
-            <td class=""logo-title"">Inter<span class=""logo-accent"">Trips</span></td>
-            <td class=""doc-title"">Potvrda rezervacije i itinerer</td>
-        
-             <td class=""right-column"">
-                    <img src=""{qrCodeUrl}"" width=""72"" height=""72"" style=""border: 1px solid #e4ecee; padding: 2px;"" alt=""QR Code Verification""/>
-                </td>
-</tr>
-    </table>
-
-    <div class=""divider""></div>
-
-    <table class=""meta-table"">
-        <tr>
-            <td style=""width: 33%; padding-right: 8px;"">
-                <div class=""meta-box"">
-                    <h4>Broj rezervacije</h4>
-                    <p>{resCode}</p>
-                </div>
-            </td>
-            <td style=""width: 33%; padding-right: 8px;"">
-                <div class=""meta-box"">
-                    <h4>Datum izdavanja</h4>
-                    <p>{ispravanDatum}</p>
-                </div>
-            </td>
-            <td style=""width: 34%;"">
-                <div class=""meta-box"" style=""border-left-color: {(placanje != null ? "#10b981" : "#f59e0b")};"">
-                    <h4>Status aranžmana</h4>
-                    <p style=""color: {(placanje != null ? "#10b981" : "#f59e0b")};"">{statusPlacanja}</p>
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    <div class=""section-title"">Detalji planiranog putovanja</div>
-
-    <table class=""grid-table"">
-        <tr>
-            <td style=""width: 50%;"">
-                <div class=""info-card"">
-                    <div class=""info-card-label"">Odabrana destinacija / paket</div>
-                    <div class=""info-card-value"">{nazivPaketa}</div>
-                </div>
-            </td>
-            <td style=""width: 50%;"">
-                <div class=""info-card"">
-                    <div class=""info-card-label"">Period putovanja</div>
-                    <div class=""info-card-value"">{periodPutovanja}</div>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <div class=""info-card"">
-                    <div class=""info-card-label"">Smještajni objekat</div>
-                    <div class=""info-card-value"">{nazivHotela}</div>
-                </div>
-            </td>
-            <td>
-                <div class=""info-card"">
-                    <div class=""info-card-label"">Planirani prevoz</div>
-                    <div class=""info-card-value"">{prevozIspis}</div>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <div class=""info-card"">
-                    <div class=""info-card-label"">Ukupan broj prijavljenih putnika</div>
-                    <div class=""info-card-value"">{brojPutnika} putnika</div>
-                </div>
-            </td>
-            <td>
-                <div class=""info-card"" style=""background: #f8fbfc;"">
-                    <div class=""info-card-label"">Finansijski saldo</div>
-                    <div class=""info-card-value"" style=""color: #1e7f88; font-size: 13px;"">{ukupnaCijena}</div>
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    <div class=""section-title"">Manifest / Podaci o putnicima</div>
-
-    <table class=""passengers-table"">
-        <thead>
-            <tr>
-                <th style=""width: 5%; text-align: center;"">#</th>
-                <th style=""width: 30%;"">Ime i prezime</th>
-                <th style=""width: 20%;"">Datum rođenja</th>
-                <th style=""width: 15%;"">Broj pasoša</th>
-                <th style=""width: 15%;"">Državljanstvo</th>
-                <th style=""width: 15%;"">Kontakt telefon</th>
-            </tr>
-        </thead>
-        <tbody>
-            {putniciRows}
-        </tbody>
-    </table>
-
-    <div class=""footer"">
-        <p>Hvala Vam na povjerenju! InterTrips Turistička Agencija d.o.o.<br />
-        Ovaj dokument je automatski generisan i punovažno je dokazno sredstvo o izvršenoj rezervaciji bez pečata.</p>
-    </div>
-
-</body>
-</html>";
 
             var emailService = HttpContext.RequestServices.GetRequiredService<EmailAndDocumentService>();
-            byte[] pdfBytes = emailService.GenerisiPdfDokument($"POTVRDA_{resCode}", rezervacija);
+            byte[] pdfBytes = emailService.GenerisiPdfDokument($"POTVRDA_{resCode}", rezervacija, base64Qr);
 
             return File(pdfBytes, "application/pdf", $"Potvrda_InterTrips_{resCode}.pdf");
         }

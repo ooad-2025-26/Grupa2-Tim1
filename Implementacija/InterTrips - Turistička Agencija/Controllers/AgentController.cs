@@ -128,14 +128,17 @@ namespace InterTrips___Turistička_Agencija.Controllers;
     [HttpGet]
         public async Task<IActionResult> Detalji(int id)
         {
-            var rezervacija = await _db.Rezervacije
-                .Include(r => r.Korisnik)
-                .Include(r => r.Paket)
-                    .ThenInclude(p => p != null ? p.Destinacija : null!) 
-                .Include(r => r.Putnici)
-                .FirstOrDefaultAsync(r => r.Id == id);
+        var rezervacija = await _db.Rezervacije
+    .Include(r => r.Putnici)               
+    .Include(r => r.Paket)                
+        .ThenInclude(p => p.Destinacija)   
+    .Include(r => r.Paket)
+        .ThenInclude(p => p.Hotel)         
+    .Include(r => r.Paket)
+        .ThenInclude(p => p.Let)           
+    .FirstOrDefaultAsync(r => r.Id == id);
 
-            if (rezervacija == null)
+        if (rezervacija == null)
                 return NotFound();
 
             return View(rezervacija);

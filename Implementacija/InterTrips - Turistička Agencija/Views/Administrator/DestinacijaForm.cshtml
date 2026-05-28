@@ -336,25 +336,30 @@
 
         <nav class="nav-links">
             <a href="/Administrator/Index" class="nav-item">
-                <i class="fa-solid fa-chart-pie"></i> Dashboard
+                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
             </a>
             <a href="/Administrator/Destinacije" class="nav-item active">
-                <i class="fa-solid fa-map-location-dot"></i> Destinacije
+                <i class="fa-solid fa-map-location-dot"></i> <span>Destinacije</span>
+            </a>
+            <a href="/Administrator/Letovi" class="nav-item">
+                <i class="fa-solid fa-plane"></i> <span>Letovi</span>
+            </a>
+            <a href="/Administrator/Hoteli" class="nav-item">
+                <i class="fa-solid fa-hotel"></i> <span>Hoteli</span>
             </a>
             <a href="/Administrator/Paketi" class="nav-item">
-                <i class="fa-solid fa-cubes"></i> Paketi
+                <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
             </a>
             <a href="/Administrator/Korisnici" class="nav-item">
-                <i class="fa-solid fa-users"></i> Korisnici
+                <i class="fa-solid fa-users"></i> <span>Korisnici</span>
             </a>
             <a href="/Administrator/Rezervacije" class="nav-item">
-                <i class="fa-solid fa-calendar-check"></i> Rezervacije
+                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
             </a>
             <a href="/Administrator/Izvjestaj" class="nav-item">
                 <i class="fa-solid fa-chart-line"></i> Izvještaji
             </a>
         </nav>
-
         <div class="sidebar-footer">
             <form method="post" action="/Account/Logout">
                 @Html.AntiForgeryToken()

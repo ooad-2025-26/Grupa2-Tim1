@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using InterTrips___Turistička_Agencija.Data;
 using InterTrips___Turistička_Agencija.Services;
+using InterTrips___Turistička_Agencija.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,12 +31,12 @@ namespace InterTrips___Turistička_Agencija.Background
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                 var ciljaniDatum = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
-
-                var rezervacijeZaPodsjetnik = await context.Rezervacije
-                    .Include(r => r.Korisnik)
-                    .Include(r => r.Paket)
-                    .Where(r => r.DatumPolaska == ciljaniDatum)
-                    .ToListAsync(stoppingToken);
+                var rezervacijeZaPodsjetnik =  context.Rezervacije
+    .Include(r => r.Korisnik)
+    .Include(r => r.Paket)
+    .AsEnumerable() 
+    .Where(r => r.DatumPolaska == ciljaniDatum)
+    .ToList();
 
                 foreach (var rezervacija in rezervacijeZaPodsjetnik)
                 {
@@ -53,10 +55,12 @@ namespace InterTrips___Turistička_Agencija.Background
 
                     var nazivPaketa = rezervacija.Paket?.Naziv ?? "Vaše putovanje";
 
+                    string formatiraniDatum = rezervacija.DatumPolaska.ToString("dd.MM.yyyy");
+
                     string naslov = $"Podsjetnik za putovanje: {nazivPaketa}";
                     string poruka = $@"
                         <h3>Poštovani,</h3>
-                        <p>Vaše putovanje na destinaciju <strong>{nazivPaketa}</strong> počinje za 3 dana ({rezervacija.DatumPolaska:dd.MM.yyyy}).</p>
+                        <p>Vaše putovanje na destinaciju <strong>{nazivPaketa}</strong> počinje za 3 dana ({formatiraniDatum}).</p>
                         <p>Molimo Vas da provjerite Vaše putne dokumente (pasoš, vizu) i plan putovanja.</p>
                         <br>
                         <p>Sretan put želi Vam <strong>InterTrips Agencija</strong>!</p>";

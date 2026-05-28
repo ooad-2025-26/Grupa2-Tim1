@@ -4,6 +4,7 @@ using InterTrips___Turistička_Agencija.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InterTrips___Turistička_Agencija.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260528160320_DodavanjeSpolaiTipOsobe")]
+    partial class DodavanjeSpolaiTipOsobe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -575,49 +578,59 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
 
                     b.Property<string>("BrojPasosa")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<DateTime>("DatumRodjenja")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Drzavljanstvo")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Ime")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<int?>("KorisnikId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Pol")
                         .IsRequired()
-                        .HasMaxLength(1)
-                        .HasColumnType("nvarchar(1)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("PosebniZahtjevi")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(600)
+                        .HasColumnType("nvarchar(600)");
 
                     b.Property<string>("Prezime")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
 
-                    b.Property<int?>("RezervacijaId")
+                    b.Property<int>("RezervacijaId")
                         .HasColumnType("int");
 
                     b.Property<string>("Telefon")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("TipPutnika")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("KorisnikId");
 
                     b.HasIndex("RezervacijaId");
 
@@ -678,13 +691,6 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
-
-                    b.Property<int>("TipPrevoza")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TipSobe")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -847,21 +853,21 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                         new
                         {
                             Id = "1b63ef27-996b-4b13-98db-00f7e4b9bc10",
-                            ConcurrencyStamp = "eefe32b7-46b3-4b13-b0a8-24e0a4778e6a",
+                            ConcurrencyStamp = "72c17560-d936-45a6-99e0-3eb90d00a82b",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2c74fa38-885b-3b12-87cb-11e8e5c8cd21",
-                            ConcurrencyStamp = "df4f0beb-c170-4c49-8788-65e420943d9a",
+                            ConcurrencyStamp = "8b06b5d9-a1b4-49e7-ba8a-d0b3da51fc12",
                             Name = "Agent",
                             NormalizedName = "AGENT"
                         },
                         new
                         {
                             Id = "3d85fb49-774b-2b11-76da-22f9e6d9de32",
-                            ConcurrencyStamp = "6be8c91e-aeb0-44a7-bd69-121b40ba574f",
+                            ConcurrencyStamp = "722ea7b8-d3a6-4a7b-ba86-349effa88218",
                             Name = "Klijent",
                             NormalizedName = "KLIJENT"
                         });
@@ -1087,9 +1093,19 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
 
             modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.Putnik", b =>
                 {
-                    b.HasOne("InterTrips___Turistička_Agencija.Models.Rezervacija", null)
+                    b.HasOne("InterTrips___Turistička_Agencija.Models.Korisnik", "Korisnik")
+                        .WithMany()
+                        .HasForeignKey("KorisnikId");
+
+                    b.HasOne("InterTrips___Turistička_Agencija.Models.Rezervacija", "Rezervacija")
                         .WithMany("Putnici")
-                        .HasForeignKey("RezervacijaId");
+                        .HasForeignKey("RezervacijaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Korisnik");
+
+                    b.Navigation("Rezervacija");
                 });
 
             modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.RataPlacanja", b =>

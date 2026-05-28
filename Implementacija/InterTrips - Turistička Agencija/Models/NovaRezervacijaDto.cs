@@ -15,5 +15,7 @@ namespace InterTrips___Turistička_Agencija.Models
         public decimal UkupanIznos { get; set; }
         public int? BrojMjeseciRata { get; set; }
         public string? SubMetodaRata { get; set; }
+        public string TipSobe { get; set; } = "Standardna soba";
+        public string TipPrevoza { get; set; } = "Autobus";
     }
 }

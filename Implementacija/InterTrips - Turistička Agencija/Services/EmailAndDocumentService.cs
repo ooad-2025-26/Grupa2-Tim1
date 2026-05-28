@@ -79,7 +79,7 @@ namespace InterTrips___Turistička_Agencija.Services
             }
         }
 
-        public byte[] GenerisiPdfDokument(string naslovDokumenta, Rezervacija rezervacija)
+        public byte[] GenerisiPdfDokument(string naslovDokumenta, Rezervacija rezervacija, string qrCodeBase64)
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
@@ -122,11 +122,25 @@ namespace InterTrips___Turistička_Agencija.Services
                                 col.Item().Text("Turistička agencija").FontSize(9).FontColor("#6f8a90");
                             });
 
-                            row.ConstantItem(220).AlignRight().Column(col =>
+                            row.ConstantItem(220).AlignRight().Row(qrRow =>
                             {
-                                col.Item().Text("POTVRDA REZERVACIJE I ITINERER")
-                                    .FontSize(11).SemiBold().FontColor("#2aa9b0")
-                                    .AlignRight();
+                                qrRow.RelativeItem().Column(col =>
+                                {
+                                    col.Item().Text("POTVRDA REZERVACIJE I ITINERER")
+                                        .FontSize(11).SemiBold().FontColor("#2aa9b0")
+                                        .AlignRight();
+                                });
+
+                                if (!string.IsNullOrEmpty(qrCodeBase64))
+                                {
+                                    try
+                                    {
+                                        qrRow.ConstantItem(10);
+                                        byte[] qrImageBytes = Convert.FromBase64String(qrCodeBase64);
+                                        qrRow.ConstantItem(60).Height(60).Image(qrImageBytes);
+                                    }
+                                    catch { }
+                                }
                             });
                         });
 
@@ -242,7 +256,7 @@ namespace InterTrips___Turistička_Agencija.Services
                                 {
                                     table.Cell().BorderBottom(1).BorderColor("#e8eff1").Padding(6).AlignCenter().Text(rb.ToString()).FontSize(8);
                                     table.Cell().BorderBottom(1).BorderColor("#e8eff1").Padding(6).Text($"{p.Ime} {p.Prezime}").FontSize(9).Bold();
-                                    table.Cell().BorderBottom(1).BorderColor("#e8eff1").Padding(6).Text(p.DatumRodjenja.HasValue ? p.DatumRodjenja.Value.ToString("dd.MM.yyyy.") : "—").FontSize(9);
+                                    table.Cell().BorderBottom(1).BorderColor("#e8eff1").Padding(6).Text(p.DatumRodjenja.ToString("dd.MM.yyyy.")).FontSize(9);
                                     table.Cell().BorderBottom(1).BorderColor("#e8eff1").Padding(6).Text(p.BrojPasosa ?? "—").FontSize(9);
                                     table.Cell().BorderBottom(1).BorderColor("#e8eff1").Padding(6).Text(p.Drzavljanstvo ?? "—").FontSize(9);
                                     table.Cell().BorderBottom(1).BorderColor("#e8eff1").Padding(6).Text(p.Telefon ?? "—").FontSize(9);

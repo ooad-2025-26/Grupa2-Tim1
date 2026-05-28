@@ -960,6 +960,14 @@
         };
 
         window.addEventListener('DOMContentLoaded', function () {
+        if (adultsCount) {
+        adultsCount.textContent = localStorage.getItem('reservationAdults') || "2";
+        }
+        if (childrenCount) {
+        const kids = localStorage.getItem('reservationChildren') || "0";
+        childrenCount.textContent = kids;
+        if (kidsNotice) kidsNotice.style.display = parseInt(kids) > 0 ? 'flex' : 'none';
+        }
         handlePackageChange();
         });
 
@@ -1185,6 +1193,7 @@
 
         const adultsRaw = document.getElementById('adultsCount')?.textContent || "2";
         const childrenRaw = document.getElementById('childrenCount')?.textContent || "0";
+
         const adults = parseInt(adultsRaw.replace(/\D/g, ""), 10) || 1;
         const children = parseInt(childrenRaw.replace(/\D/g, ""), 10) || 0;
         const ukupnoPutnika = adults + children;
