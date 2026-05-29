@@ -12,5 +12,6 @@ namespace InterTrips___Turistička_Agencija.Models
         public int PopustProcenat { get; set; }
         public DateTime VaziDo { get; set; }
         public bool Iskoristen { get; set; } = false;
+        public bool IsValid => !Iskoristen && VaziDo >= DateTime.UtcNow;
     }
 }

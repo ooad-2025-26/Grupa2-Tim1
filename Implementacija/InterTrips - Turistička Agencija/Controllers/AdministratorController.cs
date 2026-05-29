@@ -661,4 +661,29 @@ public class AdministratorController : Controller
         TempData["Error"] = "Molimo ispravite greške u formi.";
         return View(model);
     }
+    [HttpGet]
+    public async Task<IActionResult> Upiti()
+    {
+        var upiti = await _db.KontaktUpit.OrderByDescending(u => u.DatumSlanja).ToListAsync();
+
+        return View("~/Views/Administrator/Upiti.cshtml", upiti);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MarkAsRead(int id)
+    {
+        var upit = await _db.KontaktUpit.FindAsync(id);
+        if (upit == null)
+        {
+            return NotFound();
+        }
+
+        upit.Procitano = true;
+
+        _db.KontaktUpit.Update(upit);
+        await _db.SaveChangesAsync();
+
+        return Ok();
+    }
 }

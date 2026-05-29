@@ -22,6 +22,7 @@
                 --text-dark: #2d434c;
                 --muted-text: #708993;
                 --input-bg: #f8fafb;
+                --danger: #e74c3c;
             }
 
             body.auth-page {
@@ -42,6 +43,7 @@
                 border-bottom: 1px solid rgba(95, 181, 187, 0.15);
                 backdrop-filter: blur(12px);
                 -webkit-backdrop-filter: blur(12px);
+                box-sizing: border-box;
             }
 
             .logo-text {
@@ -74,30 +76,6 @@
                 gap: 16px;
             }
 
-            .top-user {
-                display: none;
-                align-items: center;
-                gap: 10px;
-                font-size: 13px;
-                font-weight: 600;
-            }
-
-                .top-user.active {
-                    display: flex;
-                }
-
-            .avatar-small {
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                background: var(--primary-grad);
-                color: #fff;
-                display: grid;
-                place-items: center;
-                font-weight: 700;
-                box-shadow: 0 4px 12px rgba(95,181,187,0.2);
-            }
-
             .auth-wrapper {
                 min-height: calc(100vh - 65px);
                 display: flex;
@@ -119,6 +97,10 @@
                 box-shadow: 0 15px 35px rgba(95, 181, 187, 0.12);
                 box-sizing: border-box;
             }
+
+                .auth-card.hidden {
+                    display: none;
+                }
 
                 .auth-card .logo-container {
                     margin-bottom: 24px;
@@ -300,11 +282,14 @@
 
             .success-box {
                 display: none;
-                padding: 30px 20px;
-                background: #fff;
+                width: 100%;
+                max-width: 440px;
+                padding: 40px 30px;
+                background: rgba(255, 255, 255, 0.95);
                 border-radius: 24px;
                 text-align: center;
-                box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+                box-shadow: 0 15px 35px rgba(95, 181, 187, 0.15);
+                box-sizing: border-box;
             }
 
                 .success-box.active {
@@ -337,6 +322,33 @@
                 margin: 0;
             }
 
+            /* Toast poruke za greške */
+            .error-toast {
+                position: fixed;
+                bottom: -100px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #fff;
+                color: var(--text-dark);
+                padding: 14px 24px;
+                border-radius: 12px;
+                font-size: 13px;
+                font-weight: 500;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                border-left: 4px solid var(--danger);
+                transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                min-width: 300px;
+                max-width: 90%;
+            }
+
+                .error-toast.show {
+                    bottom: 30px;
+                }
+
             @@media (max-width: 500px) {
                 .auth-topbar {
                     padding: 0 20px;
@@ -366,19 +378,13 @@
 
     <header class="auth-topbar">
         <a href="/" class="logo-text">Inter<span>Trips</span></a>
-
         <div class="topbar-right">
             <a href="/" class="back-link">← Početna</a>
-            <div id="topUser" class="top-user">
-                <div id="smallAvatar" class="avatar-small">A</div>
-                <span id="userNameTop">Korisnik</span>
-            </div>
         </div>
     </header>
 
     <main class="auth-wrapper">
         <section id="authCard" class="auth-card">
-
             <div class="logo-container">
                 <div class="logo-text" style="font-size: 28px;">Inter<span>Trips</span></div>
             </div>
@@ -395,16 +401,15 @@
                 <p>Pristupite svom korisničkom računu.</p>
 
                 <label>E-MAIL ADRESA</label>
-                <input id="loginEmail" type="email" placeholder="vi@primjer.com" />
+                <input id="loginEmail" type="email" placeholder="vi@primjer.com" maxlength="100" />
 
                 <label>LOZINKA</label>
                 <div class="password-field">
-                    <input id="loginPassword" type="password" placeholder="Vaša lozinka" />
+                    <input id="loginPassword" type="password" placeholder="Vaša lozinka" maxlength="50" />
                     <span class="toggle-password" onclick="togglePassword('loginPassword', this)">◉</span>
                 </div>
 
-                <a href="#" class="forgot-link">Zaboravili ste lozinku?</a>
-
+                
                 <button class="submit-btn" id="loginBtn" type="button">Prijava</button>
 
                 <p class="switch-text">Nemate račun? <a href="#" id="go-register">Registrujte se besplatno</a></p>
@@ -416,11 +421,11 @@
                 <p>Pristup rezervacijama, klijentima i ponudama.</p>
 
                 <label>E-MAIL ADRESA</label>
-                <input id="agentEmail" type="email" placeholder="agent@intertrips.ba" />
+                <input id="agentEmail" type="email" placeholder="agent@intertrips.ba" maxlength="100" />
 
                 <label>LOZINKA</label>
                 <div class="password-field">
-                    <input id="agentPassword" type="password" placeholder="Vaša lozinka" />
+                    <input id="agentPassword" type="password" placeholder="Vaša lozinka" maxlength="50" />
                     <span class="toggle-password" onclick="togglePassword('agentPassword', this)">◉</span>
                 </div>
 
@@ -435,11 +440,11 @@
                 <p>Administratorski pristup sistemu InterTrips.</p>
 
                 <label>E-MAIL ADRESA</label>
-                <input id="adminUsername" type="text" placeholder="admin@intertrips.ba" />
+                <input id="adminUsername" type="text" placeholder="admin@intertrips.ba" maxlength="100" />
 
                 <label>LOZINKA</label>
                 <div class="password-field">
-                    <input id="adminPassword" type="password" placeholder="Vaša lozinka" />
+                    <input id="adminPassword" type="password" placeholder="Vaša lozinka" maxlength="50" />
                     <span class="toggle-password" onclick="togglePassword('adminPassword', this)">◉</span>
                 </div>
 
@@ -454,20 +459,20 @@
                 <p>Počnite istraživati i rezervisati vaša iduća putovanja.</p>
 
                 <label>PUNO IME</label>
-                <input id="registerName" type="text" placeholder="Vaše puno ime" />
+                <input id="registerName" type="text" placeholder="Vaše puno ime" maxlength="60" />
 
                 <label>E-MAIL ADRESA</label>
-                <input id="registerEmail" type="email" placeholder="vi@primjer.com" />
+                <input id="registerEmail" type="email" placeholder="vi@primjer.com" maxlength="100" />
 
                 <label>LOZINKA</label>
                 <div class="password-field">
-                    <input id="registerPassword" type="password" placeholder="Min. 8 znakova" />
+                    <input id="registerPassword" type="password" placeholder="Min. 8 znakova" maxlength="50" />
                     <span class="toggle-password" onclick="togglePassword('registerPassword', this)">◉</span>
                 </div>
 
                 <label>POTVRDITE LOZINKU</label>
                 <div class="password-field">
-                    <input id="registerConfirm" type="password" placeholder="Ponovite lozinku" />
+                    <input id="registerConfirm" type="password" placeholder="Ponovite lozinku" maxlength="50" />
                     <span class="toggle-password" onclick="togglePassword('registerConfirm', this)">◉</span>
                 </div>
 
@@ -478,164 +483,158 @@
         </section>
 
         <section id="successBox" class="success-box">
-            <div id="bigAvatar" class="account-icon">A</div>
-            <h2>Uspješna prijava</h2>
-            <p id="successText">Dobrodošli nazad!</p>
+            <div id="bigAvatar" class="account-icon">✓</div>
+            <h2>Uspješno!</h2>
+            <p id="successText">Preusmjeravanje...</p>
         </section>
     </main>
+
+    <div id="errorToast" class="error-toast">
+        <span style="font-weight:bold; color:var(--danger)">⚠️</span>
+        <span id="errorToastText">Greška!</span>
+    </div>
 
     @Html.AntiForgeryToken()
 
     <script>
         const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-        const loginTab = document.getElementById('login-tab');
-        const agentTab = document.getElementById('agent-tab');
-        const adminTab = document.getElementById('admin-tab');
-        const registerTab = document.getElementById('register-tab');
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const nameRegex = /^[a-zA-ZčćžšđČĆŽŠĐ]+(?:\s[a-zA-ZčćžšđČĆŽŠĐ]+)+$/; // Zahtijeva Ime i Prezime (samo slova i jedan razmak)
 
-        const loginForm = document.getElementById('login-form');
-        const agentForm = document.getElementById('agent-form');
-        const adminForm = document.getElementById('admin-form');
-        const registerForm = document.getElementById('register-form');
+        const tabs = {
+        0: document.getElementById('login-tab'),
+        1: document.getElementById('agent-tab'),
+        2: document.getElementById('admin-tab'),
+        3: document.getElementById('register-tab')
+        };
 
-        const goRegister = document.getElementById('go-register');
-        const goLogin = document.getElementById('go-login');
-        const backToUserFromAgent = document.getElementById('back-to-user-from-agent');
-        const backToUserFromAdmin = document.getElementById('back-to-user-from-admin');
+        const forms = {
+        0: document.getElementById('login-form'),
+        1: document.getElementById('agent-form'),
+        2: document.getElementById('admin-form'),
+        3: document.getElementById('register-form')
+        };
 
-        function hideAllForms() {
-        loginForm.classList.remove('active');
-        agentForm.classList.remove('active');
-        adminForm.classList.remove('active');
-        registerForm.classList.remove('active');
+        const titles = {
+        0: 'InterTrips - Prijava',
+        1: 'InterTrips - Prijava agenta',
+        2: 'InterTrips - Prijava administratora',
+        3: 'InterTrips - Registracija'
+        };
 
-        loginTab.classList.remove('active');
-        agentTab.classList.remove('active');
-        adminTab.classList.remove('active');
-        registerTab.classList.remove('active');
+        function showError(msg) {
+        const toast = document.getElementById('errorToast');
+        document.getElementById('errorToastText').textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => { toast.classList.remove('show'); }, 4000);
         }
 
-        function showLogin() {
-        hideAllForms();
-        loginForm.classList.add('active');
-        loginTab.classList.add('active');
-        document.title = 'InterTrips - Prijava';
+        function switchTab(index) {
+        Object.keys(forms).forEach(key => {
+        forms[key].classList.remove('active');
+        tabs[key].classList.remove('active');
+        });
+        forms[index].classList.add('active');
+        tabs[index].classList.add('active');
+        document.title = titles[index];
         }
 
-        function showAgent() {
-        hideAllForms();
-        agentForm.classList.add('active');
-        agentTab.classList.add('active');
-        document.title = 'InterTrips - Prijava agenta';
+        tabs[0].addEventListener('click', () => switchTab(0));
+        tabs[1].addEventListener('click', () => switchTab(1));
+        tabs[2].addEventListener('click', () => switchTab(2));
+        tabs[3].addEventListener('click', () => switchTab(3));
+
+        document.getElementById('go-register')?.addEventListener('click', e => { e.preventDefault(); switchTab(3); });
+        document.getElementById('go-login')?.addEventListener('click', e => { e.preventDefault(); switchTab(0); });
+        document.getElementById('back-to-user-from-agent')?.addEventListener('click', e => { e.preventDefault(); switchTab(0); });
+        document.getElementById('back-to-user-from-admin')?.addEventListener('click', e => { e.preventDefault(); switchTab(0); });
+
+        document.getElementById('registerName').addEventListener('input', function (e) {
+        this.value = this.value.replace(/[^a-zA-ZčćžšđČĆŽŠĐ\s]/g, '');
+        });
+
+        function handleSuccess(redirectUrl, message) {
+        if (message) document.getElementById('successText').textContent = message;
+        document.getElementById('authCard').classList.add('hidden');
+        document.getElementById('successBox').classList.add('active');
+        setTimeout(() => { window.location.href = redirectUrl || '/'; }, 1000);
         }
 
-        function showAdmin() {
-        hideAllForms();
-        adminForm.classList.add('active');
-        adminTab.classList.add('active');
-        document.title = 'InterTrips - Prijava administratora';
+        function setupEnterKey(formId, btnId) {
+        const container = document.getElementById(formId);
+        container.querySelectorAll('input').forEach(input => {
+        input.addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById(btnId).click(); });
+        });
         }
+        setupEnterKey('login-form', 'loginBtn');
+        setupEnterKey('agent-form', 'agentBtn');
+        setupEnterKey('admin-form', 'adminBtn');
+        setupEnterKey('register-form', 'registerBtn');
 
-        function showRegister() {
-        hideAllForms();
-        registerForm.classList.add('active');
-        registerTab.classList.add('active');
-        document.title = 'InterTrips - Registracija';
-        }
-
-        loginTab.addEventListener('click', showLogin);
-        agentTab.addEventListener('click', showAgent);
-        adminTab.addEventListener('click', showAdmin);
-        registerTab.addEventListener('click', showRegister);
-
-        goRegister?.addEventListener('click', e => { e.preventDefault(); showRegister(); });
-        goLogin?.addEventListener('click', e => { e.preventDefault(); showLogin(); });
-        backToUserFromAgent?.addEventListener('click', e => { e.preventDefault(); showLogin(); });
-        backToUserFromAdmin?.addEventListener('click', e => { e.preventDefault(); showLogin(); });
-
-        // LOGIN: Korisnik (Klijent = 0)
+        // LOGIN: Korisnik (Uloga = 0)
         document.getElementById('loginBtn').addEventListener('click', async function () {
         const email = document.getElementById('loginEmail').value.trim();
         const password = document.getElementById('loginPassword').value.trim();
 
-        if (!email || !password) { alert('Popunite email i lozinku.'); return; }
+        if (!email || !password) { showError('Popunite sva polja.'); return; }
+        if (!emailRegex.test(email)) { showError('Unesite validnu e-mail adresu.'); return; }
 
         try {
         const res = await fetch('/Account/Login', {
         method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        'RequestVerificationToken': csrfToken
-        },
+        headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': csrfToken },
         credentials: 'same-origin',
         body: JSON.stringify({ Email: email, Password: password, Uloga: 0 })
         });
 
         const data = await res.json().catch(() => ({}));
-
-        if (res.ok && data.success) {
-        window.location.href = data.redirectUrl || '/';
-        return;
-        }
-        alert(data.message || 'Prijava nije uspjela');
-        } catch {
-        alert('Greška pri prijavi. Provjerite konekciju i pokušajte ponovo.');
-        }
+        if (res.ok && data.success) { handleSuccess(data.redirectUrl, "Dobrodošli nazad!"); return; }
+        showError(data.message || 'Prijava nije uspjela. Provjerite podatke.');
+        } catch { showError('Greška na mreži. Pokušajte ponovo.'); }
         });
 
-        // LOGIN: Agent (Agent = 1)
+        // LOGIN: Agent (Uloga = 1)
         document.getElementById('agentBtn').addEventListener('click', async function () {
         const email = document.getElementById('agentEmail').value.trim();
         const password = document.getElementById('agentPassword').value.trim();
 
-        if (!email || !password) { alert('Unesite podatke!'); return; }
+        if (!email || !password) { showError('Popunite sva polja.'); return; }
+        if (!emailRegex.test(email)) { showError('Unesite validnu e-mail adresu.'); return; }
 
         try {
         const res = await fetch('/Account/Login', {
         method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        'RequestVerificationToken': csrfToken
-        },
+        headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': csrfToken },
         credentials: 'same-origin',
         body: JSON.stringify({ Email: email, Password: password, Uloga: 1 })
         });
 
         const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.success) { alert(data.message || 'Pogrešan email ili lozinka (Agent)!'); return; }
-
-        window.location.href = data.redirectUrl || '/';
-        } catch {
-        alert('Greška pri prijavi. Provjerite konekciju i pokušajte ponovo.');
-        }
+        if (res.ok && data.success) { handleSuccess(data.redirectUrl, "Uspješna prijava agenta!"); return; }
+        showError(data.message || 'Pogrešni podaci za pristup agentskom panelu.');
+        } catch { showError('Greška na mreži.'); }
         });
 
-        // LOGIN: Admin (Admin = 2)
+        // LOGIN: Admin (Uloga = 2)
         document.getElementById('adminBtn').addEventListener('click', async function () {
         const email = document.getElementById('adminUsername').value.trim();
         const password = document.getElementById('adminPassword').value.trim();
 
-        if (!email || !password) { alert('Popunite korisničko ime/email i lozinku.'); return; }
+        if (!email || !password) { showError('Popunite sva polja.'); return; }
 
         try {
         const res = await fetch('/Account/Login', {
         method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        'RequestVerificationToken': csrfToken
-        },
+        headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': csrfToken },
         credentials: 'same-origin',
         body: JSON.stringify({ Email: email, Password: password, Uloga: 2 })
         });
 
         const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.success) { alert(data.message || 'Pogrešan administratorski login.'); return; }
-
-        window.location.href = data.redirectUrl || '/';
-        } catch {
-        alert('Greška pri prijavi. Provjerite konekciju i pokušajte ponovo.');
-        }
+        if (res.ok && data.success) { handleSuccess(data.redirectUrl, "Administrator prepoznat. Pristup odobren."); return; }
+        showError(data.message || 'Pogrešan administratorski login.');
+        } catch { showError('Mrežna greška.'); }
         });
 
         // REGISTRACIJA
@@ -645,52 +644,33 @@
         const password = document.getElementById('registerPassword').value.trim();
         const confirm = document.getElementById('registerConfirm').value.trim();
 
-        if (!name || !email || !password || !confirm) {
-        alert('Popunite sva polja.');
-        return;
-        }
-
-        if (password !== confirm) {
-        alert('Lozinke se ne poklapaju.');
-        return;
-        }
+        if (!name || !email || !password || !confirm) { showError('Sva polja su obavezna.'); return; }
+        if (!nameRegex.test(name)) { showError('Unesite puno ime i prezime (samo slova).'); return; }
+        if (!emailRegex.test(email)) { showError('Unesite validnu e-mail adresu.'); return; }
+        if (password !== confirm) { showError('Lozinke se ne podudaraju.'); return; }
 
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\W_]{8,}$/;
         if (!passwordRegex.test(password)) {
-        alert('Lozinka ne ispunjava sigurnosne uslove!\n\nMora imati:\n- Minimalno 8 karaktera\n- Najmanje jedno veliko slovo (A-Z)\n- Najmanje jedno malo slovo (a-z)\n- Najmanje jedan broj (0-9)');
+        showError('Lozinka mora imati: min. 8 znakova, jedno veliko, jedno malo slovo i broj.');
         return;
         }
-        const nameParts = name.split(' ');
+
+        const nameParts = name.split(/\s+/);
         const ime = nameParts[0];
-        const prezime = nameParts.slice(1).join(' ') || ' ';
+        const prezime = nameParts.slice(1).join(' ');
 
         try {
         const res = await fetch('/Account/Register', {
         method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        'RequestVerificationToken': csrfToken
-        },
+        headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': csrfToken },
         credentials: 'same-origin',
-        body: JSON.stringify({
-        Ime: ime,
-        Prezime: prezime,
-        Email: email,
-        Password: password
-        })
+        body: JSON.stringify({ Ime: ime, Prezime: prezime, Email: email, Password: password })
         });
 
         const data = await res.json().catch(() => ({}));
-
-        if (res.ok && data.success) {
-        window.location.href = data.redirectUrl || '/';
-        return;
-        } else {
-        alert(data.message || 'Registracija nije uspjela.');
-        }
-        } catch {
-        alert('Greška pri registraciji. Provjerite konekciju.');
-        }
+        if (res.ok && data.success) { handleSuccess(data.redirectUrl, "Račun uspješno kreiran!"); return; }
+        showError(data.message || 'Registracija nije uspjela.');
+        } catch { showError('Sistemska greška pri registraciji.'); }
         });
 
         function togglePassword(inputId, iconEl) {

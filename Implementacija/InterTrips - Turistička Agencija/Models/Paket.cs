@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace InterTrips___Turistička_Agencija.Models
 {
-    public class Paket
+    public class Paket : IValidatableObject
     {
         public Paket() { }
 
@@ -21,9 +21,9 @@ namespace InterTrips___Turistička_Agencija.Models
         [Required]
         public StatusPaketa Status { get; set; } = StatusPaketa.Dostupan;
 
-        [Required, Range(0, 100000)]
+        [Required, Range(1.00, 100000.00, ErrorMessage = "Cijena mora biti veća od 1 BAM.")]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal CijenaOd { get; set; } 
+        public decimal CijenaOd { get; set; }
 
         [Range(1, 365)]
         public int TrajanjeNoci { get; set; }
@@ -32,8 +32,9 @@ namespace InterTrips___Turistička_Agencija.Models
         public int DestinacijaId { get; set; }
         public virtual Destinacija? Destinacija { get; set; }
 
-        [ValidateNever]
-        public int Kapacitet { get; set; } = 30;
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Kapacitet ne može biti negativan.")]
+        public int Kapacitet { get; set; }
 
         public DateTime DatumPolaska { get; set; }
         public DateTime DatumPovratka { get; set; }
@@ -63,5 +64,18 @@ namespace InterTrips___Turistička_Agencija.Models
 
         public int BrojPregleda { get; set; } = 0;
         public double Ocjena { get; set; } = 0.0;
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (DateTime.UtcNow.Date > DatumPolaska.Date)
+            {
+                yield return new ValidationResult("Datum polaska ne može biti u prošlosti.", new[] { nameof(DatumPolaska) });
+            }
+
+            if (DatumPovratka <= DatumPolaska)
+            {
+                yield return new ValidationResult("Datum povratka mora biti nakon datuma polaska.", new[] { nameof(DatumPovratka) });
+            }
+        }
     }
 }

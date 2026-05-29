@@ -142,7 +142,7 @@
                 margin-left: 260px;
                 flex-grow: 1;
                 padding: 40px 48px;
-                max-width: 900px; 
+                max-width: 900px;
             }
 
             .dash-header {
@@ -257,6 +257,14 @@
                     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
                 }
 
+            .field-validation-error {
+                color: var(--danger);
+                font-size: 12px;
+                font-weight: 500;
+                margin-top: 4px;
+                display: block;
+            }
+
             .form-actions {
                 display: flex;
                 gap: 12px;
@@ -346,6 +354,9 @@
             <a href="/Administrator/Rezervacije" class="nav-item">
                 <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
             </a>
+            <a href="/Administrator/Upiti" class="nav-item">
+                <i class="fa-solid fa-inbox"></i> <span>Kontakt Upiti</span>
+            </a>
             <a href="/Administrator/Izvjestaj" class="nav-item">
                 <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
             </a>
@@ -386,24 +397,24 @@
 
                 <input type="hidden" asp-for="Id" />
 
-                <div asp-validation-summary="All" style="color: var(--danger); font-size: 13px; font-weight: 600; margin-bottom: 15px;"></div>
+                <div asp-validation-summary="ModelOnly" style="color: var(--danger); font-size: 13px; font-weight: 600; margin-bottom: 15px;"></div>
 
                 <div class="form-group">
                     <label class="field-label">BROJ LETA</label>
-                    <input class="input" asp-for="BrojLeta" type="text" required>
-                    <span asp-validation-for="BrojLeta" style="color:#ef4444; font-size:12px;"></span>
+                    <input class="input" asp-for="BrojLeta" type="text" maxlength="20" required placeholder="Npr. JU-100">
+                    <span asp-validation-for="BrojLeta"></span>
                 </div>
 
                 <div class="form-group">
                     <label class="field-label">POLAZAK SA</label>
-                    <input class="input" asp-for="Polazak" type="text" required>
-                    <span asp-validation-for="Polazak" style="color:#ef4444; font-size:12px;"></span>
+                    <input class="input" asp-for="Polazak" type="text" maxlength="100" required placeholder="Npr. Aerodrom Sarajevo (SJJ)">
+                    <span asp-validation-for="Polazak"></span>
                 </div>
 
                 <div class="form-group">
                     <label class="field-label">AVIOKOMPANIJA</label>
-                    <input class="input" asp-for="Aviokompanija" required />
-                    <span asp-validation-for="Aviokompanija" style="color:#ef4444; font-size:12px;"></span>
+                    <input class="input" asp-for="Aviokompanija" type="text" maxlength="100" required placeholder="Npr. Turkish Airlines">
+                    <span asp-validation-for="Aviokompanija"></span>
                 </div>
 
                 <div class="form-group">
@@ -418,13 +429,13 @@
                             }
                         }
                     </select>
-                    <span asp-validation-for="Odrediste" style="color:#ef4444; font-size:12px;"></span>
+                    <span asp-validation-for="Odrediste"></span>
                 </div>
 
                 <div class="form-group">
                     <label class="field-label">SLOBODNA SJEDIŠTA (KAPACITET)</label>
-                    <input class="input" asp-for="SlobodnaSjedista" type="number" min="0" required>
-                    <span asp-validation-for="SlobodnaSjedista" style="color:#ef4444; font-size:12px;"></span>
+                    <input class="input" asp-for="SlobodnaSjedista" type="number" min="0" max="1000" step="1" required>
+                    <span asp-validation-for="SlobodnaSjedista"></span>
                 </div>
 
                 <div class="form-actions">
@@ -434,6 +445,10 @@
             </form>
         </div>
     </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
 
 </body>
 </html>

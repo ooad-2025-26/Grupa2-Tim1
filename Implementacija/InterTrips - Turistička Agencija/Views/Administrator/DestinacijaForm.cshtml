@@ -33,14 +33,6 @@
                 --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
             }
 
-            .nav-item i {
-                width: 20px;
-                margin-right: 12px;
-                font-size: 16px;
-                text-align: center;
-                transition: color 0.2s ease;
-            }
-
             * {
                 box-sizing: border-box;
                 margin: 0;
@@ -75,11 +67,15 @@
                     margin-bottom: 24px;
                 }
 
-                .sidebar .logo {
-                    height: 36px;
-                    object-fit: contain;
-                    filter: brightness(0) invert(1);
-                }
+            .sidebar-logo-text {
+                font-size: 20px;
+                font-weight: 700;
+                color: #ffffff;
+                text-decoration: none;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                display: block;
+            }
 
             .nav-links {
                 display: flex;
@@ -99,6 +95,14 @@
                 border-radius: 8px;
                 transition: all 0.2s ease;
             }
+
+                .nav-item i {
+                    width: 20px;
+                    margin-right: 12px;
+                    font-size: 16px;
+                    text-align: center;
+                    transition: color 0.2s ease;
+                }
 
                 .nav-item:hover {
                     background: #1e293b;
@@ -276,8 +280,11 @@
                 padding: 16px;
                 box-shadow: var(--shadow);
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
+                min-height: 200px;
+                position: relative;
             }
 
             .preview {
@@ -289,6 +296,20 @@
                 border: 1px solid var(--border);
                 transition: opacity 0.3s ease;
             }
+
+            .placeholder-gallery {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+                color: var(--text-muted);
+                font-size: 13px;
+            }
+
+                .placeholder-gallery i {
+                    font-size: 32px;
+                    color: #cbd5e1;
+                }
 
             @@media (max-width: 1024px) {
                 .sidebar {
@@ -356,8 +377,11 @@
             <a href="/Administrator/Rezervacije" class="nav-item">
                 <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
             </a>
+            <a href="/Administrator/Upiti" class="nav-item">
+                <i class="fa-solid fa-inbox"></i> <span>Kontakt Upiti</span>
+            </a>
             <a href="/Administrator/Izvjestaj" class="nav-item">
-                <i class="fa-solid fa-chart-line"></i> Izvještaji
+                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
             </a>
         </nav>
         <div class="sidebar-footer">
@@ -386,6 +410,7 @@
                     @Html.AntiForgeryToken()
 
                     <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="SlikaUrl" />
 
                     <div class="row">
                         <div class="form-group">
@@ -425,14 +450,18 @@
 
             <div class="image-sidebar">
                 <div class="field-label">PREGLED SLIKE DESTINACIJE</div>
-                <div class="preview-box">
+                <div class="preview-box" id="previewBox">
                     @if (isEdit && !string.IsNullOrWhiteSpace(Model.SlikaUrl))
                     {
                         <img class="preview" id="slikaPreview" src="@Model.SlikaUrl" alt="Trenutna slika" />
                     }
                     else
                     {
-                        <img class="preview" id="slikaPreview" src="/assets/bali.jpg" style="opacity: 0.35; filter: grayscale(20%);" alt="Nema slike" />
+                        <div class="placeholder-gallery" id="placeholderGallery">
+                            <i class="fa-solid fa-image"></i>
+                            <span>Nema učitane slike</span>
+                        </div>
+                        <img class="preview" id="slikaPreview" src="" alt="Pregled slike" style="display: none;" />
                     }
                 </div>
             </div>
@@ -440,16 +469,27 @@
         </div>
     </main>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+
     <script>
-            document.getElementById('slikaInput').addEventListener('change', function (event) {
-                const [file] = this.files;
-                if (file) {
-                    const preview = document.getElementById('slikaPreview');
-                    preview.src = URL.createObjectURL(file);
-                    preview.style.opacity = "1";
-                    preview.style.filter = "none";
-                }
-            });
+        document.getElementById('slikaInput').addEventListener('change', function (event) {
+        const [file] = this.files;
+        if (file) {
+        const preview = document.getElementById('slikaPreview');
+        const placeholder = document.getElementById('placeholderGallery');
+
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+        preview.style.opacity = "1";
+        preview.style.filter = "none";
+
+        if (placeholder) {
+        placeholder.style.display = "none";
+        }
+        }
+        });
     </script>
 </body>
 </html>

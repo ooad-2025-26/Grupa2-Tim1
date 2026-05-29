@@ -14,10 +14,12 @@ public class Rezervacija
     public int Id { get; set; }
 
     [Required]
-    public DateOnly DatumPolaska { get; set; }
+    [DataType(DataType.Date)]
+    public DateTime DatumPolaska { get; set; }
 
     [Required]
-    public DateOnly DatumPovratka { get; set; }
+    [DataType(DataType.Date)]
+    public DateTime DatumPovratka { get; set; }
 
     [Required]
     public StatusRezervacije Status { get; set; } = StatusRezervacije.Kreirana;

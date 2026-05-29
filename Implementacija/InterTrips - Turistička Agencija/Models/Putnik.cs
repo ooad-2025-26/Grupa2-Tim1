@@ -9,12 +9,12 @@ namespace InterTrips___Turistička_Agencija.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(50)]
+        [Required(ErrorMessage = "Ime putnika je obavezno.")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Ime mora imati između 2 i 50 karaktera.")]
         public string Ime { get; set; }
 
-        [Required]
-        [StringLength(50)]
+        [Required(ErrorMessage = "Prezime putnika je obavezno.")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Prezime mora imati između 2 i 50 karaktera.")]
         public string Prezime { get; set; }
 
         [Required]
@@ -29,7 +29,8 @@ namespace InterTrips___Turistička_Agencija.Models
         [StringLength(20)]
         public string Telefon { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Broj pasoša je obavezan.")]
+        [RegularExpression(@"^[A-Z0-9]{6,15}$", ErrorMessage = "Neispravan format pasoša (samo velika slova i brojevi, 6-15 karaktera).")]
         [StringLength(20)]
         public string BrojPasosa { get; set; }
 

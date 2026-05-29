@@ -1,6 +1,7 @@
-﻿@model InterTrips___Turistička_Agencija.Models.ViewModels.AdminDashboardVm
+﻿@model IEnumerable<InterTrips___Turistička_Agencija.Models.KontaktUpit>
+@using System.Text.Encodings.Web
 @{
-    ViewData["Title"] = "InterTrips - Letovi";
+    ViewData["Title"] = "InterTrips Admin - Kontakt Upiti";
     Layout = null;
 }
 
@@ -32,6 +33,10 @@
                 --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
                 --success: #10b981;
                 --danger: #ef4444;
+                --destinacije-color: #f59e0b;
+                --paketi-color: #6366f1;
+                --korisnici-color: #ec4899;
+                --rezervacije-color: #06b6d4;
             }
 
             * {
@@ -102,6 +107,7 @@
                     margin-right: 12px;
                     font-size: 16px;
                     text-align: center;
+                    transition: color 0.2s ease;
                 }
 
                 .nav-item:hover {
@@ -206,148 +212,50 @@
                 border: 1px solid #fca5a5;
             }
 
-            .content-grid {
-                display: grid;
-                grid-template-columns: 1.2fr 1.8fr;
-                gap: 24px;
-                align-items: start;
-            }
-
-            .card {
+            .table-card {
                 background: var(--card-bg);
                 border: 1px solid var(--border);
                 border-radius: 12px;
                 box-shadow: var(--shadow);
-                padding: 28px;
-            }
-
-                .card h2 {
-                    font-size: 18px;
-                    font-weight: 600;
-                    color: var(--text-dark);
-                    margin-bottom: 24px;
-                }
-
-            .form-group {
-                margin-bottom: 16px;
-            }
-
-            .field-label {
-                display: block;
-                font-size: 12px;
-                font-weight: 600;
-                color: var(--text-dark);
-                margin-bottom: 6px;
-            }
-
-            .input, .select {
-                width: 100%;
-                background: #fff;
-                border: 1px solid var(--border);
-                color: var(--text-dark);
-                outline: none;
-                border-radius: 8px;
-                height: 42px;
-                padding: 0 14px;
-                font-size: 14px;
-                transition: all 0.15s ease-in-out;
-                font-family: inherit;
-            }
-
-            .select {
-                cursor: pointer;
-                appearance: none;
-                -webkit-appearance: none;
-                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%2364748b' d='M0 0l5 5 5-5z'/></svg>");
-                background-repeat: no-repeat;
-                background-position: right 14px center;
-                padding-right: 40px;
-            }
-
-                .input:focus, .select:focus {
-                    border-color: var(--primary);
-                    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
-                }
-
-            .main-btn {
-                width: 100%;
-                height: 44px;
-                border-radius: 8px;
-                border: none;
-                cursor: pointer;
-                font-weight: 600;
-                font-size: 14px;
-                background-color: var(--sidebar-bg);
-                color: #fff;
-                transition: background 0.2s;
-                margin-top: 8px;
-            }
-
-                .main-btn:hover {
-                    background-color: #1e293b;
-                }
-
-            .dest-list {
-                display: flex;
-                flex-direction: column;
-                border: 1px solid var(--border);
-                border-radius: 12px;
                 overflow: hidden;
-                background: #fff;
             }
 
-            .dest-row {
-                padding: 16px 20px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-bottom: 1px solid var(--border);
-                transition: background-color 0.15s;
-            }
-
-                .dest-row:last-child {
-                    border-bottom: none;
-                }
-
-                .dest-row:hover {
-                    background-color: #f8fafc;
-                }
-
-            .dest-info strong {
+            .admin-table {
+                width: 100%;
+                border-collapse: collapse;
+                text-align: left;
                 font-size: 14px;
-                font-weight: 600;
-                color: var(--text-dark);
-                display: block;
             }
 
-            .dest-info small {
-                color: var(--text-muted);
-                font-size: 12px;
-                margin-top: 2px;
-                display: block;
-            }
+                .admin-table thead tr {
+                    background-color: #f8fafc;
+                    border-bottom: 1px solid var(--border);
+                }
 
-            .actions-group {
-                display: flex;
-                gap: 8px;
-            }
+                .admin-table th {
+                    padding: 16px 20px;
+                    color: var(--text-dark);
+                    font-weight: 600;
+                }
 
-            .btn-action {
+                .admin-table td {
+                    padding: 16px 20px;
+                }
+
+            .btn-pregled {
+                background: var(--primary);
+                color: white;
+                border: none;
                 padding: 8px 14px;
-                font-size: 13px;
-                font-weight: 500;
-                border-radius: 6px;
-                text-decoration: none;
+                border-radius: 8px;
+                font-size: 12.5px;
+                font-weight: 600;
                 cursor: pointer;
-                border: 1px solid var(--border);
-                background: #fff;
-                color: var(--text-dark);
-                transition: all 0.15s;
+                transition: all 0.2s;
             }
 
-                .btn-action:hover {
-                    background: #f1f5f9;
-                    border-color: #cbd5e1;
+                .btn-pregled:hover {
+                    background: var(--primary-hover);
                 }
 
             @@media (max-width: 1024px) {
@@ -364,14 +272,12 @@
                     margin-left: 70px;
                     padding: 32px 24px;
                 }
-
-                .content-grid {
-                    grid-template-columns: 1fr;
-                }
             }
     </style>
 </head>
 <body>
+
+    @Html.AntiForgeryToken()
 
     <aside class="sidebar">
         <div class="logo-area">
@@ -385,7 +291,7 @@
             <a href="/Administrator/Destinacije" class="nav-item">
                 <i class="fa-solid fa-map-location-dot"></i> <span>Destinacije</span>
             </a>
-            <a href="/Administrator/Letovi" class="nav-item active">
+            <a href="/Administrator/Letovi" class="nav-item">
                 <i class="fa-solid fa-plane"></i> <span>Letovi</span>
             </a>
             <a href="/Administrator/Hoteli" class="nav-item">
@@ -400,11 +306,11 @@
             <a href="/Administrator/Rezervacije" class="nav-item">
                 <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
             </a>
-            <a href="/Administrator/Upiti" class="nav-item">
+            <a href="/Administrator/Upiti" class="nav-item active">
                 <i class="fa-solid fa-inbox"></i> <span>Kontakt Upiti</span>
             </a>
             <a href="/Administrator/Izvjestaj" class="nav-item">
-                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
+                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji i Analitika</span>
             </a>
         </nav>
 
@@ -417,15 +323,20 @@
     </aside>
 
     <main class="main-content">
+
         <header class="dash-header">
             <div>
-                <h1>Upravljanje Letovima</h1>
-                <p>Kreirajte nove avio-linije i pratite popunjenost slobodnih mjesta.</p>
+                <h1>Dolazni upiti korisnika</h1>
+                <p>Upravljanje i pregled poruka poslanih kroz kontakt formu.</p>
             </div>
-            <div>
-                <a href="/Destinacije" target="_blank" class="btn-secondary-top">
-                    <i class="fa-solid fa-globe" style="margin-right: 6px;"></i> Pregledaj sajt
-                </a>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div style="background: var(--card-bg); padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; font-weight: 500;">
+                    Ukupno: <span style="color: var(--text-dark); font-weight: 700;">@Model.Count()</span>
+                </div>
+                <div style="background: var(--card-bg); padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; font-weight: 500;">
+                    Novo: <span style="color: var(--primary); font-weight: 700;">@Model.Count(u => !u.Procitano)</span>
+                </div>
+                <a href="/Destinacije" target="_blank" class="btn-secondary-top"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 6px;"></i> Pregledaj sajt</a>
             </div>
         </header>
 
@@ -442,82 +353,129 @@
             </div>
         }
 
-        <div class="content-grid">
-            <div class="card">
-                <h2>Novi let</h2>
-                <form asp-controller="Administrator" asp-action="LetCreate" method="post">
-                    @Html.AntiForgeryToken()
-
-                    <div asp-validation-summary="ModelOnly" style="color: var(--danger); font-size: 13px; font-weight: 600; margin-bottom: 15px;"></div>
-
-                    <div class="form-group">
-                        <label class="field-label">BROJ LETA</label>
-                        <input class="input" name="BrojLeta" type="text" maxlength="20" placeholder="Npr. TM18Z" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="field-label">POLAZAK SA</label>
-                        <input class="input" name="Polazak" type="text" maxlength="100" placeholder="Npr. Sarajevo" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="field-label">AVIOKOMPANIJA</label>
-                        <input class="input" name="Aviokompanija" type="text" maxlength="100" placeholder="Npr. Turkish Airlines" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label class="field-label">ODREDIŠTE (DESTINACIJA)</label>
-                        <select class="select" name="Odrediste" required>
-                            <option value="">-- Odaberite destinaciju --</option>
-                            @if (Model.Destinacije != null)
-                            {
-                                foreach (var d in Model.Destinacije)
-                                {
-                                    <option value="@d.Naziv">@d.Naziv (@d.Drzava)</option>
-                                }
-                            }
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="field-label">SLOBODNA SJEDIŠTA (KAPACITET)</label>
-                        <input class="input" name="SlobodnaSjedista" type="number" min="1" max="1000" step="1" placeholder="Npr. 150" required>
-                    </div>
-
-                    <button class="main-btn" type="submit">Kreiraj let</button>
-                </form>
-            </div>
-
-            <div class="card" style="padding: 28px 0 0 0;">
-                <h2 style="padding: 0 28px; margin-bottom: 20px;">
-                    <i class="fa-solid fa-plane" style="color: var(--primary); margin-right: 8px;"></i> Dostupni Letovi
-                </h2>
-                <div class="dest-list">
-                    @if (Model.Letovi != null && Model.Letovi.Any())
-                    {
-                        foreach (var l in Model.Letovi)
-                        {
-                            <div class="dest-row">
-                                <div class="dest-info">
-                                    <strong>@l.BrojLeta (@l.Polazak — @l.Odrediste)</strong>
-                                    <small>Slobodna sjedišta: <span style="font-weight: 600; color: @(l.SlobodnaSjedista < 5 ? "var(--danger)" : "var(--success)")">@l.SlobodnaSjedista</span></small>
-                                </div>
-                                <div class="actions-group">
-                                    <a class="btn-action" asp-controller="Administrator" asp-action="LetEdit" asp-route-id="@l.Id">Uredi</a>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 14px;">
-                            Trenutno nema kreiranih letova u bazi podataka.
-                        </div>
-                    }
+        <div class="table-card">
+            @if (!Model.Any())
+            {
+                <div style="padding: 60px; text-align: center; color: var(--text-muted);">
+                    <i class="fa-regular fa-folder-open" style="font-size: 48px; color: var(--primary); margin-bottom: 15px; display:block;"></i>
+                    <p style="font-size: 15px; font-weight: 600; margin: 0;">Trenutno nema pristiglih upita u bazi podataka.</p>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 110px;">Status</th>
+                                <th>Pošiljalac</th>
+                                <th>Tema upita</th>
+                                <th>Datum slanja</th>
+                                <th style="text-align: right;">Akcija</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var upit in Model.OrderByDescending(u => u.DatumSlanja))
+                            {
+                                <tr id="red-@upit.Id" style="border-bottom: 1px solid var(--border); background-color: @(upit.Procitano ? "transparent" : "rgba(14, 165, 233, 0.04)"); transition: all 0.2s ease;"
+                                    onmouseover="this.style.backgroundColor='#f1f5f9'"
+                                    onmouseout="this.style.backgroundColor='@(upit.Procitano ? "transparent" : "rgba(14, 165, 233, 0.04)")'">
+
+                                    <td>
+                                        <span id="bedz-@upit.Id" style="display: inline-block; padding: 4px 8px; font-size: 11px; font-weight: 700; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;
+                                            background-color: @(upit.Procitano ? "#e2e8f0" : "rgba(14, 165, 233, 0.15)");
+                                            color: @(upit.Procitano ? "#64748b" : "var(--primary)");">
+                                            @(upit.Procitano ? "Pročitano" : "Novo")
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <div style="font-weight: 600; color: var(--text-dark);">@upit.Ime</div>
+                                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">@upit.Email</div>
+                                    </td>
+
+                                    <td style="color: var(--text-dark); font-weight: @(upit.Procitano ? "400" : "600");">
+                                        @upit.Tema
+                                    </td>
+
+                                    <td style="color: var(--text-muted); font-size: 13px;">
+                                        @upit.DatumSlanja.ToString("dd.MM.yyyy. HH:mm")
+                                    </td>
+
+                                    <td style="text-align: right;">
+                                        <button class="btn-pregled" onclick="pogledajUpit(@upit.Id, '@JavaScriptEncoder.Default.Encode(upit.Ime)', '@JavaScriptEncoder.Default.Encode(upit.Email)', '@JavaScriptEncoder.Default.Encode(upit.Tema)', '@JavaScriptEncoder.Default.Encode(upit.Poruka)', '@upit.DatumSlanja.ToString("dd.MM.yyyy. HH:mm")', @upit.Procitano.ToString().ToLower())">
+                                            <i class="fa-regular fa-eye" style="margin-right: 5px;"></i> Detalji
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
         </div>
+
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        async function pogledajUpit(id, ime, email, tema, poruka, datum, isProcitano) {
+        Swal.fire({
+        title: `<p style="font-size:14px; color: var(--text-muted); margin-bottom:5px; font-weight:400;">Tema: ${tema}</p><b style="color: var(--text-dark)">${ime}</b>`,
+        html: `
+        <div style="text-align: left; font-size: 13.5px; line-height: 1.6; color: var(--text-dark); background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border); max-height: 250px; overflow-y: auto; margin-top: 15px;">
+        <strong>Poruka:</strong><br>
+        <p style="white-space: pre-wrap; margin-top: 8px; color: #334155;">${poruka}</p>
+        </div>
+        <div style="text-align: left; margin-top: 12px; font-size: 12px; color: var(--text-muted);">
+        <i class="fa-regular fa-envelope"></i> Email: <a href="mailto:${email}" style="color: var(--primary); text-decoration:none; font-weight:500;">${email}</a><br>
+        <i class="fa-regular fa-clock"></i> Poslano: ${datum}
+        </div>
+        `,
+        showCancelButton: true,
+        confirmButtonColor: '#0ea5e9',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: isProcitano ? 'Zatvori' : '<i class="fa-solid fa-check"></i> Označi kao pročitano',
+        cancelButtonText: 'Nazad',
+        showConfirmButton: !isProcitano
+        }).then(async (result) => {
+        if (result.isConfirmed && !isProcitano) {
+        try {
+        const response = await fetch(`/Home/MarkAsRead/${id}`, {
+        method: 'POST',
+        headers: {
+        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+        }
+        });
+
+        if (response.ok) {
+        const bedz = document.getElementById(`bedz-${id}`);
+        const red = document.getElementById(`red-${id}`);
+
+        if (bedz) {
+        bedz.innerText = "Pročitano";
+        bedz.style.backgroundColor = "#e2e8f0";
+        bedz.style.color = "#64748b";
+        }
+        if (red) {
+        red.style.backgroundColor = "transparent";
+        red.setAttribute('onmouseout', "this.style.backgroundColor='transparent'");
+        }
+
+        Swal.fire({
+        icon: 'success',
+        title: 'Ažurirano',
+        text: 'Upit je označen kao pročitan.',
+        timer: 1500,
+        showConfirmButton: false
+        });
+        }
+        } catch (error) {
+        console.error("Greška pri ažuriranju statusa:", error);
+        }
+        }
+        });
+        }
+    </script>
 </body>
 </html>

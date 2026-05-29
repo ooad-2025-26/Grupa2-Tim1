@@ -4,6 +4,7 @@ using InterTrips___Turistička_Agencija.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InterTrips___Turistička_Agencija.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260529143543_SredjenContextPopravljen")]
+    partial class SredjenContextPopravljen
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,41 +232,6 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                     b.HasIndex("DestinacijaId");
 
                     b.ToTable("Hotel", (string)null);
-                });
-
-            modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.KontaktUpit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DatumSlanja")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Ime")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Poruka")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Procitano")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Tema")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("KontaktUpit");
                 });
 
             modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.Korisnik", b =>
@@ -887,21 +855,21 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                         new
                         {
                             Id = "1b63ef27-996b-4b13-98db-00f7e4b9bc10",
-                            ConcurrencyStamp = "49ebe3ab-44f1-4aef-b5c9-3c3ab2a7da16",
+                            ConcurrencyStamp = "f27730ee-a8e6-4095-a5ca-2488b6ecbcd6",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2c74fa38-885b-3b12-87cb-11e8e5c8cd21",
-                            ConcurrencyStamp = "8f63f2c9-4763-41de-8157-b5b7a3792995",
+                            ConcurrencyStamp = "ffc8a999-55cd-4cc8-89a9-24d003c804ee",
                             Name = "Agent",
                             NormalizedName = "AGENT"
                         },
                         new
                         {
                             Id = "3d85fb49-774b-2b11-76da-22f9e6d9de32",
-                            ConcurrencyStamp = "40eecdce-2fb6-481e-8df1-6b6d1b1a3156",
+                            ConcurrencyStamp = "3f7f2a22-0f29-4864-9f75-7debed486673",
                             Name = "Klijent",
                             NormalizedName = "KLIJENT"
                         });

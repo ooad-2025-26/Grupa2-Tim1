@@ -267,6 +267,13 @@
                     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
                 }
 
+            .field-validation-error {
+                color: var(--danger);
+                font-size: 12px;
+                margin-top: 4px;
+                display: block;
+            }
+
             .main-btn {
                 width: 100%;
                 height: 44px;
@@ -398,8 +405,11 @@
             <a href="/Administrator/Rezervacije" class="nav-item">
                 <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
             </a>
+            <a href="/Administrator/Upiti" class="nav-item">
+                <i class="fa-solid fa-inbox"></i> <span>Kontakt Upiti</span>
+            </a>
             <a href="/Administrator/Izvjestaj" class="nav-item">
-                <i class="fa-solid fa-chart-line"></i> Izvještaji
+                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
             </a>
         </nav>
 
@@ -443,49 +453,58 @@
 
                     <div class="form-group">
                         <label class="field-label">NAZIV HOTELA</label>
-                        <input class="input" name="Naziv" type="text" placeholder="Npr. Hotel Amfora" required>
+                        <input class="input" asp-for="NoviHotel.Naziv" type="text" placeholder="Npr. Hotel Amfora" required />
+                        <span asp-validation-for="NoviHotel.Naziv"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">LOKACIJA / ADRESA</label>
-                        <input class="input" name="Lokacija" type="text" placeholder="Npr. Šetalište bb, Makarska" required>
+                        <input class="input" asp-for="NoviHotel.Lokacija" type="text" placeholder="Npr. Šetalište bb, Makarska" required />
+                        <span asp-validation-for="NoviHotel.Lokacija"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">BROJ ZVJEZDICA</label>
-                        <input class="input" name="BrojZvjezdica" type="number" min="1" max="5" placeholder="1 - 5" required>
+                        <input class="input" asp-for="NoviHotel.BrojZvjezdica" type="number" min="1" max="5" placeholder="1 - 5" required />
+                        <span asp-validation-for="NoviHotel.BrojZvjezdica"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">UKUPAN BROJ SOBA</label>
-                        <input class="input" name="UkupnoSoba" type="number" min="1" placeholder="Npr. 50" required>
+                        <input class="input" asp-for="NoviHotel.DostupnoSoba" type="number" min="1" placeholder="Npr. 50" required />
+                        <span asp-validation-for="NoviHotel.DostupnoSoba"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">TRENUTNO DOSTUPNO SOBA</label>
-                        <input class="input" name="DostupnoSoba" type="number" min="0" placeholder="Npr. 45" required>
+                        <input class="input" asp-for="NoviHotel.DostupnoSoba" type="number" min="0" placeholder="Npr. 45" required />
+                        <span asp-validation-for="NoviHotel.DostupnoSoba"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">KONTAKT INFORMACIJE</label>
-                        <input class="input" name="KontaktInformacije" type="text" placeholder="Npr. +387 33... / info@hotel.com">
+                        <input class="input" asp-for="NoviHotel.KontaktInformacije" type="text" placeholder="Npr. +387 33... / info@hotel.com" />
+                        <span asp-validation-for="NoviHotel.KontaktInformacije"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">DOSTUPNE USLUGE</label>
-                        <input class="input" name="DostupneUsluge" type="text" placeholder="Npr. WiFi, Pool, Parking, Breakfast">
+                        <input class="input" asp-for="NoviHotel.DostupneUsluge" type="text" placeholder="Npr. WiFi, Pool, Parking, Breakfast" />
+                        <span asp-validation-for="NoviHotel.DostupneUsluge"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">DESTINACIJA</label>
-                        <select name="DestinacijaId" id="DestinacijaId" class="select-custom" asp-items="ViewBag.DestinacijaId" required>
+                        <select asp-for="NoviHotel.DestinacijaId" class="select-custom" asp-items="ViewBag.DestinacijaId" required>
                             <option value="">-- Odaberite destinaciju --</option>
                         </select>
+                        <span asp-validation-for="NoviHotel.DestinacijaId"></span>
                     </div>
 
                     <button class="main-btn" type="submit">Dodaj hotel</button>
                 </form>
             </div>
+
             <div class="card" style="padding: 28px 0 0 0;">
                 <h2 style="padding: 0 28px; margin-bottom: 20px;">
                     <i class="fa-solid fa-hotel" style="color: var(--primary); margin-right: 8px;"></i> Smještajni Kapaciteti
@@ -511,7 +530,6 @@
                                             <i class="fa-solid fa-trash"></i> Obriši
                                         </button>
                                     </form>
-                                    <div asp-validation-summary="All" class="text-danger"></div>
                                 </div>
                             </div>
                         }

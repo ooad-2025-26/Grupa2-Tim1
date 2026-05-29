@@ -499,24 +499,72 @@
         </div>
     </div>
 </footer>
-@section Scripts {
-    <script>
-        function selectTopic(button, value) {
-            document.querySelectorAll('.topic-option').forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            document.getElementById('selectedTopic').value = value;
-        }
+@@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        document.getElementById('contactForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const topic = document.getElementById('selectedTopic').value;
+<script>
+    function selectTopic(button, value) {
+    document.querySelectorAll('.topic-option').forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+    document.getElementById('selectedTopic').value = value;
+    }
 
-            alert('Hvala Vam! Vaš upit vezan za "' + topic + '" je uspješno zaprimljen. Naš agent će Vas kontaktirati unutar 24 sata.');
+    document.getElementById('contactForm').addEventListener('submit', async function (e) {
+    e.preventDefault(); 
 
-            this.reset();
-            document.querySelectorAll('.topic-option').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.topic-option')[0].classList.add('active');
-            document.getElementById('selectedTopic').value = 'Rezervacija putovanja';
-        });
-    </script>
+    const form = this;
+    const submitBtn = form.querySelector('.main-btn');
+    const originalBtnText = submitBtn.innerHTML;
+
+    const formData = new FormData(form);
+    const topic = document.getElementById('selectedTopic').value;
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Slanje u toku...';
+
+    try {
+    const response = await fetch(form.action, {
+    method: 'POST',
+    body: formData
+    });
+
+    if (response.ok) {
+    const result = await response.json();
+
+    if (result.success) {
+    Swal.fire({
+    icon: 'success',
+    title: 'Uspješno poslano!',
+    text: 'Hvala Vam! Vaš upit vezan za "' + topic + '" je zapisan u sistem. Naš agent će Vas kontaktirati unutar 24 sata.',
+    confirmButtonColor: '#2aa9b0'
+    });
+
+    form.reset();
+    document.querySelectorAll('.topic-option').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.topic-option')[0].classList.add('active');
+    document.getElementById('selectedTopic').value = 'Rezervacija putovanja';
+    } else {
+    Swal.fire({
+    icon: 'error',
+    title: 'Greška',
+    text: result.message || 'Došlo je do greške prilikom slanja.',
+    confirmButtonColor: '#2aa9b0'
+    });
+    }
+    } else {
+    throw new Error("Greška na serveru.");
+    }
+    } catch (error) {
+    Swal.fire({
+    icon: 'error',
+    title: 'Tehnički problem',
+    text: 'Komunikacija sa serverom nije uspjela. Molimo pokušajte ponovo kasnije.',
+    confirmButtonColor: '#2aa9b0'
+    });
+    } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalBtnText;
+    }
+    });
+</script>
 }

@@ -191,8 +191,8 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 var novaRezervacija = new Rezervacija
                 {
                     PaketId = model.PaketId,
-                    DatumPolaska = model.DatumPolaska,
-                    DatumPovratka = model.DatumPovratka,
+                    DatumPolaska = model.DatumPolaska.ToDateTime(TimeOnly.MinValue),
+                    DatumPovratka = model.DatumPovratka.ToDateTime(TimeOnly.MinValue),
                     Status = StatusRezervacije.Kreirana,
                     KorisnikId = korisnik.Id,
                     TipSobe = model.TipSobe ?? "Standardna soba",

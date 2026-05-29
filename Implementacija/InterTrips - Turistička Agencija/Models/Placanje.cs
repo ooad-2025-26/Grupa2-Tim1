@@ -15,11 +15,12 @@ public class Placanje
     [Required]
     public MetodaPlacanja Metoda { get; set; }
 
-    [Required, Range(0, 100000)]
-    [Column(TypeName = "decimal(18,2)")]
+    [Required]
+    [Range(0.00, 100000.00, ErrorMessage = "Iznos ne može biti negativan.")]
+    [Column(TypeName = "decimal(18,2)")] 
     public decimal Iznos { get; set; }
 
- 
+
     public DateTime VrijemePlacanja { get; set; } = DateTime.UtcNow;
 
     [Required]

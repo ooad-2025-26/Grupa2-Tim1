@@ -14,7 +14,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
 
     <style>
@@ -33,18 +32,10 @@
                 --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
                 --success: #10b981;
                 --danger: #ef4444;
-                --destinacije-color: #f59e0b; 
+                --destinacije-color: #f59e0b;
                 --paketi-color: #6366f1;
-                --korisnici-color: #ec4899; 
-                --rezervacije-color: #06b6d4; 
-            }
-
-            .nav-item i {
-                width: 20px;
-                margin-right: 12px;
-                font-size: 16px;
-                text-align: center;
-                transition: color 0.2s ease;
+                --korisnici-color: #ec4899;
+                --rezervacije-color: #06b6d4;
             }
 
             * {
@@ -62,18 +53,18 @@
             }
 
             .sidebar {
-                width: 260px;
-                background-color: var(--sidebar-bg);
-                color: #fff;
-                padding: 24px 16px;
-                display: flex;
-                flex-direction: column;
-                position: fixed;
-                height: 100vh;
-                left: 0;
-                top: 0;
-                z-index: 100;
-            }
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: #fff;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
 
                 .sidebar .logo-area {
                     padding: 8px 12px 32px;
@@ -109,6 +100,14 @@
                 border-radius: 8px;
                 transition: all 0.2s ease;
             }
+
+                .nav-item i {
+                    width: 20px;
+                    margin-right: 12px;
+                    font-size: 16px;
+                    text-align: center;
+                    transition: color 0.2s ease;
+                }
 
                 .nav-item:hover {
                     background: #1e293b;
@@ -227,7 +226,16 @@
                 box-shadow: var(--shadow);
                 display: flex;
                 flex-direction: column;
+                text-decoration: none;
+                color: inherit;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
+
+                .stat-card:hover {
+                    transform: translateY(-2px);
+                    box-shadow: var(--shadow-md);
+                    border-color: rgba(14, 165, 233, 0.3);
+                }
 
                 .stat-card span {
                     font-size: 13px;
@@ -276,6 +284,46 @@
                     transform: translateY(-2px);
                     box-shadow: var(--shadow-md);
                 }
+
+                .category-card.cat-destinacije {
+                    border-left: 4px solid var(--destinacije-color);
+                }
+
+                    .category-card.cat-destinacije:hover {
+                        border-color: var(--destinacije-color);
+                    }
+
+                .category-card.cat-paketi {
+                    border-left: 4px solid var(--paketi-color);
+                }
+
+                    .category-card.cat-paketi:hover {
+                        border-color: var(--paketi-color);
+                    }
+
+                .category-card.cat-izvjestaji {
+                    border-left: 4px solid var(--success);
+                }
+
+                    .category-card.cat-izvjestaji:hover {
+                        border-color: var(--success);
+                    }
+
+                .category-card.cat-korisnici {
+                    border-left: 4px solid var(--korisnici-color);
+                }
+
+                    .category-card.cat-korisnici:hover {
+                        border-color: var(--korisnici-color);
+                    }
+
+                .category-card.cat-rezervacije {
+                    border-left: 4px solid var(--rezervacije-color);
+                }
+
+                    .category-card.cat-rezervacije:hover {
+                        border-color: var(--rezervacije-color);
+                    }
 
             .category-icon {
                 width: 48px;
@@ -352,6 +400,9 @@
             <a href="/Administrator/Rezervacije" class="nav-item">
                 <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
             </a>
+            <a href="/Administrator/Upiti" class="nav-item">
+                <i class="fa-solid fa-inbox"></i> <span>Kontakt Upiti</span>
+            </a>
             <a href="/Administrator/Izvjestaj" class="nav-item">
                 <i class="fa-solid fa-chart-line"></i> <span>Izvještaji i Analitika</span>
             </a>
@@ -373,7 +424,7 @@
                 <p>Dobrodošli nazad. Trenutno stanje Vaše agencije.</p>
             </div>
             <div>
-                <a href="/Destinacije" target="_blank" class="btn-secondary-top">Pregledaj sajt</a>
+                <a href="/Destinacije" target="_blank" class="btn-secondary-top"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 6px;"></i> Pregledaj sajt</a>
             </div>
         </header>
 
@@ -391,25 +442,25 @@
         }
 
         <section class="stats-grid">
-            <div class="stat-card">
+            <a href="/Administrator/Destinacije" class="stat-card">
                 <span>Aktivne Destinacije</span>
                 <strong id="destCount">@Model.DestinacijeCount</strong>
-            </div>
-            <div class="stat-card">
+            </a>
+            <a href="/Administrator/Korisnici" class="stat-card">
                 <span>Aktivni Korisnici</span>
                 <strong id="agentCount">@Model.KorisniciCount</strong>
-            </div>
-            <div class="stat-card">
+            </a>
+            <a href="/Administrator/Rezervacije" class="stat-card">
                 <span>Ukupno Rezervacija</span>
                 <strong id="bookingCount">@Model.RezervacijeCount</strong>
-            </div>
+            </a>
         </section>
 
         <h2 class="categories-section-title">Kategorije upravljanja</h2>
 
         <section class="categories-grid">
 
-            <a href="/Administrator/Destinacije" class="category-card" style="border-left: 4px solid var(--destinacije-color);" onmouseover="this.style.borderColor='var(--destinacije-color)'" onmouseout="this.style.borderColor='var(--border)'">
+            <a href="/Administrator/Destinacije" class="category-card cat-destinacije">
                 <div class="category-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--destinacije-color);">
                     <i class="fa-solid fa-map-location-dot"></i>
                 </div>
@@ -419,7 +470,7 @@
                 </div>
             </a>
 
-            <a href="/Administrator/Paketi" class="category-card" style="border-left: 4px solid var(--paketi-color);" onmouseover="this.style.borderColor='var(--paketi-color)'" onmouseout="this.style.borderColor='var(--border)'">
+            <a href="/Administrator/Paketi" class="category-card cat-paketi">
                 <div class="category-icon" style="background: rgba(99, 101, 241, 0.1); color: var(--paketi-color);">
                     <i class="fa-solid fa-cubes"></i>
                 </div>
@@ -429,7 +480,7 @@
                 </div>
             </a>
 
-            <a href="/Administrator/Izvjestaj" class="category-card" style="border-left: 4px solid var(--success);" onmouseover="this.style.borderColor='var(--success)'" onmouseout="this.style.borderColor='var(--border)'">
+            <a href="/Administrator/Izvjestaj" class="category-card cat-izvjestaji">
                 <div class="category-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
                     <i class="fa-solid fa-chart-line"></i>
                 </div>
@@ -439,7 +490,7 @@
                 </div>
             </a>
 
-            <a href="/Administrator/Korisnici" class="category-card" style="border-left: 4px solid var(--korisnici-color);" onmouseover="this.style.borderColor='var(--korisnici-color)'" onmouseout="this.style.borderColor='var(--border)'">
+            <a href="/Administrator/Korisnici" class="category-card cat-korisnici">
                 <div class="category-icon" style="background: rgba(236, 72, 153, 0.1); color: var(--korisnici-color);">
                     <i class="fa-solid fa-users"></i>
                 </div>
@@ -449,7 +500,7 @@
                 </div>
             </a>
 
-            <a href="/Administrator/Rezervacije" class="category-card" style="border-left: 4px solid var(--rezervacije-color);" onmouseover="this.style.borderColor='var(--rezervacije-color)'" onmouseout="this.style.borderColor='var(--border)'">
+            <a href="/Administrator/Rezervacije" class="category-card cat-rezervacije">
                 <div class="category-icon" style="background: rgba(6, 182, 212, 0.1); color: var(--rezervacije-color);">
                     <i class="fa-solid fa-calendar-check"></i>
                 </div>

@@ -2,7 +2,7 @@
     ViewData["Title"] = "InterTrips - Profil";
     Layout = "_LayoutRaw";
 }
-@Html.AntiForgeryToken()
+
 <style>
     :root {
         --bg: #eaf7f7;
@@ -281,14 +281,14 @@
     }
 
         .msg.success {
-            display: block;
+            display: block !important;
             background: rgba(16, 185, 129, 0.1);
             color: var(--success);
             border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .msg.danger {
-            display: block;
+            display: block !important;
             background: rgba(239, 68, 68, 0.1);
             color: var(--danger);
             border: 1px solid rgba(239, 68, 68, 0.2);
@@ -361,8 +361,7 @@
 
             <div class="card-body">
                 <form id="profileForm">
-
-                    <h3 class="section-title" style="margin-bottom: 16px;">Osnovne informacije</h3>
+                    @Html.AntiForgeryToken() <h3 class="section-title" style="margin-bottom: 16px;">Osnovne informacije</h3>
                     <div class="grid-2">
                         <div>
                             <label class="label">Ime i prezime</label>
@@ -457,7 +456,6 @@
                 document.getElementById('displayName').value = user.fullName || user.userName || '';
                 document.getElementById('usernameOrEmail').value = user.email || user.userName || '';
                 document.getElementById('role').value = user.role || 'Korisnik';
-
                 document.getElementById('phoneNumber').value = user.phoneNumber || '';
                 document.getElementById('location').value = user.location || '';
 
@@ -480,9 +478,9 @@
             const el = document.getElementById('saveMsg');
             el.className = 'msg ' + type;
             el.textContent = text;
+            el.style.display = 'block'; 
 
             setTimeout(() => {
-                el.className = 'msg';
                 el.style.display = 'none';
             }, 4000);
         }
@@ -493,8 +491,12 @@
 
             document.getElementById('logoutBtnProfile')
                 .addEventListener('click', async function () {
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
                     await fetch('/Account/Logout', {
                         method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': token
+                        },
                         credentials: 'same-origin'
                     });
                     window.location.href = '/';
@@ -534,11 +536,12 @@
                     };
 
                     try {
+                        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
                         const response = await fetch('/Account/UpdateProfile', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                                'RequestVerificationToken': token
                             },
                             credentials: 'same-origin',
                             body: JSON.stringify(data)

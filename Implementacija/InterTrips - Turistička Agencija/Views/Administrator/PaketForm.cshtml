@@ -9,6 +9,7 @@
     var statusi = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Statusi;
     var hoteli = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Hoteli ?? new List<SelectListItem>();
     var letovi = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Letovi ?? new List<SelectListItem>();
+
     var renderModel = Model ?? new InterTrips___Turistička_Agencija.Models.Paket();
 
     if (renderModel.DatumPolaska == DateTime.MinValue)
@@ -393,8 +394,11 @@
             <a href="/Administrator/Rezervacije" class="nav-item">
                 <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
             </a>
+            <a href="/Administrator/Upiti" class="nav-item">
+                <i class="fa-solid fa-inbox"></i> <span>Kontakt Upiti</span>
+            </a>
             <a href="/Administrator/Izvjestaj" class="nav-item">
-                <i class="fa-solid fa-chart-line"></i> Izvještaji
+                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
             </a>
         </nav>
 
@@ -460,7 +464,7 @@
 
                     <div class="form-group-custom">
                         <label class="field-label-custom">Dužina boravka (Noćenja)</label>
-                        <input class="input-custom" id="TrajanjeNoci" asp-for="TrajanjeNoci" value="@renderModel.TrajanjeNoci" type="number" min="1" max="90" placeholder="Npr. 7" required />
+                        <input class="input-custom" id="TrajanjeNoci" asp-for="TrajanjeNoci" value="@(renderModel.TrajanjeNoci == 0 ? "" : renderModel.TrajanjeNoci.ToString())" type="number" min="1" max="90" placeholder="Npr. 7" required />
                         <span class="err-custom" asp-validation-for="TrajanjeNoci"></span>
                     </div>
 
@@ -478,9 +482,10 @@
 
                     <div class="form-group-custom">
                         <label class="field-label-custom">Ukupan kapacitet (Broj mjesta)</label>
-                        <input class="input-custom" asp-for="Kapacitet" value="@renderModel.Kapacitet" type="number" min="1" max="1000" placeholder="Npr. 30" required />
+                        <input class="input-custom" asp-for="Kapacitet" value="@(renderModel.Kapacitet == 0 ? "" : renderModel.Kapacitet.ToString())" type="number" min="1" max="1000" placeholder="Npr. 30" required />
                         <span class="err-custom" asp-validation-for="Kapacitet"></span>
                     </div>
+
                     <div class="form-group-custom">
                         <label class="field-label-custom">Dodijeli Hotel paketu</label>
                         <select class="select-custom" asp-for="HotelId" asp-items="hoteli">
@@ -546,14 +551,43 @@
         var noviDatumPovratka = `${godina}-${mjesec}-${dan}`;
         $('#DatumPovratka').val(noviDatumPovratka);
 
-        if ($('#paketModalForm').validate) {
-        $('#DatumPovratka').valid();
+        validirajPolje('#DatumPovratka');
         }
+        }
+
+        function izracunajTrajanjeNoci() {
+        var polazakVrijednost = $('#DatumPolaska').val();
+        var povratakVrijednost = $('#DatumPovratka').val();
+
+        if (polazakVrijednost && povratakVrijednost) {
+        var polazak = new Date(polazakVrijednost);
+        var povratak = new Date(povratakVrijednost);
+
+        var razlikaU vremenu = povratak.getTime() - polazak.getTime();
+        var izracunatoNoci = Math.ceil(razlikaUVremenu / (1000 * 3600 * 24));
+
+        if (izracunatoNoci > 0) {
+        $('#TrajanjeNoci').val(izracunatoNoci);
+        } else {
+        $('#TrajanjeNoci').val(''); 
+        }
+
+        validirajPolje('#TrajanjeNoci');
+        }
+        }
+
+        function validirajPolje(selector) {
+        if ($('#paketModalForm').data('validator')) {
+        $(selector).valid();
         }
         }
 
         $('#DatumPolaska, #TrajanjeNoci').on('input change', function () {
         izracunajDatumPovratka();
+        });
+
+        $('#DatumPovratka').on('input change', function () {
+        izracunajTrajanjeNoci();
         });
         });
     </script>

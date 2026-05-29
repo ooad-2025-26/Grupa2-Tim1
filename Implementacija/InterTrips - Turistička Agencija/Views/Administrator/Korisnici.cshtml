@@ -30,14 +30,6 @@
                 --primary: #0ea5e9;
             }
 
-            .nav-item i {
-                width: 20px;
-                margin-right: 12px;
-                font-size: 16px;
-                text-align: center;
-                transition: color 0.2s ease;
-            }
-
             * {
                 box-sizing: border-box;
                 margin: 0;
@@ -100,6 +92,14 @@
                 border-radius: 8px;
                 transition: all 0.2s ease;
             }
+
+                .nav-item i {
+                    width: 20px;
+                    margin-right: 12px;
+                    font-size: 16px;
+                    text-align: center;
+                    transition: color 0.2s ease;
+                }
 
                 .nav-item:hover {
                     background: #1e293b;
@@ -289,7 +289,6 @@
                     background: #f1f5f9;
                     border-color: #cbd5e1;
                 }
-
             @@media (max-width: 1024px) {
                 .sidebar {
                     width: 70px;
@@ -347,8 +346,11 @@
             <a href="/Administrator/Rezervacije" class="nav-item">
                 <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
             </a>
+            <a href="/Administrator/Upiti" class="nav-item">
+                <i class="fa-solid fa-inbox"></i> <span>Kontakt Upiti</span>
+            </a>
             <a href="/Administrator/Izvjestaj" class="nav-item">
-                <i class="fa-solid fa-chart-line"></i> Izvještaji
+                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
             </a>
         </nav>
 

@@ -30,7 +30,7 @@ namespace InterTrips___Turistička_Agencija.Background
                 var emailService = scope.ServiceProvider.GetRequiredService<EmailAndDocumentService>();
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                var ciljaniDatum = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+                var ciljaniDatum = DateTime.Today.AddDays(3);
                 var rezervacijeZaPodsjetnik =  context.Rezervacije
     .Include(r => r.Korisnik)
     .Include(r => r.Paket)

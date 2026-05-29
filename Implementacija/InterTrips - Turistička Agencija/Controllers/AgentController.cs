@@ -186,12 +186,12 @@ namespace InterTrips___Turistička_Agencija.Controllers;
         if (datumOd.HasValue)
         {
             var dateOnlyOd = DateOnly.FromDateTime(datumOd.Value);
-            query = query.Where(r => r.DatumPolaska >= dateOnlyOd);
+            query = query.Where(r => r.DatumPolaska >= datumOd.Value.Date);
         }
         if (datumDo.HasValue)
         {
             var dateOnlyDo = DateOnly.FromDateTime(datumDo.Value);
-            query = query.Where(r => r.DatumPolaska <= dateOnlyDo);
+            query = query.Where(r => r.DatumPolaska <= datumDo.Value.Date);
         }
 
         if (!string.IsNullOrEmpty(status))

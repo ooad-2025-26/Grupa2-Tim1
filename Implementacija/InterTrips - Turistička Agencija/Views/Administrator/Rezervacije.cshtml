@@ -3,11 +3,11 @@
     ViewData["Title"] = "Admin - Rezervacije korisnika";
     Layout = null;
 
-    var danas = DateOnly.FromDateTime(DateTime.Today);
+    var danas = DateTime.Today;
 
     var aktivneRezervacije = Model.Rezervacije?
-    .Where(r => r.Paket == null || r.DatumPolaska.AddDays(r.Paket?.TrajanjeNoci ?? 0) > danas)
-    .ToList();
+        .Where(r => r.Paket == null || r.DatumPolaska.AddDays(r.Paket?.TrajanjeNoci ?? 0) > danas)
+        .ToList();
 }
 <!DOCTYPE html>
 <html lang="bs">
@@ -540,6 +540,9 @@
             <a asp-controller="Administrator" asp-action="Rezervacije" class="nav-item active">
                 <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
             </a>
+            <a href="/Administrator/Upiti" class="nav-item">
+                <i class="fa-solid fa-inbox"></i> <span>Kontakt Upiti</span>
+            </a>
             <a href="/Administrator/Izvjestaj" class="nav-item">
                 <i class="fa-solid fa-chart-line"></i> Izvještaji
             </a>
@@ -636,7 +639,6 @@
                                                     p.Ime,
                                                     p.Prezime,
                                                     p.BrojPasosa,
-                                                    p.Pol,
                                                     p.Drzavljanstvo,
                                                     p.Telefon,
                                                     DatumRodjenja = p.DatumRodjenja.ToString("dd.MM.yyyy"),
@@ -772,7 +774,7 @@
                                 modalPutniciLista.innerHTML += `
                                             <div class="passenger-row" style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
                                                 <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                                                    <strong>${index + 1}. ${p.Ime} ${p.Prezime} <span style="font-size:11px; font-weight:normal; background:#e2e8f0; padding:2px 6px; border-radius:10px; margin-left:6px;">${p.TipPutnika} (${p.Pol})</span></strong>
+                                                                <strong>${index + 1}. ${p.Ime} ${p.Prezime}</strong>
                                                     <span style="color: var(--text-muted); font-size:13px;">Pasoš: <strong>${p.BrojPasosa || '—'}</strong></span>
                                                 </div>
                                                 <div style="font-size: 12px; color: #64748b; display:flex; gap:15px; flex-wrap:wrap;">

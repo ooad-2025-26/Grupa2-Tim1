@@ -4,6 +4,7 @@ using InterTrips___Turistička_Agencija.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InterTrips___Turistička_Agencija.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260529142815_DodaciFinalni")]
+    partial class DodaciFinalni
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -228,42 +231,7 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
 
                     b.HasIndex("DestinacijaId");
 
-                    b.ToTable("Hotel", (string)null);
-                });
-
-            modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.KontaktUpit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DatumSlanja")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Ime")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Poruka")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Procitano")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Tema")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("KontaktUpit");
+                    b.ToTable("Hoteli");
                 });
 
             modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.Korisnik", b =>
@@ -527,7 +495,6 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Iznos")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("KuponId")
@@ -537,7 +504,6 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("OriginalniIznos")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("RezervacijaId")
@@ -827,7 +793,7 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
 
                     b.HasIndex("PaketId");
 
-                    b.ToTable("TerminPutovanja", (string)null);
+                    b.ToTable("TerminPutovanja");
                 });
 
             modelBuilder.Entity("InterTrips___Turistička_Agencija.Models.UslugaPaketa", b =>
@@ -887,21 +853,21 @@ namespace InterTrips___Turistička_Agencija.Data.Migrations
                         new
                         {
                             Id = "1b63ef27-996b-4b13-98db-00f7e4b9bc10",
-                            ConcurrencyStamp = "49ebe3ab-44f1-4aef-b5c9-3c3ab2a7da16",
+                            ConcurrencyStamp = "a9f768a3-b855-4c80-ba1b-e841fd35a9ad",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2c74fa38-885b-3b12-87cb-11e8e5c8cd21",
-                            ConcurrencyStamp = "8f63f2c9-4763-41de-8157-b5b7a3792995",
+                            ConcurrencyStamp = "573b043e-bb96-4ff1-9d5b-92ceb181a30e",
                             Name = "Agent",
                             NormalizedName = "AGENT"
                         },
                         new
                         {
                             Id = "3d85fb49-774b-2b11-76da-22f9e6d9de32",
-                            ConcurrencyStamp = "40eecdce-2fb6-481e-8df1-6b6d1b1a3156",
+                            ConcurrencyStamp = "fcbe15ab-b66e-4a90-a88f-50209c7d16f9",
                             Name = "Klijent",
                             NormalizedName = "KLIJENT"
                         });
