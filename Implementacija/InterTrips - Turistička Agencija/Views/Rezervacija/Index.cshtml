@@ -363,6 +363,25 @@
     justify-content: space-between;
     flex-wrap: wrap;
     }
+
+    }
+
+    .status-badge.status-otkazano {
+    background-color: #fce8e6;
+    color: #a71d2a;
+    border: 1px solid #f5c2c7;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    }
+
+    .status-badge.status-ceka {
+    background-color: #fff3cd;
+    color: #10b981;
+    border: 1px solid #ffeeba;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: bold;
     }
 </style>
 
@@ -436,14 +455,24 @@
     putniciHtml = `<tr><td colspan="6" style="text-align:center; color:#a4bcc0; padding:15px;">Nema registrovanih putnika za ovu rezervaciju.</td></tr>`;
     }
 
-    const statusKlasa = 'status-placeno';
-    const statusTekst = 'Uplaćeno';
+    let statusKlasa = 'status-ceka';
+    let statusTekst = 'PLAĆENO (Potvrđeno)';
+    let sakrijOtkaziDugme = '';
+    let prikaziQrKod = true;
+
+    if (r.status === 2 || r.status === "Otkazana") {
+    statusKlasa = 'status-otkazano';
+    statusTekst = 'Otkazano';
+    sakrijOtkaziDugme = 'display: none;';
+    prikaziQrKod = false; 
+    } 
+
 
     return `
-    <div class="reservation-panel" id="panel_${r.id}">
+    <div class="reservation-panel" id="panel_${r.id}" style="${r.status === 2 ? 'opacity: 0.85; border-left: 4px solid #dc3545;' : ''}">
     <div class="res-card-header">
     <div class="res-info-block">
-    <h4>${r.paketNaziv}</h4>
+    <h4 style="${r.status === 2 ? 'text-decoration: line-through; color: #6c757d;' : ''}">${r.paketNaziv}</h4>
     <div class="res-meta-pills">
     <div class="meta-pill">
     <i class="fa-solid fa-hashtag"></i>
@@ -460,11 +489,11 @@
     </div>
 
     <div class="res-actions-wrapper">
-    <div class="qr-container-box" id="qr_${r.id}" title="Verifikacija"></div>
+    ${prikaziQrKod ? `<div class="qr-container-box" id="qr_${r.id}" title="Verifikacija"></div>` : '<div style="width:48px; height:48px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#dc3545;">🚫</div>'}
     <button class="btn-download" onclick="preuzmiPdf(${r.id}, this)">
-    <i class="fa-solid fa-file-pdf"></i> Preuzmi Itinerer
+    <i class="fa-solid fa-file-pdf"></i> ${r.status === 2 ? 'Preuzmi Storno' : 'Preuzmi Itinerer'}
     </button>
-    <button class="btn-cancel" onclick="otkaziAranzman(${r.id}, '${resCode}')">
+    <button class="btn-cancel" style="${sakrijOtkaziDugme}" onclick="otkaziAranzman(${r.id}, '${resCode}')">
     <i class="fa-solid fa-trash-can"></i> Otkaži putovanje
     </button>
     </div>
@@ -516,6 +545,7 @@
     }).join('');
 
     data.forEach(r => {
+    if (r.status !== 2 && r.status !== "Otkazana") {
     const qrElement = document.getElementById(`qr_${r.id}`);
     if (qrElement) {
     qrElement.innerHTML = "";
@@ -527,6 +557,7 @@
     colorLight: "#ffffff",
     correctLevel: QRCode.CorrectLevel.H
     });
+    }
     }
     });
 
@@ -560,14 +591,14 @@
 
     if (rezultat.isConfirmed) {
     try {
-   const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value
     || document.querySelector('[headers*="RequestVerificationToken"]')?.value;
 
     const response = await fetch(`/Rezervacija/OtkaziRezervaciju/${id}`, {
     method: 'POST',
     headers: {
     'Content-Type': 'application/json',
-    'RequestVerificationToken': token 
+    'RequestVerificationToken': token
     }
     });
 
@@ -643,4 +674,6 @@
 
     return "Uključen prevoz po programu";
     }
+
+   
 </script>

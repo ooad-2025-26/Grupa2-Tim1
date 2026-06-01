@@ -1,5 +1,6 @@
 ﻿using InterTrips___Turistička_Agencija.Data;
 using InterTrips___Turistička_Agencija.Models;
+using InterTrips___Turistička_Agencija.Enums; 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using QuestPDF.Fluent;
@@ -7,6 +8,7 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -88,10 +90,20 @@ namespace InterTrips___Turistička_Agencija.Services
 
             string brojRezervacije = $"IT-{rezervacija.Id:D4}-{rezervacija.DatumPolaska.Year}";
             string datumIzdavanja = DateTime.Now.ToString("dd.MM.yyyy.");
-            string statusAranzmana = placanje != null ? "PLAĆENO (Potvrđeno)" : "ČEKA SE UPLATA";
+
+            string statusAranzmana = "PLAĆENO (Potvrđeno)";
+            string statusBoja = "#10b981"; 
+
+            if (rezervacija.Status == StatusRezervacije.Otkazana)
+            {
+                statusAranzmana = "OTKAZANO / STORNIRANO";
+                statusBoja = "#dc3545"; 
+            }
+
             string nazivPaketa = rezervacija.Paket?.Naziv ?? "Nije specificirano";
-            string nazivHotela = rezervacija.Paket?.Hotel?.Naziv ?? "Uključen smještaj po programu";
+            string nazivHotela = rezervacija.Paket?.Hotel?.Naziv ?? "Uključen smještaj po programa";
             string periodPutovanja = $"{rezervacija.DatumPolaska:dd.MM.yyyy} - {rezervacija.DatumPovratka:dd.MM.yyyy}";
+
             string prevozIspis = "Autobuski prevoz uključen";
             if (rezervacija.Paket != null)
             {
@@ -101,7 +113,16 @@ namespace InterTrips___Turistička_Agencija.Services
                     prevozIspis = "Kombinovani prevoz (Avion / Autobus)";
             }
 
-            string ukupnaCijena = placanje != null ? $"{placanje.Iznos:F2} BAM" : "Na upit";
+            string ukupnaCijena = "Na upit";
+            if (rezervacija.Status == StatusRezervacije.Otkazana)
+            {
+                ukupnaCijena = "0.00 BAM (Storno)";
+            }
+            else if (placanje != null)
+            {
+                ukupnaCijena = $"{placanje.Iznos:F2} BAM";
+            }
+
             int brojPutnika = rezervacija.Putnici?.Count ?? 0;
 
             var document = Document.Create(container =>
@@ -126,12 +147,12 @@ namespace InterTrips___Turistička_Agencija.Services
                             {
                                 qrRow.RelativeItem().Column(col =>
                                 {
-                                    col.Item().Text("POTVRDA REZERVACIJE I ITINERER")
-                                        .FontSize(11).SemiBold().FontColor("#2aa9b0")
+                                    col.Item().Text(rezervacija.Status == StatusRezervacije.Otkazana ? "DOKUMENT STORNIRAN" : "POTVRDA REZERVACIJE I ITINERER")
+                                        .FontSize(11).SemiBold().FontColor(statusBoja)
                                         .AlignRight();
                                 });
 
-                                if (!string.IsNullOrEmpty(qrCodeBase64))
+                                if (!string.IsNullOrEmpty(qrCodeBase64) && rezervacija.Status != StatusRezervacije.Otkazana)
                                 {
                                     try
                                     {
@@ -167,14 +188,14 @@ namespace InterTrips___Turistička_Agencija.Services
 
                             row.ConstantItem(14);
 
-                            row.RelativeItem().Background("#f7faf9").BorderLeft(3).BorderColor(placanje != null ? "#10b981" : "#f59e0b").Padding(12).Column(col =>
+                            row.RelativeItem().Background("#f7faf9").BorderLeft(3).BorderColor(statusBoja).Padding(12).Column(col =>
                             {
                                 col.Item().Text("Status aranžmana").FontSize(8).FontColor("#6f8a90").SemiBold();
-                                col.Item().Text(statusAranzmana).FontSize(12).Bold().FontColor(placanje != null ? "#10b981" : "#f59e0b");
+                                col.Item().Text(statusAranzmana).FontSize(12).Bold().FontColor(statusBoja);
                             });
                         });
 
-                        content.Item().PaddingTop(18).Text("Detalji planiranog putovanja")
+                        content.Item().PaddingTop(18).Text(rezervacija.Status == StatusRezervacije.Otkazana ? "Detalji otkazanog putovanja" : "Detalji planiranog putovanja")
                             .FontSize(13).Bold().FontColor("#16343b");
 
                         content.Item().PaddingTop(8).LineHorizontal(1).LineColor("#dbe7ea");
@@ -220,7 +241,7 @@ namespace InterTrips___Turistička_Agencija.Services
                             table.Cell().PaddingLeft(8).PaddingBottom(8).Background("#f8fbfc").Border(1).BorderColor("#dbe7ea").Padding(10).Column(col =>
                             {
                                 col.Item().Text("Finansijski saldo").FontSize(8).FontColor("#7a9297").SemiBold();
-                                col.Item().PaddingTop(3).Text(ukupnaCijena).FontSize(11).Bold().FontColor("#1e7f88");
+                                col.Item().PaddingTop(3).Text(ukupnaCijena).FontSize(11).Bold().FontColor(statusBoja);
                             });
                         });
 
@@ -271,7 +292,7 @@ namespace InterTrips___Turistička_Agencija.Services
                         });
                     });
 
-                    page.Footer().PaddingTop(10).AlignCenter().Text("Ovaj dokument je automatski generisan i validan bez pečata i potpisa.")
+                    page.Footer().PaddingTop(10).AlignCenter().Text(rezervacija.Status == StatusRezervacije.Otkazana ? "Ovaj dokument je storniran uslijed otkazivanja aranžmana." : "Ovaj dokument je automatski generisan i validan bez pečata i potpisa.")
                         .FontSize(8)
                         .FontColor("#93a7ab");
                 });

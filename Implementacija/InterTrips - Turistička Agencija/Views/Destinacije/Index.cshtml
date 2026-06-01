@@ -478,7 +478,6 @@
             filter: none;
         }
 
-    /* Elegantni stilovi za vremenski timeline polaska i dolaska */
     .travel-timeline {
         display: flex;
         align-items: center;
@@ -724,31 +723,37 @@
 </section>
 
 <footer class="footer">
-    <div class="footer-grid">
-        <div>
-            <a asp-controller="Home" asp-action="Index" class="logo-link">
-                <img src="~/assets/logo.png" alt="InterTrips logo" class="logo small-logo">
-            </a>
-            <p>Otkrijte najbolje destinacije na svijetu.</p>
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <a href="/" class="logo-link">
+                    <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
+                </a>
+                <p>InterTrips - sistem za upravljanje turističkim paketima, rezervacijama i putnim informacijama.</p>
+            </div>
+            <div>
+                <h4>Istraži</h4>
+                <p><a href="/destinacije">Destinacije</a></p>
+
+            </div>
+            <div>
+                <h4>Kompanija</h4>
+                <p><a href="/">Početna</a></p>
+                <p><a href="/home/onama">O nama</a></p>
+                <p><a href="/home/kontakt">Kontakt</a></p>
+            </div>
+            <div>
+                <h4>Podrška</h4>
+
+                <p><a href="/home/privacy">Politika privatnosti</a></p>
+            </div>
         </div>
 
-        <div>
-            <h4>Istraži</h4>
-            <a asp-controller="Destinacije" asp-action="Index">Destinacije</a>
-        </div>
-
-        <div>
-            <h4>Kompanija</h4>
-            <a asp-controller="Home" asp-action="ONama">O nama</a>
-            <a asp-controller="Home" asp-action="Kontakt">Kontakt</a>
-        </div>
-
-        <div>
-            <h4>Podrška</h4>
-            <a asp-controller="Home" asp-action="Privacy">Politika privatnosti</a>
+        <div class="copyright">
+            <div>© 2026 InterTrips. Sva prava zadržana.</div>
+            <div>Napravljen s &lt;3 za putni svijet</div>
         </div>
     </div>
-    <div class="footer-bottom">© 2026 InterTrips. Sva prava zadržana.</div>
 </footer>
 
 <script>

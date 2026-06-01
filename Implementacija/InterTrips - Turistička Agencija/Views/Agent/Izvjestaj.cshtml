@@ -446,7 +446,9 @@
                                 <option value="">Svi statusi</option>
                                 <option value="Potvrdjeno">Potvrđeno</option>
                                 <option value="NaCekanju">Na čekanju</option>
+                                <option value="Otkazano">Otkazano</option>
                             </select>
+                            
                         </div>
 
                         <button type="submit" class="filter-btn">
@@ -480,7 +482,13 @@
                         <div class="stat-info">
                             <h3>Procjena prometa</h3>
                             @{
-                                decimal ukupanPromet = (decimal)(Model.AktivneRezervacije?.Sum(r => r.Paket?.CijenaOd) ?? 0);
+                                var sveRezervacije = Model.AktivneRezervacije ?? new List<Rezervacija>();
+
+                                var validneRezervacije = sveRezervacije
+                                    .Where(r => r.Status.ToString() != "Otkazano" && r.Status.ToString() != "Cancelled")
+                                    .ToList();
+
+                                decimal ukupanPromet = (decimal)(validneRezervacije.Sum(r => (double?)(r.Paket?.CijenaOd)) ?? 0);
                                 decimal provizijaAgenta = ukupanPromet * 0.10m;
                             }
                             <p>@ukupanPromet.ToString("N2") KM</p>
@@ -532,18 +540,25 @@
                                 }
                                 else
                                 {
-                                    foreach (var r in Model.AktivneRezervacije)
+                                    @foreach (var r in Model.AktivneRezervacije)
                                     {
                                         decimal cijenaPaketa = (decimal)(r.Paket?.CijenaOd ?? 0);
-                                        decimal pojedinacnaProvizija = cijenaPaketa * 0.10m;
+                                        bool jeOtkazano = r.Status.ToString() == "Otkazano" || r.Status.ToString() == "Cancelled";
+
+                                        decimal pojedinacnaProvizija = jeOtkazano ? 0.00m : (cijenaPaketa * 0.10m);
+
                                         <tr>
                                             <td><strong>#@r.Id</strong></td>
                                             <td>@(r.Korisnik?.Email ?? "Nije specificirano")</td>
                                             <td>@(r.Paket?.Naziv ?? "Nepoznat paket")</td>
                                             <td><strong>@cijenaPaketa.ToString("N2") KM</strong></td>
-                                            <td style="color: var(--success); font-weight: 600;">+@pojedinacnaProvizija.ToString("N2") KM</td>
+
+                                            <td style="color: @(jeOtkazano ? "#dc2626" : "var(--success)"); font-weight: 600;">
+                                                @(jeOtkazano ? "-" : "+")@pojedinacnaProvizija.ToString("N2") KM
+                                            </td>
+
                                             <td>
-                                                <span class="badge-status @(r.Status.ToString() == "Potvrdjeno" ? "status-potvrdjeno" : "status-na-cekanju")">
+                                                <span class="badge-status @(r.Status.ToString() == "Potvrdjeno" ? "status-potvrdjeno" : r.Status.ToString() == "Otkazano" ? "status-otkazano" : "status-na-cekanju")">
                                                     @r.Status.ToString()
                                                 </span>
                                             </td>

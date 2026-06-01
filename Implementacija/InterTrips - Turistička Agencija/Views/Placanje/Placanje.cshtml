@@ -793,8 +793,7 @@
         let selectedPaymentType = 'card';
 
         document.addEventListener('DOMContentLoaded', () => {
-            localStorage.removeItem('koristeniKuponKod');
-
+        localStorage.removeItem('koristeniKuponKod');
 
         loadPaymentSummary();
         setupInputValidations();
@@ -963,7 +962,7 @@
         <div class="row">
         <div>
         <label class="field-label" for="rateCardName">Ime na kartici</label>
-        <input class="input" id="rateCardName" placeholder="Ime i prezime">
+        <input class="input" id="rateCardName" placeholder="IME PREZIME">
         </div>
         <div>
         <label class="field-label" for="rateCardCvv">CVV / CVC</label>
@@ -1010,6 +1009,16 @@
         }
 
         function setupInputValidations() {
+        ['cardName', 'rateCardName'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+        input.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/[^a-zA-ZčćžšđČĆŽŠĐ ]/g, '');
+        e.target.value = value.toUpperCase();
+        });
+        }
+        });
+
         ['cardNumber', 'rateCardNumber'].forEach(id => {
         const input = document.getElementById(id);
         if (input) {
@@ -1060,9 +1069,17 @@
         });
         }
 
+        function validateCardHolderName(name) {
+        if (!name || name.trim().split(' ').length < 2) return false;
+        const nameRegex = /^[a-zA-ZČĆŽŠĐčćžšđ ]+$/;
+        return nameRegex.test(name);
+        }
+
         function validateCardExpiry(expiryValue) {
         if (!expiryValue || !expiryValue.includes('/')) return false;
         const parts = expiryValue.split('/');
+        if (parts.length !== 2) return false;
+
         const month = parseInt(parts[0], 10);
         const year = parseInt(parts[1], 10);
 
@@ -1089,12 +1106,13 @@
         const zipCode = document.getElementById('billingZip')?.value || "";
         const cardName = document.getElementById('cardName')?.value.trim() || "";
 
-        if (!cardName) { alert("Molimo unesite ime na kartici."); return; }
+        if (!validateCardHolderName(cardName)) { alert("Molimo unesite ispravno ime i prezime sa kartice (bez brojeva, minimalno dvije riječi)."); return; }
         if (cardNumber.length !== 16) { alert("Broj kartice mora sadržavati tačno 16 cifara."); return; }
-        if (!validateCardExpiry(cardExpiry)) { alert("Datum isteka kartice nije validan (Format: MM/GG)."); return; }
+        if (!validateCardExpiry(cardExpiry)) { alert("Datum isteka kartice nije validan ili je kartica istekla (Format: MM/GG)."); return; }
         if (cardCvv.length !== 3) { alert("CVV kod mora sadržavati tačno 3 cifre."); return; }
         if (zipCode.length !== 5) { alert("Poštanski broj računa mora sadržavati tačno 5 cifara."); return; }
         }
+
         if (selectedPaymentType === 'rates') {
         const monthsInput = document.getElementById('ratesMonths');
         const months = parseInt(monthsInput?.value, 10);
@@ -1102,6 +1120,21 @@
         if (!months || isNaN(months) || months < 1 || months > 60) {
         alert("Molimo unesite ispravan broj mjeseci za otplatu rata (između 1 i 60).");
         return;
+        }
+
+        const subMethod = localStorage.getItem('ratesSubMethod');
+        if (subMethod === 'Kartica') {
+        const cardNumber = document.getElementById('rateCardNumber')?.value.replace(/\s/g, '') || "";
+        const cardExpiry = document.getElementById('rateCardExpiry')?.value || "";
+        const cardCvv = document.getElementById('rateCardCvv')?.value || "";
+        const zipCode = document.getElementById('rateBillingZip')?.value || "";
+        const cardName = document.getElementById('rateCardName')?.value.trim() || "";
+
+        if (!validateCardHolderName(cardName)) { alert("Molimo unesite ispravno ime i prezime sa kartice za rate (bez brojeva, minimalno dvije riječi)."); return; }
+        if (cardNumber.length !== 16) { alert("Broj kartice za rate mora sadržavati tačno 16 cifara."); return; }
+        if (!validateCardExpiry(cardExpiry)) { alert("Datum isteka kartice za rate nije validan ili je kartica istekla (Format: MM/GG)."); return; }
+        if (cardCvv.length !== 3) { alert("CVV kod za rate mora sadržavati tačno 3 cifre."); return; }
+        if (zipCode.length !== 5) { alert("Poštanski broj računa za rate mora sadržavati tačno 5 cifara."); return; }
         }
         }
 
@@ -1175,13 +1208,8 @@
         Telefon: p.phone || ""
         }))
         };
-        console.log("RAW POLAZAK:", departureRaw);
-        console.log("RAW POVRATAK:", returnRaw);
 
-        console.log("FORMAT POLAZAK:", departureDate);
-        console.log("FORMAT POVRATAK:", returnDate);
-console.log("PROMO KOD:", promoKod);
-try {
+        try {
         const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
 
         const response = await fetch('/Rezervacija/KreirajRezervaciju', {
@@ -1215,7 +1243,6 @@ try {
         }
         }
         }
-
 
         async function applyCoupon() {
         const codeInput = document.getElementById('couponCode');

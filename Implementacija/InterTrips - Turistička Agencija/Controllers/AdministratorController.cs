@@ -152,6 +152,7 @@ public class AdministratorController : Controller
         var list = await _db.Paketi
             .Include(p => p.Destinacija)
             .Include(p => p.Rezervacije)
+            .ThenInclude(r => r.Putnici)
             .OrderByDescending(p => p.Id)
             .ToListAsync();
 
