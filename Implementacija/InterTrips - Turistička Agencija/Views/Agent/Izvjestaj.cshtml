@@ -2,6 +2,13 @@
 @{
     ViewData["Title"] = "InterTrips - Izvještaji Agenta";
     Layout = null;
+
+    var trenutniDatumOd = Context.Request.Query["datumOd"].ToString();
+    var trenutniDatumDo = Context.Request.Query["datumDo"].ToString();
+    var trenutniStatus = Context.Request.Query["status"].ToString();
+
+    if (string.IsNullOrEmpty(trenutniDatumOd)) trenutniDatumOd = DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd");
+    if (string.IsNullOrEmpty(trenutniDatumDo)) trenutniDatumDo = DateTime.Now.ToString("yyyy-MM-dd");
 }
 
 <!DOCTYPE html>
@@ -353,6 +360,11 @@
                 color: var(--warning);
             }
 
+            .status-otkazano {
+                background: #fef2f2;
+                color: var(--danger);
+            }
+
             .print-btn {
                 background: none;
                 border: 1px solid var(--border-color);
@@ -397,13 +409,13 @@
             <a href="/Agent/Index" class="nav-item">
                 <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
             </a>
-            <a href="/Agent/Rezervacije?agentId=@Model.AgentId" class="nav-item">
+            <a href="/Agent/Rezervacije?agentId=@Model?.AgentId" class="nav-item">
                 <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
             </a>
-            <a href="/Agent/Paketi?agentId=@Model.AgentId" class="nav-item">
+            <a href="/Agent/Paketi?agentId=@Model?.AgentId" class="nav-item">
                 <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
             </a>
-            <a href="/Agent/Izvjestaj?agentId=@Model.AgentId" class="nav-item active">
+            <a href="/Agent/Izvjestaj?agentId=@Model?.AgentId" class="nav-item active">
                 <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
             </a>
         </nav>
@@ -428,27 +440,26 @@
 
                 <div class="filter-card">
                     <form method="get" action="/Agent/Izvjestaj" class="filter-form">
-                        <input type="hidden" name="agentId" value="@Model.AgentId" />
+                        <input type="hidden" name="agentId" value="@Model?.AgentId" />
 
                         <div class="form-group">
                             <label>Datum od</label>
-                            <input type="date" name="datumOd" value="@DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd")" />
+                            <input type="date" name="datumOd" value="@trenutniDatumOd" />
                         </div>
 
                         <div class="form-group">
                             <label>Datum do</label>
-                            <input type="date" name="datumDo" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                            <input type="date" name="datumDo" value="@trenutniDatumDo" />
                         </div>
 
                         <div class="form-group">
                             <label>Status rezervacije</label>
                             <select name="status">
-                                <option value="">Svi statusi</option>
-                                <option value="Potvrdjeno">Potvrđeno</option>
-                                <option value="NaCekanju">Na čekanju</option>
-                                <option value="Otkazano">Otkazano</option>
-                            </select>
+                                <option value="" selected="@(string.IsNullOrEmpty(trenutniStatus))">Svi statusi</option>
+                                <option value="Potvrdjeno" selected="@(trenutniStatus == "Potvrdjeno")">Potvrđeno</option>
                             
+                                <option value="Otkazano" selected="@(trenutniStatus == "Otkazano")">Otkazano</option>
+                            </select>
                         </div>
 
                         <button type="submit" class="filter-btn">
@@ -461,7 +472,7 @@
                     <div class="stat-box">
                         <div class="stat-info">
                             <h3>Ukupno rezervacija</h3>
-                            <p>@(Model.AktivneRezervacije?.Count ?? 0)</p>
+                            <p>@(Model?.AktivneRezervacije?.Count ?? 0)</p>
                         </div>
                         <div class="stat-icon">
                             <i class="fa-solid fa-receipt"></i>
@@ -471,7 +482,7 @@
                     <div class="stat-box">
                         <div class="stat-info">
                             <h3>Aktivni paketi</h3>
-                            <p>@(Model.MojiPaketiIds?.Count ?? 0)</p>
+                            <p>@(Model?.MojiPaketiIds?.Count ?? 0)</p>
                         </div>
                         <div class="stat-icon">
                             <i class="fa-solid fa-box-archive"></i>
@@ -482,10 +493,10 @@
                         <div class="stat-info">
                             <h3>Procjena prometa</h3>
                             @{
-                                var sveRezervacije = Model.AktivneRezervacije ?? new List<Rezervacija>();
+                                var sveRezervacije = Model?.AktivneRezervacije ?? new List<Rezervacija>();
 
                                 var validneRezervacije = sveRezervacije
-                                    .Where(r => r.Status.ToString() != "Otkazano" && r.Status.ToString() != "Cancelled")
+                                    .Where(r => r != null && r.Status.ToString() != "Otkazano" && r.Status.ToString() != "Cancelled")
                                     .ToList();
 
                                 decimal ukupanPromet = (decimal)(validneRezervacije.Sum(r => (double?)(r.Paket?.CijenaOd)) ?? 0);
@@ -530,7 +541,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (Model.AktivneRezervacije == null || !Model.AktivneRezervacije.Any())
+                                @if (Model?.AktivneRezervacije == null || !Model.AktivneRezervacije.Any())
                                 {
                                     <tr>
                                         <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
@@ -542,10 +553,12 @@
                                 {
                                     @foreach (var r in Model.AktivneRezervacije)
                                     {
+                                        if (r == null) continue;
+
                                         decimal cijenaPaketa = (decimal)(r.Paket?.CijenaOd ?? 0);
                                         bool jeOtkazano = r.Status.ToString() == "Otkazano" || r.Status.ToString() == "Cancelled";
-
                                         decimal pojedinacnaProvizija = jeOtkazano ? 0.00m : (cijenaPaketa * 0.10m);
+                                        string statusString = r.Status.ToString();
 
                                         <tr>
                                             <td><strong>#@r.Id</strong></td>
@@ -554,12 +567,12 @@
                                             <td><strong>@cijenaPaketa.ToString("N2") KM</strong></td>
 
                                             <td style="color: @(jeOtkazano ? "#dc2626" : "var(--success)"); font-weight: 600;">
-                                                @(jeOtkazano ? "-" : "+")@pojedinacnaProvizija.ToString("N2") KM
+                                                @(jeOtkazano ? "" : "+")@pojedinacnaProvizija.ToString("N2") KM
                                             </td>
 
                                             <td>
-                                                <span class="badge-status @(r.Status.ToString() == "Potvrdjeno" ? "status-potvrdjeno" : r.Status.ToString() == "Otkazano" ? "status-otkazano" : "status-na-cekanju")">
-                                                    @r.Status.ToString()
+                                                <span class="badge-status @(statusString == "Potvrdjeno" ? "status-potvrdjeno" : statusString == "Otkazano" || statusString == "Cancelled" ? "status-otkazano" : "status-na-cekanju")">
+                                                    @(statusString == "Potvrdjeno" ? "Potvrđeno" : statusString == "Otkazano" || statusString == "Cancelled" ? "Otkazano" : "Na čekanju")
                                                 </span>
                                             </td>
                                         </tr>

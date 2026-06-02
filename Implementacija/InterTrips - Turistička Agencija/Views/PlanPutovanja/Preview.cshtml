@@ -180,6 +180,7 @@
         color: #555;
         line-height: 1.65;
         font-size: 14.5px;
+        white-space: pre-line;
     }
 
     .back-wrapper {
@@ -229,7 +230,7 @@
         <p class="subtitle-info">
             @if (Model?.Paket?.Destinacija != null)
             {
-                <span>Pogledajte detaljan pregled aktivnosti i plan putovanja za destinaciju <strong>@Model.Paket.Destinacija.Naziv</strong> (@Model.Paket.Destinacija.Drzava).</span>
+                <span>Pogledajte detaljan pregled aktivnosti i plan putovanja za destinaciju <strong>@Model.Paket?.Destinacija?.Naziv</strong> (@Model.Paket?.Destinacija?.Drzava).</span>
             }
             else
             {
@@ -249,7 +250,7 @@
     }
     else
     {
-        @if (!string.IsNullOrWhiteSpace(Model.Napomena))
+        if (!string.IsNullOrWhiteSpace(Model.Napomena))
         {
             <div class="note-box">
                 <span class="note-title">📌 Važne napomene:</span>
@@ -257,7 +258,7 @@
             </div>
         }
 
-        @if (Model.Stavke == null || !Model.Stavke.Any())
+        if (Model.Stavke == null || !Model.Stavke.Any())
         {
             <div class="empty-state">
                 🗓️ Plan i program putovanja će uskoro biti objavljen.
@@ -266,17 +267,17 @@
         else
         {
             <div class="timeline">
-                @foreach (var s in Model.Stavke.OrderBy(x => x.RedniBroj))
+                @foreach (var s in Model.Stavke.Where(x => x != null).OrderBy(x => x.RedniBroj))
                 {
                     <div class="timeline-item">
                         <div class="timeline-header">
                             <div class="day-title">
-                                Dan @s.RedniBroj: @s.Naziv
+                                Dan @s.RedniBroj: @(s.Naziv ?? "Aktivnost")
                             </div>
                             @if (s.Vrijeme.HasValue)
                             {
                                 <div class="time-badge">
-                                    🕒 @s.Vrijeme.Value.ToString(@"hh\:mm")
+                                    🕒 @(s.Vrijeme.Value is TimeSpan ? ((TimeSpan)s.Vrijeme.Value).ToString(@"hh\:mm") : Convert.ToDateTime(s.Vrijeme.Value).ToString("HH:mm"))
                                 </div>
                             }
                         </div>

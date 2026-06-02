@@ -35,6 +35,7 @@
                 --primary: #0ea5e9;
                 --primary-hover: #0284c7;
                 --danger: #ef4444;
+                --secondary: #475569;
             }
 
             .nav-item i {
@@ -211,6 +212,25 @@
             }
 
                 .btn-info:hover {
+                    background-color: var(--primary-hover);
+                }
+
+            .btn-pogledaj-detalje {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 12px;
+                background-color: var(--primary);
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background 0.15s;
+            }
+
+                .btn-pogledaj-detalje:hover {
                     background-color: var(--primary-hover);
                 }
 
@@ -557,7 +577,6 @@
     </aside>
 
     <main class="main-content">
-
         <header class="dash-header">
             <div>
                 <span class="badge">Sistemski Logovi</span>
@@ -573,41 +592,42 @@
             @if (aktivneRezervacije == null || !aktivneRezervacije.Any())
             {
                 <div style="text-align:center; padding: 48px; color: var(--text-muted); font-size: 14px; border: 1px dashed var(--border); border-radius: 8px;">
-                    Trenutno nema aktivnih osiguranih rezervacija u sistemu za korisnika <strong style="color: var(--text-dark);">@Model.KorisnikEmail</strong>.
+                    Trenutno nema aktivnih rezervacija u sistemu za korisnika <strong style="color: var(--text-dark);">@(Model?.KorisnikEmail ?? "Nespecificirano")</strong>.
                 </div>
             }
             else
             {
-                <div class="table-container">
-                    <table class="custom-table">
+                <div class="table-container" style="overflow-x: auto; width: 100%;">
+                    <table class="custom-table" style="width: 100%; table-layout: fixed;">
                         <thead>
                             <tr>
-                                <th>ID Rezervacije</th>
-                                <th>Korisnik (Email)</th>
-                                <th>Paket / Aranžman</th>
-                                <th>Destinacija</th>
-                                <th>Broj Putnika</th>
-                                <th>Status</th>
-                                <th style="text-align: right;">Akcije</th>
+                                <th style="width: 100px;">ID Rezervacije</th>
+                                <th style="width: 200px;">Korisnik (Email)</th>
+                                <th style="width: 200px;">Paket / Aranžman</th>
+                                <th style="width: 180px;">Destinacija</th>
+                                <th style="width: 110px;">Broj Putnika</th>
+                                <th style="width: 120px;">Status</th>
+                                <th style="text-align: right; width: 110px;">Akcije</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var r in aktivneRezervacije)
                             {
+                                if (r == null) continue;
                                 <tr>
                                     <td><span class="res-id">#@r.Id</span></td>
 
-                                    <td>
+                                    <td style="word-break: break-all;">
                                         <span class="user-email">
-                                            @(r.Korisnik != null ? r.Korisnik.Email : "ID: " + r.KorisnikId)
+                                            @(r.Korisnik != null ? r.Korisnik.Email : (!string.IsNullOrEmpty(r.KorisnikId) ? "ID: " + r.KorisnikId : "Gost"))
                                         </span>
                                     </td>
 
-                                    <td>
+                                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="@(r.Paket?.Naziv)">
                                         <span class="package-title">@(r.Paket?.Naziv ?? "Nespecificirano")</span>
                                     </td>
 
-                                    <td>
+                                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                         <div class="destination-text">
                                             @(r.Paket?.Destinacija != null ? $"{r.Paket.Destinacija.Naziv} ({r.Paket.Destinacija.Drzava})" : "—")
                                         </div>
@@ -620,30 +640,37 @@
                                     </td>
 
                                     <td>
-                                        <span class="status-pill">@r.Status.ToString().ToLower()</span>
+                                        <span class="status-pill">@(r.Status != null ? r.Status.ToString().ToLower() : "nepoznato")</span>
                                     </td>
 
                                     <td style="text-align: right;">
-                                        <button class="btn-info btn-pogledaj-detalje"
+                                        @{
+                                            var putniciList = r.Putnici?.Select(p => (object)new
+                                            {
+                                                Ime = p.Ime ?? "",
+                                                Prezime = p.Prezime ?? "",
+                                                BrojPasosa = p.BrojPasosa ?? "—",
+                                                Drzavljanstvo = p.Drzavljanstvo ?? "—",
+                                                Telefon = p.Telefon ?? "—",
+                                                DatumRodjenja = p.DatumRodjenja != null ? p.DatumRodjenja.ToString("dd.MM.yyyy") : "—",
+                                                PosebniZahtjevi = p.PosebniZahtjevi ?? ""
+                                            }).ToList() ?? new List<object>();
+
+                                            var jsonPutnici = System.Text.Json.JsonSerializer.Serialize(putniciList);
+                                        }
+                                        <button class="btn-pogledaj-detalje"
                                                 data-id="@r.Id"
                                                 data-email="@(r.Korisnik?.Email ?? "Nepoznato")"
-                                                data-status="@r.Status"
+                                                data-status="@(r.Status != null ? r.Status.ToString() : "Nepoznato")"
                                                 data-paket="@(r.Paket?.Naziv ?? "Nespecificirano")"
                                                 data-destinacija="@(r.Paket?.Destinacija != null ? $"{r.Paket.Destinacija.Naziv}, {r.Paket.Destinacija.Drzava}" : "—")"
-                                                data-polazak="@r.DatumPolaska.ToString("dd.MM.yyyy")"
-                                                data-povratak="@(r.Paket != null ? r.DatumPolaska.AddDays(r.Paket.TrajanjeNoci).ToString("dd.MM.yyyy") : "—")"
+                                                data-polazak="@(r.DatumPolaska != DateTime.MinValue ? r.DatumPolaska.ToString("dd.MM.yyyy") : "—")"
+                                                data-povratak="@(r.Paket != null && r.DatumPolaska != DateTime.MinValue ? r.DatumPolaska.AddDays(r.Paket.TrajanjeNoci).ToString("dd.MM.yyyy") : "—")"
                                                 data-hotel="@(r.Paket?.Hotel != null ? r.Paket.Hotel.Naziv : "Nije uključeno")"
+                                                data-hotelid="@(r.Paket?.Hotel != null ? r.Paket.Hotel.Id : 0)"
                                                 data-let="@(r.Paket?.Let != null ? $"{r.Paket.Let.Aviokompanija} ({r.Paket.Let.BrojLeta})" : "Nije uključeno")"
-                                                data-putnici='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(r.Putnici?.Select(p => new
-                                                {
-                                                    p.Ime,
-                                                    p.Prezime,
-                                                    p.BrojPasosa,
-                                                    p.Drzavljanstvo,
-                                                    p.Telefon,
-                                                    DatumRodjenja = p.DatumRodjenja.ToString("dd.MM.yyyy"),
-                                                    p.PosebniZahtjevi
-                                                }).ToList()))'>
+                                                data-putnici="@Html.Raw(System.Web.HttpUtility.HtmlAttributeEncode(jsonPutnici))"
+                                                style="cursor: pointer;">
                                             <i class="fa-solid fa-eye"></i> Detalji
                                         </button>
                                     </td>
@@ -705,7 +732,12 @@
                     <div class="info-grid">
                         <div class="info-item">
                             <div class="info-label">Smještaj (Hotel)</div>
-                            <div class="info-value" id="modalHotel"></div>
+                            <div class="info-value">
+                                <span id="modalHotelNaziv"></span>
+                                <a id="modalHotelLink" href="#" class="btn-mini-link" style="display:none; margin-left: 10px; color: #0ea5e9; text-decoration: underline; font-size: 13px; font-weight: 600;">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Pogledaj detalje hotela
+                                </a>
+                            </div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">Informacije o letu</div>
@@ -737,9 +769,28 @@
                 const modalDestinacija = document.getElementById("modalDestinacija");
                 const modalPolazak = document.getElementById("modalPolazak");
                 const modalPovratak = document.getElementById("modalPovratak");
-                const modalHotel = document.getElementById("modalHotel");
                 const modalLet = document.getElementById("modalLet");
                 const modalPutniciLista = document.getElementById("modalPutniciLista");
+
+                const hotelNazivSpan = document.getElementById('modalHotelNaziv');
+                const hotelLink = document.getElementById('modalHotelLink');
+
+                function escapeHtml(str) {
+                    if (!str) return "—";
+                    return str.replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&#039;");
+                }
+
+                function otvoriModal() {
+                    modalOverlay.classList.add("active");
+                }
+
+                function zatvoriModal() {
+                    modalOverlay.classList.remove("active");
+                }
 
                 detaljiButtons.forEach(button => {
                     button.addEventListener("click", function () {
@@ -751,36 +802,54 @@
                         const povratak = this.getAttribute("data-povratak");
                         const status = this.getAttribute("data-status");
                         const hotel = this.getAttribute("data-hotel");
+                        const hotelId = parseInt(this.getAttribute('data-hotelid')) || 0;
                         const letInfo = this.getAttribute("data-let");
-                        const putniciData = JSON.parse(this.getAttribute("data-putnici") || "[]");
+
+                        let putniciData = [];
+                        try {
+                            putniciData = JSON.parse(this.getAttribute("data-putnici") || "[]");
+                        } catch (e) {
+                            console.error("Greška pri parsiranju podataka o putnicima.", e);
+                        }
 
                         modalResId.innerText = "#" + id;
                         modalKorisnik.innerText = email;
-                        modalStatus.innerHTML = `<span class="status-pill">${status ? status.toLowerCase() : "nepoznato"}</span>`;
+                        modalStatus.innerHTML = `<span class="status-pill">${escapeHtml(status ? status.toLowerCase() : "nepoznato")}</span>`;
                         modalPaket.innerText = paket;
                         modalDestinacija.innerText = destinacija;
                         modalPolazak.innerText = polazak;
                         modalPovratak.innerText = povratak;
-                        modalHotel.innerText = hotel;
                         modalLet.innerText = letInfo;
+
+                        if (hotelNazivSpan && hotelLink) {
+                            hotelNazivSpan.innerText = hotel;
+
+                            if (hotelId > 0 && hotel !== "Nije uključeno") {
+                                hotelLink.href = `/Administrator/HotelDetails/${hotelId}`;
+                                hotelLink.style.display = 'inline-block';
+                            } else {
+                                hotelLink.style.display = 'none';
+                            }
+                        }
 
                         modalPutniciLista.innerHTML = "";
                         if (putniciData.length === 0) {
                             modalPutniciLista.innerHTML = `<div style="color: var(--text-muted); font-size: 13px;">Nema dodatnih registrovanih putnika (Samo nosilac rezervacije).</div>`;
                         } else {
                             putniciData.forEach((p, index) => {
-                                const zahtjeviHtml = p.PosebniZahtjevi ? `<div style="margin-top:4px; font-size:12px; color:#b91c1c; background:#fef2f2; padding:4px 8px; border-radius:4px;"><strong>Napomena:</strong> ${p.PosebniZahtjevi}</div>` : '';
+                                const cistZahtjevi = escapeHtml(p.PosebniZahtjevi);
+                                const zahtjeviHtml = p.PosebniZahtjevi ? `<div style="margin-top:4px; font-size:12px; color:#b91c1c; background:#fef2f2; padding:4px 8px; border-radius:4px; word-break: break-word;"><strong>Napomena:</strong> ${cistZahtjevi}</div>` : '';
 
                                 modalPutniciLista.innerHTML += `
-                                            <div class="passenger-row" style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                                                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                                                                <strong>${index + 1}. ${p.Ime} ${p.Prezime}</strong>
-                                                    <span style="color: var(--text-muted); font-size:13px;">Pasoš: <strong>${p.BrojPasosa || '—'}</strong></span>
+                                            <div class="passenger-row" style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; display: block; width: 100%;">
+                                                <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap: wrap; gap: 8px;">
+                                                    <strong>${index + 1}. ${escapeHtml(p.Ime)} ${escapeHtml(p.Prezime)}</strong>
+                                                    <span style="color: var(--text-muted); font-size:13px;">Pasoš: <strong>${escapeHtml(p.BrojPasosa)}</strong></span>
                                                 </div>
                                                 <div style="font-size: 12px; color: #64748b; display:flex; gap:15px; flex-wrap:wrap;">
-                                                    <span>Državljanstvo: ${p.Drzavljanstvo || '—'}</span>
-                                                    <span>Datum rođenja: ${p.DatumRodjenja}</span>
-                                                    <span>Tel: ${p.Telefon || '—'}</span>
+                                                    <span>Državljanstvo: ${escapeHtml(p.Drzavljanstvo)}</span>
+                                                    <span>Datum rođenja: ${escapeHtml(p.DatumRodjenja)}</span>
+                                                    <span>Tel: ${escapeHtml(p.Telefon)}</span>
                                                 </div>
                                                 ${zahtjeviHtml}
                                             </div>
@@ -788,17 +857,21 @@
                             });
                         }
 
-                        modalOverlay.classList.add("active");
+                        otvoriModal();
                     });
                 });
 
-                btnZatvori.addEventListener("click", function () {
-                    modalOverlay.classList.remove("active");
-                });
+                btnZatvori.addEventListener("click", zatvoriModal);
 
                 modalOverlay.addEventListener("click", function (e) {
                     if (e.target === modalOverlay) {
-                        modalOverlay.classList.remove("active");
+                        zatvoriModal();
+                    }
+                });
+
+                window.addEventListener("keydown", function (e) {
+                    if (e.key === "Escape" && modalOverlay.classList.contains("active")) {
+                        zatvoriModal();
                     }
                 });
             });

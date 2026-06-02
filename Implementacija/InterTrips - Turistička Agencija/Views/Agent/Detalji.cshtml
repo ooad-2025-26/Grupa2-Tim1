@@ -3,14 +3,17 @@
     ViewData["Title"] = "Agent - Detalji Rezervacije";
     Layout = null;
 
-    string statusKlasa = Model.Status.ToString().ToLower();
-    string imeKlijenta = Model.Korisnik?.Ime ?? "Nepoznato ime";
-    string emailKlijenta = Model.Korisnik?.Email ?? "Nije uneseno";
+    string rawAgentId = Context.Request.Query["agentr"].ToString();
+    string agentId = string.IsNullOrWhiteSpace(rawAgentId) ? "2" : System.Net.WebUtility.HtmlEncode(rawAgentId);
+    string statusKlasa = "nepoznato";
+    string imeKlijenta = "Nepoznato ime";
+    string emailKlijenta = "Nije uneseno";
 
-    string agentId = Context.Request.Query["agentr"].ToString();
-    if (string.IsNullOrEmpty(agentId))
+    if (Model != null)
     {
-        agentId = "2";
+        statusKlasa = Model.Status.ToString().ToLower() ?? "nepoznato";
+        imeKlijenta = Model.Korisnik?.Ime ?? "Nepoznato ime";
+        emailKlijenta = Model.Korisnik?.Email ?? "Nije uneseno";
     }
 }
 
@@ -46,6 +49,8 @@
                 --status-potvrdjena-txt: #047857;
                 --status-otkazana-bg: #fef2f2;
                 --status-otkazana-txt: #b91c1c;
+                --status-nepoznato-bg: #f1f5f9;
+                --status-nepoznato-txt: #64748b;
             }
 
             body {
@@ -245,6 +250,11 @@
             .status-otkazana {
                 background: var(--status-otkazana-bg);
                 color: var(--status-otkazana-txt);
+            }
+
+            .status-nepoznato {
+                background: var(--status-nepoznato-bg);
+                color: var(--status-nepoznato-txt);
             }
 
             .dashboard-grid {
@@ -510,7 +520,7 @@
                     </div>
                     <div>
                         <span class="status-badge status-@statusKlasa">
-                            <i class="fa-solid fa-circle" style="font-size: 8px; margin-right: 4px;"></i> @Model.Status
+                            <i class="fa-solid fa-circle" style="font-size: 8px; margin-right: 4px;"></i> @(Model.Status.ToString() ?? "Nepoznato")
                         </span>
                     </div>
                 </header>
@@ -550,7 +560,14 @@
                                 <div class="info-item">
                                     <label>Ime klijenta</label>
                                     <span style="font-weight: 600;">
-                                        @(string.IsNullOrEmpty(imeKlijenta) ? "—" : imeKlijenta.Split(' ')[0])
+                                        @if (!string.IsNullOrWhiteSpace(imeKlijenta) && imeKlijenta != "Nepoznato ime")
+                                        {
+                                            @(imeKlijenta.Split(' ')[0])
+                                        }
+                                        else
+                                        {
+                                            <text>—</text>
+                                        }
                                     </span>
                                 </div>
                                 <div class="info-item">
@@ -573,11 +590,11 @@
                                 <i class="fa-solid fa-hotel"></i> Podaci o smještaju (Hotel)
                             </h2>
                             <div class="info-list">
-                                @if (Model.Paket != null && Model.Paket.Hotel != null)
+                                @if (Model.Paket?.Hotel != null)
                                 {
                                     <div class="info-item">
                                         <label>Naziv hotela</label>
-                                        <span style="font-weight:600;">@Model.Paket.Hotel.Naziv</span>
+                                        <span style="font-weight:600;">@(string.IsNullOrWhiteSpace(Model.Paket.Hotel.Naziv) ? "—" : Model.Paket.Hotel.Naziv)</span>
                                     </div>
                                     <div class="info-item">
                                         <label>Kategorizacija</label>
@@ -646,7 +663,7 @@
                                 else
                                 {
                                     <div class="info-item" style="grid-column: span 2;">
-                                        <p class="empty-state" style="padding: 10px 0;">Nema povezanih informacija o letu (npr. autobuski prevoz ili sopstveni).</p>
+                                        <p class="empty-state" style="padding: 10px 0;">Nema povezanih informacija o letu (autobuski ili sopstveni prevoz).</p>
                                     </div>
                                 }
                             </div>
@@ -663,12 +680,12 @@
                                 </div>
                                 <div class="info-item">
                                     <label>Broj putnika</label>
-                                    <span>@(Model.Putnici?.Count ?? 1)x</span>
+                                    <span>@(Model.Putnici?.Count ?? 0)x</span>
                                 </div>
                                 <div class="info-item">
                                     <label>Ukupna vrijednost</label>
                                     <span style="font-weight: 700; font-size: 17px; color: var(--sidebar-dark);">
-                                        @(((Model.Paket?.CijenaOd ?? 0) * (Model.Putnici?.Count ?? 1)).ToString("0.00")) KM
+                                        @(((Model.Paket?.CijenaOd ?? 0) * (Model.Putnici?.Count ?? 0)).ToString("0.00")) KM
                                     </span>
                                 </div>
                                 <div class="info-item">
@@ -705,18 +722,21 @@
                                             }
                                             @foreach (var putnik in Model.Putnici)
                                             {
-                                                <tr>
-                                                    <td>#@brojac.ToString("D2")</td>
-                                                    <td class="passenger-name">@putnik.Ime @putnik.Prezime</td>
-                                                    <td>@(string.IsNullOrEmpty(putnik.Drzavljanstvo) ? "—" : putnik.Drzavljanstvo)</td>
-                                                    <td>@putnik.DatumRodjenja.ToString("dd.MM.yyyy.")</td>
-                                                    <td>
-                                                        <code style="font-family:monospace; font-size:13px; background:#f1f5f9; padding:3px 6px; border-radius:4px; color:var(--sidebar-dark)">
-                                                            @(string.IsNullOrEmpty(putnik.BrojPasosa) ? "—" : putnik.BrojPasosa)
-                                                        </code>
-                                                    </td>
-                                                </tr>
-                                                brojac++;
+                                                if (putnik != null)
+                                                {
+                                                    <tr>
+                                                        <td>#@brojac.ToString("D2")</td>
+                                                        <td class="passenger-name">@(putnik.Ime ?? "—") @(putnik.Prezime ?? "—")</td>
+                                                        <td>@(string.IsNullOrWhiteSpace(putnik.Drzavljanstvo) ? "—" : putnik.Drzavljanstvo)</td>
+                                                        <td>@putnik.DatumRodjenja.ToString("dd.MM.yyyy.")</td>
+                                                        <td>
+                                                            <code style="font-family:monospace; font-size:13px; background:#f1f5f9; padding:3px 6px; border-radius:4px; color:var(--sidebar-dark)">
+                                                                @(string.IsNullOrWhiteSpace(putnik.BrojPasosa) ? "—" : putnik.BrojPasosa)
+                                                            </code>
+                                                        </td>
+                                                    </tr>
+                                                    brojac++;
+                                                }
                                             }
                                         </tbody>
                                     </table>
@@ -725,11 +745,21 @@
                         </div>
 
                     </div>
+
+                    <footer class="action-footer">
+                        <button class="btn-action btn-print" onclick="window.print();">
+                            <i class="fa-solid fa-print"></i> Štampaj vaučer
+                        </button>
+                      
+                    </footer>
                 </main>
             }
             else
             {
-                <div class="alert alert-danger" style="margin-top: 20px;">Podaci o rezervaciji nisu uspješno učitani.</div>
+                <div style="background-color: #fef2f2; border: 1px solid #fca5a5; color: #b91c1c; padding: 20px; border-radius: 12px; font-weight: 500; text-align: center; margin-top: 40px;">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                    Podaci o rezervaciji nisu uspješno učitani ili rezervacija ne postoji.
+                </div>
             }
 
         </div>

@@ -242,6 +242,25 @@
                     padding: 16px 20px;
                 }
 
+                .admin-table tbody tr {
+                    border-bottom: 1px solid var(--border);
+                    transition: all 0.2s ease;
+                }
+                    .admin-table tbody tr.novo-upit {
+                        background-color: rgba(14, 165, 233, 0.04);
+                    }
+
+                    .admin-table tbody tr:hover {
+                        background-color: #f1f5f9 !important;
+                    }
+
+            .text-truncate-custom {
+                max-width: 300px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
             .btn-pregled {
                 background: var(--primary);
                 color: white;
@@ -277,7 +296,9 @@
 </head>
 <body>
 
-    @Html.AntiForgeryToken()
+    <div id="antiforgery-token-container" style="display: none;">
+        @Html.AntiForgeryToken()
+    </div>
 
     <aside class="sidebar">
         <div class="logo-area">
@@ -331,10 +352,10 @@
             </div>
             <div style="display: flex; gap: 12px; align-items: center;">
                 <div style="background: var(--card-bg); padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; font-weight: 500;">
-                    Ukupno: <span style="color: var(--text-dark); font-weight: 700;">@Model.Count()</span>
+                    Ukupno: <span style="color: var(--text-dark); font-weight: 700;">@(Model != null ? Model.Count() : 0)</span>
                 </div>
                 <div style="background: var(--card-bg); padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; font-weight: 500;">
-                    Novo: <span style="color: var(--primary); font-weight: 700;">@Model.Count(u => !u.Procitano)</span>
+                    Novo: <span style="color: var(--primary); font-weight: 700;">@(Model != null ? Model.Count(u => !u.Procitano) : 0)</span>
                 </div>
                 <a href="/Destinacije" target="_blank" class="btn-secondary-top"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 6px;"></i> Pregledaj sajt</a>
             </div>
@@ -354,7 +375,7 @@
         }
 
         <div class="table-card">
-            @if (!Model.Any())
+            @if (Model == null || !Model.Any())
             {
                 <div style="padding: 60px; text-align: center; color: var(--text-muted);">
                     <i class="fa-regular fa-folder-open" style="font-size: 48px; color: var(--primary); margin-bottom: 15px; display:block;"></i>
@@ -377,10 +398,9 @@
                         <tbody>
                             @foreach (var upit in Model.OrderByDescending(u => u.DatumSlanja))
                             {
-                                <tr id="red-@upit.Id" style="border-bottom: 1px solid var(--border); background-color: @(upit.Procitano ? "transparent" : "rgba(14, 165, 233, 0.04)"); transition: all 0.2s ease;"
-                                    onmouseover="this.style.backgroundColor='#f1f5f9'"
-                                    onmouseout="this.style.backgroundColor='@(upit.Procitano ? "transparent" : "rgba(14, 165, 233, 0.04)")'">
+                                if (upit == null) continue;
 
+                                <tr id="red-@upit.Id" class="@(upit.Procitano ? "" : "novo-upit")">
                                     <td>
                                         <span id="bedz-@upit.Id" style="display: inline-block; padding: 4px 8px; font-size: 11px; font-weight: 700; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;
                                             background-color: @(upit.Procitano ? "#e2e8f0" : "rgba(14, 165, 233, 0.15)");
@@ -391,19 +411,27 @@
 
                                     <td>
                                         <div style="font-weight: 600; color: var(--text-dark);">@upit.Ime</div>
-                                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">@upit.Email</div>
+                                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px; word-break: break-all;">@upit.Email</div>
                                     </td>
 
-                                    <td style="color: var(--text-dark); font-weight: @(upit.Procitano ? "400" : "600");">
+                                    <td class="text-truncate-custom" style="color: var(--text-dark); font-weight: @(upit.Procitano ? "400" : "600");" title="@upit.Tema">
                                         @upit.Tema
                                     </td>
 
-                                    <td style="color: var(--text-muted); font-size: 13px;">
+                                    <td style="color: var(--text-muted); font-size: 13px; white-space: nowrap;">
                                         @upit.DatumSlanja.ToString("dd.MM.yyyy. HH:mm")
                                     </td>
 
                                     <td style="text-align: right;">
-                                        <button class="btn-pregled" onclick="pogledajUpit(@upit.Id, '@JavaScriptEncoder.Default.Encode(upit.Ime)', '@JavaScriptEncoder.Default.Encode(upit.Email)', '@JavaScriptEncoder.Default.Encode(upit.Tema)', '@JavaScriptEncoder.Default.Encode(upit.Poruka)', '@upit.DatumSlanja.ToString("dd.MM.yyyy. HH:mm")', @upit.Procitano.ToString().ToLower())">
+                                        <button class="btn-pregled"
+                                                data-id="@upit.Id"
+                                                data-ime="@upit.Ime"
+                                                data-email="@upit.Email"
+                                                data-tema="@upit.Tema"
+                                                data-poruka="@upit.Poruka"
+                                                data-datum="@upit.DatumSlanja.ToString("dd.MM.yyyy. HH:mm")"
+                                                data-procitano="@upit.Procitano.ToString().ToLower()"
+                                                onclick="pogledajUpit(this)">
                                             <i class="fa-regular fa-eye" style="margin-right: 5px;"></i> Detalji
                                         </button>
                                     </td>
@@ -419,17 +447,35 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        async function pogledajUpit(id, ime, email, tema, poruka, datum, isProcitano) {
+        function escapeHtml(text) {
+        if (!text) return '';
+        return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+        }
+
+        async function pogledajUpit(element) {
+        const id = element.getAttribute("data-id");
+        const ime = element.getAttribute("data-ime");
+        const email = element.getAttribute("data-email");
+        const tema = element.getAttribute("data-tema");
+        const poruka = element.getAttribute("data-poruka");
+        const datum = element.getAttribute("data-datum");
+        const isProcitano = element.getAttribute("data-procitano") === "true";
+
         Swal.fire({
-        title: `<p style="font-size:14px; color: var(--text-muted); margin-bottom:5px; font-weight:400;">Tema: ${tema}</p><b style="color: var(--text-dark)">${ime}</b>`,
+        title: `<p style="font-size:14px; color: var(--text-muted); margin-bottom:5px; font-weight:400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Tema: ${escapeHtml(tema)}</p><b style="color: var(--text-dark)">${escapeHtml(ime)}</b>`,
         html: `
         <div style="text-align: left; font-size: 13.5px; line-height: 1.6; color: var(--text-dark); background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border); max-height: 250px; overflow-y: auto; margin-top: 15px;">
         <strong>Poruka:</strong><br>
-        <p style="white-space: pre-wrap; margin-top: 8px; color: #334155;">${poruka}</p>
+        <p style="white-space: pre-wrap; margin-top: 8px; color: #334155; word-break: break-word;">${escapeHtml(poruka)}</p>
         </div>
         <div style="text-align: left; margin-top: 12px; font-size: 12px; color: var(--text-muted);">
-        <i class="fa-regular fa-envelope"></i> Email: <a href="mailto:${email}" style="color: var(--primary); text-decoration:none; font-weight:500;">${email}</a><br>
-        <i class="fa-regular fa-clock"></i> Poslano: ${datum}
+        <i class="fa-regular fa-envelope"></i> Email: <a href="mailto:${escapeHtml(email)}" style="color: var(--primary); text-decoration:none; font-weight:500; word-break: break-all;">${escapeHtml(email)}</a><br>
+        <i class="fa-regular fa-clock"></i> Poslano: ${escapeHtml(datum)}
         </div>
         `,
         showCancelButton: true,
@@ -441,10 +487,13 @@
         }).then(async (result) => {
         if (result.isConfirmed && !isProcitano) {
         try {
+        const tokenInput = document.querySelector('#antiforgery-token-container input[name="__RequestVerificationToken"]');
+        const token = tokenInput ? tokenInput.value : '';
+
         const response = await fetch(`/Home/MarkAsRead/${id}`, {
         method: 'POST',
         headers: {
-        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+        'RequestVerificationToken': token
         }
         });
 
@@ -458,9 +507,10 @@
         bedz.style.color = "#64748b";
         }
         if (red) {
-        red.style.backgroundColor = "transparent";
-        red.setAttribute('onmouseout', "this.style.backgroundColor='transparent'");
+        red.classList.remove("novo-upit");
         }
+
+        element.setAttribute("data-procitano", "true");
 
         Swal.fire({
         icon: 'success',
@@ -469,9 +519,20 @@
         timer: 1500,
         showConfirmButton: false
         });
+        } else {
+        Swal.fire({
+        icon: 'error',
+        title: 'Greška',
+        text: 'Došlo je do problema prilikom ažuriranja statusa na serveru.'
+        });
         }
         } catch (error) {
         console.error("Greška pri ažuriranju statusa:", error);
+        Swal.fire({
+        icon: 'error',
+        title: 'Greška',
+        text: 'Sistemska greška. Provjerite mrežnu konekciju.'
+        });
         }
         }
         });

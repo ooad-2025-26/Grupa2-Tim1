@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Agent - Upravljanje Paketima";
     Layout = null;
+
+    var agentId = Model?.AgentId ?? 0;
 }
 
 <!DOCTYPE html>
@@ -420,13 +422,13 @@
             <a href="/Agent/Index" class="nav-item">
                 <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
             </a>
-            <a href="/Agent/Rezervacije?agentId=@Model.AgentId" class="nav-item">
+            <a href="/Agent/Rezervacije?agentId=@agentId" class="nav-item">
                 <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
             </a>
-            <a href="/Agent/Paketi?agentId=@Model.AgentId" class="nav-item active">
+            <a href="/Agent/Paketi?agentId=@agentId" class="nav-item active">
                 <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
             </a>
-            <a href="/Agent/Izvjestaj?agentId=@Model.AgentId" class="nav-item ">
+            <a href="/Agent/Izvjestaj?agentId=@agentId" class="nav-item">
                 <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
             </a>
         </nav>
@@ -446,7 +448,7 @@
 
             <header class="page-header">
                 <h2>Upravljanje paketima agencije</h2>
-                <a href="/Agent?agentId=@Model.AgentId" class="btn-back">
+                <a href="/Agent?agentId=@agentId" class="btn-back">
                     <i class="fa-solid fa-arrow-left"></i> Nazad na panel
                 </a>
             </header>
@@ -464,10 +466,12 @@
             }
 
             <div class="grid-list">
-                @if (Model.SviPaketi != null && Model.SviPaketi.Any())
+                @if (Model?.SviPaketi != null && Model.SviPaketi.Any())
                 {
                     foreach (var p in Model.SviPaketi)
                     {
+                        if (p == null) continue;
+
                         bool isMine = Model.MojiPaketiIds != null && Model.MojiPaketiIds.Contains(p.Id);
 
                         <div class="item @(isMine ? "preuzeto" : "")">
@@ -495,7 +499,7 @@
                                     <span>•</span>
                                     <span class="price-tag">
                                         <i class="fa-solid fa-tags" style="color: var(--text-muted);"></i>
-                                        @p.CijenaOd BAM
+                                        @p.CijenaOd.ToString("N2") BAM
                                     </span>
                                 </div>
                             </div>
@@ -503,7 +507,7 @@
                             <form action="/Agent/TogglePaket" method="post">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="paketId" value="@p.Id" />
-                                <input type="hidden" name="agentId" value="@Model.AgentId" />
+                                <input type="hidden" name="agentId" value="@agentId" />
 
                                 @if (isMine)
                                 {

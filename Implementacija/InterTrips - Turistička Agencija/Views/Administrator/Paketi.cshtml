@@ -132,6 +132,10 @@
                 font-weight: 600;
                 font-size: 13px;
                 transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
             }
 
                 .logout-btn-nav:hover {
@@ -200,7 +204,8 @@
 
             .row-grid {
                 display: grid;
-                grid-template-columns: 2.2fr 1.2fr 1fr 1fr auto;
+                /* Popravak minmax(0, ...) sprječava dugačke riječi da razvuku kolone grid-a */
+                grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
                 gap: 24px;
                 align-items: center;
                 padding: 20px 24px;
@@ -221,6 +226,9 @@
                 font-weight: 600;
                 color: var(--text-dark);
                 margin-bottom: 4px;
+                /* Popravak za ekstremno duge nazive bez razmaka */
+                word-break: break-word;
+                overflow-wrap: break-word;
             }
 
             .paket-value {
@@ -323,8 +331,8 @@
                 color: #94a3b8 !important;
                 border-color: #e2e8f0 !important;
                 cursor: not-allowed !important;
-                pointer-events: none;
-                opacity: 0.7;
+                pointer-events: none !important;
+                opacity: 0.6;
             }
 
             .actions {
@@ -372,7 +380,7 @@
 
             @@media (max-width: 1200px) {
                 .row-grid {
-                    grid-template-columns: 1.6fr 1fr 1fr auto;
+                    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr) auto;
                 }
 
                 .col-duration {
@@ -385,9 +393,12 @@
                     width: 70px;
                     padding: 24px 8px;
                 }
-
-                    .sidebar .logo-area, .sidebar .nav-item span, .sidebar .logout-btn-nav {
+                    .sidebar .logo-area, .sidebar .nav-item span, .sidebar .logout-btn-nav span {
                         display: none;
+                    }
+
+                    .sidebar .logout-btn-nav {
+                        padding: 10px 0;
                     }
 
                 .main-content {
@@ -399,7 +410,7 @@
 
             @@media (max-width: 768px) {
                 .row-grid {
-                    grid-template-columns: 1fr;
+                    grid-template-columns: minmax(0, 1fr);
                     gap: 16px;
                     padding: 20px;
                 }
@@ -409,6 +420,7 @@
                     margin-top: 8px;
                     border-top: 1px solid var(--border);
                     padding-top: 16px;
+                    flex-wrap: wrap;
                 }
 
                 .btn {
@@ -461,15 +473,15 @@
                 <i class="fa-solid fa-inbox"></i> <span>Kontakt Upiti</span>
             </a>
             <a href="/Administrator/Izvjestaj" class="nav-item">
-                <i class="fa-solid fa-chart-line"></i> Izvještaji
+                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
             </a>
         </nav>
 
         <div class="sidebar-footer">
             <form method="post" action="/Account/Logout">
                 @Html.AntiForgeryToken()
-                <button class="logout-btn-nav" type="submit">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Odjavi se
+                <button class="logout-btn-nav" type="submit" title="Odjavi se">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Odjavi se</span>
                 </button>
             </form>
         </div>
@@ -479,14 +491,14 @@
 
         <header class="dash-header">
             <h1>Upravljanje turističkim paketima</h1>
-            <p>Pregledajte, ažurirajte ili uklanjajte aranžmane sa platforme, te upravljajte pripadajućim etažnim planovima putovanja.</p>
+            <p>Pregledajte, ažurirajte ili uklanjajte aranžmane sa platforme, te upravljajte pripadajućim planovima putovanja.</p>
         </header>
 
         <div class="bar">
             <div>
                 <span class="counter-badge">
                     <i class="fa-solid fa-box-archive" style="margin-right: 8px; color: var(--text-muted);"></i>
-                    Ukupno aranžmana: &nbsp;<strong>@Model.Count</strong>
+                    Ukupno aranžmana: &nbsp;<strong>@(Model?.Count ?? 0)</strong>
                 </span>
             </div>
             <div>
@@ -497,7 +509,7 @@
         </div>
 
         <div class="card">
-            @if (!Model.Any())
+            @if (Model == null || !Model.Any())
             {
                 <div class="muted" style="font-weight:500; text-align:center; padding: 64px;">
                     <i class="fa-regular fa-folder-open" style="font-size: 32px; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
@@ -508,9 +520,22 @@
             {
                 foreach (var p in Model)
                 {
+                    if (p == null) continue;
+
                     int popunjenoMjesta = p.Rezervacije?.Sum(r => r.Putnici?.Count ?? 0) ?? 0;
-                    bool jePopunjeno = popunjenoMjesta >= p.Kapacitet;
+                    bool jePopunjeno = p.Kapacitet > 0 && popunjenoMjesta >= p.Kapacitet;
+
                     double procenatPopunjenosti = p.Kapacitet > 0 ? ((double)popunjenoMjesta / p.Kapacitet) * 100 : 0;
+                    if (procenatPopunjenosti > 100) procenatPopunjenosti = 100;
+                    if (procenatPopunjenosti < 0) procenatPopunjenosti = 0;
+
+                    string nocenjeTekst = "noćenja";
+                    int poslednjaCifra = p.TrajanjeNoci % 10;
+                    int poslednjeDvijeCifre = p.TrajanjeNoci % 100;
+                    if (poslednjaCifra == 1 && poslednjeDvijeCifre != 11)
+                    {
+                        nocenjeTekst = "noćenje";
+                    }
 
                     <div class="row-grid">
                         <div>
@@ -522,24 +547,24 @@
 
                             <div class="capacity-container">
                                 <div class="muted" style="font-size:11px;">
-                                    Popunjeno: <strong>@popunjenoMjesta</strong> / @p.Kapacitet mjesta
+                                    Popunjeno: <strong>@popunjenoMjesta</strong> / @(p.Kapacitet < 0 ? 0 : p.Kapacitet) mjesta
                                 </div>
                                 <div class="progress-bar-bg">
-                                    <div class="progress-bar-fill @(jePopunjeno ? "full" : "")" style="width: @(procenatPopunjenosti > 100 ? 100 : procenatPopunjenosti)%"></div>
+                                    <div class="progress-bar-fill @(jePopunjeno ? "full" : "")" style="width: @procenatPopunjenosti.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%"></div>
                                 </div>
                             </div>
                         </div>
 
                         <div>
                             <div class="muted" style="font-size:11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Cijena od</div>
-                            <div class="paket-value price-highlight">@p.CijenaOd.ToString("0.##") BAM</div>
+                            <div class="paket-value price-highlight">@(p.CijenaOd < 0 ? "0.00" : p.CijenaOd.ToString("N2")) BAM</div>
                         </div>
 
                         <div class="col-duration">
                             <div class="muted" style="font-size:11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Trajanje</div>
                             <div class="paket-value">
                                 <i class="fa-regular fa-moon" style="color: var(--text-muted); font-size:13px;"></i>
-                                @p.TrajanjeNoci @(p.TrajanjeNoci == 1 ? "noćenje" : "noćenja")
+                                @p.TrajanjeNoci @nocenjeTekst
                             </div>
                         </div>
 
@@ -550,7 +575,7 @@
                             }
                             else
                             {
-                                <span class="status-badge">@p.Status</span>
+                                <span class="status-badge">@p.Status.ToString()</span>
                             }
                         </div>
 
@@ -568,7 +593,10 @@
 
                             <form asp-controller="Administrator" asp-action="PaketDelete" asp-route-id="@p.Id" method="post" style="display:inline;">
                                 @Html.AntiForgeryToken()
-                                <button class="btn btn-danger" type="submit" onclick="return confirm('Da li ste sigurni da želite obrisati paket @p.Naziv?')">
+                                <button class="btn btn-danger @(popunjenoMjesta > 0 ? "btn-disabled" : "")"
+                                        type="submit"
+                                    @(popunjenoMjesta > 0 ? "disabled" : "")
+                                        onclick="return confirm('Da li ste sigurni da želite obrisati paket @@JavaScriptEncoder.Default.Encode(p.Naziv)?')">
                                     <i class="fa-regular fa-trash-can"></i> Obriši
                                 </button>
                             </form>
@@ -586,7 +614,7 @@
                     badge.classList.add('status-active');
                 } else if (txt === 'neaktivan' || txt === 'nije aktivno' || txt === 'skriveno') {
                     badge.classList.add('status-inactive');
-                } else if (txt === 'nacrt' || txt === 'draft') {
+                } else if (txt === 'nacrt' || txt === 'draft' || txt === '') {
                     badge.classList.add('status-draft');
                 } else if (txt === 'popunjeno') {
                     badge.classList.add('status-full');

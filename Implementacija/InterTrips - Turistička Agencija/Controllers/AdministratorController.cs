@@ -246,7 +246,7 @@ public class AdministratorController : Controller
         {
             try
             {
-               _db.Update(paket);
+                _db.Update(paket);
                 await _db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -349,7 +349,7 @@ public class AdministratorController : Controller
         {
             PlanPutovanjaTemplateId = planId,
             RedniBroj = redniBroj,
-            Naziv = Naziv, 
+            Naziv = Naziv,
             Opis = opis,
             Vrijeme = vrijeme
         });
@@ -357,6 +357,7 @@ public class AdministratorController : Controller
         await _db.SaveChangesAsync();
         return RedirectToAction(nameof(PlanTemplate), new { paketId = plan.PaketId });
     }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> PlanTemplateObrisiStavku(int id)
@@ -385,7 +386,7 @@ public class AdministratorController : Controller
            .Include(r => r.Putnici)
            .Include(r => r.Placanje)
            .Include(r => r.Paket)
-        .ThenInclude(p => p.Hotel) 
+        .ThenInclude(p => p.Hotel)
     .Include(r => r.Paket)
         .ThenInclude(p => p.Let)
            .AsQueryable();
@@ -531,6 +532,22 @@ public class AdministratorController : Controller
         return RedirectToAction(nameof(Hoteli));
     }
 
+    [HttpGet]
+    public async Task<IActionResult> HotelDetails(int id)
+    {
+        var hotel = await _db.Hoteli
+            .Include(h => h.Destinacija)
+            .FirstOrDefaultAsync(h => h.Id == id);
+
+        if (hotel == null)
+        {
+            TempData["Error"] = "Traženi hotel ne postoji u sistemu.";
+            return RedirectToAction(nameof(Hoteli));
+        }
+
+        return View("~/Views/Administrator/HotelDetails.cshtml", hotel);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> HotelDelete(int id)
@@ -565,7 +582,7 @@ public class AdministratorController : Controller
             var hoteli = await _db.Hoteli.ToListAsync();
             foreach (var hotel in hoteli)
             {
-                 hotel.DostupnoSoba = 400;
+                hotel.DostupnoSoba = 400;
             }
 
             var paketi = await _db.Paketi.ToListAsync();
@@ -607,7 +624,7 @@ public class AdministratorController : Controller
 
         var topDestinacije = paketi.Select(p => {
             double brojRezervacija = p.Rezervacije?.Count ?? 0;
-            double pregledi = p.BrojPregleda > 0 ? p.BrojPregleda : (brojRezervacija + 10); 
+            double pregledi = p.BrojPregleda > 0 ? p.BrojPregleda : (brojRezervacija + 10);
             double stopaKonverzije = (brojRezervacija / pregledi) * 100;
 
             double prosjecnaOcjena = 4.5;
@@ -623,7 +640,7 @@ public class AdministratorController : Controller
             };
         })
         .OrderByDescending(d => d.Score)
-        .Take(10) 
+        .Take(10)
         .ToList();
 
         ViewBag.TopDestinacije = topDestinacije;
@@ -638,7 +655,7 @@ public class AdministratorController : Controller
         if (let == null)
         {
             TempData["Error"] = "Traženi let ne postoji.";
-            return RedirectToAction("Letovi"); 
+            return RedirectToAction("Letovi");
         }
 
         ViewBag.Destinacije = await _db.Destinacije.ToListAsync();
@@ -655,13 +672,14 @@ public class AdministratorController : Controller
             _db.Letovi.Update(model);
             await _db.SaveChangesAsync();
             TempData["Success"] = "Let je uspješno izmijenjen.";
-            return RedirectToAction("Letovi"); 
+            return RedirectToAction("Letovi");
         }
 
         ViewBag.Destinacije = await _db.Destinacije.ToListAsync();
         TempData["Error"] = "Molimo ispravite greške u formi.";
         return View(model);
     }
+
     [HttpGet]
     public async Task<IActionResult> Upiti()
     {

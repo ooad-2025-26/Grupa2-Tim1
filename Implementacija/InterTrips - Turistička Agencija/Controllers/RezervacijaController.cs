@@ -248,16 +248,24 @@ namespace InterTrips___Turistička_Agencija.Controllers
                 paket.Kapacitet -= brojPutnika;
                 _db.Entry(paket).State = EntityState.Modified;
 
-                if (paket.Hotel != null)
+                if (paket.HotelId.HasValue)
                 {
-                    paket.Hotel.DostupnoSoba -= brojPutnika;
-                    _db.Entry(paket.Hotel).State = EntityState.Modified;
+                    var hotel = await _db.Hoteli.FindAsync(paket.HotelId.Value);
+                    if (hotel != null)
+                    {
+                        hotel.DostupnoSoba -= brojPutnika;
+                        _db.Entry(hotel).State = EntityState.Modified;
+                    }
                 }
 
-                if ((paket.DostupniPrevoz == VrstaPrevoza.SamoAvion || paket.DostupniPrevoz == VrstaPrevoza.Oboje) && paket.Let != null)
+                if ((paket.DostupniPrevoz == VrstaPrevoza.SamoAvion || paket.DostupniPrevoz == VrstaPrevoza.Oboje) && paket.LetId.HasValue)
                 {
-                    paket.Let.SlobodnaSjedista -= brojPutnika;
-                    _db.Entry(paket.Let).State = EntityState.Modified;
+                    var let = await _db.Letovi.FindAsync(paket.LetId.Value);
+                    if (let != null)
+                    {
+                        let.SlobodnaSjedista -= brojPutnika;
+                        _db.Entry(let).State = EntityState.Modified;
+                    }
                 }
 
                 if (kupon != null)
@@ -268,6 +276,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
 
                 await _db.SaveChangesAsync();
                 await transaction.CommitAsync();
+           
 
                 PozadinskiProcesiService.DodajRezervacijuURed(novaRezervacija.Id);
 
@@ -473,16 +482,13 @@ namespace InterTrips___Turistička_Agencija.Controllers
                             }
                         }
 
-                        if (paket.DostupniPrevoz == VrstaPrevoza.SamoAvion || paket.DostupniPrevoz == VrstaPrevoza.Oboje)
+                        if (paket.LetId.HasValue)
                         {
-                            if (paket.LetId.HasValue)
+                            var let = await _db.Letovi.FindAsync(paket.LetId.Value);
+                            if (let != null)
                             {
-                                var let = await _db.Letovi.FindAsync(paket.LetId.Value);
-                                if (let != null)
-                                {
-                                    let.SlobodnaSjedista += brojPutnika;
-                                    _db.Entry(let).State = EntityState.Modified;
-                                }
+                                let.SlobodnaSjedista += brojPutnika;
+                                _db.Entry(let).State = EntityState.Modified;
                             }
                         }
                     }
@@ -501,7 +507,6 @@ namespace InterTrips___Turistička_Agencija.Controllers
                     return false;
                 }
             });
-
             if (!ishodTransakcije)
             {
                 return BadRequest(new { greska = "Greška prilikom otkazivanja rezervacije ili rezervacija ne postoji." });

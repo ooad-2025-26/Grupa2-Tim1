@@ -497,10 +497,11 @@
     @Html.AntiForgeryToken()
 
     <script>
-        const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        const csrfTokenEl = document.querySelector('input[name="__RequestVerificationToken"]');
+        const csrfToken = csrfTokenEl ? csrfTokenEl.value : '';
 
         const emailRegex = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        const nameRegex = /^[a-zA-ZčćžšđČĆŽŠĐ]+(?:\s[a-zA-ZčćžšđČĆŽŠĐ]+)+$/; // Zahtijeva Ime i Prezime (samo slova i jedan razmak)
+        const nameRegex = /^[a-zA-ZčćžšđČĆŽŠĐ]+(?:\s+[a-zA-ZčćžšđČĆŽŠĐ]+)+$/;
 
         const tabs = {
         0: document.getElementById('login-tab'),
@@ -525,46 +526,73 @@
 
         function showError(msg) {
         const toast = document.getElementById('errorToast');
-        document.getElementById('errorToastText').textContent = msg;
+        const toastText = document.getElementById('errorToastText');
+        if (!toast || !toastText) {
+        alert(msg); 
+        return;
+        }
+        toastText.textContent = msg;
         toast.classList.add('show');
-        setTimeout(() => { toast.classList.remove('show'); }, 4000);
+
+        if (toast.timeoutId) clearTimeout(toast.timeoutId);
+
+        toast.timeoutId = setTimeout(() => { toast.classList.remove('show'); }, 4000);
         }
 
         function switchTab(index) {
+        if (!forms[index] || !tabs[index]) return; 
+
         Object.keys(forms).forEach(key => {
-        forms[key].classList.remove('active');
-        tabs[key].classList.remove('active');
+        if (forms[key]) forms[key].classList.remove('active');
+        if (tabs[key]) tabs[key].classList.remove('active');
         });
+
         forms[index].classList.add('active');
         tabs[index].classList.add('active');
-        document.title = titles[index];
+        document.title = titles[index] || 'InterTrips';
         }
 
-        tabs[0].addEventListener('click', () => switchTab(0));
-        tabs[1].addEventListener('click', () => switchTab(1));
-        tabs[2].addEventListener('click', () => switchTab(2));
-        tabs[3].addEventListener('click', () => switchTab(3));
+        if (tabs[0]) tabs[0].addEventListener('click', () => switchTab(0));
+        if (tabs[1]) tabs[1].addEventListener('click', () => switchTab(1));
+        if (tabs[2]) tabs[2].addEventListener('click', () => switchTab(2));
+        if (tabs[3]) tabs[3].addEventListener('click', () => switchTab(3));
 
         document.getElementById('go-register')?.addEventListener('click', e => { e.preventDefault(); switchTab(3); });
         document.getElementById('go-login')?.addEventListener('click', e => { e.preventDefault(); switchTab(0); });
         document.getElementById('back-to-user-from-agent')?.addEventListener('click', e => { e.preventDefault(); switchTab(0); });
         document.getElementById('back-to-user-from-admin')?.addEventListener('click', e => { e.preventDefault(); switchTab(0); });
 
-        document.getElementById('registerName').addEventListener('input', function (e) {
-        this.value = this.value.replace(/[^a-zA-ZčćžšđČĆŽŠĐ\s]/g, '');
+        document.getElementById('registerName')?.addEventListener('input', function (e) {
+        let val = this.value.replace(/[^a-zA-ZčćžšđČĆŽŠĐ\s]/g, '');
+        val = val.replace(/\s+/g, ' '); 
+        if (val.startsWith(' ')) val = val.trimStart();
+        this.value = val;
         });
 
         function handleSuccess(redirectUrl, message) {
-        if (message) document.getElementById('successText').textContent = message;
-        document.getElementById('authCard').classList.add('hidden');
-        document.getElementById('successBox').classList.add('active');
+        const successText = document.getElementById('successText');
+        const authCard = document.getElementById('authCard');
+        const successBox = document.getElementById('successBox');
+
+        if (successText && message) successText.textContent = message;
+        if (authCard) authCard.classList.add('hidden');
+        if (successBox) successBox.classList.add('active');
+
         setTimeout(() => { window.location.href = redirectUrl || '/'; }, 1000);
         }
 
         function setupEnterKey(formId, btnId) {
         const container = document.getElementById(formId);
+        const btn = document.getElementById(btnId);
+        if (!container || !btn) return; 
+
         container.querySelectorAll('input').forEach(input => {
-        input.addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById(btnId).click(); });
+        input.addEventListener('keypress', e => {
+        if (e.key === 'Enter') {
+        e.preventDefault(); 
+        btn.click();
+        }
+        });
         });
         }
         setupEnterKey('login-form', 'loginBtn');
@@ -573,14 +601,16 @@
         setupEnterKey('register-form', 'registerBtn');
 
         // LOGIN: Korisnik (Uloga = 0)
-        document.getElementById('loginBtn').addEventListener('click', async function () {
-        const email = document.getElementById('loginEmail').value.trim();
-        const password = document.getElementById('loginPassword').value.trim();
+        document.getElementById('loginBtn')?.addEventListener('click', async function () {
+        const btn = this;
+        const email = document.getElementById('loginEmail')?.value.trim() || '';
+        const password = document.getElementById('loginPassword')?.value.trim() || '';
 
         if (!email || !password) { showError('Popunite sva polja.'); return; }
         if (!emailRegex.test(email)) { showError('Unesite validnu e-mail adresu.'); return; }
 
         try {
+        btn.disabled = true; 
         const res = await fetch('/Account/Login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': csrfToken },
@@ -591,18 +621,24 @@
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.success) { handleSuccess(data.redirectUrl, "Dobrodošli nazad!"); return; }
         showError(data.message || 'Prijava nije uspjela. Provjerite podatke.');
-        } catch { showError('Greška na mreži. Pokušajte ponovo.'); }
+        } catch {
+        showError('Greška na mreži. Pokušajte ponovo.');
+        } finally {
+        btn.disabled = false; 
+        }
         });
 
         // LOGIN: Agent (Uloga = 1)
-        document.getElementById('agentBtn').addEventListener('click', async function () {
-        const email = document.getElementById('agentEmail').value.trim();
-        const password = document.getElementById('agentPassword').value.trim();
+        document.getElementById('agentBtn')?.addEventListener('click', async function () {
+        const btn = this;
+        const email = document.getElementById('agentEmail')?.value.trim() || '';
+        const password = document.getElementById('agentPassword')?.value.trim() || '';
 
         if (!email || !password) { showError('Popunite sva polja.'); return; }
         if (!emailRegex.test(email)) { showError('Unesite validnu e-mail adresu.'); return; }
 
         try {
+        btn.disabled = true;
         const res = await fetch('/Account/Login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': csrfToken },
@@ -613,17 +649,23 @@
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.success) { handleSuccess(data.redirectUrl, "Uspješna prijava agenta!"); return; }
         showError(data.message || 'Pogrešni podaci za pristup agentskom panelu.');
-        } catch { showError('Greška na mreži.'); }
+        } catch {
+        showError('Greška na mreži.');
+        } finally {
+        btn.disabled = false;
+        }
         });
 
         // LOGIN: Admin (Uloga = 2)
-        document.getElementById('adminBtn').addEventListener('click', async function () {
-        const email = document.getElementById('adminUsername').value.trim();
-        const password = document.getElementById('adminPassword').value.trim();
+        document.getElementById('adminBtn')?.addEventListener('click', async function () {
+        const btn = this;
+        const email = document.getElementById('adminUsername')?.value.trim() || '';
+        const password = document.getElementById('adminPassword')?.value.trim() || '';
 
         if (!email || !password) { showError('Popunite sva polja.'); return; }
 
         try {
+        btn.disabled = true;
         const res = await fetch('/Account/Login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': csrfToken },
@@ -634,15 +676,22 @@
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.success) { handleSuccess(data.redirectUrl, "Administrator prepoznat. Pristup odobren."); return; }
         showError(data.message || 'Pogrešan administratorski login.');
-        } catch { showError('Mrežna greška.'); }
+        } catch {
+        showError('Mrežna greška.');
+        } finally {
+        btn.disabled = false;
+        }
         });
 
         // REGISTRACIJA
-        document.getElementById('registerBtn').addEventListener('click', async function () {
-        const name = document.getElementById('registerName').value.trim();
-        const email = document.getElementById('registerEmail').value.trim();
-        const password = document.getElementById('registerPassword').value.trim();
-        const confirm = document.getElementById('registerConfirm').value.trim();
+        document.getElementById('registerBtn')?.addEventListener('click', async function () {
+        const btn = this;
+        let name = document.getElementById('registerName')?.value.trim() || '';
+        name = name.replace(/\s+/g, ' ');
+
+        const email = document.getElementById('registerEmail')?.value.trim() || '';
+        const password = document.getElementById('registerPassword')?.value.trim() || '';
+        const confirm = document.getElementById('registerConfirm')?.value.trim() || '';
 
         if (!name || !email || !password || !confirm) { showError('Sva polja su obavezna.'); return; }
         if (!nameRegex.test(name)) { showError('Unesite puno ime i prezime (samo slova).'); return; }
@@ -655,11 +704,12 @@
         return;
         }
 
-        const nameParts = name.split(/\s+/);
+        const nameParts = name.split(' ');
         const ime = nameParts[0];
         const prezime = nameParts.slice(1).join(' ');
 
         try {
+        btn.disabled = true;
         const res = await fetch('/Account/Register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': csrfToken },
@@ -670,17 +720,22 @@
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.success) { handleSuccess(data.redirectUrl, "Račun uspješno kreiran!"); return; }
         showError(data.message || 'Registracija nije uspjela.');
-        } catch { showError('Sistemska greška pri registraciji.'); }
+        } catch {
+        showError('Sistemska greška pri registraciji.');
+        } finally {
+        btn.disabled = false;
+        }
         });
 
         function togglePassword(inputId, iconEl) {
         const input = document.getElementById(inputId);
+        if (!input) return;
         if (input.type === 'password') {
         input.type = 'text';
-        iconEl.textContent = '◔';
+        if (iconEl) iconEl.textContent = '◔';
         } else {
         input.type = 'password';
-        iconEl.textContent = '◉';
+        if (iconEl) iconEl.textContent = '◉';
         }
         }
     </script>

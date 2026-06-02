@@ -448,48 +448,42 @@
         <div class="content-grid">
             <div class="card">
                 <h2>Novi hotel</h2>
-                <form asp-controller="Administrator" asp-action="HotelCreate" method="post">
+                <form id="hotelForm" asp-controller="Administrator" asp-action="HotelCreate" method="post">
                     @Html.AntiForgeryToken()
 
                     <div class="form-group">
                         <label class="field-label">NAZIV HOTELA</label>
-                        <input class="input" asp-for="NoviHotel.Naziv" type="text" placeholder="Npr. Hotel Amfora" required />
-                        <span asp-validation-for="NoviHotel.Naziv"></span>
+                        <input class="input" id="hotelNaziv" asp-for="NoviHotel.Naziv" type="text" placeholder="Npr. Hotel Amfora" required maxlength="150" />
+                        <span asp-validation-for="NoviHotel.Naziv" id="errorNaziv" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">LOKACIJA / ADRESA</label>
-                        <input class="input" asp-for="NoviHotel.Lokacija" type="text" placeholder="Npr. Šetalište bb, Makarska" required />
-                        <span asp-validation-for="NoviHotel.Lokacija"></span>
+                        <input class="input" id="hotelLokacija" asp-for="NoviHotel.Lokacija" type="text" placeholder="Npr. Šetalište bb, Makarska" required maxlength="250" />
+                        <span asp-validation-for="NoviHotel.Lokacija" id="errorLokacija" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">BROJ ZVJEZDICA</label>
-                        <input class="input" asp-for="NoviHotel.BrojZvjezdica" type="number" min="1" max="5" placeholder="1 - 5" required />
-                        <span asp-validation-for="NoviHotel.BrojZvjezdica"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="field-label">UKUPAN BROJ SOBA</label>
-                        <input class="input" asp-for="NoviHotel.DostupnoSoba" type="number" min="1" placeholder="Npr. 50" required />
-                        <span asp-validation-for="NoviHotel.DostupnoSoba"></span>
+                        <input class="input" id="hotelZvjezdice" asp-for="NoviHotel.BrojZvjezdica" type="number" min="0" max="5" placeholder="0 - 5 (0 za B&B/Hostele)" required />
+                        <span asp-validation-for="NoviHotel.BrojZvjezdica" id="errorZvjezdice" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">TRENUTNO DOSTUPNO SOBA</label>
-                        <input class="input" asp-for="NoviHotel.DostupnoSoba" type="number" min="0" placeholder="Npr. 45" required />
-                        <span asp-validation-for="NoviHotel.DostupnoSoba"></span>
+                        <input class="input" id="hotelDostupnoSoba" asp-for="NoviHotel.DostupnoSoba" type="number" min="0" placeholder="Npr. 45" required />
+                        <span asp-validation-for="NoviHotel.DostupnoSoba" id="errorDostupnoSoba" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">KONTAKT INFORMACIJE</label>
-                        <input class="input" asp-for="NoviHotel.KontaktInformacije" type="text" placeholder="Npr. +387 33... / info@hotel.com" />
+                        <input class="input" asp-for="NoviHotel.KontaktInformacije" type="text" placeholder="Npr. +387 33... / info@hotel.com" maxlength="200" />
                         <span asp-validation-for="NoviHotel.KontaktInformacije"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">DOSTUPNE USLUGE</label>
-                        <input class="input" asp-for="NoviHotel.DostupneUsluge" type="text" placeholder="Npr. WiFi, Pool, Parking, Breakfast" />
+                        <input class="input" asp-for="NoviHotel.DostupneUsluge" type="text" placeholder="Npr. WiFi, Pool, Parking, Breakfast" maxlength="500" />
                         <span asp-validation-for="NoviHotel.DostupneUsluge"></span>
                     </div>
 
@@ -501,7 +495,7 @@
                         <span asp-validation-for="NoviHotel.DestinacijaId"></span>
                     </div>
 
-                    <button class="main-btn" type="submit">Dodaj hotel</button>
+                    <button class="main-btn" type="submit" id="submitBtn">Dodaj hotel</button>
                 </form>
             </div>
 
@@ -524,9 +518,13 @@
                                     </small>
                                 </div>
                                 <div class="actions-group">
-                                    <form asp-controller="Administrator" asp-action="HotelDelete" asp-route-id="@h.Id" method="post" onsubmit="return confirm('Da li ste sigurni da želite obrisati ovaj hotel?');">
+                                    <a asp-controller="Administrator" asp-action="HotelDetails" asp-route-id="@h.Id" class="btn-action" style="color: var(--primary); border-color: rgba(14, 165, 233, 0.2); text-decoration: none;">
+                                        <i class="fa-solid fa-eye"></i> Detalji
+                                    </a>
+
+                                    <form asp-controller="Administrator" asp-action="HotelDelete" asp-route-id="@h.Id" method="post" onsubmit="return confirm('PAŽNJA: Brisanjem hotela \u201e@h.Naziv\u201c obrisat ćete i sve vezane pakete iz kolekcije! Da li ste sigurni?');" style="display: inline;">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn-action" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2);">
+                                        <button type="submit" class="btn-action" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2); background: none; cursor: pointer;">
                                             <i class="fa-solid fa-trash"></i> Obriši
                                         </button>
                                     </form>
@@ -544,5 +542,63 @@
             </div>
         </div>
     </main>
+
+    <script>
+            document.getElementById('hotelZvjezdice')?.addEventListener('input', function () {
+                let val = parseInt(this.value);
+                if (val > 5) this.value = 5;
+                if (val < 0 && this.value !== "") this.value = 0;
+            });
+
+            document.getElementById('hotelDostupnoSoba')?.addEventListener('input', function () {
+                if (parseInt(this.value) < 0) this.value = 0;
+            });
+
+            document.getElementById('hotelForm').addEventListener('submit', function (e) {
+                const nazivInput = document.getElementById('hotelNaziv');
+                const lokacijaInput = document.getElementById('hotelLokacija');
+                const dostupnoInput = document.getElementById('hotelDostupnoSoba');
+                const submitBtn = document.getElementById('submitBtn');
+
+                const errorNaziv = document.getElementById('errorNaziv');
+                const errorLokacija = document.getElementById('errorLokacija');
+                const errorDostupno = document.getElementById('errorDostupnoSoba');
+
+                let isValid = true;
+
+                if (errorNaziv) errorNaziv.textContent = "";
+                if (errorLokacija) errorLokacija.textContent = "";
+                if (errorDostupno) errorDostupno.textContent = "";
+
+                if (nazivInput && nazivInput.value.trim() === "") {
+                    errorNaziv.textContent = "Naziv hotela ne može sadržavati samo razmake.";
+                    isValid = false;
+                }
+                if (lokacijaInput && lokacijaInput.value.trim() === "") {
+                    errorLokacija.textContent = "Lokacija/adresa ne može sadržavati samo razmake.";
+                    isValid = false;
+                }
+
+                if (dostupnoInput) {
+                    const slobodneSoba = parseInt(dostupnoInput.value);
+                    if (isNaN(slobodneSoba) || slobodneSoba < 0) {
+                        errorDostupno.textContent = "Broj slobodnih soba mora biti pozitivan broj ili nula.";
+                        isValid = false;
+                    }
+                }
+
+                if (!isValid) {
+                    e.preventDefault(); 
+                } else {
+                    if (nazivInput) nazivInput.value = nazivInput.value.trim();
+                    if (lokacijaInput) lokacijaInput.value = lokacijaInput.value.trim();
+
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerText = "Dodavanje u toku...";
+                    }
+                }
+            });
+    </script>
 </body>
 </html>

@@ -1,0 +1,476 @@
+﻿@model InterTrips___Turistička_Agencija.Models.Hotel
+@{
+    ViewData["Title"] = "InterTrips - Detalji Hotela";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
+    <style>
+            :root {
+                --bg-main: #f8fafc;
+                --sidebar-bg: #0f172a;
+                --sidebar-text: #94a3b8;
+                --sidebar-active: #38bdf8;
+                --text-dark: #0f172a;
+                --text-muted: #64748b;
+                --primary: #0ea5e9;
+                --primary-hover: #0284c7;
+                --border: #e2e8f0;
+                --card-bg: #ffffff;
+                --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
+                --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+                --success: #10b981;
+                --danger: #ef4444;
+                --warning: #f59e0b;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: var(--bg-main);
+                color: var(--text-dark);
+                display: flex;
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                width: 260px;
+                background-color: var(--sidebar-bg);
+                color: #fff;
+                padding: 24px 16px;
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                height: 100vh;
+                left: 0;
+                top: 0;
+                z-index: 100;
+            }
+
+                .sidebar .logo-area {
+                    padding: 8px 12px 32px;
+                    border-bottom: 1px solid #1e293b;
+                    margin-bottom: 24px;
+                }
+
+            .sidebar-logo-text {
+                font-size: 20px;
+                font-weight: 700;
+                color: #ffffff;
+                text-decoration: none;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                display: block;
+            }
+
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                flex-grow: 1;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                color: var(--sidebar-text);
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 500;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+            }
+
+                .nav-item i {
+                    width: 20px;
+                    margin-right: 12px;
+                    font-size: 16px;
+                    text-align: center;
+                }
+
+                .nav-item:hover {
+                    background: #1e293b;
+                    color: #fff;
+                }
+
+                .nav-item.active {
+                    background: rgba(14, 165, 233, 0.15);
+                    color: var(--sidebar-active);
+                    font-weight: 600;
+                }
+
+            .sidebar-footer {
+                padding-top: 16px;
+                border-top: 1px solid #1e293b;
+            }
+
+            .logout-btn-nav {
+                width: 100%;
+                background: transparent;
+                border: 1px solid rgba(239, 68, 68, 0.25);
+                color: #ef4444;
+                padding: 10px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 13px;
+                transition: all 0.2s;
+            }
+
+                .logout-btn-nav:hover {
+                    background: rgba(239, 68, 68, 0.1);
+                }
+
+            .main-content {
+                margin-left: 260px;
+                flex-grow: 1;
+                padding: 40px 48px;
+                max-width: 1300px;
+            }
+
+            .dash-header {
+                margin-bottom: 32px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+                .dash-header h1 {
+                    font-size: 26px;
+                    font-weight: 700;
+                    color: var(--text-dark);
+                    letter-spacing: -0.5px;
+                }
+
+                .dash-header p {
+                    color: var(--text-muted);
+                    font-size: 14px;
+                    margin-top: 4px;
+                }
+
+            .header-actions {
+                display: flex;
+                gap: 12px;
+            }
+
+            .btn-top-nav {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 16px;
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                color: var(--text-dark);
+                font-size: 13px;
+                font-weight: 600;
+                text-decoration: none;
+                box-shadow: var(--shadow);
+                transition: background 0.2s;
+            }
+
+                .btn-top-nav:hover {
+                    background: #f8fafc;
+                }
+
+                .btn-top-nav.btn-back {
+                    background: #f1f5f9;
+                }
+
+                    .btn-top-nav.btn-back:hover {
+                        background: #e2e8f0;
+                    }
+
+            .details-grid {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 28px;
+                align-items: start;
+            }
+
+            .card {
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                box-shadow: var(--shadow);
+                padding: 28px;
+                margin-bottom: 24px;
+            }
+
+                .card h2 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: var(--text-dark);
+                    margin-bottom: 20px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    border-bottom: 1px solid var(--border);
+                    padding-bottom: 12px;
+                }
+
+            .info-group {
+                margin-bottom: 20px;
+            }
+
+                .info-group:last-child {
+                    margin-bottom: 0;
+                }
+
+            .info-label {
+                font-size: 11px;
+                font-weight: 700;
+                text-transform: uppercase;
+                color: var(--text-muted);
+                letter-spacing: 0.5px;
+                margin-bottom: 6px;
+            }
+
+            .info-value {
+                font-size: 15px;
+                color: var(--text-dark);
+                font-weight: 500;
+            }
+
+            .stars {
+                color: var(--warning);
+                font-size: 16px;
+            }
+
+            .services-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 6px;
+            }
+
+            .service-badge {
+                background: #f1f5f9;
+                color: #334155;
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 500;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .status-box {
+                text-align: center;
+                padding: 20px;
+                background: #f0f9ff;
+                border: 1px solid #bae6fd;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }
+
+            .status-number {
+                font-size: 36px;
+                font-weight: 700;
+                color: #0369a1;
+            }
+
+            .status-label {
+                font-size: 13px;
+                color: #0c4a6e;
+                font-weight: 500;
+                margin-top: 4px;
+            }
+
+            @@media (max-width: 1024px) {
+                .sidebar {
+                    width: 70px;
+                    padding: 24px 8px;
+                }
+
+                    .sidebar .logo-area, .sidebar .nav-item span, .sidebar .logout-btn-nav {
+                        display: none;
+                    }
+
+                .main-content {
+                    margin-left: 70px;
+                    padding: 32px 24px;
+                }
+
+                .details-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo-area">
+            <a href="/" class="sidebar-logo-text">InterTrips</a>
+        </div>
+
+        <nav class="nav-links">
+            <a href="/Administrator/Index" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
+            </a>
+            <a href="/Administrator/Destinacije" class="nav-item">
+                <i class="fa-solid fa-map-location-dot"></i> <span>Destinacije</span>
+            </a>
+            <a href="/Administrator/Letovi" class="nav-item">
+                <i class="fa-solid fa-plane"></i> <span>Letovi</span>
+            </a>
+            <a href="/Administrator/Hoteli" class="nav-item active">
+                <i class="fa-solid fa-hotel"></i> <span>Hoteli</span>
+            </a>
+            <a href="/Administrator/Paketi" class="nav-item">
+                <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
+            </a>
+            <a href="/Administrator/Korisnici" class="nav-item">
+                <i class="fa-solid fa-users"></i> <span>Korisnici</span>
+            </a>
+            <a href="/Administrator/Rezervacije" class="nav-item">
+                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            </a>
+            <a href="/Administrator/Upiti" class="nav-item">
+                <i class="fa-solid fa-inbox"></i> <span>Kontakt Upiti</span>
+            </a>
+            <a href="/Administrator/Izvjestaj" class="nav-item">
+                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <form method="post" action="/Account/Logout">
+                @Html.AntiForgeryToken()
+                <button class="logout-btn-nav" type="submit">Odjavi se</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="dash-header">
+            <div>
+                <h1>@Model.Naziv</h1>
+                <p>Detaljan pregled informacija i statusa hotelskog smještaja.</p>
+            </div>
+            <div class="header-actions">
+                <a href="/Administrator/Hoteli" class="btn-top-nav btn-back">
+                    <i class="fa-solid fa-arrow-left"></i> Nazad na listu
+                </a>
+            </div>
+        </header>
+
+        <div class="details-grid">
+            <div class="card">
+                <h2><i class="fa-solid fa-circle-info" style="color: var(--primary);"></i> Specifikacije Hotela</h2>
+
+                <div class="info-group">
+                    <div class="info-label">Naziv objekta</div>
+                    <div class="info-value" style="font-size: 18px; font-weight: 600;">@Model.Naziv</div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Kategorizacija</div>
+                    <div class="info-value">
+                        <div class="stars">
+                            @for (int i = 0; i < Model.BrojZvjezdica; i++)
+                            {
+                                <i class="fa-solid fa-star"></i>
+                            }
+                            @if (Model.BrojZvjezdica == 0)
+                            {
+                                <span style="color: var(--text-muted); font-size: 13px; font-weight: 400;">B&B / Hostel (0*)</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Lokacija i Adresa</div>
+                    <div class="info-value">
+                        <i class="fa-solid fa-location-dot" style="color: var(--text-muted); margin-right: 4px;"></i>
+                        @Model.Lokacija
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Destinacija u sistemu</div>
+                    <div class="info-value">
+                        @(Model.Destinacija != null ? $"{Model.Destinacija.Naziv}, {Model.Destinacija.Drzava}" : "Neraspoređeno")
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Kontakt podaci</div>
+                    <div class="info-value">
+                        @if (!string.IsNullOrEmpty(Model.KontaktInformacije))
+                        {
+                            <i class="fa-solid fa-phone" style="color: var(--text-muted); margin-right: 4px;"></i> 
+                            @Model.KontaktInformacije
+                        }
+                        else
+                        {
+                            <span style="color: var(--text-muted); font-style: italic;">Nema unesenih kontakt podataka</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Uključene usluge / Pogodnosti</div>
+                    <div class="services-tags">
+                        @if (!string.IsNullOrEmpty(Model.DostupneUsluge))
+                        {
+                            var usluge = Model.DostupneUsluge.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                            foreach (var u in usluge)
+                            {
+                                <span class="service-badge">
+                                    <i class="fa-solid fa-check" style="color: var(--success);"></i> @u.Trim()
+                                </span>
+                            }
+                        }
+                        else
+                        {
+                            <span style="color: var(--text-muted); font-style: italic; font-size: 14px;">Nema specificiranih usluga</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <h2><i class="fa-solid fa-bed" style="color: var(--primary);"></i> Stanje soba</h2>
+                    <div class="status-box">
+                        <div class="status-number">@Model.DostupnoSoba</div>
+                        <div class="status-label">Trenutno dostupno soba</div>
+                    </div>
+                </div>
+
+                <div class="card" style="border-color: rgba(239, 68, 68, 0.15);">
+                    <h2><i class="fa-solid fa-gears" style="color: var(--danger);"></i> Kontrola</h2>
+                    <form asp-controller="Administrator" asp-action="HotelDelete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('PAŽNJA: Brisanjem hotela \u201e@Model.Naziv\u201c obrisat ćete i sve vezane pakete iz kolekcije! Da li ste sigurni?');">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="logout-btn-nav" style="border-color: var(--danger); background: none; color: var(--danger); width: 100%; padding: 12px; font-size: 14px;">
+                            <i class="fa-solid fa-trash"></i> Trajno obriši hotel
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

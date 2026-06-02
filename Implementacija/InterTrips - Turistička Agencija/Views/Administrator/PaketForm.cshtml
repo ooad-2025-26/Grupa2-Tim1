@@ -417,7 +417,7 @@
                 <p>Postavljanje operativnih parametara, cijena i kapaciteta za turistički aranžman.</p>
             </div>
             <div>
-                <a href="/Administrator/Paketi" class="btn-secondary-top">
+                <a href="/Administrator/Paketi" class="btn-secondary-top" style="text-decoration:none;">
                     <i class="fa-solid fa-arrow-left" style="margin-right: 6px;"></i> Nazad na listu
                 </a>
             </div>
@@ -429,17 +429,21 @@
 
                 <input type="hidden" asp-for="Id" value="@renderModel.Id" />
 
+                <input type="hidden" id="ZauzetaMjesta" value="@(renderModel != null && renderModel.Rezervacije != null ? renderModel.Rezervacije.Count : 0)" />
+
+                <input type="hidden" id="IsEditMode" value="@(isEdit ? "true" : "false")" />
+
                 @if (!ViewData.ModelState.IsValid)
                 {
-                    <div asp-validation-summary="ModelOnly" class="validation-summary-custom"></div>
+                    <div asp-validation-summary="ModelOnly" class="validation-summary-custom" style="color: var(--danger); font-size: 13px; font-weight: 600; margin-bottom: 20px;"></div>
                 }
 
                 <div class="form-grid">
 
                     <div class="form-group-custom full-width">
                         <label class="field-label-custom">Naziv turističkog paketa</label>
-                        <input class="input-custom" asp-for="Naziv" value="@renderModel.Naziv" placeholder="Npr. Rim — Proljećna čarolija (8 dana)" required />
-                        <span class="err-custom" asp-validation-for="Naziv"></span>
+                        <input class="input-custom" id="NazivPaketa" asp-for="Naziv" value="@renderModel.Naziv" placeholder="Npr. Rim — Proljećna čarolija (8 dana)" required />
+                        <span class="err-custom" asp-validation-for="Naziv" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group-custom">
@@ -447,43 +451,43 @@
                         <select class="select-custom" asp-for="DestinacijaId" asp-items="destinacije" required>
                             <option value="">-- Odaberite destinaciju --</option>
                         </select>
-                        <span class="err-custom" asp-validation-for="DestinacijaId"></span>
+                        <span class="err-custom" asp-validation-for="DestinacijaId" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group-custom">
                         <label class="field-label-custom">Status paketa na sajtu</label>
                         <select class="select-custom" asp-for="Status" asp-items="statusi"></select>
-                        <span class="err-custom" asp-validation-for="Status"></span>
+                        <span class="err-custom" asp-validation-for="Status" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group-custom">
                         <label class="field-label-custom">Početna cijena (BAM)</label>
-                        <input class="input-custom" asp-for="CijenaOd" type="number" step="0.01" min="1" placeholder="0.00" required />
-                        <span class="err-custom" asp-validation-for="CijenaOd"></span>
+                        <input class="input-custom" id="CijenaOd" asp-for="CijenaOd" type="number" step="0.01" min="1" placeholder="0.00" required />
+                        <span class="err-custom" asp-validation-for="CijenaOd" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group-custom">
                         <label class="field-label-custom">Dužina boravka (Noćenja)</label>
-                        <input class="input-custom" id="TrajanjeNoci" asp-for="TrajanjeNoci" value="@(renderModel.TrajanjeNoci == 0 ? "" : renderModel.TrajanjeNoci.ToString())" type="number" min="1" max="90" placeholder="Npr. 7" required />
-                        <span class="err-custom" asp-validation-for="TrajanjeNoci"></span>
+                        <input class="input-custom" id="TrajanjeNoci" asp-for="TrajanjeNoci" value="@(renderModel.TrajanjeNoci == 0 ? "" : renderModel.TrajanjeNoci.ToString())" type="number" min="1" max="365" placeholder="Npr. 7" required />
+                        <span class="err-custom" asp-validation-for="TrajanjeNoci" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group-custom">
                         <label class="field-label-custom">Datum polaska</label>
-                        <input class="input-custom" id="DatumPolaska" type="date" asp-for="DatumPolaska" value="@renderModel.DatumPolaska.ToString("yyyy-MM-dd")" min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
-                        <span class="err-custom" asp-validation-for="DatumPolaska"></span>
+                        <input class="input-custom" id="DatumPolaska" type="date" asp-for="DatumPolaska" value="@(renderModel.DatumPolaska == DateTime.MinValue ? "" : renderModel.DatumPolaska.ToString("yyyy-MM-dd"))" required />
+                        <span class="err-custom" asp-validation-for="DatumPolaska" id="errDatumPolaska" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group-custom">
                         <label class="field-label-custom">Datum povratka</label>
-                        <input class="input-custom" id="DatumPovratka" type="date" asp-for="DatumPovratka" value="@renderModel.DatumPovratka.ToString("yyyy-MM-dd")" min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
-                        <span class="err-custom" asp-validation-for="DatumPovratka"></span>
+                        <input class="input-custom" id="DatumPovratka" type="date" asp-for="DatumPovratka" value="@(renderModel.DatumPovratka == DateTime.MinValue ? "" : renderModel.DatumPovratka.ToString("yyyy-MM-dd"))" required />
+                        <span class="err-custom" asp-validation-for="DatumPovratka" id="errDatumPovratka" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group-custom">
                         <label class="field-label-custom">Ukupan kapacitet (Broj mjesta)</label>
-                        <input class="input-custom" asp-for="Kapacitet" value="@(renderModel.Kapacitet == 0 ? "" : renderModel.Kapacitet.ToString())" type="number" min="1" max="1000" placeholder="Npr. 30" required />
-                        <span class="err-custom" asp-validation-for="Kapacitet"></span>
+                        <input class="input-custom" id="Kapacitet" asp-for="Kapacitet" value="@(renderModel.Kapacitet == 0 ? "" : renderModel.Kapacitet.ToString())" type="number" min="0" placeholder="Npr. 30" required />
+                        <span class="err-custom" asp-validation-for="Kapacitet" id="errKapacitet" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group-custom">
@@ -491,32 +495,32 @@
                         <select class="select-custom" asp-for="HotelId" asp-items="hoteli">
                             <option value="">-- Bez hotela --</option>
                         </select>
-                        <span class="err-custom" asp-validation-for="HotelId"></span>
+                        <span class="err-custom" asp-validation-for="HotelId" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group-custom">
                         <label class="field-label-custom">Dodijeli Let paketu</label>
-                        <select class="select-custom" asp-for="LetId" asp-items="letovi">
+                        <select class="select-custom" id="LetId" asp-for="LetId" asp-items="letovi">
                             <option value="">-- Bez leta (Autobus) --</option>
                         </select>
-                        <span class="err-custom" asp-validation-for="LetId"></span>
+                        <span class="err-custom" asp-validation-for="LetId" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group-custom">
                         <label class="field-label-custom">Dozvoljeni tip prevoza</label>
-                        <select class="select-custom" asp-for="DostupniPrevoz">
+                        <select class="select-custom" id="DostupniPrevoz" asp-for="DostupniPrevoz">
                             <option value="SamoAvion">Samo Avion</option>
                             <option value="SamoAutobus">Samo Autobus</option>
                             <option value="Oboje">Oboje (Mogućnost izbora)</option>
                         </select>
-                        <span class="err-custom" asp-validation-for="DostupniPrevoz"></span>
+                        <span class="err-custom" asp-validation-for="DostupniPrevoz" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                 </div>
 
-                <div class="btnrow-custom">
-                    <a href="/Administrator/Paketi" class="btn-cancel">Odustani</a>
-                    <button class="btn-submit-custom" type="submit">
+                <div class="btnrow-custom" style="margin-top: 25px;">
+                    <a href="/Administrator/Paketi" class="btn-cancel" style="text-decoration:none; padding:10px 20px; display:inline-block;">Odustani</a>
+                    <button class="btn-submit-custom" type="submit" id="submitBtn">
                         <i class="fa-solid fa-floppy-disk" style="margin-right: 6px;"></i> Sačuvaj promjene
                     </button>
                 </div>
@@ -530,6 +534,16 @@
 
     <script>
         $(document).ready(function () {
+        var isEditMode = $('#IsEditMode').val() === "true";
+        var danas = new Date().toISOString().split('T')[0];
+
+        if (!isEditMode) {
+        $('#DatumPolaska').attr('min', danas);
+        $('#DatumPovratka').attr('min', danas);
+        }
+
+        var uTokuJePreracunavanje = false;
+
         if ($.validator && $.validator.methods) {
         $.validator.methods.date = function (value, element) {
         return this.optional(element) || !isNaN(Date.parse(value)) || /^\d{4}-\d{2}-\d{2}$/.test(value);
@@ -537,6 +551,9 @@
         }
 
         function izracunajDatumPovratka() {
+        if (uTokuJePreracunavanje) return;
+        uTokuJePreracunavanje = true;
+
         var datumPolaskaVrijednost = $('#DatumPolaska').val();
         var nocenja = parseInt($('#TrajanjeNoci').val());
 
@@ -548,14 +565,16 @@
         var mjesec = String(polazak.getMonth() + 1).padStart(2, '0');
         var dan = String(polazak.getDate()).padStart(2, '0');
 
-        var noviDatumPovratka = `${godina}-${mjesec}-${dan}`;
-        $('#DatumPovratka').val(noviDatumPovratka);
-
+        $('#DatumPovratka').val(`${godina}-${mjesec}-${dan}`);
         validirajPolje('#DatumPovratka');
         }
+        uTokuJePreracunavanje = false;
         }
 
         function izracunajTrajanjeNoci() {
+        if (uTokuJePreracunavanje) return;
+        uTokuJePreracunavanje = true;
+
         var polazakVrijednost = $('#DatumPolaska').val();
         var povratakVrijednost = $('#DatumPovratka').val();
 
@@ -563,17 +582,17 @@
         var polazak = new Date(polazakVrijednost);
         var povratak = new Date(povratakVrijednost);
 
-        var razlikaU vremenu = povratak.getTime() - polazak.getTime();
+        var razlikaUVremenu = povratak.getTime() - polazak.getTime();
         var izracunatoNoci = Math.ceil(razlikaUVremenu / (1000 * 3600 * 24));
 
         if (izracunatoNoci > 0) {
         $('#TrajanjeNoci').val(izracunatoNoci);
         } else {
-        $('#TrajanjeNoci').val(''); 
+        $('#TrajanjeNoci').val('');
         }
-
         validirajPolje('#TrajanjeNoci');
         }
+        uTokuJePreracunavanje = false;
         }
 
         function validirajPolje(selector) {
@@ -582,12 +601,71 @@
         }
         }
 
-        $('#DatumPolaska, #TrajanjeNoci').on('input change', function () {
+        $('#DatumPolaska, #TrajanjeNoci').on('change', function () {
         izracunajDatumPovratka();
         });
 
-        $('#DatumPovratka').on('input change', function () {
+        $('#DatumPovratka').on('change', function () {
         izracunajTrajanjeNoci();
+        });
+
+        $('#LetId').on('change', function () {
+        var selektovaniLet = $(this).val();
+        if (selektovaniLet !== "") {
+        if ($('#DostupniPrevoz').val() === "SamoAutobus") {
+        $('#DostupniPrevoz').val("SamoAvion");
+        }
+        $("#DostupniPrevoz option[value='SamoAutobus']").attr('disabled', 'disabled');
+        } else {
+        $("#DostupniPrevoz option[value='SamoAutobus']").removeAttr('disabled');
+        }
+        });
+        $('#LetId').trigger('change');
+
+        $('#paketModalForm').on('submit', function (e) {
+        var isFormValid = true;
+
+        var naziv = $('#NazivPaketa').val();
+        var polazakStr = $('#DatumPolaska').val();
+        var povratakStr = $('#DatumPovratka').val();
+        var kapacitet = parseInt($('#Kapacitet').val());
+        var zauzetaMjesta = parseInt($('#ZauzetaMjesta').val()) || 0;
+
+        $('#errDatumPovratka, #errKapacitet, #errDatumPolaska').text('');
+
+        if (naziv && naziv.trim() === "") {
+        alert("Naziv paketa ne može sadržavati samo razmake.");
+        isFormValid = false;
+        }
+
+        if (polazakStr && povratakStr) {
+        var pDate = new Date(polazakStr);
+        var rDate = new Date(povratakStr);
+        var dDanas = new Date(danas);
+
+        if (!isEditMode && pDate < dDanas) {
+        $('#errDatumPolaska').text('Datum polaska ne može biti u prošlosti.');
+        isFormValid = false;
+        }
+
+        if (rDate <= pDate) {
+        $('#errDatumPovratka').text('Datum povratka mora biti najmanje 1 dan nakon polaska.');
+        isFormValid = false;
+        }
+        }
+
+        if (!isNaN(kapacitet) && kapacitet < zauzetaMjesta) {
+        $('#errKapacitet').text('Kapacitet ne može biti manji od broja već rezervisanih mjesta (' + zauzetaMjesta + ').');
+        isFormValid = false;
+        }
+
+        if (!isFormValid) {
+        e.preventDefault();
+        } else {
+        var btn = $('#submitBtn');
+        btn.attr('disabled', 'disabled');
+        btn.html('<i class="fa-solid fa-spinner fa-spin"></i> Čuvanje...');
+        }
         });
         });
     </script>

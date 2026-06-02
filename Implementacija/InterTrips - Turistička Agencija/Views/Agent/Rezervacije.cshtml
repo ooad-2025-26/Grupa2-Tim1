@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "Agent - Lista Rezervacija";
     Layout = null;
+
+    var agentId = Model?.AgentId ?? 0;
 }
 
 <!DOCTYPE html>
@@ -157,7 +159,7 @@
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
-                background-color: var(--bg-main); 
+                background-color: var(--bg-main);
             }
 
             .dashboard-container {
@@ -475,20 +477,20 @@
 
     <aside class="sidebar">
         <div class="logo-area">
-            <a href="/Agent/Index?agentId=@Model.AgentId" class="sidebar-logo-text">InterTrips</a>
+            <a href="/Agent/Index?agentId=@agentId" class="sidebar-logo-text">InterTrips</a>
         </div>
 
         <nav class="nav-menu">
-            <a href="/Agent/Index?agentId=@Model.AgentId" class="nav-item">
+            <a href="/Agent/Index?agentId=@agentId" class="nav-item">
                 <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
             </a>
-            <a href="/Agent/Rezervacije?agentId=@Model.AgentId" class="nav-item active">
+            <a href="/Agent/Rezervacije?agentId=@agentId" class="nav-item active">
                 <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
             </a>
-            <a href="/Agent/Paketi?agentId=@Model.AgentId" class="nav-item">
+            <a href="/Agent/Paketi?agentId=@agentId" class="nav-item">
                 <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
             </a>
-            <a href="/Agent/Izvjestaj?agentId=@Model.AgentId" class="nav-item">
+            <a href="/Agent/Izvjestaj?agentId=@agentId" class="nav-item">
                 <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
             </a>
         </nav>
@@ -510,7 +512,7 @@
 
                 <div class="dash-header">
                     <div>
-                        <a href="/Agent/Index?agentId=@Model.AgentId" class="btn-back">
+                        <a href="/Agent/Index?agentId=@agentId" class="btn-back">
                             <i class="fa-solid fa-arrow-left"></i> Nazad na Dashboard
                         </a>
                         <h1>Sve rezervacije</h1>
@@ -521,16 +523,24 @@
                 </div>
 
                 <div class="res-list">
-                    @if (Model.AktivneRezervacije != null && Model.AktivneRezervacije.Any())
+                    @if (Model?.AktivneRezervacije != null && Model.AktivneRezervacije.Any())
                     {
                         foreach (var r in Model.AktivneRezervacije)
                         {
-                            bool isPriority = r.Status.ToString() == "Kreirana";
+                            if (r == null) continue;
+
+                            var statusString = r.Status.ToString() ?? "Kreirana";
+                            bool isPriority = statusString.Equals("Kreirana", StringComparison.OrdinalIgnoreCase);
+
+                            int brojPutnika = r.Putnici?.Count ?? 0;
+                            int množilacPutnika = brojPutnika > 0 ? brojPutnika : 1;
+                            decimal ukupnaCijena = (r.Paket?.CijenaOd ?? 0) * množilacPutnika;
+
                             <div class="res-card @(isPriority ? "highlight" : "")">
 
                                 <div class="res-info">
                                     <div class="res-title-row">
-                                        <h3>@r.Paket.Naziv</h3>
+                                        <h3>@(r.Paket?.Naziv ?? "Nepoznat paket (Obrisan)")</h3>
                                         @if (isPriority)
                                         {
                                             <span class="priority-label">
@@ -541,10 +551,10 @@
 
                                     <div class="res-meta">
                                         <span>
-                                            <i class="fa-solid fa-user"></i> Klijent: <strong>@r.Korisnik.Ime @r.Korisnik.Prezime</strong>
+                                            <i class="fa-solid fa-user"></i> Klijent: <strong>@(r.Korisnik != null ? $"{r.Korisnik.Ime} {r.Korisnik.Prezime}" : "Nepoznat klijent")</strong>
                                         </span>
                                         <span>
-                                            <i class="fa-solid fa-credit-card"></i> Iznos: <strong>@(r.Paket != null ? r.Paket.CijenaOd * (r.Putnici?.Count ?? 1) : 0) BAM</strong>
+                                            <i class="fa-solid fa-credit-card"></i> Iznos: <strong>@ukupnaCijena.ToString("N2") BAM</strong>
                                         </span>
                                     </div>
 
@@ -553,14 +563,14 @@
                                             <i class="fa-regular fa-calendar"></i> Polazak: @r.DatumPolaska.ToString("dd. MMM yyyy.")
                                         </span>
                                         <span>
-                                            <i class="fa-solid fa-users"></i> Putnika: @r.Putnici.Count
+                                            <i class="fa-solid fa-users"></i> Putnika: @brojPutnika
                                         </span>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <span class="status-badge status-@(r.Status.ToString().ToLower())">
-                                        @r.Status
+                                    <span class="status-badge status-@(statusString.ToLower().Replace(" ", ""))">
+                                        @statusString
                                     </span>
                                 </div>
 

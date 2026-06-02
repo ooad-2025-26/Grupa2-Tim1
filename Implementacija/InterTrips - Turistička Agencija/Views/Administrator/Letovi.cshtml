@@ -423,7 +423,7 @@
                 <p>Kreirajte nove avio-linije i pratite popunjenost slobodnih mjesta.</p>
             </div>
             <div>
-                <a href="/Destinacije" target="_blank" class="btn-secondary-top">
+                <a href="/Destinacije" target="_blank" class="btn-secondary-top" style="text-decoration: none;">
                     <i class="fa-solid fa-globe" style="margin-right: 6px;"></i> Pregledaj sajt
                 </a>
             </div>
@@ -445,29 +445,32 @@
         <div class="content-grid">
             <div class="card">
                 <h2>Novi let</h2>
-                <form asp-controller="Administrator" asp-action="LetCreate" method="post">
+                <form id="letCreateForm" asp-controller="Administrator" asp-action="LetCreate" method="post">
                     @Html.AntiForgeryToken()
 
                     <div asp-validation-summary="ModelOnly" style="color: var(--danger); font-size: 13px; font-weight: 600; margin-bottom: 15px;"></div>
 
                     <div class="form-group">
                         <label class="field-label">BROJ LETA</label>
-                        <input class="input" name="BrojLeta" type="text" maxlength="20" placeholder="Npr. TM18Z" required>
+                        <input class="input" id="createBrojLeta" name="BrojLeta" type="text" maxlength="20" placeholder="Npr. TM18Z" required>
+                        <span id="errorBrojLeta" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">POLAZAK SA</label>
-                        <input class="input" name="Polazak" type="text" maxlength="100" placeholder="Npr. Sarajevo" required>
+                        <input class="input" id="createPolazak" name="Polazak" type="text" maxlength="100" placeholder="Npr. Sarajevo" required>
+                        <span id="errorPolazak" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">AVIOKOMPANIJA</label>
-                        <input class="input" name="Aviokompanija" type="text" maxlength="100" placeholder="Npr. Turkish Airlines" required />
+                        <input class="input" id="createAviokompanija" name="Aviokompanija" type="text" maxlength="100" placeholder="Npr. Turkish Airlines" required />
+                        <span id="errorAviokompanija" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">ODREDIŠTE (DESTINACIJA)</label>
-                        <select class="select" name="Odrediste" required>
+                        <select class="select" id="createOdrediste" name="Odrediste" required>
                             <option value="">-- Odaberite destinaciju --</option>
                             @if (Model.Destinacije != null)
                             {
@@ -477,17 +480,38 @@
                                 }
                             }
                         </select>
+                        <span id="errorOdrediste" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label class="field-label">VRIJEME POLASKA</label>
+                        <input class="input" id="createVrijemePolaska" name="VrijemePolaska" type="datetime-local" required>
+                        <span id="errorVrijemePolaska" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
                     </div>
 
                     <div class="form-group">
-                        <label class="field-label">SLOBODNA SJEDIŠTA (KAPACITET)</label>
-                        <input class="input" name="SlobodnaSjedista" type="number" min="1" max="1000" step="1" placeholder="Npr. 150" required>
+                        <label class="field-label">VRIJEME DOLASKA</label>
+                        <input class="input" id="createVrijemeDolaska" name="VrijemeDolaska" type="datetime-local" required>
+                        <span id="errorVrijemeDolaska" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
                     </div>
 
-                    <button class="main-btn" type="submit">Kreiraj let</button>
+                    <div class="form-group">
+                        <label class="field-label">TIP AVIONA</label>
+                        <input class="input" id="createTipAviona" name="TipAviona" type="text" maxlength="50" placeholder="Npr. Boeing 737" required>
+                        <span id="errorTipAviona" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">KAPACITET (UKUPNO SJEDIŠTA)</label>
+                        <input class="input" id="createKapacitet" name="UkupnoSjedista" type="number" min="1" max="1000" placeholder="Npr. 180" required>
+                        <span id="errorKapacitet" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
+
+                        <input type="hidden" id="createSlobodnaSjedista" name="SlobodnaSjedista" value="0" />
+                    </div>
+
+                    <button class="main-btn" type="submit" id="submitBtn" style="margin-top: 15px;">Kreiraj let</button>
                 </form>
             </div>
-
             <div class="card" style="padding: 28px 0 0 0;">
                 <h2 style="padding: 0 28px; margin-bottom: 20px;">
                     <i class="fa-solid fa-plane" style="color: var(--primary); margin-right: 8px;"></i> Dostupni Letovi
@@ -498,19 +522,30 @@
                         foreach (var l in Model.Letovi)
                         {
                             <div class="dest-row">
-                                <div class="dest-info">
+                                <div class="dest-info" style="word-break: break-word; max-width: 70%;">
                                     <strong>@l.BrojLeta (@l.Polazak — @l.Odrediste)</strong>
-                                    <small>Slobodna sjedišta: <span style="font-weight: 600; color: @(l.SlobodnaSjedista < 5 ? "var(--danger)" : "var(--success)")">@l.SlobodnaSjedista</span></small>
+                                    <small>
+                                        Slobodna sjedišta:
+                                        @if (l.SlobodnaSjedista <= 0)
+                                        {
+                                            <span style="font-weight: 700; color: #ef4444; background: rgba(239, 68, 68, 0.1); padding: 2px 6px; border-radius: 4px;">RASPRODANO</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="font-weight: 600; color: @(l.SlobodnaSjedista < 10 ? "var(--danger)" : "var(--success)")">@l.SlobodnaSjedista</span>
+                                        }
+                                    </small>
                                 </div>
                                 <div class="actions-group">
-                                    <a class="btn-action" asp-controller="Administrator" asp-action="LetEdit" asp-route-id="@l.Id">Uredi</a>
+                                    <a class="btn-action" asp-controller="Administrator" asp-action="LetEdit" asp-route-id="@l.Id" style="text-decoration: none;">Uredi</a>
                                 </div>
                             </div>
                         }
                     }
                     else
                     {
-                        <div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 14px;">
+                        <div style="padding: 32px; text-align: center; color: var(--text-muted); font-size: 14px;">
+                            <i class="fa-solid fa-plane-slash" style="font-size: 28px; display: block; margin-bottom: 10px; color: #cbd5e1;"></i>
                             Trenutno nema kreiranih letova u bazi podataka.
                         </div>
                     }
@@ -519,5 +554,74 @@
         </div>
     </main>
 
+    <script>
+            document.getElementById('createSlobodnaSjedista')?.addEventListener('input', function () {
+                let val = parseInt(this.value);
+                if (val < 1 && this.value !== "") this.value = 1;
+                if (val > 1000) this.value = 1000;
+            });
+
+            document.getElementById('letCreateForm')?.addEventListener('submit', function (e) {
+                const brojLeta = document.getElementById('createBrojLeta');
+                const polazak = document.getElementById('createPolazak');
+                const aviokompanija = document.getElementById('createAviokompanija');
+                const sjedista = document.getElementById('createSlobodnaSjedista');
+                const odrediste = document.getElementById('createOdrediste');
+                const submitBtn = document.getElementById('submitBtn');
+
+                const errorBrojLeta = document.getElementById('errorBrojLeta');
+                const errorPolazak = document.getElementById('errorPolazak');
+                const errorAviokompanija = document.getElementById('errorAviokompanija');
+                const errorSjedista = document.getElementById('errorSjedista');
+                const errorOdrediste = document.getElementById('errorOdrediste');
+
+                let isValid = true;
+
+                if (errorBrojLeta) errorBrojLeta.textContent = "";
+                if (errorPolazak) errorPolazak.textContent = "";
+                if (errorAviokompanija) errorAviokompanija.textContent = "";
+                if (errorSjedista) errorSjedista.textContent = "";
+                if (errorOdrediste) errorOdrediste.textContent = "";
+
+                if (brojLeta && brojLeta.value.trim() === "") {
+                    errorBrojLeta.textContent = "Broj leta ne može sadržavati samo razmake.";
+                    isValid = false;
+                }
+                if (polazak && polazak.value.trim() === "") {
+                    errorPolazak.textContent = "Polazište ne može sadržavati samo razmake.";
+                    isValid = false;
+                }
+                if (aviokompanija && aviokompanija.value.trim() === "") {
+                    errorAviokompanija.textContent = "Naziv aviokompanije ne može sadržavati samo razmake.";
+                    isValid = false;
+                }
+
+                if (odrediste && odrediste.value === "") {
+                    errorOdrediste.textContent = "Molimo odaberite odredište sa liste.";
+                    isValid = false;
+                }
+
+                if (sjedista) {
+                    const brSjedista = parseInt(sjedista.value);
+                    if (isNaN(brSjedista) || brSjedista < 1 || brSjedista > 1000) {
+                        errorSjedista.textContent = "Broj sjedišta mora biti između 1 i 1000.";
+                        isValid = false;
+                    }
+                }
+
+                if (!isValid) {
+                    e.preventDefault(); 
+                } else {
+                    if (brojLeta) brojLeta.value = brojLeta.value.trim();
+                    if (polazak) polazak.value = polazak.value.trim();
+                    if (aviokompanija) aviokompanija.value = aviokompanija.value.trim();
+
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerText = "Kreiranje u toku...";
+                    }
+                }
+            });
+    </script>
 </body>
 </html>

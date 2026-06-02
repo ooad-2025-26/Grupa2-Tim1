@@ -417,6 +417,16 @@
 </main>
 
 <script>
+    function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+    }
+
     async function renderReservations() {
     try {
     const response = await fetch('/Rezervacija/GetMojeRezervacije');
@@ -424,30 +434,34 @@
     const list = document.getElementById('reservationsList');
     const empty = document.getElementById('emptyMsg');
 
+    if (!list) return; 
+
     if (!data || data.length === 0) {
     list.innerHTML = "";
-    empty.style.display = 'block';
+    if (empty) empty.style.display = 'block';
     return;
     } else {
-    empty.style.display = 'none';
+    if (empty) empty.style.display = 'none';
     }
 
     list.innerHTML = data.map(r => {
     const resCode = `IT-${String(r.id).padStart(4, '0')}`;
 
+    const jeOtkazana = (r.status === 2 || r.status === "Otkazana");
+
     let putniciHtml = '';
     if (r.putnici && r.putnici.length > 0) {
     r.putnici.forEach((p, idx) => {
-    const tipZackica = p.tipPutnika ? ` <span style="font-size: 0.75rem; background: #e4ecee; padding: 2px 6px; border-radius: 4px; color: #1e7f88;">${p.tipPutnika}</span>` : '';
-    const polZackica = p.pol ? ` (${p.pol})` : '';
+    const tipZackica = p.tipPutnika ? ` <span style="font-size: 0.75rem; background: #e4ecee; padding: 2px 6px; border-radius: 4px; color: #1e7f88;">${escapeHtml(p.tipPutnika)}</span>` : '';
+    const polZackica = p.pol ? ` (${escapeHtml(p.pol)})` : '';
     putniciHtml += `
     <tr>
     <td style="text-align:center; font-weight:bold;">${idx + 1}.</td>
-    <td><b>${p.ime} ${p.prezime}</b>${polZackica}${tipZackica}</td>
+    <td><b>${escapeHtml(p.ime)} ${escapeHtml(p.prezime)}</b>${polZackica}${tipZackica}</td>
     <td>${p.datumRodjenja ? formatirajDatum(p.datumRodjenja) : '—'}</td>
-    <td style="font-family:monospace; font-weight:600;">${p.brojPasosa || '—'}</td>
-    <td>${p.drzavljanstvo || '—'}</td>
-    <td>${p.telefon || '—'}</td>
+    <td style="font-family:monospace; font-weight:600;">${p.brojPasosa ? escapeHtml(p.brojPasosa) : '—'}</td>
+    <td>${p.drzavljanstvo ? escapeHtml(p.drzavljanstvo) : '—'}</td>
+    <td>${p.telefon ? escapeHtml(p.telefon) : '—'}</td>
     </tr>
     `;
     });
@@ -455,24 +469,16 @@
     putniciHtml = `<tr><td colspan="6" style="text-align:center; color:#a4bcc0; padding:15px;">Nema registrovanih putnika za ovu rezervaciju.</td></tr>`;
     }
 
-    let statusKlasa = 'status-ceka';
-    let statusTekst = 'PLAĆENO (Potvrđeno)';
-    let sakrijOtkaziDugme = '';
-    let prikaziQrKod = true;
-
-    if (r.status === 2 || r.status === "Otkazana") {
-    statusKlasa = 'status-otkazano';
-    statusTekst = 'Otkazano';
-    sakrijOtkaziDugme = 'display: none;';
-    prikaziQrKod = false; 
-    } 
-
+    let statusKlasa = jeOtkazana ? 'status-otkazano' : 'status-ceka';
+    let statusTekst = jeOtkazana ? 'Otkazano' : 'PLAĆENO (Potvrđeno)';
+    let sakrijOtkaziDugme = jeOtkazana ? 'display: none;' : '';
+    let prikaziQrKod = !jeOtkazana;
 
     return `
-    <div class="reservation-panel" id="panel_${r.id}" style="${r.status === 2 ? 'opacity: 0.85; border-left: 4px solid #dc3545;' : ''}">
+    <div class="reservation-panel" id="panel_${r.id}" style="${jeOtkazana ? 'opacity: 0.85; border-left: 4px solid #dc3545;' : ''}">
     <div class="res-card-header">
     <div class="res-info-block">
-    <h4 style="${r.status === 2 ? 'text-decoration: line-through; color: #6c757d;' : ''}">${r.paketNaziv}</h4>
+    <h4 style="${jeOtkazana ? 'text-decoration: line-through; color: #6c757d;' : ''}">${escapeHtml(r.paketNaziv)}</h4>
     <div class="res-meta-pills">
     <div class="meta-pill">
     <i class="fa-solid fa-hashtag"></i>
@@ -489,9 +495,9 @@
     </div>
 
     <div class="res-actions-wrapper">
-    ${prikaziQrKod ? `<div class="qr-container-box" id="qr_${r.id}" title="Verifikacija"></div>` : '<div style="width:48px; height:48px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#dc3545;">🚫</div>'}
+    ${prikaziQrKod ? `<div class="qr-container-box" id="qr_${r.id}" title="Verifikacija" style="width:48px; height:48px;"></div>` : '<div style="width:48px; height:48px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#dc3545;">🚫</div>'}
     <button class="btn-download" onclick="preuzmiPdf(${r.id}, this)">
-    <i class="fa-solid fa-file-pdf"></i> ${r.status === 2 ? 'Preuzmi Storno' : 'Preuzmi Itinerer'}
+    <i class="fa-solid fa-file-pdf"></i> ${jeOtkazana ? 'Preuzmi Storno' : 'Preuzmi Itinerer'}
     </button>
     <button class="btn-cancel" style="${sakrijOtkaziDugme}" onclick="otkaziAranzman(${r.id}, '${resCode}')">
     <i class="fa-solid fa-trash-can"></i> Otkaži putovanje
@@ -505,18 +511,13 @@
     <div class="detail-label">Odabrani Smještaj & Soba</div>
     <div class="detail-value">
     <i class="fa-solid fa-hotel" style="color: #1e7f88; margin-right: 5px;"></i>
-    ${r.hotelNaziv || 'Smještaj po programu'} ${r.odabranaSoba ? `(${r.odabranaSoba})` : ''}
+    ${r.hotelNaziv ? escapeHtml(r.hotelNaziv) : 'Smještaj po programu'} ${r.odabranaSoba ? `(${escapeHtml(r.odabranaSoba)})` : ''}
     </div>
     </div>
     <div class="detail-item">
     <div class="detail-label">Odabrani Način Prevoza</div>
     <div class="detail-value">
-    ${r.odabraniPrevoz === 'Avion'
-    ? `<i class="fa-solid fa-plane" style="color: #1e7f88; margin-right: 5px;"></i> Avionski prevoz`
-    : r.odabraniPrevoz === 'Autobus'
-    ? `<i class="fa-solid fa-bus" style="color: #1e7f88; margin-right: 5px;"></i> Autobuski prevoz`
-    : `<i class="fa-solid fa-van-shuttle" style="color: #1e7f88; margin-right: 5px;"></i> Uključen prevoz po programu`
-    }
+    ${mapirajPrevoz(r.odabraniPrevoz)}
     </div>
     </div>
     </div>
@@ -544,8 +545,10 @@
     `;
     }).join('');
 
+    setTimeout(() => {
     data.forEach(r => {
-    if (r.status !== 2 && r.status !== "Otkazana") {
+    const jeOtkazana = (r.status === 2 || r.status === "Otkazana");
+    if (!jeOtkazana) {
     const qrElement = document.getElementById(`qr_${r.id}`);
     if (qrElement) {
     qrElement.innerHTML = "";
@@ -560,9 +563,10 @@
     }
     }
     });
+    }, 50);
 
     } catch (e) {
-    console.error(e);
+    console.error("Greška pri renderovanju rezervacija:", e);
     }
     }
 
@@ -570,10 +574,10 @@
     if (!datumStr) return '—';
     try {
     const d = new Date(datumStr);
-    if (isNaN(d.getTime())) return datumStr;
+    if (isNaN(d.getTime())) return escapeHtml(datumStr);
     return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}.`;
     } catch {
-    return datumStr;
+    return escapeHtml(datumStr);
     }
     }
 
@@ -592,7 +596,8 @@
     if (rezultat.isConfirmed) {
     try {
     const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value
-    || document.querySelector('[headers*="RequestVerificationToken"]')?.value;
+    || document.querySelector('[headers*="RequestVerificationToken"]')?.value
+    || '';
 
     const response = await fetch(`/Rezervacija/OtkaziRezervaciju/${id}`, {
     method: 'POST',
@@ -628,11 +633,11 @@
     }
 
     async function preuzmiPdf(stvarniId, btn) {
-    let originalniTekst = btn ? btn.innerHTML : '';
-    if (btn) {
+    if (!btn || btn.disabled) return; 
+
+    let originalniTekst = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generisanje...';
-    }
 
     try {
     const response = await fetch(`/Rezervacija/PreuzmiItinerer/${stvarniId}`, {
@@ -653,27 +658,34 @@
 
     document.body.appendChild(a);
     a.click();
+
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
     } catch (error) {
-    alert("Došlo je do greške: " + error.message);
+    Swal.fire({
+    title: 'Greška!',
+    text: "Došlo je do greške: " + error.message,
+    icon: 'error',
+    confirmButtonColor: '#1e7f88'
+    });
     } finally {
-    if (btn) {
     btn.disabled = false;
     btn.innerHTML = originalniTekst;
     }
     }
+
+    function mapirajPrevoz(prevoz) {
+    if (prevoz === 0 || prevoz === "Avion") {
+    return `<i class="fa-solid fa-plane" style="color: #1e7f88; margin-right: 5px;"></i> Avionski prevoz`;
+    }
+    if (prevoz === 1 || prevoz === "Autobus") {
+    return `<i class="fa-solid fa-bus" style="color: #1e7f88; margin-right: 5px;"></i> Autobuski prevoz`;
+    }
+    if (prevoz === 2 || prevoz === "Oboje") {
+    return `<i class="fa-solid fa-repeat" style="color: #1e7f88; margin-right: 5px;"></i> Kombinovani prevoz (Avion/Autobus)`;
+    }
+    return `<i class="fa-solid fa-van-shuttle" style="color: #1e7f88; margin-right: 5px;"></i> Uključen prevoz po programu`;
     }
 
     window.addEventListener('DOMContentLoaded', renderReservations);
-
-    function mapirajPrevoz(prevoz) {
-    if (prevoz === 0 || prevoz === "Avion") return "Avionski prevoz";
-    if (prevoz === 1 || prevoz === "Autobus") return "Autobuski prevoz";
-    if (prevoz === 2 || prevoz === "Oboje") return "Kombinovani prevoz (Avion/Autobus)";
-
-    return "Uključen prevoz po programu";
-    }
-
-   
 </script>

@@ -966,7 +966,7 @@
         if (childrenCount) {
         const kids = localStorage.getItem('reservationChildren') || "0";
         childrenCount.textContent = kids;
-        if (kidsNotice) kidsNotice.style.display = parseInt(kids) > 0 ? 'flex' : 'none';
+        if (kidsNotice) kidsNotice.style.display = parseInt(kids, 10) > 0 ? 'flex' : 'none';
         }
         handlePackageChange();
         });
@@ -1039,15 +1039,18 @@
 
         function changeCount(type, val) {
         if (type === 'adults' && adultsCount) {
-        let current = parseInt(adultsCount.textContent) || 2;
+        let current = parseInt(adultsCount.textContent, 10) || 2;
         current += val;
-        if (current < 1) current = 1;
+        if (current < 1) current = 1; 
         adultsCount.textContent = current;
+        localStorage.setItem('reservationAdults', current);
         } else if (type === 'children' && childrenCount) {
-        let current = parseInt(childrenCount.textContent) || 0;
+        let current = parseInt(childrenCount.textContent, 10) || 0;
         current += val;
-        if (current < 0) current = 0;
+        if (current < 0) current = 0; 
+        if (current > 10) current = 10; 
         childrenCount.textContent = current;
+        localStorage.setItem('reservationChildren', current);
         if (kidsNotice) kidsNotice.style.display = current > 0 ? 'flex' : 'none';
         }
         updateSummary();
@@ -1090,8 +1093,15 @@
         if (depDateVal && retDateVal) {
         const d1 = parseLocalDate(depDateVal);
         const d2 = parseLocalDate(retDateVal);
-        const brojDana = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+        let brojDana = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+
+        if (brojDana < 0) {
+        if (document.getElementById('summaryNights')) document.getElementById('summaryNights').textContent = "Greška u datumima";
+        } else if (brojDana === 0) {
+        if (document.getElementById('summaryNights')) document.getElementById('summaryNights').textContent = "1 dan (Jednodnevni izlet)";
+        } else {
         if (document.getElementById('summaryNights')) document.getElementById('summaryNights').textContent = `${brojDana} dana / ${brojDana - 1} noćenja`;
+        }
         } else {
         if (document.getElementById('summaryNights')) document.getElementById('summaryNights').textContent = "—";
         }
@@ -1116,15 +1126,26 @@
         const flight = selectedOpt.getAttribute('data-let');
         const kompanija = selectedOpt.getAttribute('data-let-kompanija');
         const vrijeme = selectedOpt.getAttribute('data-let-vrijeme');
+        const fullPolazak = selectedOpt.getAttribute('data-let-full-polazak');
+        const fullDolazak = selectedOpt.getAttribute('data-let-full-dolazak');
+
         const flightSection = document.getElementById('flightSummarySection');
         const busSection = document.getElementById('busSummarySection');
+        const dbFlightCard = document.getElementById('dbFlightDetailsCard');
 
         if (transportType === 'Avion') {
         if (summaryPrevoz) summaryPrevoz.textContent = '✈️ Avion';
         if (flight && flight.trim() !== "") {
         if (document.getElementById('summaryLet')) document.getElementById('summaryLet').textContent = `${flight} (${kompanija}) - ${vrijeme}`;
+
+        if (document.getElementById('dbFlightCompany')) document.getElementById('dbFlightCompany').textContent = kompanija;
+        if (document.getElementById('dbFlightNumber')) document.getElementById('dbFlightNumber').textContent = flight;
+        if (document.getElementById('dbFlightDepTime')) document.getElementById('dbFlightDepTime').textContent = fullPolazak;
+        if (document.getElementById('dbFlightArrTime')) document.getElementById('dbFlightArrTime').textContent = fullDolazak;
+        if (dbFlightCard) dbFlightCard.style.display = 'block';
         } else {
         if (document.getElementById('summaryLet')) document.getElementById('summaryLet').textContent = 'Uključen let';
+        if (dbFlightCard) dbFlightCard.style.display = 'none';
         }
         if (flightSection) flightSection.style.display = 'block';
         if (busSection) busSection.style.display = 'none';
@@ -1132,9 +1153,11 @@
         if (summaryPrevoz) summaryPrevoz.textContent = '🚌 Autobus';
         if (flightSection) flightSection.style.display = 'none';
         if (busSection) busSection.style.display = 'block';
+        if (dbFlightCard) dbFlightCard.style.display = 'none';
         if (document.getElementById('summaryBusDeparture')) document.getElementById('summaryBusDeparture').textContent = formatDate(depDateVal);
         if (document.getElementById('summaryBusReturn')) document.getElementById('summaryBusReturn').textContent = formatDate(retDateVal);
         }
+
 
         let total = basePrice * adults;
         if (prevozTip === 'Oboje' && transportType === 'Avion') {
@@ -1194,9 +1217,9 @@
         const adultsRaw = document.getElementById('adultsCount')?.textContent || "2";
         const childrenRaw = document.getElementById('childrenCount')?.textContent || "0";
 
-        const adults = parseInt(adultsRaw.replace(/\D/g, ""), 10) || 1;
-        const children = parseInt(childrenRaw.replace(/\D/g, ""), 10) || 0;
-        const ukupnoPutnika = adults + children;
+        const adults = parseInt(adultsRaw.replace(/\D/g, ""), 10) || 2;
+            const children = parseInt(childrenRaw.replace(/\D/g, ""), 10) || 0;
+            const ukupnoPutnika = adults + children;
 
         const transportType = document.querySelector('input[name="tipPrevoza"]:checked')?.value || 'Autobus';
         const roomTypeRadio = document.querySelector('input[name="roomType"]:checked');

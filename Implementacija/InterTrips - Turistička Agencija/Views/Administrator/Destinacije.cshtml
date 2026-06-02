@@ -522,35 +522,38 @@
         <div class="content-grid">
             <div class="card">
                 <h2>Nova destinacija</h2>
-                <form asp-controller="Administrator" asp-action="DestinacijaCreate" method="post" enctype="multipart/form-data">
+                <form id="createDestForm" asp-controller="Administrator" asp-action="DestinacijaCreate" method="post" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
 
                     <div class="form-group">
                         <label class="field-label">NAZIV DESTINACIJE</label>
-                        <input class="input" name="Naziv" type="text" placeholder="Npr. Rim" required>
+                        <input class="input" id="inputNaziv" name="Naziv" type="text" placeholder="Npr. Rim" required maxlength="100">
+                        <span id="errorNaziv" style="color:#ef4444; font-size:12px; display:none; margin-top:4px;"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">DRŽAVA</label>
-                        <input class="input" name="Drzava" type="text" placeholder="Npr. Italija" required>
+                        <input class="input" id="inputDrzava" name="Drzava" type="text" placeholder="Npr. Italija" required maxlength="100">
+                        <span id="errorDrzava" style="color:#ef4444; font-size:12px; display:none; margin-top:4px;"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">KATEGORIJA</label>
-                        <input class="input" name="Kategorija" type="text" placeholder="Npr. City Break">
+                        <input class="input" name="Kategorija" type="text" placeholder="Npr. City Break" maxlength="50">
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">KRATKI OPIS</label>
-                        <textarea class="textarea" name="Opis" placeholder="Unesite opis destinacije..."></textarea>
+                        <textarea class="textarea" name="Opis" placeholder="Unesite opis destinacije..." maxlength="2000"></textarea>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">SLIKA PONUDE</label>
-                        <input class="input" type="file" name="slika" accept="image/*">
+                        <input class="input" type="file" id="slikaInput" name="slika" accept="image/jpeg, image/png, image/webp">
+                        <span id="slikaError" style="color:#ef4444; font-size:12px; display:none; margin-top:4px;"></span>
                     </div>
 
-                    <button class="main-btn" type="submit">Kreiraj destinaciju</button>
+                    <button class="main-btn" type="submit" id="submitBtn">Kreiraj destinaciju</button>
                 </form>
             </div>
 
@@ -573,7 +576,7 @@
                                             <i class="fa-solid fa-image" style="color:#cbd5e1;"></i>
                                         </div>
                                     }
-                                    <div class="dest-info">
+                                    <div class="dest-info" style="word-break: break-word; max-width: 250px;">
                                         <strong>@d.Naziv</strong>
                                         <small>@d.Drzava @(!string.IsNullOrWhiteSpace(d.Kategorija) ? "• " + d.Kategorija : "")</small>
                                     </div>
@@ -583,7 +586,7 @@
                                     <a class="btn-action" asp-controller="Administrator" asp-action="DestinacijaEdit" asp-route-id="@d.Id">Uredi</a>
                                     <form asp-controller="Administrator" asp-action="DestinacijaDelete" asp-route-id="@d.Id" method="post" style="display:inline;">
                                         @Html.AntiForgeryToken()
-                                        <button class="btn-action btn-delete" type="submit" onclick="return confirm('Da li ste sigurni da želite obrisati destinaciju @d.Naziv?')">
+                                        <button class="btn-action btn-delete" type="submit" onclick="return confirm('PAŽNJA: Brisanjem destinacije \u201e@d.Naziv\u201c obrisat ćete i sve povezane pakete i aranžmane ako postoje! Da li ste sigurni?')">
                                             Obriši
                                         </button>
                                     </form>
@@ -602,5 +605,79 @@
         </div>
     </main>
 
+    <script>
+        document.getElementById('slikaInput')?.addEventListener('change', function () {
+            const file = this.files[0];
+            const errorSpan = document.getElementById('slikaError');
+            
+            if (errorSpan) {
+                errorSpan.style.display = "none";
+                errorSpan.textContent = "";
+            }
+
+            if (file) {
+                const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    errorSpan.textContent = "Format fajla nije podržan. Dozvoljene su samo slike (JPG, PNG, WEBP).";
+                    errorSpan.style.display = "block";
+                    this.value = ""; 
+                    return;
+                }
+
+                const maxSize = 5 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    errorSpan.textContent = "Slika je prevelika. Maksimalna dozvoljena veličina je 5MB.";
+                    errorSpan.style.display = "block";
+                    this.value = ""; 
+                    return;
+                }
+            }
+        });
+
+        document.getElementById('createDestForm').addEventListener('submit', function (e) {
+            const nazivInput = document.getElementById('inputNaziv');
+            const drzavaInput = document.getElementById('inputDrzava');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            const errorNaziv = document.getElementById('errorNaziv');
+            const errorDrzava = document.getElementById('errorDrzava');
+
+            let isValid = true;
+
+            if (errorNaziv) { errorNaziv.style.display = "none"; errorNaziv.textContent = ""; }
+            if (errorDrzava) { errorDrzava.style.display = "none"; errorDrzava.textContent = ""; }
+
+            if (nazivInput && nazivInput.value.trim() === "") {
+                errorNaziv.textContent = "Naziv destinacije ne može sadržavati samo razmake.";
+                errorNaziv.style.display = "block";
+                isValid = false;
+            }
+
+            if (drzavaInput && drzavaInput.value.trim() === "") {
+                errorDrzava.textContent = "Naziv države ne može sadržavati samo razmake.";
+                errorDrzava.style.display = "block";
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault(); 
+            } else {
+                if (nazivInput) nazivInput.value = nazivInput.value.trim();
+                if (drzavaInput) drzavaInput.value = drzavaInput.value.trim();
+
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerText = "Kreiranje u toku...";
+                }
+            }
+        });
+
+        const filterGeografskiUnos = function () {
+            this.value = this.value.replace(/[0-9<>:"/\\|?*+=_@@#$%%^&*()]/g, '');
+        };
+
+        document.getElementById('inputNaziv')?.addEventListener('input', filterGeografskiUnos);
+        document.getElementById('inputDrzava')?.addEventListener('input', filterGeografskiUnos);
+    </script>
 </body>
 </html>

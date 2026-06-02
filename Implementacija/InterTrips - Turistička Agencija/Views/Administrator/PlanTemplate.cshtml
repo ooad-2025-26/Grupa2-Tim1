@@ -485,7 +485,7 @@
             <h1>Plan putovanja <span style="font-weight: 300; color: var(--text-muted);">/ Template</span></h1>
             <p>
                 Konfigurišite hronološke stavke, dnevne rute i satnice aktivnosti za aranžman:
-                <span class="badge badge-info">@paketNaziv</span>
+                <span class="badge badge-info">@(paketNaziv ?? "Nepoznat aranžman")</span>
                 @if (dest != null)
                 {
                     <span> u sklopu lokacije <strong>@dest.Naziv (@dest.Drzava)</strong></span>
@@ -494,131 +494,161 @@
         </header>
 
         <div class="card">
-            <form asp-controller="Administrator" asp-action="PlanTemplateSaveNapomena" method="post" class="napomena-box">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="id" value="@Model.Id" />
-                <div style="flex: 1;">
-                    <label class="field-label" style="color: #991b1b;">Krovna napomena plana (prikazuje se korisnicima)</label>
-                    <input class="input" name="napomena" value="@Model.Napomena" style="border-color: #fca5a5;" placeholder="Npr. Plan puta je podložan blagim izmjenama u zavisnosti od reda letenja i vremenskih uslova..." />
-                </div>
-                <button type="submit" class="btn btn-primary" style="height: 40px; background: #991b1b;">Sačuvaj</button>
-            </form>
-
-            <div class="section-title">
-                <div>Nova stavka ili dan</div>
-                <span class="badge">Ukupno stavki: @Model.Stavke.Count</span>
-            </div>
-
-            <form asp-controller="Administrator" asp-action="PlanTemplateDodajStavku" method="post" style="background: #f8fafc; padding: 24px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 48px;">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="planId" value="@Model.Id" />
-
-                <div class="row2">
-                    <div>
-                        <label class="field-label">Redni broj koraka / dan</label>
-                        <input class="input" type="number" name="redniBroj" min="1" value="@(Model.Stavke.Any() ? Model.Stavke.Max(s => s.RedniBroj) + 1 : 1)" required />
-                    </div>
-
-                    <div>
-                        <label class="field-label">Vrijeme (Opciono)</label>
-                        <input class="input" type="time" name="vrijeme" />
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 16px;">
-                    <label class="field-label">Naslov etape ili aktivnosti</label>
-                    <input class="input" name="Naziv" maxlength="160" required placeholder="Npr. Dan 1 - Okupljanje grupe na aerodromu i let za destinaciju" />
-                </div>
-
-                <div style="margin-bottom: 20px;">
-                    <label class="field-label">Detaljne informacije i opis</label>
-                    <textarea id="opisTextArea" class="textarea" name="opis" maxlength="600" placeholder="Unesite opise transfera, hotelskog smještaja, opcionalnih izleta ili slobodnih aktivnosti za ovu stavku..."></textarea>
-                    <small id="charCounter" class="char-counter">Preostalo karaktera: 600</small>
-                </div>
-
-                <div class="actions">
-                    @if (Model.PaketId != null)
-                    {
-                        <a class="btn" href="/PlanPutovanja/Preview?paketId=@Model.PaketId" target="_blank">👁️ Pregledaj na sajtu</a>
-                    }
-                    <button class="btn btn-primary" type="submit">Unesi u plan putovanja</button>
-                </div>
-            </form>
-
-            <div class="section-title" style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 8px;">
-                <div>Hronološki slijed plana</div>
-            </div>
-
-            @if (!Model.Stavke.Any())
+            @if (Model != null)
             {
-                <div class="item-description" style="font-style: italic; text-align: center; padding: 48px; background: #f8fafc; border-radius: 8px; border: 1px dashed var(--border);">
-                    Plan putovanja je trenutno prazan. Koristite gornju formu da definišete strukturu aranžmana.
+                <form asp-controller="Administrator" asp-action="PlanTemplateSaveNapomena" method="post" class="napomena-box" style="display: flex; gap: 16px; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div style="flex: 1; min-width: 280px;">
+                        <label class="field-label" style="color: #991b1b; display: block; margin-bottom: 6px; font-weight: 600;">Krovna napomena plana (prikazuje se korisnicima)</label>
+                        <input class="input" name="napomena" value="@Model.Napomena" style="border-color: #fca5a5; width: 100%; height: 40px; padding: 8px 12px; border-radius: 6px; border: 1px solid #fca5a5;" placeholder="Npr. Plan puta je podložan blagim izmjenama u zavisnosti od reda letenja i vremenskih uslova..." />
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="height: 40px; background: #991b1b; color: white; border: none; padding: 0 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">Sačuvaj</button>
+                </form>
+
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 18px; font-weight: 600;">
+                    <div>Nova stavka ili dan</div>
+                    <span class="badge" style="background: #e2e8f0; color: #334155; padding: 4px 10px; border-radius: 12px; font-size: 12px;">
+                        Ukupno stavki: @(Model.Stavke?.Count ?? 0)
+                    </span>
                 </div>
+
+                <form asp-controller="Administrator" asp-action="PlanTemplateDodajStavku" method="post" style="background: #f8fafc; padding: 24px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 48px;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="planId" value="@Model.Id" />
+
+                    <div class="row2" style="display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 140px;">
+                            <label class="field-label" style="display: block; margin-bottom: 6px;">Redni broj koraka / dan</label>
+                            <input class="input" type="number" name="redniBroj" min="1" value="@(Model.Stavke != null && Model.Stavke.Any() ? Model.Stavke.Max(s => s.RedniBroj) + 1 : 1)" required style="width: 100%; height: 40px; padding: 8px; border-radius: 6px; border: 1px solid var(--border);" />
+                        </div>
+
+                        <div style="flex: 1; min-width: 140px;">
+                            <label class="field-label" style="display: block; margin-bottom: 6px;">Vrijeme (Opciono)</label>
+                            <input class="input" type="time" name="vrijeme" style="width: 100%; height: 40px; padding: 8px; border-radius: 6px; border: 1px solid var(--border);" />
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label class="field-label" style="display: block; margin-bottom: 6px;">Naslov etape ili aktivnosti</label>
+                        <input class="input" name="Naziv" maxlength="160" required placeholder="Npr. Dan 1 - Okupljanje grupe na aerodromu i let za destinaciju" style="width: 100%; height: 40px; padding: 8px; border-radius: 6px; border: 1px solid var(--border);" />
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label class="field-label" style="display: block; margin-bottom: 6px;">Detaljne informacije i opis</label>
+                        <textarea id="opisTextArea" class="textarea" name="opis" maxlength="600" placeholder="Unesite opise transfera, hotelskog smještaja, opcionalnih izleta ili slobodnih aktivnosti za ovu stavku..." style="width: 100%; height: 120px; padding: 10px; border-radius: 6px; border: 1px solid var(--border); resize: vertical; font-family: inherit;"></textarea>
+                        <small id="charCounter" class="char-counter" style="display: block; text-align: right; color: var(--text-muted); font-size: 12px; margin-top: 4px;">Preostalo karaktera: 600</small>
+                    </div>
+
+                    <div class="actions" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                        <div>
+                            @if (Model.PaketId != null)
+                            {
+                                <a class="btn" href="/PlanPutovanja/Preview?paketId=@Model.PaketId" target="_blank" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">👁️ Pregledaj na sajtu</a>
+                            }
+                        </div>
+                        <button class="btn btn-primary" type="submit" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">Unesi u plan putovanja</button>
+                    </div>
+                </form>
+
+                <div class="section-title" style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; font-size: 18px; font-weight: 600;">
+                    <div>Hronološki slijed plana</div>
+                </div>
+
+                @if (Model.Stavke == null || !Model.Stavke.Any())
+                {
+                    <div class="item-description" style="font-style: italic; text-align: center; padding: 48px; background: #f8fafc; border-radius: 8px; border: 1px dashed var(--border); color: var(--text-muted);">
+                        Plan putovanja je trenutno prazan. Koristite gornju formu da definišete strukturu aranžmana.
+                    </div>
+                }
+                else
+                {
+                    <div class="timeline-container" style="display: flex; flex-direction: column; gap: 12px;">
+                        @foreach (var s in Model.Stavke.OrderBy(x => x.RedniBroj))
+                        {
+                            if (s == null) continue;
+
+                            <div class="grid-row" style="display: grid; grid-template-columns: 60px 90px minmax(0, 1fr) 90px auto; gap: 20px; align-items: center; padding: 16px; background: white; border: 1px solid var(--border); border-radius: 8px;">
+                                <div>
+                                    <span class="field-label" style="display: block; font-size: 10px; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase;">Pozicija</span>
+                                    <div class="timeline-number" style="font-weight: 700; font-size: 16px; color: var(--text-dark);">@s.RedniBroj</div>
+                                </div>
+
+                                <div>
+                                    <span class="field-label" style="display: block; font-size: 10px; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase;">Satnica</span>
+                                    @if (s.Vrijeme.HasValue)
+                                    {
+                                        <span class="time-display" style="font-weight: 600; font-size: 14px; color: var(--text-dark);">
+                                            @s.Vrijeme.Value.ToString(@"hh\:mm") h
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="muted" style="font-size: 13px; color: #cbd5e1; font-weight: 500;">— : —</span>
+                                    }
+                                </div>
+
+                                <div style="padding-right: 16px; word-break: break-word; overflow-wrap: break-word;">
+                                    <div class="item-title" style="font-weight: 600; font-size: 15px; color: var(--text-dark); margin-bottom: 4px;">@s.Naziv</div>
+                                    <div class="item-description" style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">@s.Opis</div>
+                                </div>
+
+                                <div>
+                                    <span class="field-label" style="display: block; font-size: 10px; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase;">Status</span>
+                                    <span class="badge" style="background: #f0fdf4; color: #166534; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; display: inline-block;">Aktivan</span>
+                                </div>
+
+                                <div class="actions">
+                                    <form asp-controller="Administrator" asp-action="PlanTemplateObrisiStavku" method="post" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@s.Id" />
+                                        <button class="btn btn-danger" type="submit"
+                                                onclick="return confirm('Da li ste sigurni da želite obrisati stavku: @System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(s.Naziv ?? "")?')"
+                                                style="background: #fef2f2; color: #ef4444; border: 1px solid #fca5a5; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;">
+                                            Ukloni
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
             }
             else
             {
-                foreach (var s in Model.Stavke.OrderBy(x => x.RedniBroj))
-                {
-                    <div class="grid-row">
-                        <div>
-                            <span class="field-label" style="font-size: 10px; margin-bottom: 4px;">Pozicija</span>
-                            <div class="timeline-number">@s.RedniBroj</div>
-                        </div>
-
-                        <div>
-                            <span class="field-label" style="font-size: 10px; margin-bottom: 4px;">Satnica</span>
-                            @if (s.Vrijeme.HasValue)
-                            {
-                                <span class="time-display">@s.Vrijeme.Value.ToString(@"hh\:mm") h</span>
-                            }
-                            else
-                            {
-                                <span class="muted" style="font-size: 13px; color: var(--text-muted);">— : —</span>
-                            }
-                        </div>
-
-                        <div style="padding-right: 16px;">
-                            <div class="item-title">@s.Naziv</div>
-                            <div class="item-description">@s.Opis</div>
-                        </div>
-
-                        <div>
-                            <span class="field-label" style="font-size: 10px; margin-bottom: 4px;">Status</span>
-                            <span class="badge" style="background: #f0fdf4; color: #166534; font-size: 11px;">Aktivan</span>
-                        </div>
-
-                        <div class="actions">
-                            <form asp-controller="Administrator" asp-action="PlanTemplateObrisiStavku" method="post" style="display:inline;">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@s.Id" />
-                                <button class="btn btn-danger" type="submit" onclick="return confirm('Da li ste sigurni da želite obrisati stavku: @s.Naziv?')">Ukloni</button>
-                            </form>
-                        </div>
-                    </div>
-                }
+                <div class="muted" style="text-align: center; padding: 48px;">
+                    Greška prilikom učitavanja šablona plana putovanja. Model je prazan.
+                </div>
             }
         </div>
     </main>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const textarea = document.getElementById("opisTextArea");
-            const counter = document.getElementById("charCounter");
-            const maxLength = 600;
+            document.addEventListener("DOMContentLoaded", function () {
+                const textarea = document.getElementById("opisTextArea");
+                const counter = document.getElementById("charCounter");
+                const maxLength = 600;
 
-            if (textarea && counter) {
-                textarea.addEventListener("input", function () {
-                    const remaining = maxLength - textarea.value.length;
-                    counter.textContent = `Preostalo karaktera: ${remaining}`;
+                if (textarea && counter) {
+                    function updateCounter() {
+                        const currentLength = textarea.value ? textarea.value.length : 0;
+                        const remaining = maxLength - currentLength;
+                        counter.textContent = `Preostalo karaktera: ${remaining}`;
 
-                    if (remaining <= 20) {
-                        counter.style.color = "var(--danger)";
-                    } else {
-                        counter.style.color = "var(--text-muted)";
+                        if (remaining <= 20) {
+                            counter.style.color = "#ef4444"; 
+                            counter.style.color = "#64748b";
+                        }
                     }
-                });
-            }
-        });
+
+                    updateCounter();
+
+                    textarea.addEventListener("input", updateCounter);
+                    textarea.addEventListener("paste", function () {
+                        setTimeout(updateCounter, 1);
+                    });
+                }
+            });
     </script>
 </body>
 </html>

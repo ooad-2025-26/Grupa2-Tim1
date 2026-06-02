@@ -658,15 +658,15 @@
         ].sort((a, b) => a.name.localeCompare(b.name));
 
         function calcAgeYears(isoDate) {
-            if (!isoDate) return null;
-            const dob = new Date(isoDate + "T00:00:00");
-            if (isNaN(dob.getTime())) return null;
+        if (!isoDate) return null;
+        const dob = new Date(isoDate + "T00:00:00");
+        if (isNaN(dob.getTime())) return null;
 
-            const today = new Date();
-            let age = today.getFullYear() - dob.getFullYear();
-            const m = today.getMonth() - dob.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-            return age;
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const m = today.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+        return age;
         }
 
         function onlyDigits(s) {
@@ -696,48 +696,58 @@
         }
 
         function validateBlock(block, idx, isLive) {
-            const type = block.querySelector('.ptype')?.value || 'Odrasli';
-            const fname = block.querySelector('.fname')?.value.trim();
-            const lname = block.querySelector('.lname')?.value.trim();
-            const gender = block.querySelector('.gender')?.value;
-            const birthdate = block.querySelector('.birthdate')?.value;
-            const passport = block.querySelector('.passport')?.value.trim();
-            const nationality = block.querySelector('.nationality')?.value;
-            const phoneDigits = onlyDigits(block.querySelector('.phoneNumber')?.value || '');
-            if (fname && !isValidNameFormat(fname)) {
-                return { ok: false, msg: `Putnik ${idx + 1}: Ime mora početi velikim slovom, a ostala slova moraju biti mala (npr. Niko).` };
-            }
-            if (lname && !isValidNameFormat(lname)) {
-                return { ok: false, msg: `Putnik ${idx + 1}: Prezime mora početi velikim slovom, a ostala slova moraju biti mala (npr. Nikić).` };
-            }
-            if (!isLive) {
-                if (!gender) return { ok: false, msg: `Putnik ${idx + 1}: Molimo odaberite pol.` };
-                if (!fname) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ime.` };
-                if (!lname) return { ok: false, msg: `Putnik ${idx + 1}: Unesite prezime.` };
-                if (!birthdate) return { ok: false, msg: `Putnik ${idx + 1}: Unesite datum rođenja.` };
-                if (!passport || passport.length < 5) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ispravan broj pasoša.` };
-                if (!nationality) return { ok: false, msg: `Putnik ${idx + 1}: Odaberite državljanstvo.` };
-                if (!phoneDigits || phoneDigits.length < 6) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ispravan broj telefona.` };
-            }
+        const type = block.querySelector('.ptype')?.value || 'Odrasli';
+        const fname = block.querySelector('.fname')?.value.trim();
+        const lname = block.querySelector('.lname')?.value.trim();
+        const gender = block.querySelector('.gender')?.value;
+        const birthdate = block.querySelector('.birthdate')?.value;
+        const passport = block.querySelector('.passport')?.value.trim();
+        const nationality = block.querySelector('.nationality')?.value;
+        const phoneCode = block.querySelector('.phoneCode')?.value;
+        const phoneDigits = onlyDigits(block.querySelector('.phoneNumber')?.value || '');
 
-            if (birthdate) {
-                const birthYear = new Date(birthdate).getFullYear();
+        if (fname && !isValidNameFormat(fname)) {
+        return { ok: false, msg: `Putnik ${idx + 1}: Ime mora početi velikim slovom (npr. Edin).` };
+        }
+        if (lname && !isValidNameFormat(lname)) {
+        return { ok: false, msg: `Putnik ${idx + 1}: Prezime mora početi velikim slovom (npr. Džeko).` };
+        }
 
-                if (birthYear < 1900 || birthYear > 2026) {
-                    return { ok: false, msg: `Putnik ${idx + 1}: Godina rođenja mora biti između 1900. i 2026. godine.` };
-                }
+        if (!isLive) {
+        if (!gender) return { ok: false, msg: `Putnik ${idx + 1}: Molimo odaberite pol.` };
+        if (!fname) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ime.` };
+        if (!lname) return { ok: false, msg: `Putnik ${idx + 1}: Unesite prezime.` };
+        if (!birthdate) return { ok: false, msg: `Putnik ${idx + 1}: Unesite datum rođenja.` };
+        if (!passport || passport.length < 5) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ispravan broj pasoša.` };
+        if (!nationality) return { ok: false, msg: `Putnik ${idx + 1}: Odaberite državljanstvo.` };
+        if (!phoneCode) return { ok: false, msg: `Putnik ${idx + 1}: Odaberite pozivni broj države.` };
+        if (!phoneDigits || phoneDigits.length < 6) return { ok: false, msg: `Putnik ${idx + 1}: Unesite ispravan broj telefona.` };
+        }
 
-                const age = calcAgeYears(birthdate);
-                if (age !== null) {
-                    if (type === 'Odrasli' && age < 18) {
-                        return { ok: false, msg: `Putnik ${idx + 1}: Označen je kao "Odrasli", ali ima manje od 18 godina (${age} god).` };
-                    }
-                    if (type === 'Dijete' && age >= 18) {
-                        return { ok: false, msg: `Putnik ${idx + 1}: Označen je kao "Dijete", ali ima 18 ili više godina (${age} god).` };
-                    }
-                }
-            }
-            return { ok: true };
+        if (birthdate) {
+        const today = new Date();
+        const inputDate = new Date(birthdate);
+
+        if (inputDate > today) {
+        return { ok: false, msg: `Putnik ${idx + 1}: Datum rođenja ne može biti u budućnosti.` };
+        }
+
+        const birthYear = inputDate.getFullYear();
+        if (birthYear < 1900) {
+        return { ok: false, msg: `Putnik ${idx + 1}: Godina rođenja ne može biti starija od 1900.` };
+        }
+
+        const age = calcAgeYears(birthdate);
+        if (age !== null) {
+        if (type === 'Odrasli' && age < 18) {
+        return { ok: false, msg: `Putnik ${idx + 1}: Označen je kao "Odrasli", ali ima manje od 18 godina (${age} god).` };
+        }
+        if (type === 'Dijete' && age >= 18) {
+        return { ok: false, msg: `Putnik ${idx + 1}: Označen je kao "Dijete", ali ima 18 ili više godina (${age} god).` };
+        }
+        }
+        }
+        return { ok: true };
         }
 
         function setFormError(msg) {
@@ -958,13 +968,13 @@
 
                 if (fnameInput) {
                     fnameInput.addEventListener('input', () => {
-                        fnameInput.value = fnameInput.value.replace(/[0-9]/g, '');
+        fnameInput.value = fnameInput.value.replace(/[^A-Za-zČĆŽŠĐčćžšđ\s-]/g, '');
                         triggerLiveValidate();
                     });
                 }
                 if (lnameInput) {
                     lnameInput.addEventListener('input', () => {
-                        lnameInput.value = lnameInput.value.replace(/[0-9]/g, '');
+        lnameInput.value = lnameInput.value.replace(/[^A-Za-zČĆŽŠĐčćžšđ\s-]/g, '');
                         triggerLiveValidate();
                     });
                 }
@@ -1065,14 +1075,21 @@
                 passengers.push(p);
             }
 
-            const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '1', 10);
-            const expectedChildren = parseInt(localStorage.getItem('reservationChildren') || '0', 10);
+        const expectedAdults = parseInt(localStorage.getItem('reservationAdults') || '1', 10);
+        const expectedChildren = parseInt(localStorage.getItem('reservationChildren') || '0', 10);
 
-            if (countAdultsForm !== expectedAdults || countChildrenForm !== expectedChildren) {
-                setFormError(`Struktura putnika ne odgovara rezervaciji! Izabrano: ${countAdultsForm} odraslih, ${countChildrenForm} djece. Očekivano: ${expectedAdults} odraslih, ${expectedChildren} djece.`);
-                return;
-            }
-
+        if (countAdultsForm !== expectedAdults || countChildrenForm !== expectedChildren) {
+        setFormError(`Struktura putnika ne odgovara odabranom aranžmanu. Očekivano odraslih: ${expectedAdults}, djece: ${expectedChildren}.`);
+        return;
+        }
+            const passportSet = new Set();
+           for (let p of passengers) {
+             if (passportSet.has(p.passport)) {
+              setFormError(`Greška: Broj pasoša ${p.passport} je unesen više puta! Svaki putnik mora imati jedinstven pasoš.`);
+              return;
+           }
+            passportSet.add(p.passport);
+}
             localStorage.setItem('savedPassengers', JSON.stringify(passengers));
             const paketId = localStorage.getItem('reservationPaketId');
 
@@ -1080,8 +1097,13 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            loadSummary();
-            generatePassengers();
+        if (!localStorage.getItem('reservationTravelers')) {
+        alert("Sesija je istekla ili podaci nisu ispravni. Vraćamo vas na početak.");
+        window.location.href = "/"; 
+        return;
+        }
+        loadSummary();
+        generatePassengers();
         });
     </script>
 </body>
