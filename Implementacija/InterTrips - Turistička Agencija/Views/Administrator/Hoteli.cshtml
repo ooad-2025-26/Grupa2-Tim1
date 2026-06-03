@@ -1,4 +1,4 @@
-﻿@model InterTrips___Turistička_Agencija.Models.HoteliPageViewModel
+﻿@model InterTrips___Turistička_Agencija.Models.ViewModels.HoteliPageViewModel
 @{
     ViewData["Title"] = "InterTrips - Hoteli";
     Layout = null;
@@ -454,25 +454,25 @@
                     <div class="form-group">
                         <label class="field-label">NAZIV HOTELA</label>
                         <input class="input" id="hotelNaziv" asp-for="NoviHotel.Naziv" type="text" placeholder="Npr. Hotel Amfora" required maxlength="150" />
-                        <span asp-validation-for="NoviHotel.Naziv" id="errorNaziv" style="color:#ef4444; font-size:12px;"></span>
+                        <span id="errorNaziv" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">LOKACIJA / ADRESA</label>
                         <input class="input" id="hotelLokacija" asp-for="NoviHotel.Lokacija" type="text" placeholder="Npr. Šetalište bb, Makarska" required maxlength="250" />
-                        <span asp-validation-for="NoviHotel.Lokacija" id="errorLokacija" style="color:#ef4444; font-size:12px;"></span>
+                        <span id="errorLokacija" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">BROJ ZVJEZDICA</label>
                         <input class="input" id="hotelZvjezdice" asp-for="NoviHotel.BrojZvjezdica" type="number" min="0" max="5" placeholder="0 - 5 (0 za B&B/Hostele)" required />
-                        <span asp-validation-for="NoviHotel.BrojZvjezdica" id="errorZvjezdice" style="color:#ef4444; font-size:12px;"></span>
+                        <span id="errorZvjezdice" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group">
                         <label class="field-label">TRENUTNO DOSTUPNO SOBA</label>
                         <input class="input" id="hotelDostupnoSoba" asp-for="NoviHotel.DostupnoSoba" type="number" min="0" placeholder="Npr. 45" required />
-                        <span asp-validation-for="NoviHotel.DostupnoSoba" id="errorDostupnoSoba" style="color:#ef4444; font-size:12px;"></span>
+                        <span id="errorDostupnoSoba" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <div class="form-group">
@@ -489,10 +489,10 @@
 
                     <div class="form-group">
                         <label class="field-label">DESTINACIJA</label>
-                        <select asp-for="NoviHotel.DestinacijaId" class="select-custom" asp-items="ViewBag.DestinacijaId" required>
+                        <select asp-for="NoviHotel.DestinacijaId" asp-items="ViewBag.DestinacijaId" class="select-custom" required>
                             <option value="">-- Odaberite destinaciju --</option>
                         </select>
-                        <span asp-validation-for="NoviHotel.DestinacijaId"></span>
+                        <span id="errorDestinacija" style="color:#ef4444; font-size:12px;"></span>
                     </div>
 
                     <button class="main-btn" type="submit" id="submitBtn">Dodaj hotel</button>
@@ -558,17 +558,20 @@
                 const nazivInput = document.getElementById('hotelNaziv');
                 const lokacijaInput = document.getElementById('hotelLokacija');
                 const dostupnoInput = document.getElementById('hotelDostupnoSoba');
+                const destSelect = document.querySelector('select[name="NoviHotel.DestinacijaId"]');
                 const submitBtn = document.getElementById('submitBtn');
 
                 const errorNaziv = document.getElementById('errorNaziv');
                 const errorLokacija = document.getElementById('errorLokacija');
                 const errorDostupno = document.getElementById('errorDostupnoSoba');
+                const errorDestinacija = document.getElementById('errorDestinacija');
 
                 let isValid = true;
 
                 if (errorNaziv) errorNaziv.textContent = "";
                 if (errorLokacija) errorLokacija.textContent = "";
                 if (errorDostupno) errorDostupno.textContent = "";
+                if (errorDestinacija) errorDestinacija.textContent = "";
 
                 if (nazivInput && nazivInput.value.trim() === "") {
                     errorNaziv.textContent = "Naziv hotela ne može sadržavati samo razmake.";
@@ -587,8 +590,13 @@
                     }
                 }
 
+                if (destSelect && destSelect.value === "") {
+                    errorDestinacija.textContent = "Molimo odaberite destinaciju.";
+                    isValid = false;
+                }
+
                 if (!isValid) {
-                    e.preventDefault(); 
+                    e.preventDefault();
                 } else {
                     if (nazivInput) nazivInput.value = nazivInput.value.trim();
                     if (lokacijaInput) lokacijaInput.value = lokacijaInput.value.trim();

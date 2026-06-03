@@ -24,17 +24,18 @@ namespace InterTrips___Turistička_Agencija.Data
         public DbSet<StavkaPlana> StavkePlana => Set<StavkaPlana>();
         public DbSet<PlanPutovanjaTemplate> PlanoviPutovanjaTemplate => Set<PlanPutovanjaTemplate>();
         public DbSet<StavkaPlanaTemplate> StavkePlanaTemplate => Set<StavkaPlanaTemplate>();
-        public DbSet<AgentPaket> AgentPaketi { get; set; }
-
+        public DbSet<AgentPaket> AgentPaketi => Set<AgentPaket>();
         public DbSet<Hotel> Hoteli => Set<Hotel>();
         public DbSet<Let> Letovi => Set<Let>();
         public DbSet<Dobavljac> Dobavljaci => Set<Dobavljac>();
-        public DbSet<Kupon> Kupon => Set<Kupon>();
+        public DbSet<Kupon> Kuponi => Set<Kupon>();
         public DbSet<RataPlacanja> RatePlacanja => Set<RataPlacanja>();
-        public DbSet<LogNotifikacija> LogNotifikacija { get; set; }
-        public DbSet<TerminPutovanja> TerminPutovanja { get; set; }
+        public DbSet<LogNotifikacija> LogNotifikacije => Set<LogNotifikacija>();
+        public DbSet<TerminPutovanja> TerminiPutovanja => Set<TerminPutovanja>();
+        public DbSet<KontaktUpit> KontaktUpiti => Set<KontaktUpit>();
         public DbSet<KontaktUpit> KontaktUpit { get; set; }
-
+        public DbSet<Kupon> Kupon { get; set; }
+        public DbSet<LogNotifikacija> LogNotifikacija { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -44,24 +45,26 @@ namespace InterTrips___Turistička_Agencija.Data
             modelBuilder.Entity<Paket>().ToTable("Paket");
             modelBuilder.Entity<UslugaPaketa>().ToTable("UslugaPaketa");
             modelBuilder.Entity<Rezervacija>().ToTable("Rezervacija");
-            modelBuilder.Entity<Putnik>().ToTable("Putnik");
+            modelBuilder.Entity<Putnik>().ToTable("Putnik"); 
             modelBuilder.Entity<Placanje>().ToTable("Placanje");
             modelBuilder.Entity<Notifikacija>().ToTable("Notifikacija");
             modelBuilder.Entity<PlanPutovanja>().ToTable("PlanPutovanja");
             modelBuilder.Entity<StavkaPlana>().ToTable("StavkaPlana");
             modelBuilder.Entity<AgentPaket>().ToTable("AgentPaket");
-
-            modelBuilder.Entity<RataPlacanja>().Property(r => r.IznosRate).HasPrecision(18, 2);
-            modelBuilder.Entity<Placanje>().Property(p => p.Iznos).HasPrecision(18, 2); 
-            modelBuilder.Entity<Placanje>().Property(p => p.OriginalniIznos).HasPrecision(18, 2);
             modelBuilder.Entity<Hotel>().ToTable("Hotel");
             modelBuilder.Entity<Let>().ToTable("Let");
-            modelBuilder.Entity<Putnik>().ToTable("Putnik");
             modelBuilder.Entity<TerminPutovanja>().ToTable("TerminPutovanja");
             modelBuilder.Entity<Dobavljac>().ToTable("Dobavljac");
             modelBuilder.Entity<Kupon>().ToTable("Kupon");
             modelBuilder.Entity<LogNotifikacija>().ToTable("LogNotifikacija");
+            modelBuilder.Entity<KontaktUpit>().ToTable("KontaktUpit"); 
+            modelBuilder.Entity<PlanPutovanjaTemplate>().ToTable("PlanPutovanjaTemplate");
+            modelBuilder.Entity<StavkaPlanaTemplate>().ToTable("StavkaPlanaTemplate");
 
+            modelBuilder.Entity<RataPlacanja>().Property(r => r.IznosRate).HasPrecision(18, 2);
+            modelBuilder.Entity<Placanje>().Property(p => p.Iznos).HasPrecision(18, 2);
+            modelBuilder.Entity<Placanje>().Property(p => p.OriginalniIznos).HasPrecision(18, 2);
+            
             modelBuilder.Entity<PlanPutovanjaTemplate>()
                 .HasMany(p => p.Stavke)
                 .WithOne(s => s.PlanPutovanjaTemplate!)
@@ -91,6 +94,10 @@ namespace InterTrips___Turistička_Agencija.Data
                 .WithOne(r => r.Placanje!)
                 .HasForeignKey(r => r.PlacanjeId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AgentPaket>()
+                .HasIndex(ap => new { ap.AgentId, ap.PaketId })
+                .IsUnique();
 
             string adminRoleId = "1b63ef27-996b-4b13-98db-00f7e4b9bc10";
             string agentRoleId = "2c74fa38-885b-3b12-87cb-11e8e5c8cd21";
@@ -124,16 +131,16 @@ namespace InterTrips___Turistička_Agencija.Data
                 .ToTable(tb => tb.HasTrigger("tr_Paketi_Trigger"));
 
             modelBuilder.Entity<Paket>()
-    .HasOne(p => p.Hotel)
-    .WithMany(h => h.Paketi)
-    .HasForeignKey(p => p.HotelId)
-    .OnDelete(DeleteBehavior.ClientSetNull);
+                .HasOne(p => p.Hotel)
+                .WithMany(h => h.Paketi)
+                .HasForeignKey(p => p.HotelId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             modelBuilder.Entity<Paket>()
-    .HasOne(p => p.Let)
-    .WithMany(l => l.Paketi)
-    .HasForeignKey(p => p.LetId)
-    .OnDelete(DeleteBehavior.ClientSetNull);
+                .HasOne(p => p.Let)
+                .WithMany(l => l.Paketi)
+                .HasForeignKey(p => p.LetId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
 }

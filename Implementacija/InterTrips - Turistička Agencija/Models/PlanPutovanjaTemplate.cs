@@ -1,18 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace InterTrips___Turistička_Agencija.Models;
-
-public class PlanPutovanjaTemplate
+namespace InterTrips___Turistička_Agencija.Models
 {
-    [Key]
-    public int Id { get; set; }
+    public class PlanPutovanjaTemplate
+    {
+        [Key]
+        public int Id { get; set; }
 
-    [Required]
-    public int PaketId { get; set; }
-    public Paket? Paket { get; set; }
+        [Required(ErrorMessage = "Šablon plana mora biti vezan za turistički paket.")]
+        public int PaketId { get; set; }
 
-    [MaxLength(800)]
-    public string? Napomena { get; set; }
+        [ForeignKey(nameof(PaketId))]
+        public virtual Paket? Paket { get; set; }
 
-    public List<StavkaPlanaTemplate> Stavke { get; set; } = new();
+        [MaxLength(1000, ErrorMessage = "Napomena ne može biti duža od 1000 karaktera.")] // Blago povećano radi opširnijih opštih napomena (npr. informacije o vizama, prtljagu)
+        public string? Napomena { get; set; }
+
+        public virtual List<StavkaPlanaTemplate> Stavke { get; set; } = new List<StavkaPlanaTemplate>();
+    }
 }

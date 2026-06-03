@@ -483,27 +483,9 @@
                         <span id="errorOdrediste" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
                     </div>
 
-                    <div class="form-group" style="margin-top: 15px;">
-                        <label class="field-label">VRIJEME POLASKA</label>
-                        <input class="input" id="createVrijemePolaska" name="VrijemePolaska" type="datetime-local" required>
-                        <span id="errorVrijemePolaska" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="field-label">VRIJEME DOLASKA</label>
-                        <input class="input" id="createVrijemeDolaska" name="VrijemeDolaska" type="datetime-local" required>
-                        <span id="errorVrijemeDolaska" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="field-label">TIP AVIONA</label>
-                        <input class="input" id="createTipAviona" name="TipAviona" type="text" maxlength="50" placeholder="Npr. Boeing 737" required>
-                        <span id="errorTipAviona" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
-                    </div>
-
                     <div class="form-group">
                         <label class="field-label">KAPACITET (UKUPNO SJEDIŠTA)</label>
-                        <input class="input" id="createKapacitet" name="UkupnoSjedista" type="number" min="1" max="1000" placeholder="Npr. 180" required>
+                        <input class="input" id="createUkupnoSjedista" name="UkupnoSjedista" type="number" min="1" max="1000" placeholder="Npr. 180" required>
                         <span id="errorKapacitet" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
 
                         <input type="hidden" id="createSlobodnaSjedista" name="SlobodnaSjedista" value="0" />
@@ -555,7 +537,7 @@
     </main>
 
     <script>
-            document.getElementById('createSlobodnaSjedista')?.addEventListener('input', function () {
+            document.getElementById('createUkupnoSjedista')?.addEventListener('input', function () {
                 let val = parseInt(this.value);
                 if (val < 1 && this.value !== "") this.value = 1;
                 if (val > 1000) this.value = 1000;
@@ -565,14 +547,15 @@
                 const brojLeta = document.getElementById('createBrojLeta');
                 const polazak = document.getElementById('createPolazak');
                 const aviokompanija = document.getElementById('createAviokompanija');
-                const sjedista = document.getElementById('createSlobodnaSjedista');
+                const ukupnoSjedistaInput = document.getElementById('createUkupnoSjedista');
+                const slobodnaSjedistaHidden = document.getElementById('createSlobodnaSjedista');
                 const odrediste = document.getElementById('createOdrediste');
                 const submitBtn = document.getElementById('submitBtn');
 
                 const errorBrojLeta = document.getElementById('errorBrojLeta');
                 const errorPolazak = document.getElementById('errorPolazak');
                 const errorAviokompanija = document.getElementById('errorAviokompanija');
-                const errorSjedista = document.getElementById('errorSjedista');
+                const errorKapacitet = document.getElementById('errorKapacitet');
                 const errorOdrediste = document.getElementById('errorOdrediste');
 
                 let isValid = true;
@@ -580,7 +563,7 @@
                 if (errorBrojLeta) errorBrojLeta.textContent = "";
                 if (errorPolazak) errorPolazak.textContent = "";
                 if (errorAviokompanija) errorAviokompanija.textContent = "";
-                if (errorSjedista) errorSjedista.textContent = "";
+                if (errorKapacitet) errorKapacitet.textContent = "";
                 if (errorOdrediste) errorOdrediste.textContent = "";
 
                 if (brojLeta && brojLeta.value.trim() === "") {
@@ -601,16 +584,20 @@
                     isValid = false;
                 }
 
-                if (sjedista) {
-                    const brSjedista = parseInt(sjedista.value);
+                if (ukupnoSjedistaInput) {
+                    const brSjedista = parseInt(ukupnoSjedistaInput.value);
                     if (isNaN(brSjedista) || brSjedista < 1 || brSjedista > 1000) {
-                        errorSjedista.textContent = "Broj sjedišta mora biti između 1 i 1000.";
+                        errorKapacitet.textContent = "Broj sjedišta mora biti između 1 i 1000.";
                         isValid = false;
+                    } else {
+                         if (slobodnaSjedistaHidden) {
+                            slobodnaSjedistaHidden.value = brSjedista;
+                        }
                     }
                 }
 
                 if (!isValid) {
-                    e.preventDefault(); 
+                    e.preventDefault();
                 } else {
                     if (brojLeta) brojLeta.value = brojLeta.value.trim();
                     if (polazak) polazak.value = polazak.value.trim();

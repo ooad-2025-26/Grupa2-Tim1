@@ -1,22 +1,26 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace InterTrips___Turistička_Agencija.Models;
-
-public class UslugaPaketa
+namespace InterTrips___Turistička_Agencija.Models
 {
-    public UslugaPaketa() { }
+    public class UslugaPaketa
+    {
+        public UslugaPaketa() { }
 
-    [Key]
-    public int Id { get; set; }
+        [Key]
+        public int Id { get; set; }
 
-    [Required, MaxLength(120)]
-    public string Naziv { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Naziv usluge je obavezan.")]
+        [MaxLength(120, ErrorMessage = "Naziv usluge ne može biti duži od 120 karaktera.")]
+        public string Naziv { get; set; } = string.Empty;
 
-    [MaxLength(400)]
-    public string? Opis { get; set; }
+        [MaxLength(500, ErrorMessage = "Opis usluge ne može biti duži od 500 karaktera.")] // Blago povećano radi detaljnijeg objašnjenja šta usluga obuhvata
+        public string? Opis { get; set; }
 
-    [Required]
-    public int PaketId { get; set; }
-    public Paket? Paket { get; set; }
+        [Required(ErrorMessage = "Usluga mora biti vezana za turistički paket.")]
+        public int PaketId { get; set; }
 
+        [ForeignKey(nameof(PaketId))]
+        public virtual Paket? Paket { get; set; }
+    }
 }

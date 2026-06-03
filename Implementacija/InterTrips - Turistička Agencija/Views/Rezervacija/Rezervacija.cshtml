@@ -715,7 +715,7 @@
                                                     data-let="@(p.Let != null ? p.Let.BrojLeta : "")"
                                                     data-let-relacija="@(p.Let != null ? p.Let.Polazak + " → " + p.Let.Odrediste : "")"
                                                     data-let-kompanija="@(p.Let != null ? p.Let.Aviokompanija : "")"
-                                                    data-let-vrijeme="@(p.Let != null ? p.Let.VrijemePolaska.ToString(@"hh\:mm") : "")"
+                                                    data-let-vrijeme="@(p.Let != null ? p.Let.VrijemePolaska.Value.ToString(@"hh\:mm") : "")"
                                                     data-prevoz-tip="@p.DostupniPrevoz"
                                                     data-polazak="@p.DatumPolaska.ToString("yyyy-MM-dd")"
                                                     data-povratak="@p.DatumPovratka.ToString("yyyy-MM-dd")">

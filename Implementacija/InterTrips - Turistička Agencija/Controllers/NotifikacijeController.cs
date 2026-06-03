@@ -1,4 +1,5 @@
 using InterTrips___Turistička_Agencija.Data;
+using InterTrips___Turistička_Agencija.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
             if (string.IsNullOrWhiteSpace(email))
                 return Unauthorized();
 
-            var notifikacije = await _db.LogNotifikacija
+            var notifikacije = await _db.Set<LogNotifikacija>()
                 .Where(n => n.EmailPrimaoca == email)
                 .OrderByDescending(n => n.VrijemeSlanja)
                 .Take(50)

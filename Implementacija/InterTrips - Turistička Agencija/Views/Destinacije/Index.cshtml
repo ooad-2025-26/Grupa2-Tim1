@@ -643,7 +643,7 @@
         <div class="filters">
             <div class="search">
                 <span style="color:var(--primary-dark); font-size:14px;">⌕</span>
-                <input type="text" placeholder="Pretražite pakete...">
+                <input type="text" id="searchInput" placeholder="Pretražite pakete...">
             </div>
 
             <div class="chip-row">
@@ -651,15 +651,15 @@
             </div>
         </div>
 
-        <div class="section-title">Prikazano <strong>@Model.Count()</strong> turističkih paketa</div>
+        <div class="section-title" id="searchResultTitle">Prikazano <strong>@Model.Count()</strong> turističkih paketa</div>
 
         <div class="grid">
             @foreach (var p in Model)
             {
                 int trenutneRezervacije = p.Rezervacije?.Count ?? 0;
-                bool jePopunjen = trenutneRezervacije >= p.Kapacitet;
+                bool jePopunjen = trenutneRezervacije >= p.Kapacitet; 
 
-                <article class="card">
+                <article class="card paket-card">
                     <img src="@(string.IsNullOrEmpty(p.Destinacija?.SlikaUrl) ? "/assets/destination1.jpg" : p.Destinacija.SlikaUrl)" alt="@p.Naziv">
                     <div class="card-body">
                         <div class="card-top">
@@ -807,5 +807,35 @@
 
         window.addEventListener('resize', updateSlider);
         setTimeout(updateSlider, 250);
+
+        const searchInput = document.getElementById('searchInput');
+        const paketCards = document.querySelectorAll('.paket-card');
+        const resultTitle = document.getElementById('searchResultTitle');
+        const ukupnoPaketa = paketCards.length;
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function (e) {
+                const pojamZaPretragu = e.target.value.toLowerCase().trim();
+                let vidljivoPaketa = 0;
+
+                paketCards.forEach(function (card) {
+                    const naziv = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
+                    const drzava = card.querySelector('.country') ? card.querySelector('.country').textContent.toLowerCase() : '';
+                    const opis = card.querySelector('.desc') ? card.querySelector('.desc').textContent.toLowerCase() : '';
+
+                    if (naziv.includes(pojamZaPretragu) || drzava.includes(pojamZaPretragu) || opis.includes(pojamZaPretragu)) {
+                        card.style.display = ''; 
+                    } else {
+                        card.style.display = 'none'; 
+                    }
+                });
+
+                if (pojamZaPretragu === '') {
+                    resultTitle.innerHTML = `Prikazano <strong>${ukupnoPaketa}</strong> turističkih paketa`;
+                } else {
+                    resultTitle.innerHTML = `Pronađeno <strong>${vidljivoPaketa}</strong> od <strong>${ukupnoPaketa}</strong> paketa za pojam "${e.target.value}"`;
+                }
+            });
+        }
     });
 </script>

@@ -4,6 +4,8 @@ using InterTrips___Turistička_Agencija.Models;
 using InterTrips___Turistička_Agencija.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using InterTrips___Turistička_Agencija.Models.DTOs;
+using InterTrips___Turistička_Agencija.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;

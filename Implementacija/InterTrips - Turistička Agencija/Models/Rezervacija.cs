@@ -1,48 +1,65 @@
 using InterTrips___Turistička_Agencija.Enums;
-using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-
-namespace InterTrips___Turistička_Agencija.Models;
-
-public class Rezervacija
+namespace InterTrips___Turistička_Agencija.Models
 {
-    public Rezervacija() { }
+    public class Rezervacija : IValidatableObject
+    {
+        public Rezervacija() { }
 
-    [Key]
-    public int Id { get; set; }
+        [Key]
+        public int Id { get; set; }
 
-    [Required]
-    [DataType(DataType.Date)]
-    public DateTime DatumPolaska { get; set; }
+        [Required(ErrorMessage = "Datum polaska je obavezan.")]
+        [DataType(DataType.Date)]
+        public DateTime DatumPolaska { get; set; }
 
-    [Required]
-    [DataType(DataType.Date)]
-    public DateTime DatumPovratka { get; set; }
+        [Required(ErrorMessage = "Datum povratka je obavezan.")]
+        [DataType(DataType.Date)]
+        public DateTime DatumPovratka { get; set; }
 
-    [Required]
-    public StatusRezervacije Status { get; set; } = StatusRezervacije.Kreirana;
+        [Required]
+        public StatusRezervacije Status { get; set; } = StatusRezervacije.Kreirana;
 
-    [Required]
-    public int PaketId { get; set; }
-    public Paket? Paket { get; set; }
+        [Required(ErrorMessage = "Morate odabrati turistički paket.")]
+        public int PaketId { get; set; }
 
-    [Required]
-    public string KorisnikId { get; set; }
+        [ForeignKey(nameof(PaketId))]
+        public virtual Paket? Paket { get; set; }
 
-    [ForeignKey("KorisnikId")]
-   public ApplicationUser? Korisnik { get; set; }
-    [Required]
-    public string TipSobe { get; set; } = "Standardna soba";
+        [Required]
+        public string KorisnikId { get; set; } = string.Empty;
 
-    [Required]
-    public VrstaPrevoza TipPrevoza { get; set; }
+        [ForeignKey(nameof(KorisnikId))]
+        public virtual ApplicationUser? Korisnik { get; set; }
 
-    public List<Putnik> Putnici { get; set; } = new();
+        [Required(ErrorMessage = "Tip sobe je obavezan.")]
+        [MaxLength(100, ErrorMessage = "Naziv tipa sobe ne može biti duži od 100 karaktera.")] // Popravljen nvarchar(max)
+        public string TipSobe { get; set; } = "Standardna soba";
 
-    public Placanje? Placanje { get; set; }
+        [Required(ErrorMessage = "Morate odabrati vrstu prevoza.")]
+        public VrstaPrevoza TipPrevoza { get; set; }
 
-    public PlanPutovanja? PlanPutovanja { get; set; }
+        public virtual List<Putnik> Putnici { get; set; } = new List<Putnik>();
 
+        public virtual Placanje? Placanje { get; set; }
+
+        public virtual PlanPutovanja? PlanPutovanja { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (DatumPolaska.Date < DateTime.Today)
+            {
+                yield return new ValidationResult("Datum polaska ne može biti u prošlosti.", new[] { nameof(DatumPolaska) });
+            }
+
+            if (DatumPovratka <= DatumPolaska)
+            {
+                yield return new ValidationResult("Datum povratka mora biti nakon datuma polaska.", new[] { nameof(DatumPovratka) });
+            }
+        }
+    }
 }

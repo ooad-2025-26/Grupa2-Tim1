@@ -44,7 +44,7 @@ namespace InterTrips___Turistička_Agencija.Background
                     if (string.IsNullOrWhiteSpace(klijentEmail))
                         continue;
 
-                    bool vecPoslato = await context.LogNotifikacija.AnyAsync(l =>
+                    bool vecPoslato = await context.Set<LogNotifikacija>().AnyAsync(l =>
                         l.RezervacijaId == rezervacija.Id &&
                         l.EmailPrimaoca == klijentEmail &&
                         l.TipNotifikacije == "Podsjetnik za putovanje" &&
@@ -86,7 +86,7 @@ namespace InterTrips___Turistička_Agencija.Background
                     if (string.IsNullOrWhiteSpace(klijentEmail))
                         continue;
 
-                    bool vecPoslataRecenzija = await context.LogNotifikacija.AnyAsync(l =>
+                    bool vecPoslataRecenzija = await context.Set<LogNotifikacija>().AnyAsync(l =>
                         l.RezervacijaId == rezervacija.Id &&
                         l.EmailPrimaoca == klijentEmail &&
                         l.TipNotifikacije == "Molba za recenziju" &&

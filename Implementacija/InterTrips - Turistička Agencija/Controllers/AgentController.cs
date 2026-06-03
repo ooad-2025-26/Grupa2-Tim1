@@ -156,7 +156,7 @@ namespace InterTrips___Turistička_Agencija.Controllers;
             {
                 AgentId = agentId,
                 SviPaketi = await _db.Paketi.Include(p => p.Destinacija).ToListAsync(),
-                MojiPaketiIds = mojiPaketiIds
+                MojiPaketiIds = new HashSet<int>(mojiPaketiIds)
             };
 
             return View(viewModel);

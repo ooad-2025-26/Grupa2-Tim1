@@ -466,6 +466,17 @@ public class AdministratorController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> LetCreate(Let model)
     {
+
+        model.VrijemePolaska = DateTime.Today;
+        model.VrijemeDolaska = DateTime.Today;
+   
+        model.SlobodnaSjedista = model.UkupnoSjedista;
+
+
+        ModelState.Remove("VrijemePolaska");
+        ModelState.Remove("VrijemeDolaska");
+        ModelState.Remove("SlobodnaSjedista");
+
         if (!ModelState.IsValid)
         {
             var vm = new AdminDashboardVm
@@ -473,15 +484,39 @@ public class AdministratorController : Controller
                 Destinacije = await _db.Destinacije.ToListAsync(),
                 Letovi = await _db.Letovi.ToListAsync()
             };
-            TempData["Error"] = "Podaci nisu validni.";
+            TempData["Error"] = "Podaci na formi nisu ispravno popunjeni.";
             return View("Letovi", vm);
         }
 
-        _db.Letovi.Add(model);
-        await _db.SaveChangesAsync();
+        try
+        {
+            _db.Letovi.Add(model);
+            await _db.SaveChangesAsync();
 
-        TempData["Success"] = "Let uspješno kreiran!";
-        return RedirectToAction("Letovi");
+            TempData["Success"] = "Let uspješno kreiran!";
+            return RedirectToAction("Letovi");
+        }
+        catch (Exception ex) // Hvatamo opću grešku kako bi osigurali da uđemo u catch blok
+        {
+            // Izvlačimo najdublju poruku iz SQL Servera koja piše točan razlog padanja
+            var innerMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+
+            // Ako je greška kompleksnija, uzimamo i njezinu pod-grešku
+            if (ex.InnerException?.InnerException != null)
+            {
+                innerMessage = ex.InnerException.InnerException.Message;
+            }
+
+            // Prikazujemo točnu poruku administratoru na ekranu
+            TempData["Error"] = $"Baza odbija upis! Detaljna greška: {innerMessage}";
+
+            var vm = new AdminDashboardVm
+            {
+                Destinacije = await _db.Destinacije.ToListAsync(),
+                Letovi = await _db.Letovi.ToListAsync()
+            };
+            return View("Letovi", vm);
+        }
     }
 
     [HttpGet]
@@ -518,18 +553,32 @@ public class AdministratorController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> HotelCreate(Hotel hotel)
+    public async Task<IActionResult> HotelCreate([Bind(Prefix = "NoviHotel")] Hotel hotel)
     {
         if (ModelState.IsValid)
         {
             _db.Add(hotel);
             await _db.SaveChangesAsync();
+
             TempData["Success"] = "Hotel uspješno dodan!";
             return RedirectToAction(nameof(Hoteli));
         }
 
+        var hoteli = await _db.Hoteli
+            .Include(h => h.Destinacija)
+            .ToListAsync();
+
+        var viewModel = new HoteliPageViewModel
+        {
+            Hoteli = hoteli,
+            NoviHotel = hotel 
+        };
+
+        ViewBag.DestinacijaId = new SelectList(await _db.Destinacije.ToListAsync(), "Id", "Naziv", hotel.DestinacijaId);
+
         TempData["Error"] = "Greška pri dodavanju hotela. Provjerite unesene podatke.";
-        return RedirectToAction(nameof(Hoteli));
+
+        return View("~/Views/Administrator/Hoteli.cshtml", viewModel);
     }
 
     [HttpGet]

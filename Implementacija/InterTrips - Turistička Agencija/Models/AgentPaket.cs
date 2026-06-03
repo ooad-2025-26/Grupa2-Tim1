@@ -1,15 +1,23 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace InterTrips___Turistička_Agencija.Models;
-
-public class AgentPaket
+namespace InterTrips___Turistička_Agencija.Models
 {
-    [Key]
-    public int Id { get; set; }
+    public class AgentPaket
+    {
+        [Key]
+        public int Id { get; set; }
 
-    public int AgentId { get; set; }
-    public int PaketId { get; set; }
+        [Required]
+        public int AgentId { get; set; }
 
-    public Korisnik? Agent { get; set; }
-    public Paket? Paket { get; set; }
+        [Required]
+        public int PaketId { get; set; }
+
+        [ForeignKey(nameof(AgentId))]
+        public Korisnik? Agent { get; set; }
+
+        [ForeignKey(nameof(PaketId))]
+        public Paket? Paket { get; set; }
+    }
 }

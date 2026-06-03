@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace InterTrips___Turistička_Agencija.Models
+namespace InterTrips___Turistička_Agencija.Models.ViewModels
 {
     public class HoteliPageViewModel
     {
