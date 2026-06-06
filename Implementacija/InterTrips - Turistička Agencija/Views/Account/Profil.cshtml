@@ -440,11 +440,11 @@
 
 @section Scripts {
     <script>
+        let msgTimeout;
+
         async function loadProfile() {
             try {
-                const response = await fetch('/Account/Me', {
-                    credentials: 'same-origin'
-                });
+                const response = await fetch('/Account/Me', { credentials: 'same-origin' });
 
                 if (!response.ok) {
                     window.location.href = '/Account/Login';
@@ -478,92 +478,99 @@
             const el = document.getElementById('saveMsg');
             el.className = 'msg ' + type;
             el.textContent = text;
-            el.style.display = 'block'; 
+            el.style.display = 'block';
 
-            setTimeout(() => {
+            if (msgTimeout) clearTimeout(msgTimeout);
+
+            msgTimeout = setTimeout(() => {
                 el.style.display = 'none';
             }, 4000);
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-
             loadProfile();
 
-            document.getElementById('logoutBtnProfile')
-                .addEventListener('click', async function () {
-                    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                    await fetch('/Account/Logout', {
-                        method: 'POST',
-                        headers: {
-                            'RequestVerificationToken': token
-                        },
-                        credentials: 'same-origin'
-                    });
-                    window.location.href = '/';
+            document.getElementById('logoutBtnProfile').addEventListener('click', async function () {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                await fetch('/Account/Logout', {
+                    method: 'POST',
+                    headers: { 'RequestVerificationToken': token },
+                    credentials: 'same-origin'
                 });
+                window.location.href = '/';
+            });
 
-            document.getElementById('resetBtn')
-                .addEventListener('click', function () {
-                    document.getElementById('currentPassword').value = '';
-                    document.getElementById('newPassword').value = '';
-                    document.getElementById('confirmPassword').value = '';
+            document.getElementById('resetBtn').addEventListener('click', function () {
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
 
-                    loadProfile();
-                    showMsg('Forma je vraćena na originalne podatke.', 'success');
-                });
+                loadProfile();
+                showMsg('Forma je vraćena na originalne podatke.', 'success');
+            });
 
-            document.getElementById('profileForm')
-                .addEventListener('submit', async function (e) {
-                    e.preventDefault();
+            document.getElementById('profileForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
 
-                    const nPassword = document.getElementById('newPassword').value;
-                    const cPassword = document.getElementById('confirmPassword').value;
+                const currentPassword = document.getElementById('currentPassword').value;
+                const nPassword = document.getElementById('newPassword').value;
+                const cPassword = document.getElementById('confirmPassword').value;
 
+                if (nPassword || cPassword || currentPassword) {
+                    if (!currentPassword) {
+                        showMsg('Morate unijeti trenutnu lozinku da biste je promijenili!', 'danger');
+                        return;
+                    }
                     if (nPassword !== cPassword) {
                         showMsg('Nova lozinka i potvrda se ne podudaraju!', 'danger');
                         return;
                     }
-
-                    const data = {
-                        fullName: document.getElementById('displayName').value,
-                        email: document.getElementById('usernameOrEmail').value,
-                        phoneNumber: document.getElementById('phoneNumber').value,
-                        location: document.getElementById('location').value,
-                        birthDate: document.getElementById('birthDate').value,
-                        currentPassword: document.getElementById('currentPassword').value,
-                        newPassword: nPassword,
-                        confirmPassword: cPassword
-                    };
-
-                    try {
-                        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                        const response = await fetch('/Account/UpdateProfile', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'RequestVerificationToken': token
-                            },
-                            credentials: 'same-origin',
-                            body: JSON.stringify(data)
-                        });
-
-                        if (response.ok) {
-                            showMsg('Profil je uspješno ažuriran i sačuvan.', 'success');
-                            document.getElementById('currentPassword').value = '';
-                            document.getElementById('newPassword').value = '';
-                            document.getElementById('confirmPassword').value = '';
-                            const currentName = document.getElementById('displayName').value;
-                            document.getElementById('userAvatar').textContent = currentName.charAt(0).toUpperCase();
-                        }
-                        else {
-                            showMsg('Greška pri čuvanju podataka na serveru.', 'danger');
-                        }
-
-                    } catch (err) {
-                        console.error(err);
-                        showMsg('Greška u komunikaciji sa serverom.', 'danger');
+                    if (nPassword.length < 6) {
+                        showMsg('Nova lozinka mora imati najmanje 6 znakova!', 'danger');
+                        return;
                     }
-                });
+                }
+
+                const data = {
+                    fullName: document.getElementById('displayName').value,
+                    email: document.getElementById('usernameOrEmail').value,
+                    phoneNumber: document.getElementById('phoneNumber').value,
+                    location: document.getElementById('location').value,
+                    birthDate: document.getElementById('birthDate').value,
+                    currentPassword: currentPassword,
+                    newPassword: nPassword,
+                    confirmPassword: cPassword
+                };
+
+                try {
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                    const response = await fetch('/Account/UpdateProfile', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': token
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        showMsg('Profil je uspješno ažuriran i sačuvan.', 'success');
+                        document.getElementById('currentPassword').value = '';
+                        document.getElementById('newPassword').value = '';
+                        document.getElementById('confirmPassword').value = '';
+                        const currentName = document.getElementById('displayName').value;
+                        document.getElementById('userAvatar').textContent = currentName.charAt(0).toUpperCase();
+                    } else {
+                        const errData = await response.text();
+                        showMsg(errData || 'Greška pri čuvanju podataka na serveru.', 'danger');
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    showMsg('Greška u komunikaciji sa serverom.', 'danger');
+                }
+            });
         });
     </script>
 }

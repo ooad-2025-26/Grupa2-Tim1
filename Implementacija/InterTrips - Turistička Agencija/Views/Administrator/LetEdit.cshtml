@@ -402,46 +402,44 @@
                 <div class="form-group">
                     <label class="field-label">BROJ LETA</label>
                     <input class="input" id="inputBrojLeta" asp-for="BrojLeta" type="text" maxlength="20" required placeholder="Npr. JU-100">
-                    <span asp-validation-for="BrojLeta" id="errorBrojLeta" style="color:#ef4444; font-size:12px;"></span>
+                    <span asp-validation-for="BrojLeta" class="field-validation-error"></span>
                 </div>
 
                 <div class="form-group">
                     <label class="field-label">POLAZAK SA</label>
                     <input class="input" id="inputPolazak" asp-for="Polazak" type="text" maxlength="100" required placeholder="Npr. Aerodrom Sarajevo (SJJ)">
-                    <span asp-validation-for="Polazak" id="errorPolazak" style="color:#ef4444; font-size:12px;"></span>
+                    <span asp-validation-for="Polazak" class="field-validation-error"></span>
                 </div>
 
                 <div class="form-group">
                     <label class="field-label">AVIOKOMPANIJA</label>
                     <input class="input" id="inputAviokompanija" asp-for="Aviokompanija" type="text" maxlength="100" required placeholder="Npr. Turkish Airlines">
-                    <span asp-validation-for="Aviokompanija" id="errorAviokompanija" style="color:#ef4444; font-size:12px;"></span>
+                    <span asp-validation-for="Aviokompanija" class="field-validation-error"></span>
                 </div>
 
                 <div class="form-group">
                     <label class="field-label">ODREDIŠTE (DESTINACIJA)</label>
                     <select class="select" asp-for="Odrediste" required id="selectOdrediste">
                         <option value="">-- Odaberite destinaciju --</option>
-                        @if (ViewBag.Destinacije != null)
+                        @if (destinacije != null && destinacije.Any())
                         {
-                            foreach (var d in (IEnumerable<dynamic>)ViewBag.Destinacije)
+                            foreach (var d in destinacije)
                             {
-                                <option value="@d.Naziv" selected="@(Model?.Odrediste == d.Naziv ? "selected" : null)">
-                                    @d.Naziv (@d.Drzava)
-                                </option>
+                                <option value="@d.Naziv">@d.Naziv (@d.Drzava)</option>
                             }
                         }
                     </select>
-                    <span asp-validation-for="Odrediste" id="errorOdrediste" style="color:#ef4444; font-size:12px;"></span>
+                    <span asp-validation-for="Odrediste" class="field-validation-error"></span>
                 </div>
 
                 <div class="form-group">
                     <label class="field-label">SLOBODNA SJEDIŠTA (KAPACITET)</label>
                     <input class="input" id="inputSlobodnaSjedista" asp-for="SlobodnaSjedista" type="number" min="0" max="1000" step="1" required>
-                    <span asp-validation-for="SlobodnaSjedista" id="errorSjedista" style="color:#ef4444; font-size:12px;"></span>
+                    <span asp-validation-for="SlobodnaSjedista" class="field-validation-error"></span>
                 </div>
 
                 <div class="form-actions">
-                    <a href="/Administrator/Letovi" class="cancel-btn" style="text-decoration: none; padding: 10px 16px; display: inline-block;">Otkaži</a>
+                    <a href="/Administrator/Letovi" class="cancel-btn">Otkaži</a>
                     <button class="main-btn" type="submit" id="submitBtn">Spasi izmjene</button>
                 </div>
             </form>
@@ -460,56 +458,15 @@
         });
 
         document.getElementById('letEditForm')?.addEventListener('submit', function (e) {
+        if (window.jQuery && jQuery(this).valid && !jQuery(this).valid()) {
+        return;
+        }
+
         const brojLetaInput = document.getElementById('inputBrojLeta');
         const polazakInput = document.getElementById('inputPolazak');
         const avioInput = document.getElementById('inputAviokompanija');
-        const sjedistaInput = document.getElementById('inputSlobodnaSjedista');
-        const selectOdrediste = document.getElementById('selectOdrediste');
         const submitBtn = document.getElementById('submitBtn');
 
-        const errorBrojLeta = document.getElementById('errorBrojLeta');
-        const errorPolazak = document.getElementById('errorPolazak');
-        const errorAviokompanija = document.getElementById('errorAviokompanija');
-        const errorSjedista = document.getElementById('errorSjedista');
-        const errorOdrediste = document.getElementById('errorOdrediste');
-
-        let isValid = true;
-
-        if (errorBrojLeta) errorBrojLeta.textContent = "";
-        if (errorPolazak) errorPolazak.textContent = "";
-        if (errorAviokompanija) errorAviokompanija.textContent = "";
-        if (errorSjedista) errorSjedista.textContent = "";
-        if (errorOdrediste) errorOdrediste.textContent = "";
-
-        if (brojLetaInput && brojLetaInput.value.trim() === "") {
-        errorBrojLeta.textContent = "Broj leta ne može sadržavati samo razmake.";
-        isValid = false;
-        }
-        if (polazakInput && polazakInput.value.trim() === "") {
-        errorPolazak.textContent = "Polazni aerodrom ne može sadržavati samo razmake.";
-        isValid = false;
-        }
-        if (avioInput && avioInput.value.trim() === "") {
-        errorAviokompanija.textContent = "Naziv aviokompanije ne može sadržavati samo razmake.";
-        isValid = false;
-        }
-
-        if (selectOdrediste && selectOdrediste.value === "") {
-        errorOdrediste.textContent = "Molimo odaberite validnu destinaciju sa liste.";
-        isValid = false;
-        }
-
-        if (sjedistaInput) {
-        const brojSjedista = parseInt(sjedistaInput.value);
-        if (isNaN(brojSjedista) || brojSjedista < 0) {
-        errorSjedista.textContent = "Broj slobodnih sjedišta ne može biti negativan.";
-        isValid = false;
-        }
-        }
-
-        if (!isValid) {
-        e.preventDefault();
-        } else {
         if (brojLetaInput) brojLetaInput.value = brojLetaInput.value.trim();
         if (polazakInput) polazakInput.value = polazakInput.value.trim();
         if (avioInput) avioInput.value = avioInput.value.trim();
@@ -517,7 +474,6 @@
         if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.innerText = "Spašavanje u toku...";
-        }
         }
         });
     </script>

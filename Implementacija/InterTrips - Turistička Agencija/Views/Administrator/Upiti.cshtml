@@ -490,7 +490,7 @@
         const tokenInput = document.querySelector('#antiforgery-token-container input[name="__RequestVerificationToken"]');
         const token = tokenInput ? tokenInput.value : '';
 
-        const response = await fetch(`/Home/MarkAsRead/${id}`, {
+        const response = await fetch(`/Administrator/MarkAsRead/${id}`, {
         method: 'POST',
         headers: {
         'RequestVerificationToken': token

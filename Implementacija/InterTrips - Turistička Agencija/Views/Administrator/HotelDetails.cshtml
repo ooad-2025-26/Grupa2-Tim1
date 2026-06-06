@@ -320,41 +320,41 @@
 
     <aside class="sidebar">
         <div class="logo-area">
-            <a href="/" class="sidebar-logo-text">InterTrips</a>
+            <a asp-controller="Home" asp-action="Index" class="sidebar-logo-text">InterTrips</a>
         </div>
 
         <nav class="nav-links">
-            <a href="/Administrator/Index" class="nav-item">
-                <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
+            <a asp-controller="Administrator" asp-action="Index" class="nav-item">
+                <i class="fa-solid fa-chart-pie" aria-hidden="true"></i> <span>Dashboard</span>
             </a>
-            <a href="/Administrator/Destinacije" class="nav-item">
-                <i class="fa-solid fa-map-location-dot"></i> <span>Destinacije</span>
+            <a asp-controller="Administrator" asp-action="Destinacije" class="nav-item">
+                <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> <span>Destinacije</span>
             </a>
-            <a href="/Administrator/Letovi" class="nav-item">
-                <i class="fa-solid fa-plane"></i> <span>Letovi</span>
+            <a asp-controller="Administrator" asp-action="Letovi" class="nav-item">
+                <i class="fa-solid fa-plane" aria-hidden="true"></i> <span>Letovi</span>
             </a>
-            <a href="/Administrator/Hoteli" class="nav-item active">
-                <i class="fa-solid fa-hotel"></i> <span>Hoteli</span>
+            <a asp-controller="Administrator" asp-action="Hoteli" class="nav-item active">
+                <i class="fa-solid fa-hotel" aria-hidden="true"></i> <span>Hoteli</span>
             </a>
-            <a href="/Administrator/Paketi" class="nav-item">
-                <i class="fa-solid fa-cubes"></i> <span>Paketi</span>
+            <a asp-controller="Administrator" asp-action="Paketi" class="nav-item">
+                <i class="fa-solid fa-cubes" aria-hidden="true"></i> <span>Paketi</span>
             </a>
-            <a href="/Administrator/Korisnici" class="nav-item">
-                <i class="fa-solid fa-users"></i> <span>Korisnici</span>
+            <a asp-controller="Administrator" asp-action="Korisnici" class="nav-item">
+                <i class="fa-solid fa-users" aria-hidden="true"></i> <span>Korisnici</span>
             </a>
-            <a href="/Administrator/Rezervacije" class="nav-item">
-                <i class="fa-solid fa-calendar-check"></i> <span>Rezervacije</span>
+            <a asp-controller="Administrator" asp-action="Rezervacije" class="nav-item">
+                <i class="fa-solid fa-calendar-check" aria-hidden="true"></i> <span>Rezervacije</span>
             </a>
-            <a href="/Administrator/Upiti" class="nav-item">
-                <i class="fa-solid fa-inbox"></i> <span>Kontakt Upiti</span>
+            <a asp-controller="Administrator" asp-action="Upiti" class="nav-item">
+                <i class="fa-solid fa-inbox" aria-hidden="true"></i> <span>Kontakt Upiti</span>
             </a>
-            <a href="/Administrator/Izvjestaj" class="nav-item">
-                <i class="fa-solid fa-chart-line"></i> <span>Izvještaji</span>
+            <a asp-controller="Administrator" asp-action="Izvjestaj" class="nav-item">
+                <i class="fa-solid fa-chart-line" aria-hidden="true"></i> <span>Izvještaji</span>
             </a>
         </nav>
 
         <div class="sidebar-footer">
-            <form method="post" action="/Account/Logout">
+            <form asp-controller="Account" asp-action="Logout" method="post">
                 @Html.AntiForgeryToken()
                 <button class="logout-btn-nav" type="submit">Odjavi se</button>
             </form>
@@ -368,15 +368,15 @@
                 <p>Detaljan pregled informacija i statusa hotelskog smještaja.</p>
             </div>
             <div class="header-actions">
-                <a href="/Administrator/Hoteli" class="btn-top-nav btn-back">
-                    <i class="fa-solid fa-arrow-left"></i> Nazad na listu
+                <a asp-controller="Administrator" asp-action="Hoteli" class="btn-top-nav btn-back">
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Nazad na listu
                 </a>
             </div>
         </header>
 
         <div class="details-grid">
             <div class="card">
-                <h2><i class="fa-solid fa-circle-info" style="color: var(--primary);"></i> Specifikacije Hotela</h2>
+                <h2><i class="fa-solid fa-circle-info" style="color: var(--primary);" aria-hidden="true"></i> Specifikacije Hotela</h2>
 
                 <div class="info-group">
                     <div class="info-label">Naziv objekta</div>
@@ -386,10 +386,10 @@
                 <div class="info-group">
                     <div class="info-label">Kategorizacija</div>
                     <div class="info-value">
-                        <div class="stars">
+                        <div class="stars" aria-label="Kategorizacija: @Model.BrojZvjezdica zvjezdica">
                             @for (int i = 0; i < Model.BrojZvjezdica; i++)
                             {
-                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star" aria-hidden="true"></i>
                             }
                             @if (Model.BrojZvjezdica == 0)
                             {
@@ -402,7 +402,7 @@
                 <div class="info-group">
                     <div class="info-label">Lokacija i Adresa</div>
                     <div class="info-value">
-                        <i class="fa-solid fa-location-dot" style="color: var(--text-muted); margin-right: 4px;"></i>
+                        <i class="fa-solid fa-location-dot" style="color: var(--text-muted); margin-right: 4px;" aria-hidden="true"></i>
                         @Model.Lokacija
                     </div>
                 </div>
@@ -419,7 +419,7 @@
                     <div class="info-value">
                         @if (!string.IsNullOrEmpty(Model.KontaktInformacije))
                         {
-                            <i class="fa-solid fa-phone" style="color: var(--text-muted); margin-right: 4px;"></i> 
+                            <i class="fa-solid fa-phone" style="color: var(--text-muted); margin-right: 4px;" aria-hidden="true"></i>
                             @Model.KontaktInformacije
                         }
                         else
@@ -438,7 +438,7 @@
                             foreach (var u in usluge)
                             {
                                 <span class="service-badge">
-                                    <i class="fa-solid fa-check" style="color: var(--success);"></i> @u.Trim()
+                                    <i class="fa-solid fa-check" style="color: var(--success);" aria-hidden="true"></i> @u.Trim()
                                 </span>
                             }
                         }
@@ -452,7 +452,7 @@
 
             <div>
                 <div class="card">
-                    <h2><i class="fa-solid fa-bed" style="color: var(--primary);"></i> Stanje soba</h2>
+                    <h2><i class="fa-solid fa-bed" style="color: var(--primary);" aria-hidden="true"></i> Stanje soba</h2>
                     <div class="status-box">
                         <div class="status-number">@Model.DostupnoSoba</div>
                         <div class="status-label">Trenutno dostupno soba</div>
@@ -460,11 +460,11 @@
                 </div>
 
                 <div class="card" style="border-color: rgba(239, 68, 68, 0.15);">
-                    <h2><i class="fa-solid fa-gears" style="color: var(--danger);"></i> Kontrola</h2>
-                    <form asp-controller="Administrator" asp-action="HotelDelete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('PAŽNJA: Brisanjem hotela \u201e@Model.Naziv\u201c obrisat ćete i sve vezane pakete iz kolekcije! Da li ste sigurni?');">
+                    <h2><i class="fa-solid fa-gears" style="color: var(--danger);" aria-hidden="true"></i> Kontrola</h2>
+                    <form asp-controller="Administrator" asp-action="HotelDelete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('PAŽNJA: Brisanjem hotela \u201e@System.Web.HttpUtility.JavaScriptStringEncode(Model.Naziv)\u201c obrisat ćete i sve vezane pakete iz kolekcije! Da li ste sigurni?');">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="logout-btn-nav" style="border-color: var(--danger); background: none; color: var(--danger); width: 100%; padding: 12px; font-size: 14px;">
-                            <i class="fa-solid fa-trash"></i> Trajno obriši hotel
+                            <i class="fa-solid fa-trash" aria-hidden="true"></i> Trajno obriši hotel
                         </button>
                     </form>
                 </div>

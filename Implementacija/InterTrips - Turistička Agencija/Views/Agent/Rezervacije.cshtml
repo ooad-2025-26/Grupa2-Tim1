@@ -569,9 +569,18 @@
                                 </div>
 
                                 <div>
-                                    <span class="status-badge status-@(statusString.ToLower().Replace(" ", ""))">
-                                        @statusString
-                                    </span>
+                                    @if (statusString.Equals("Kreirana", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="status-badge status-potvrdjena">
+                                            UPLACENO
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-@(statusString.ToLower().Replace(" ", ""))">
+                                            @statusString
+                                        </span>
+                                    }
                                 </div>
 
                                 <div class="actions-box">

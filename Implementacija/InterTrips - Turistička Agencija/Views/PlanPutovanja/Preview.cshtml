@@ -230,7 +230,7 @@
         <p class="subtitle-info">
             @if (Model?.Paket?.Destinacija != null)
             {
-                <span>Pogledajte detaljan pregled aktivnosti i plan putovanja za destinaciju <strong>@Model.Paket?.Destinacija?.Naziv</strong> (@Model.Paket?.Destinacija?.Drzava).</span>
+                <span>Pogledajte detaljan pregled aktivnosti i plan putovanja za destinaciju <strong>@Model.Paket.Destinacija.Naziv</strong> (@Model.Paket.Destinacija.Drzava).</span>
             }
             else
             {
@@ -241,7 +241,6 @@
 </header>
 
 <div class="itinerary-container">
-
     @if (Model == null)
     {
         <div class="empty-state">
@@ -277,7 +276,12 @@
                             @if (s.Vrijeme.HasValue)
                             {
                                 <div class="time-badge">
-                                    🕒 @(s.Vrijeme.Value is TimeSpan ? ((TimeSpan)s.Vrijeme.Value).ToString(@"hh\:mm") : Convert.ToDateTime(s.Vrijeme.Value).ToString("HH:mm"))
+                                    @{
+                                        string ispisVremena = s.Vrijeme.Value is TimeSpan ts
+                                            ? ts.ToString(@"hh\:mm")
+                                            : Convert.ToDateTime(s.Vrijeme.Value).ToString("HH:mm");
+                                    }
+                                    🕒 @ispisVremena
                                 </div>
                             }
                         </div>

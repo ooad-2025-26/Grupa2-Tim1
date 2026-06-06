@@ -500,7 +500,7 @@
         const csrfTokenEl = document.querySelector('input[name="__RequestVerificationToken"]');
         const csrfToken = csrfTokenEl ? csrfTokenEl.value : '';
 
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+\x40[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         const nameRegex = /^[a-zA-ZčćžšđČĆŽŠĐ]+(?:\s+[a-zA-ZčćžšđČĆŽŠĐ]+)+$/;
 
         const tabs = {
@@ -663,6 +663,7 @@
         const password = document.getElementById('adminPassword')?.value.trim() || '';
 
         if (!email || !password) { showError('Popunite sva polja.'); return; }
+        if (!emailRegex.test(email)) { showError('Unesite validnu e-mail adresu.'); return; }
 
         try {
         btn.disabled = true;
@@ -727,17 +728,17 @@
         }
         });
 
-        function togglePassword(inputId, iconEl) {
-        const input = document.getElementById(inputId);
-        if (!input) return;
-        if (input.type === 'password') {
+    window.togglePassword = function(inputId, iconEl) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    if (input.type === 'password') {
         input.type = 'text';
         if (iconEl) iconEl.textContent = '◔';
-        } else {
+    } else {
         input.type = 'password';
         if (iconEl) iconEl.textContent = '◉';
-        }
-        }
+    }
+};
     </script>
 </body>
 </html>

@@ -1128,7 +1128,7 @@
         if (savedPassengers.length === 0) {
             alert("Greška: Nismo pronašli podatke o putnicima. Molimo vratite se na prethodni korak.");
             return;
-        } // Added missing closing brace and handled return context
+        } 
 
         if (selectedPaymentType === 'card') {
             const cardNumber = document.getElementById('cardNumber')?.value.replace(/\s/g, '') || "";
@@ -1170,9 +1170,11 @@
         }
 
         const btn = document.querySelector('.btn-row .main-btn');
+        let originalText = "Potvrdi i plati";
         if (btn) {
-            btn.disabled = true;
-            btn.innerText = "Procesiranje...";
+        originalText = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = "Procesiranje...";
         }
 
         const paketId = parseInt(localStorage.getItem('reservationPaketId'), 10);
@@ -1349,5 +1351,4 @@
     }
 </script>
 </body>
-
 </html>

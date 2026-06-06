@@ -579,9 +579,9 @@
     <main class="main-content">
         <header class="dash-header">
             <div>
-                <span class="badge">Sistemski Logovi</span>
+                <span class="badge">Sistemski Evidencija</span>
                 <h1>Rezervacije korisnika</h1>
-                <p>Detaljan pregled, monitoring i evidencija svih aktivnih, potvrđenih i realizovanih aranžmana u bazi agencije.</p>
+                <p>Detaljan pregled, monitoring i evidencija svih aktivnih, potvrđenih i potvrđenih aranžmana u bazi agencije.</p>
             </div>
             <a asp-controller="Destinacije" asp-action="Index" class="btn-secondary" target="_blank">👁️ Pregledaj sajt</a>
         </header>
@@ -814,12 +814,20 @@
 
                         modalResId.innerText = "#" + id;
                         modalKorisnik.innerText = email;
-                        modalStatus.innerHTML = `<span class="status-pill">${escapeHtml(status ? status.toLowerCase() : "nepoznato")}</span>`;
+                        modalStatus.innerHTML = `<span class="status-pill ${status.toLowerCase()}">${escapeHtml(status)}</span>`;
                         modalPaket.innerText = paket;
                         modalDestinacija.innerText = destinacija;
                         modalPolazak.innerText = polazak;
                         modalPovratak.innerText = povratak;
                         modalLet.innerText = letInfo;
+                        hotelNazivSpan.innerText = hotel;
+
+                        if (hotelId > 0) {
+                            hotelLink.href = `/Administrator/Hoteli/Details/${hotelId}`;
+                            hotelLink.style.display = "inline-flex";
+                        } else {
+                            hotelLink.style.display = "none";
+                        }
 
                         if (hotelNazivSpan && hotelLink) {
                             hotelNazivSpan.innerText = hotel;
@@ -862,18 +870,11 @@
                 });
 
                 btnZatvori.addEventListener("click", zatvoriModal);
-
                 modalOverlay.addEventListener("click", function (e) {
-                    if (e.target === modalOverlay) {
-                        zatvoriModal();
-                    }
+                    if (e.target === modalOverlay) zatvoriModal();
                 });
 
-                window.addEventListener("keydown", function (e) {
-                    if (e.key === "Escape" && modalOverlay.classList.contains("active")) {
-                        zatvoriModal();
-                    }
-                });
+               
             });
     </script>
 </body>

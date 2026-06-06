@@ -496,18 +496,15 @@ public class AdministratorController : Controller
             TempData["Success"] = "Let uspješno kreiran!";
             return RedirectToAction("Letovi");
         }
-        catch (Exception ex) // Hvatamo opću grešku kako bi osigurali da uđemo u catch blok
+        catch (Exception ex)
         {
-            // Izvlačimo najdublju poruku iz SQL Servera koja piše točan razlog padanja
             var innerMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
 
-            // Ako je greška kompleksnija, uzimamo i njezinu pod-grešku
             if (ex.InnerException?.InnerException != null)
             {
                 innerMessage = ex.InnerException.InnerException.Message;
             }
 
-            // Prikazujemo točnu poruku administratoru na ekranu
             TempData["Error"] = $"Baza odbija upis! Detaljna greška: {innerMessage}";
 
             var vm = new AdminDashboardVm
@@ -754,4 +751,5 @@ public class AdministratorController : Controller
 
         return Ok();
     }
+
 }

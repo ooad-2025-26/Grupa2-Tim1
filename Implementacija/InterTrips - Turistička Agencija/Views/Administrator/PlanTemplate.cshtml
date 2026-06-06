@@ -19,420 +19,457 @@
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
 
     <style>
-        :root {
-            --bg-main: #f8fafc;
-            --sidebar-bg: #0f172a;
-            --sidebar-text: #94a3b8;
-            --sidebar-active: #38bdf8;
-            --text-dark: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --card-bg: #ffffff;
-            --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
-            --primary: #0ea5e9;
-            --danger: #ef4444;
-        }
+            :root {
+                --bg-main: #f8fafc;
+                --sidebar-bg: #0f172a;
+                --sidebar-text: #94a3b8;
+                --sidebar-active: #38bdf8;
+                --text-dark: #0f172a;
+                --text-muted: #64748b;
+                --border: #e2e8f0;
+                --card-bg: #ffffff;
+                --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
+                --primary: #0ea5e9;
+                --danger: #ef4444;
+                --danger-bg: #991b1b;
+            }
 
-        .nav-item i {
-            width: 20px;
-            margin-right: 12px;
-            font-size: 16px;
-            text-align: center;
-            transition: color 0.2s ease;
-        }
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: var(--bg-main);
+                color: var(--text-dark);
+                display: flex;
+                min-height: 100vh;
+            }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-main);
-            color: var(--text-dark);
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 260px;
-            background-color: var(--sidebar-bg);
-            color: #fff;
-            padding: 24px 16px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            left: 0;
-            top: 0;
-            z-index: 100;
-        }
-
-        .sidebar .logo-area {
-            padding: 0 12px 32px;
-            border-bottom: 1px solid #1e293b;
-            margin-bottom: 24px;
-        }
-
-        .sidebar-logo-text {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 20px;
-        }
-
-        .nav-links {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex-grow: 1;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            color: var(--sidebar-text);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .nav-item:hover {
-            background: #1e293b;
-            color: #fff;
-        }
-
-        .nav-item.active {
-            background: rgba(14, 165, 233, 0.15);
-            color: var(--sidebar-active);
-            font-weight: 600;
-        }
-
-        .sidebar-footer {
-            padding-top: 16px;
-            border-top: 1px solid #1e293b;
-        }
-
-        .logout-btn-nav {
-            width: 100%;
-            background: transparent;
-            border: 1px solid rgba(239, 68, 68, 0.25);
-            color: #ef4444;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-
-        .logout-btn-nav:hover {
-            background: rgba(239, 68, 68, 0.1);
-        }
-
-        .main-content {
-            margin-left: 260px;
-            flex-grow: 1;
-            padding: 40px 48px;
-            max-width: 1250px;
-            width: calc(100% - 260px);
-        }
-
-        .dash-header {
-            margin-bottom: 32px;
-        }
-
-        .dash-header h1 {
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--text-dark);
-            letter-spacing: -0.5px;
-        }
-
-        .dash-header p {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-top: 6px;
-            line-height: 1.5;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            padding: 32px;
-            margin-bottom: 24px;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .napomena-box {
-            display: flex;
-            gap: 16px;
-            align-items: flex-end;
-            background: #fdf8f6;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #fee2e2;
-            margin-bottom: 32px;
-        }
-
-        .field-label {
-            display: block;
-            font-size: 11px;
-            font-weight: 600;
-            color: #475569;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: .5px;
-        }
-
-        .input, .textarea {
-            width: 100%;
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            height: 40px;
-            padding: 0 14px;
-            font-size: 14px;
-            font-family: inherit;
-            color: var(--text-dark);
-            outline: none;
-            transition: all 0.15s ease;
-        }
-
-        .textarea {
-            height: 84px;
-            padding: 12px 14px;
-            resize: none;
-        }
-
-        .input:focus, .textarea:focus {
-            border-color: #94a3b8;
-            box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.1);
-        }
-
-        .row2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        .btn {
-            height: 38px;
-            padding: 0 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            border: 1px solid var(--border);
-            background: #fff;
-            color: #475569;
-            transition: all 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            gap: 6px;
-        }
-
-        .btn:hover {
-            background: #f1f5f9;
-            border-color: #cbd5e1;
-            color: var(--text-dark);
-        }
-
-        .btn-primary {
-            border: none;
-            color: #fff;
-            background: var(--sidebar-bg);
-        }
-
-        .btn-primary:hover {
-            background: #1e293b;
-            color: #fff;
-        }
-
-        .btn-danger {
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            background: rgba(239, 68, 68, 0.02);
-            color: var(--danger);
-        }
-
-        .btn-danger:hover {
-            background: rgba(239, 68, 68, 0.08);
-            border-color: var(--danger);
-        }
-
-        .actions {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            justify-content: flex-end;
-        }
-
-        .badge {
-            display: inline-flex;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            background: #e2e8f0;
-            color: #334155;
-        }
-
-        .badge-info {
-            background: #e0f2fe;
-            color: #0369a1;
-        }
-
-        .grid-row {
-            display: grid;
-            grid-template-columns: 80px 100px 1fr 100px auto;
-            gap: 24px;
-            align-items: start;
-            padding: 20px 12px;
-            border-bottom: 1px solid var(--border);
-            transition: all 0.15s ease;
-        }
-
-        .grid-row:last-child {
-            border-bottom: none;
-        }
-
-        .grid-row:hover {
-            background: #f8fafc;
-        }
-
-        .timeline-number {
-            font-size: 14px;
-            font-weight: 700;
-            color: #fff;
-            background: var(--sidebar-bg);
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-        }
-
-        .time-display {
-            font-weight: 600;
-            font-size: 14px;
-            background: #f0fdf4;
-            padding: 4px 8px;
-            border-radius: 4px;
-            display: inline-block;
-            border: 1px solid #bbf7d0;
-            color: #166534;
-        }
-
-        .item-title {
-            font-weight: 600;
-            font-size: 15px;
-            color: var(--text-dark);
-            margin-bottom: 6px;
-        }
-
-        .item-description {
-            color: var(--text-muted);
-            font-size: 13.5px;
-            line-height: 1.6;
-        }
-
-        .char-counter {
-            display: block;
-            text-align: right;
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        @@media (max-width: 1024px) {
             .sidebar {
-                width: 70px;
-                padding: 24px 8px;
+                width: 260px;
+                background-color: var(--sidebar-bg);
+                color: #fff;
+                padding: 24px 16px;
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                height: 100vh;
+                left: 0;
+                top: 0;
+                z-index: 100;
             }
 
-            .sidebar .logo-area, .sidebar .nav-item span {
-                display: none;
+                .sidebar .logo-area {
+                    padding: 0 12px 32px;
+                    border-bottom: 1px solid #1e293b;
+                    margin-bottom: 24px;
+                }
+
+            .sidebar-logo-text {
+                color: #fff;
+                text-decoration: none;
+                font-weight: 700;
+                font-size: 20px;
             }
 
-            .sidebar .nav-item i {
-                margin-right: 0;
-                font-size: 18px;
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                flex-grow: 1;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                color: var(--sidebar-text);
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 500;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+            }
+
+                .nav-item i {
+                    width: 20px;
+                    margin-right: 12px;
+                    font-size: 16px;
+                    text-align: center;
+                    transition: color 0.2s ease;
+                }
+
+                .nav-item:hover {
+                    background: #1e293b;
+                    color: #fff;
+                }
+
+                .nav-item.active {
+                    background: rgba(14, 165, 233, 0.15);
+                    color: var(--sidebar-active);
+                    font-weight: 600;
+                }
+
+            .sidebar-footer {
+                padding-top: 16px;
+                border-top: 1px solid #1e293b;
             }
 
             .logout-btn-nav {
-                padding: 10px 0;
-                font-size: 0;
+                width: 100%;
+                background: transparent;
+                border: 1px solid rgba(239, 68, 68, 0.25);
+                color: #ef4444;
+                padding: 10px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 13px;
+                transition: all 0.2s;
             }
 
-            .logout-btn-nav::before {
-                content: "\f2f5";
-                font-family: "Font Awesome 6 Free";
-                font-weight: 900;
-                font-size: 16px;
-            }
+                .logout-btn-nav:hover {
+                    background: rgba(239, 68, 68, 0.1);
+                }
 
             .main-content {
-                margin-left: 70px;
-                padding: 32px 24px;
-                width: calc(100% - 70px);
-            }
-        }
-
-        @@media (max-width: 850px) {
-            .grid-row {
-                grid-template-columns: 1fr;
-                gap: 12px;
-                padding: 24px 12px;
+                margin-left: 260px;
+                flex-grow: 1;
+                padding: 40px 48px;
+                max-width: 1250px;
+                width: calc(100% - 260px);
             }
 
-            .grid-row > div {
+            .dash-header {
+                margin-bottom: 32px;
+            }
+
+                .dash-header h1 {
+                    font-size: 26px;
+                    font-weight: 700;
+                    color: var(--text-dark);
+                    letter-spacing: -0.5px;
+                }
+
+                .dash-header p {
+                    color: var(--text-muted);
+                    font-size: 14px;
+                    margin-top: 6px;
+                    line-height: 1.5;
+                }
+
+            .card {
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                box-shadow: var(--shadow);
+                padding: 32px;
+                margin-bottom: 24px;
+            }
+
+            .section-title {
+                font-size: 16px;
+                font-weight: 600;
+                color: var(--text-dark);
+                margin-bottom: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .field-label {
+                display: block;
+                font-size: 11px;
+                font-weight: 600;
+                color: #475569;
+                margin-bottom: 6px;
+                text-transform: uppercase;
+                letter-spacing: .5px;
+            }
+
+            .input, .textarea {
+                width: 100%;
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                height: 40px;
+                padding: 0 14px;
+                font-size: 14px;
+                font-family: inherit;
+                color: var(--text-dark);
+                outline: none;
+                transition: all 0.15s ease;
+            }
+
+            .textarea {
+                height: 120px;
+                padding: 12px 14px;
+                resize: vertical;
+            }
+
+                .input:focus, .textarea:focus {
+                    border-color: #94a3b8;
+                    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.1);
+                }
+
+            .row2 {
+                display: flex;
+                gap: 16px;
+                margin-bottom: 16px;
+                flex-wrap: wrap;
+            }
+
+                .row2 > div {
+                    flex: 1;
+                    min-width: 140px;
+                }
+
+            .napomena-box {
+                display: flex;
+                gap: 16px;
+                align-items: flex-end;
+                background: #fdf8f6;
+                padding: 20px;
+                border-radius: 8px;
+                border: 1px solid #fee2e2;
+                margin-bottom: 24px;
+                flex-wrap: wrap;
+            }
+
+                .napomena-box .field-label {
+                    color: var(--danger-bg);
+                }
+
+                .napomena-box .input {
+                    border-color: #fca5a5;
+                }
+
+            .btn {
+                height: 38px;
+                padding: 0 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 13px;
+                border: 1px solid var(--border);
+                background: #fff;
+                color: #475569;
+                transition: all 0.15s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                gap: 6px;
+            }
+
+                .btn:hover {
+                    background: #f1f5f9;
+                    border-color: #cbd5e1;
+                    color: var(--text-dark);
+                }
+
+            .btn-primary {
+                border: none;
+                color: #fff;
+                background: var(--sidebar-bg);
+            }
+
+                .btn-primary:hover {
+                    background: #1e293b;
+                    color: #fff;
+                }
+
+            .btn-danger {
+                background: #fef2f2;
+                color: var(--danger);
+                border: 1px solid #fca5a5;
+            }
+
+                .btn-danger:hover {
+                    background: rgba(239, 68, 68, 0.08);
+                    border-color: var(--danger);
+                }
+
+            .btn-submit-plan {
+                background: var(--primary);
+                color: white;
+                border: none;
+            }
+
+                .btn-submit-plan:hover {
+                    background: #0284c7;
+                    color: white;
+                }
+
+            .btn-save-napomena {
+                height: 40px;
+                background: var(--danger-bg);
+                color: white;
+                border: none;
+                padding: 0 20px;
+            }
+
+                .btn-save-napomena:hover {
+                    background: #7f1d1d;
+                    color: white;
+                }
+
+            .actions {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+                justify-content: flex-end;
+            }
+
+            .badge {
+                display: inline-flex;
+                padding: 4px 10px;
+                border-radius: 6px;
+                font-size: 12px;
+                font-weight: 600;
+                background: #e2e8f0;
+                color: #334155;
+            }
+
+            .badge-info {
+                background: #e0f2fe;
+                color: #0369a1;
+            }
+
+            .badge-active {
+                background: #f0fdf4;
+                color: #166534;
+                font-size: 11px;
+            }
+
+            .timeline-container {
                 display: flex;
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
+                gap: 12px;
             }
 
-            .grid-row .actions {
-                width: 100%;
-                justify-content: flex-start;
-                border-top: 1px solid var(--border);
-                padding-top: 12px;
+            .grid-row {
+                display: grid;
+                grid-template-columns: 60px 90px minmax(0, 1fr) 90px auto;
+                gap: 20px;
+                align-items: center;
+                padding: 16px;
+                background: white;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                transition: all 0.15s ease;
+            }
+
+                .grid-row:hover {
+                    background: #f8fafc;
+                }
+
+            .timeline-number {
+                font-size: 16px;
+                font-weight: 700;
+                color: var(--text-dark);
+            }
+
+            .time-display {
+                font-weight: 600;
+                font-size: 14px;
+                background: #f0fdf4;
+                padding: 4px 8px;
+                border-radius: 4px;
+                display: inline-block;
+                border: 1px solid #bbf7d0;
+                color: #166534;
+            }
+
+            .item-title {
+                font-weight: 600;
+                font-size: 15px;
+                color: var(--text-dark);
+                margin-bottom: 4px;
+            }
+
+            .item-description {
+                color: var(--text-muted);
+                font-size: 13px;
+                line-height: 1.5;
+            }
+
+            .char-counter {
+                display: block;
+                text-align: right;
+                font-size: 12px;
+                color: var(--text-muted);
                 margin-top: 4px;
             }
 
-            .napomena-box {
-                flex-direction: column;
-                align-items: stretch;
+            @@media (max-width: 1024px) {
+                .sidebar {
+                    width: 70px;
+                    padding: 24px 8px;
+                }
+
+                    .sidebar .logo-area, .sidebar .nav-item span {
+                        display: none;
+                    }
+
+                    .sidebar .nav-item i {
+                        margin-right: 0;
+                        font-size: 18px;
+                    }
+
+                .logout-btn-nav {
+                    padding: 10px 0;
+                    font-size: 0;
+                }
+
+                    .logout-btn-nav::before {
+                        content: "\f2f5";
+                        font-family: "Font Awesome 6 Free";
+                        font-weight: 900;
+                        font-size: 16px;
+                    }
+
+                .main-content {
+                    margin-left: 70px;
+                    padding: 32px 24px;
+                    width: calc(100% - 70px);
+                }
             }
 
-            .napomena-box button {
-                width: 100%;
-                margin-top: 0;
-            }
+            @@media (max-width: 850px) {
+                .grid-row {
+                    grid-template-columns: 1fr;
+                    gap: 12px;
+                    padding: 24px 12px;
+                }
 
-            .row2 {
-                grid-template-columns: 1fr;
+                    .grid-row > div {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 4px;
+                    }
+
+                    .grid-row .actions {
+                        width: 100%;
+                        justify-content: flex-start;
+                        border-top: 1px solid var(--border);
+                        padding-top: 12px;
+                        margin-top: 4px;
+                    }
+
+                .napomena-box {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                    .napomena-box button {
+                        width: 100%;
+                    }
             }
-        }
     </style>
 </head>
 <body>
@@ -496,19 +533,19 @@
         <div class="card">
             @if (Model != null)
             {
-                <form asp-controller="Administrator" asp-action="PlanTemplateSaveNapomena" method="post" class="napomena-box" style="display: flex; gap: 16px; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap;">
+                <form asp-controller="Administrator" asp-action="PlanTemplateSaveNapomena" method="post" class="napomena-box">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="id" value="@Model.Id" />
                     <div style="flex: 1; min-width: 280px;">
-                        <label class="field-label" style="color: #991b1b; display: block; margin-bottom: 6px; font-weight: 600;">Krovna napomena plana (prikazuje se korisnicima)</label>
-                        <input class="input" name="napomena" value="@Model.Napomena" style="border-color: #fca5a5; width: 100%; height: 40px; padding: 8px 12px; border-radius: 6px; border: 1px solid #fca5a5;" placeholder="Npr. Plan puta je podložan blagim izmjenama u zavisnosti od reda letenja i vremenskih uslova..." />
+                        <label class="field-label">Krovna napomena plana (prikazuje se korisnicima)</label>
+                        <input class="input" name="napomena" value="@Model.Napomena" placeholder="Npr. Plan puta je podložan blagim izmjenama..." />
                     </div>
-                    <button type="submit" class="btn btn-primary" style="height: 40px; background: #991b1b; color: white; border: none; padding: 0 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">Sačuvaj</button>
+                    <button type="submit" class="btn btn-save-napomena">Sačuvaj</button>
                 </form>
 
-                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 18px; font-weight: 600;">
+                <div class="section-title" style="font-size: 18px;">
                     <div>Nova stavka ili dan</div>
-                    <span class="badge" style="background: #e2e8f0; color: #334155; padding: 4px 10px; border-radius: 12px; font-size: 12px;">
+                    <span class="badge">
                         Ukupno stavki: @(Model.Stavke?.Count ?? 0)
                     </span>
                 </div>
@@ -517,85 +554,85 @@
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="planId" value="@Model.Id" />
 
-                    <div class="row2" style="display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 140px;">
-                            <label class="field-label" style="display: block; margin-bottom: 6px;">Redni broj koraka / dan</label>
-                            <input class="input" type="number" name="redniBroj" min="1" value="@(Model.Stavke != null && Model.Stavke.Any() ? Model.Stavke.Max(s => s.RedniBroj) + 1 : 1)" required style="width: 100%; height: 40px; padding: 8px; border-radius: 6px; border: 1px solid var(--border);" />
+                    <div class="row2">
+                        <div>
+                            <label class="field-label">Redni broj koraka / dan</label>
+                            <input class="input" type="number" name="redniBroj" min="1" value="@(Model.Stavke != null && Model.Stavke.Any() ? Model.Stavke.Max(s => s.RedniBroj) + 1 : 1)" required />
                         </div>
 
-                        <div style="flex: 1; min-width: 140px;">
-                            <label class="field-label" style="display: block; margin-bottom: 6px;">Vrijeme (Opciono)</label>
-                            <input class="input" type="time" name="vrijeme" style="width: 100%; height: 40px; padding: 8px; border-radius: 6px; border: 1px solid var(--border);" />
+                        <div>
+                            <label class="field-label">Vrijeme (Opciono)</label>
+                            <input class="input" type="time" name="vrijeme" />
                         </div>
                     </div>
 
                     <div style="margin-bottom: 16px;">
-                        <label class="field-label" style="display: block; margin-bottom: 6px;">Naslov etape ili aktivnosti</label>
-                        <input class="input" name="Naziv" maxlength="160" required placeholder="Npr. Dan 1 - Okupljanje grupe na aerodromu i let za destinaciju" style="width: 100%; height: 40px; padding: 8px; border-radius: 6px; border: 1px solid var(--border);" />
+                        <label class="field-label">Naslov etape ili aktivnosti</label>
+                        <input class="input" name="Naziv" maxlength="160" required placeholder="Npr. Dan 1 - Okupljanje grupe na aerodromu i let za destinaciju" />
                     </div>
 
                     <div style="margin-bottom: 20px;">
-                        <label class="field-label" style="display: block; margin-bottom: 6px;">Detaljne informacije i opis</label>
-                        <textarea id="opisTextArea" class="textarea" name="opis" maxlength="600" placeholder="Unesite opise transfera, hotelskog smještaja, opcionalnih izleta ili slobodnih aktivnosti za ovu stavku..." style="width: 100%; height: 120px; padding: 10px; border-radius: 6px; border: 1px solid var(--border); resize: vertical; font-family: inherit;"></textarea>
-                        <small id="charCounter" class="char-counter" style="display: block; text-align: right; color: var(--text-muted); font-size: 12px; margin-top: 4px;">Preostalo karaktera: 600</small>
+                        <label class="field-label">Detaljne informacije i opis</label>
+                        <textarea id="opisTextArea" class="textarea" name="opis" maxlength="600" placeholder="Unesite opise transfera, hotelskog smještaja, opcionalnih izleta..."></textarea>
+                        <small id="charCounter" class="char-counter">Preostalo karaktera: 600</small>
                     </div>
 
-                    <div class="actions" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <div class="actions" style="justify-content: space-between; flex-wrap: wrap; gap: 12px;">
                         <div>
                             @if (Model.PaketId != null)
                             {
-                                <a class="btn" href="/PlanPutovanja/Preview?paketId=@Model.PaketId" target="_blank" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">👁️ Pregledaj na sajtu</a>
+                                <a class="btn" href="/PlanPutovanja/Preview?paketId=@Model.PaketId" target="_blank">👁️ Pregledaj na sajtu</a>
                             }
                         </div>
-                        <button class="btn btn-primary" type="submit" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">Unesi u plan putovanja</button>
+                        <button class="btn btn-submit-plan" type="submit">Unesi u plan putovanja</button>
                     </div>
                 </form>
 
-                <div class="section-title" style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; font-size: 18px; font-weight: 600;">
+                <div class="section-title" style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; font-size: 18px;">
                     <div>Hronološki slijed plana</div>
                 </div>
 
                 @if (Model.Stavke == null || !Model.Stavke.Any())
                 {
-                    <div class="item-description" style="font-style: italic; text-align: center; padding: 48px; background: #f8fafc; border-radius: 8px; border: 1px dashed var(--border); color: var(--text-muted);">
+                    <div class="item-description" style="font-style: italic; text-align: center; padding: 48px; background: #f8fafc; border-radius: 8px; border: 1px dashed var(--border);">
                         Plan putovanja je trenutno prazan. Koristite gornju formu da definišete strukturu aranžmana.
                     </div>
                 }
                 else
                 {
-                    <div class="timeline-container" style="display: flex; flex-direction: column; gap: 12px;">
+                    <div class="timeline-container">
                         @foreach (var s in Model.Stavke.OrderBy(x => x.RedniBroj))
                         {
                             if (s == null) continue;
 
-                            <div class="grid-row" style="display: grid; grid-template-columns: 60px 90px minmax(0, 1fr) 90px auto; gap: 20px; align-items: center; padding: 16px; background: white; border: 1px solid var(--border); border-radius: 8px;">
+                            <div class="grid-row">
                                 <div>
-                                    <span class="field-label" style="display: block; font-size: 10px; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase;">Pozicija</span>
-                                    <div class="timeline-number" style="font-weight: 700; font-size: 16px; color: var(--text-dark);">@s.RedniBroj</div>
+                                    <span class="field-label" style="font-size: 10px; color: var(--text-muted);">Pozicija</span>
+                                    <div class="timeline-number">@s.RedniBroj</div>
                                 </div>
 
                                 <div>
-                                    <span class="field-label" style="display: block; font-size: 10px; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase;">Satnica</span>
+                                    <span class="field-label" style="font-size: 10px; color: var(--text-muted);">Satnica</span>
                                     @if (s.Vrijeme.HasValue)
                                     {
-                                        <span class="time-display" style="font-weight: 600; font-size: 14px; color: var(--text-dark);">
+                                        <span class="time-display">
                                             @s.Vrijeme.Value.ToString(@"hh\:mm") h
                                         </span>
                                     }
                                     else
                                     {
-                                        <span class="muted" style="font-size: 13px; color: #cbd5e1; font-weight: 500;">— : —</span>
+                                        <span style="font-size: 13px; color: #cbd5e1; font-weight: 500;">— : —</span>
                                     }
                                 </div>
 
                                 <div style="padding-right: 16px; word-break: break-word; overflow-wrap: break-word;">
-                                    <div class="item-title" style="font-weight: 600; font-size: 15px; color: var(--text-dark); margin-bottom: 4px;">@s.Naziv</div>
-                                    <div class="item-description" style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">@s.Opis</div>
+                                    <div class="item-title">@s.Naziv</div>
+                                    <div class="item-description">@s.Opis</div>
                                 </div>
 
                                 <div>
-                                    <span class="field-label" style="display: block; font-size: 10px; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase;">Status</span>
-                                    <span class="badge" style="background: #f0fdf4; color: #166534; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; display: inline-block;">Aktivan</span>
+                                    <span class="field-label" style="font-size: 10px; color: var(--text-muted);">Status</span>
+                                    <span class="badge badge-active">Aktivan</span>
                                 </div>
 
                                 <div class="actions">
@@ -603,8 +640,7 @@
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="id" value="@s.Id" />
                                         <button class="btn btn-danger" type="submit"
-                                                onclick="return confirm('Da li ste sigurni da želite obrisati stavku: @System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(s.Naziv ?? "")?')"
-                                                style="background: #fef2f2; color: #ef4444; border: 1px solid #fca5a5; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;">
+                                                onclick="return confirm('Da li ste sigurni da želite obrisati stavku: @System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(s.Naziv ?? "")?')">
                                             Ukloni
                                         </button>
                                     </form>
@@ -616,7 +652,7 @@
             }
             else
             {
-                <div class="muted" style="text-align: center; padding: 48px;">
+                <div style="text-align: center; padding: 48px; color: var(--text-muted);">
                     Greška prilikom učitavanja šablona plana putovanja. Model je prazan.
                 </div>
             }
@@ -636,7 +672,8 @@
                         counter.textContent = `Preostalo karaktera: ${remaining}`;
 
                         if (remaining <= 20) {
-                            counter.style.color = "#ef4444"; 
+                            counter.style.color = "#ef4444";
+                        } else {
                             counter.style.color = "#64748b";
                         }
                     }

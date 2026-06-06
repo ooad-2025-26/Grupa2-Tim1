@@ -14,6 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
 
     <style>
@@ -36,6 +37,7 @@
                 --paketi-color: #6366f1;
                 --korisnici-color: #ec4899;
                 --rezervacije-color: #06b6d4;
+                --upiti-color: #14b8a6;
             }
 
             * {
@@ -53,18 +55,18 @@
             }
 
             .sidebar {
-            width: 260px;
-            background-color: var(--sidebar-bg);
-            color: #fff;
-            padding: 24px 16px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            left: 0;
-            top: 0;
-            z-index: 100;
-        }
+                width: 260px;
+                background-color: var(--sidebar-bg);
+                color: #fff;
+                padding: 24px 16px;
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                height: 100vh;
+                left: 0;
+                top: 0;
+                z-index: 100;
+            }
 
                 .sidebar .logo-area {
                     padding: 8px 12px 32px;
@@ -325,6 +327,14 @@
                         border-color: var(--rezervacije-color);
                     }
 
+                .category-card.cat-upiti {
+                    border-left: 4px solid var(--upiti-color);
+                }
+
+                    .category-card.cat-upiti:hover {
+                        border-color: var(--upiti-color);
+                    }
+
             .category-icon {
                 width: 48px;
                 height: 48px;
@@ -424,7 +434,9 @@
                 <p>Dobrodošli nazad. Trenutno stanje Vaše agencije.</p>
             </div>
             <div>
-                <a href="/Destinacije" target="_blank" class="btn-secondary-top"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 6px;"></i> Pregledaj sajt</a>
+                <a href="/Destinacije" target="_blank" class="btn-secondary-top">
+                    <i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 6px;"></i> Pregledaj sajt
+                </a>
             </div>
         </header>
 
@@ -448,7 +460,7 @@
             </a>
             <a href="/Administrator/Korisnici" class="stat-card">
                 <span>Aktivni Korisnici</span>
-                <strong id="agentCount">@Model.KorisniciCount</strong>
+                <strong id="userCount">@Model.KorisniciCount</strong>
             </a>
             <a href="/Administrator/Rezervacije" class="stat-card">
                 <span>Ukupno Rezervacija</span>
@@ -510,9 +522,17 @@
                 </div>
             </a>
 
+            <a href="/Administrator/Upiti" class="category-card cat-upiti">
+                <div class="category-icon" style="background: rgba(20, 184, 166, 0.1); color: var(--upiti-color);">
+                    <i class="fa-solid fa-inbox"></i>
+                </div>
+                <div class="category-details">
+                    <h3>Kontakt Upiti</h3>
+                    <p>Pregledajte poruke i pitanja posjetitelja poslana kroz kontakt formu. Odgovorite direktno klijentima.</p>
+                </div>
+            </a>
+
         </section>
-
     </main>
-
 </body>
 </html>

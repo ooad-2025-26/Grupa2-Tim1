@@ -487,8 +487,6 @@
                         <label class="field-label">KAPACITET (UKUPNO SJEDIŠTA)</label>
                         <input class="input" id="createUkupnoSjedista" name="UkupnoSjedista" type="number" min="1" max="1000" placeholder="Npr. 180" required>
                         <span id="errorKapacitet" style="color:#ef4444; font-size:12px; display:block; margin-top:4px;"></span>
-
-                        <input type="hidden" id="createSlobodnaSjedista" name="SlobodnaSjedista" value="0" />
                     </div>
 
                     <button class="main-btn" type="submit" id="submitBtn" style="margin-top: 15px;">Kreiraj let</button>
@@ -548,7 +546,6 @@
                 const polazak = document.getElementById('createPolazak');
                 const aviokompanija = document.getElementById('createAviokompanija');
                 const ukupnoSjedistaInput = document.getElementById('createUkupnoSjedista');
-                const slobodnaSjedistaHidden = document.getElementById('createSlobodnaSjedista');
                 const odrediste = document.getElementById('createOdrediste');
                 const submitBtn = document.getElementById('submitBtn');
 
@@ -584,15 +581,16 @@
                     isValid = false;
                 }
 
+                if (polazak && odrediste && polazak.value.trim().toLowerCase() === odrediste.value.trim().toLowerCase()) {
+                    errorOdrediste.textContent = "Odredište ne može biti isto kao i polazište.";
+                    isValid = false;
+                }
+
                 if (ukupnoSjedistaInput) {
                     const brSjedista = parseInt(ukupnoSjedistaInput.value);
                     if (isNaN(brSjedista) || brSjedista < 1 || brSjedista > 1000) {
                         errorKapacitet.textContent = "Broj sjedišta mora biti između 1 i 1000.";
                         isValid = false;
-                    } else {
-                         if (slobodnaSjedistaHidden) {
-                            slobodnaSjedistaHidden.value = brSjedista;
-                        }
                     }
                 }
 

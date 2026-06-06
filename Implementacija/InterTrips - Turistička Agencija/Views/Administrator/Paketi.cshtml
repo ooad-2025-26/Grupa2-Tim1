@@ -204,7 +204,6 @@
 
             .row-grid {
                 display: grid;
-                /* Popravak minmax(0, ...) sprječava dugačke riječi da razvuku kolone grid-a */
                 grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
                 gap: 24px;
                 align-items: center;
@@ -226,7 +225,6 @@
                 font-weight: 600;
                 color: var(--text-dark);
                 margin-bottom: 4px;
-                /* Popravak za ekstremno duge nazive bez razmaka */
                 word-break: break-word;
                 overflow-wrap: break-word;
             }
@@ -393,6 +391,7 @@
                     width: 70px;
                     padding: 24px 8px;
                 }
+
                     .sidebar .logo-area, .sidebar .nav-item span, .sidebar .logout-btn-nav span {
                         display: none;
                     }
@@ -596,7 +595,7 @@
                                 <button class="btn btn-danger @(popunjenoMjesta > 0 ? "btn-disabled" : "")"
                                         type="submit"
                                     @(popunjenoMjesta > 0 ? "disabled" : "")
-                                        onclick="return confirm('Da li ste sigurni da želite obrisati paket @@JavaScriptEncoder.Default.Encode(p.Naziv)?')">
+                                        onclick="return confirm('Da li ste sigurni da želite obrisati paket @System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(p.Naziv)?')">
                                     <i class="fa-regular fa-trash-can"></i> Obriši
                                 </button>
                             </form>

@@ -606,78 +606,78 @@
     </main>
 
     <script>
-        document.getElementById('slikaInput')?.addEventListener('change', function () {
-            const file = this.files[0];
-            const errorSpan = document.getElementById('slikaError');
-            
-            if (errorSpan) {
-                errorSpan.style.display = "none";
-                errorSpan.textContent = "";
-            }
+            document.getElementById('slikaInput')?.addEventListener('change', function () {
+                const file = this.files[0];
+                const errorSpan = document.getElementById('slikaError');
 
-            if (file) {
-                const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
-                if (!validTypes.includes(file.type)) {
-                    errorSpan.textContent = "Format fajla nije podržan. Dozvoljene su samo slike (JPG, PNG, WEBP).";
-                    errorSpan.style.display = "block";
-                    this.value = ""; 
-                    return;
+                if (errorSpan) {
+                    errorSpan.style.display = "none";
+                    errorSpan.textContent = "";
                 }
 
-                const maxSize = 5 * 1024 * 1024;
-                if (file.size > maxSize) {
-                    errorSpan.textContent = "Slika je prevelika. Maksimalna dozvoljena veličina je 5MB.";
-                    errorSpan.style.display = "block";
-                    this.value = ""; 
-                    return;
+                if (file) {
+                    const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+                    if (!validTypes.includes(file.type)) {
+                        errorSpan.textContent = "Format fajla nije podržan. Dozvoljene su samo slike (JPG, PNG, WEBP).";
+                        errorSpan.style.display = "block";
+                        this.value = "";
+                        return;
+                    }
+
+                    const maxSize = 5 * 1024 * 1024;
+                    if (file.size > maxSize) {
+                        errorSpan.textContent = "Slika je prevelika. Maksimalna dozvoljena veličina je 5MB.";
+                        errorSpan.style.display = "block";
+                        this.value = "";
+                        return;
+                    }
                 }
-            }
-        });
+            });
 
-        document.getElementById('createDestForm').addEventListener('submit', function (e) {
-            const nazivInput = document.getElementById('inputNaziv');
-            const drzavaInput = document.getElementById('inputDrzava');
-            const submitBtn = document.getElementById('submitBtn');
-            
-            const errorNaziv = document.getElementById('errorNaziv');
-            const errorDrzava = document.getElementById('errorDrzava');
+            document.getElementById('createDestForm').addEventListener('submit', function (e) {
+                const nazivInput = document.getElementById('inputNaziv');
+                const drzavaInput = document.getElementById('inputDrzava');
+                const submitBtn = document.getElementById('submitBtn');
 
-            let isValid = true;
+                const errorNaziv = document.getElementById('errorNaziv');
+                const errorDrzava = document.getElementById('errorDrzava');
 
-            if (errorNaziv) { errorNaziv.style.display = "none"; errorNaziv.textContent = ""; }
-            if (errorDrzava) { errorDrzava.style.display = "none"; errorDrzava.textContent = ""; }
+                let isValid = true;
 
-            if (nazivInput && nazivInput.value.trim() === "") {
-                errorNaziv.textContent = "Naziv destinacije ne može sadržavati samo razmake.";
-                errorNaziv.style.display = "block";
-                isValid = false;
-            }
+                if (errorNaziv) { errorNaziv.style.display = "none"; errorNaziv.textContent = ""; }
+                if (errorDrzava) { errorDrzava.style.display = "none"; errorDrzava.textContent = ""; }
 
-            if (drzavaInput && drzavaInput.value.trim() === "") {
-                errorDrzava.textContent = "Naziv države ne može sadržavati samo razmake.";
-                errorDrzava.style.display = "block";
-                isValid = false;
-            }
-
-            if (!isValid) {
-                e.preventDefault(); 
-            } else {
-                if (nazivInput) nazivInput.value = nazivInput.value.trim();
-                if (drzavaInput) drzavaInput.value = drzavaInput.value.trim();
-
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.innerText = "Kreiranje u toku...";
+                if (nazivInput && nazivInput.value.trim() === "") {
+                    errorNaziv.textContent = "Naziv destinacije ne može sadržavati samo razmake.";
+                    errorNaziv.style.display = "block";
+                    isValid = false;
                 }
-            }
-        });
 
-        const filterGeografskiUnos = function () {
-            this.value = this.value.replace(/[0-9<>:"/\\|?*+=_@@#$%%^&*()]/g, '');
-        };
+                if (drzavaInput && drzavaInput.value.trim() === "") {
+                    errorDrzava.textContent = "Naziv države ne može sadržavati samo razmake.";
+                    errorDrzava.style.display = "block";
+                    isValid = false;
+                }
 
-        document.getElementById('inputNaziv')?.addEventListener('input', filterGeografskiUnos);
-        document.getElementById('inputDrzava')?.addEventListener('input', filterGeografskiUnos);
+                if (!isValid) {
+                    e.preventDefault();
+                } else {
+                    if (nazivInput) nazivInput.value = nazivInput.value.trim();
+                    if (drzavaInput) drzavaInput.value = drzavaInput.value.trim();
+
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerText = "Kreiranje u toku...";
+                    }
+                }
+            });
+
+            const filterGeografskiUnos = function () {
+                this.value = this.value.replace(/[0-9<>:"/\\|?*+=_@@#$%%^&*()]/g, '');
+            };
+
+            document.getElementById('inputNaziv')?.addEventListener('input', filterGeografskiUnos);
+            document.getElementById('inputDrzava')?.addEventListener('input', filterGeografskiUnos);
     </script>
 </body>
 </html>

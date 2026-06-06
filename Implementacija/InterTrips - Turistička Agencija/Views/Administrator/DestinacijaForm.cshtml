@@ -478,7 +478,20 @@
     <script>
         let trenutniUrlObjekat = null;
 
-        document.getElementById('slikaInput').addEventListener('change', function (event) {
+        const nazivInput = document.getElementById('Naziv');
+        const drzavaInput = document.getElementById('Drzava');
+        const slikaInput = document.getElementById('slikaInput');
+        const errorNaziv = document.getElementById('error-Naziv');
+        const errorDrzava = document.getElementById('error-Drzava');
+
+        nazivInput?.addEventListener('input', function () {
+        if (this.value.trim() !== "") errorNaziv.textContent = "";
+        });
+        drzavaInput?.addEventListener('input', function () {
+        if (this.value.trim() !== "") errorDrzava.textContent = "";
+        });
+
+        slikaInput.addEventListener('change', function (event) {
         const file = this.files[0];
         const preview = document.getElementById('slikaPreview');
         const placeholder = document.getElementById('placeholderGallery');
@@ -492,7 +505,7 @@
         if (!dozvoljeniTipovi.includes(file.type)) {
         slikaError.textContent = "Dozvoljeni formati slika su: JPG, JPEG, PNG i WEBP.";
         slikaError.style.display = "block";
-        this.value = ""; 
+        this.value = "";
         return;
         }
 
@@ -512,46 +525,40 @@
         preview.src = trenutniUrlObjekat;
         preview.style.display = "block";
         preview.style.opacity = "1";
-        preview.style.filter = "none";
 
-        if (placeholder) {
-        placeholder.style.display = "none";
-        }
+        if (placeholder) placeholder.style.display = "none";
         }
         });
 
         document.getElementById('destinacijaForm').addEventListener('submit', function (e) {
-        const nazivInput = document.getElementById('Naziv');
-        const drzavaInput = document.getElementById('Drzava');
-
         let isvalid = true;
 
         if (nazivInput && nazivInput.value.trim() === "") {
-        document.getElementById('error-Naziv').textContent = "Naziv destinacije ne može sadržavati samo razmake.";
+        errorNaziv.textContent = "Naziv destinacije ne može sadržavati samo razmake.";
         isvalid = false;
         }
 
         if (drzavaInput && drzavaInput.value.trim() === "") {
-        document.getElementById('error-Drzava').textContent = "Naziv države ne može sadržavati samo razmake.";
+        errorDrzava.textContent = "Naziv države ne može sadržavati samo razmake.";
         isvalid = false;
         }
 
         if (!isvalid) {
-        e.preventDefault(); 
+        e.preventDefault();
         } else {
         nazivInput.value = nazivInput.value.trim();
         drzavaInput.value = drzavaInput.value.trim();
 
-        document.getElementById('submitBtn').disabled = true;
-        document.getElementById('submitBtn').innerText = "Spremanje...";
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Spremanje...';
         }
         });
 
         const tekstualniFilter = function (e) {
         this.value = this.value.replace(/[0-9<>:"/\\|?*+=_]/g, '');
         };
-
-        document.getElementById('Naziv')?.addEventListener('input', tekstualniFilter);
-        document.getElementById('Drzava')?.addEventListener('input', tekstualniFilter);
-    </script>
+        nazivInput?.addEventListener('input', tekstualniFilter);
+        drzavaInput?.addEventListener('input', tekstualniFilter);
+        </script>
 </body>
