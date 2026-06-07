@@ -12,33 +12,7 @@
 
 Aplikacija je razvijena kao projektni zadatak i obuhvata funkcionalnosti za **klijente**, **turističke agente** i **administratore**.
 
----
 
-## Tehnologije
-
-- **Backend:** .NET 10 / ASP.NET Core MVC
-- **Baza podataka:** Microsoft SQL Server
-- **ORM:** Entity Framework Core 10
-- **Autentifikacija:** ASP.NET Core Identity
-- **Frontend:** Razor Views, HTML5, CSS3, JavaScript
-- **Generisanje PDF dokumenata:** integrisani PDF engine na backendu
-- **Pozadinski servisi:** `BackgroundWorker` za automatske podsjetnike putem e-maila
-
----
-
-## Glavne funkcionalnosti
-
-- pregled turističkih paketa i destinacija
-- pregled dostupnih termina putovanja
-- rezervacija putovanja
-- unos podataka putnika
-- online plaćanje rezervacije
-- plaćanje na rate
-- prikaz plana putovanja
-- pregled vlastitih rezervacija
-- administracija paketa, destinacija, hotela, letova i korisnika
-- automatsko slanje e-mail podsjetnika 3 dana prije polaska
-- generisanje PDF planova putovanja i prateće dokumentacije
 
 ---
 
