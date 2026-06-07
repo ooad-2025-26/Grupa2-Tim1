@@ -48,6 +48,10 @@
                                 {
                                     <span>Potvrda rezervacije za <span style="color: #2aa9b0;">@n.Rezervacija?.Paket?.Destinacija?.Naziv</span></span>
                                 }
+                                else if (!string.IsNullOrEmpty(n.TipNotifikacije) && (n.TipNotifikacije.Contains("Otkazivanje") || n.TipNotifikacije.Contains("Otkazana")))
+                                {
+                                    <span style="color: #c92a2a;">Admin otkazao rezervaciju @(n.Rezervacija?.Paket?.Destinacija != null ? $"za {n.Rezervacija.Paket.Destinacija.Naziv}" : "")</span>
+                                }
                                 else
                                 {
                                     @n.TipNotifikacije
@@ -96,7 +100,6 @@
                         @if (n.Rezervacija?.Paket != null)
                         {
                             <div style="background: rgba(42, 169, 176, 0.08); color: #1d3b41; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                                @* Popravljeno: Dodan null-conditional operator *@
                                 Aranžman: <span style="color: #2aa9b0;">@n.Rezervacija?.Paket?.Naziv</span>
                             </div>
                         }
@@ -115,10 +118,10 @@
             btn.disabled = true;
             btn.textContent = 'Označavanje...';
             btn.style.background = '#555';
-                btn.style.cursor = 'not-allowed';
+            btn.style.cursor = 'not-allowed';
 
             try {
-                        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
 
                 const response = await fetch('/Notifikacije/OznaciSveKaoProcitane', {
                     method: 'POST',

@@ -1148,8 +1148,8 @@
             const monthsInput = document.getElementById('ratesMonths');
             const months = parseInt(monthsInput?.value, 10);
 
-            if (!months || isNaN(months) || months < 2 || months > 60) {
-                alert("Molimo unesite ispravan broj mjeseci za otplatu rata (između 2 i 60).");
+            if (!months || isNaN(months) || months < 2 || months > 24) {
+                alert("Molimo unesite ispravan broj mjeseci za otplatu rata (između 2 i 24).");
                 return;
             }
 

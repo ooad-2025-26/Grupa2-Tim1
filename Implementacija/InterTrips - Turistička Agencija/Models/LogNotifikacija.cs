@@ -32,13 +32,12 @@ namespace InterTrips___Turistička_Agencija.Models
         public DateTime VrijemeSlanja { get; set; } = DateTime.Now;
 
         [MaxLength(4000, ErrorMessage = "Poruka greške ne može biti duža od 4000 karaktera.")]
-        public string PorukaGreske { get; set; } = string.Empty;
+        public string? PorukaGreske { get; set; } = string.Empty;
 
         public bool Procitana { get; set; } = false;
 
         public DateTime? DatumProcitano { get; set; }
 
-        // Navigaciono svojstvo prema rezervaciji
         [ForeignKey(nameof(RezervacijaId))]
         public virtual Rezervacija? Rezervacija { get; set; }
     }

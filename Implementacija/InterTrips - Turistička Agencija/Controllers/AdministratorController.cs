@@ -605,10 +605,12 @@ public class AdministratorController : Controller
             return RedirectToAction("Hoteli");
         }
 
-        _db.Hoteli.Remove(hotel);
+        hotel.IsActive = false;
+
+        _db.Hoteli.Update(hotel);
         await _db.SaveChangesAsync();
 
-        TempData["Success"] = "Hotel je uspješno obrisan.";
+        TempData["Success"] = "Hotel je uspješno deaktiviran i sklonjen iz ponude.";
         return RedirectToAction("Hoteli");
     }
 
@@ -648,7 +650,98 @@ public class AdministratorController : Controller
 
         return RedirectToAction("Rezervacije");
     }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> OtkaziRezervaciju(int id)
+    {
+        var executionStrategy = _db.Database.CreateExecutionStrategy();
 
+        try
+        {
+            await executionStrategy.ExecuteAsync(async () =>
+            {
+                using var transaction = await _db.Database.BeginTransactionAsync();
+                try
+                {
+                    var rezervacija = await _db.Rezervacije
+                        .Include(r => r.Korisnik)
+                        .Include(r => r.Paket)
+                            .ThenInclude(p => p!.Destinacija)
+                        .Include(r => r.Paket)
+                            .ThenInclude(p => p!.Hotel)
+                        .Include(r => r.Paket)
+                            .ThenInclude(p => p!.Let)
+                        .Include(r => r.Putnici)
+                        .FirstOrDefaultAsync(r => r.Id == id);
+
+                    if (rezervacija == null)
+                    {
+                        throw new KeyNotFoundException("Rezervacija nije pronađena.");
+                    }
+
+                    int brojPutnika = (rezervacija.Putnici?.Count ?? 0) + 1;
+
+                    if (rezervacija.Paket != null)
+                    {
+                        if (rezervacija.Paket.Let != null)
+                        {
+                            rezervacija.Paket.Let.SlobodnaSjedista += brojPutnika;
+                        }
+
+                        if (rezervacija.Paket.Hotel != null)
+                        {
+                            rezervacija.Paket.Hotel.DostupnoSoba += 1;
+                        }
+                    }
+
+                    var stariLogovi = await _db.LogNotifikacije
+                        .Where(l => l.RezervacijaId == rezervacija.Id)
+                        .ToListAsync();
+
+                    if (stariLogovi.Any())
+                    {
+                        _db.LogNotifikacije.RemoveRange(stariLogovi);
+                    }
+
+                    var notifikacija = new LogNotifikacija
+                    {
+                        TipNotifikacije = "Otkazivanje rezervacije",
+                        VrijemeSlanja = DateTime.Now,
+                        Procitana = false,
+                        Status = "Uspjesno",
+                        EmailPrimaoca = rezervacija.Korisnik?.Email ?? "nepoznato@intertrips.com",
+                        RezervacijaId = rezervacija.Id, 
+                        PorukaGreske = ""
+                    };
+                    _db.LogNotifikacije.Add(notifikacija);
+
+                    _db.Rezervacije.Remove(rezervacija);
+
+                    await _db.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    TempData["Success"] = "Rezervacija uspješno otkazana, kapaciteti su vraćeni, a korisnik je obaviješten.";
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw; 
+                }
+            });
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["Error"] = "Rezervacija nije pronađena.";
+            return RedirectToAction(nameof(Rezervacije));
+        }
+        catch (Exception ex)
+        {
+            var greska = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+            TempData["Error"] = "Greška pri otkazivanju rezervacije: " + greska;
+        }
+
+        return RedirectToAction(nameof(Rezervacije));
+    }
     [HttpGet]
     public async Task<IActionResult> Izvjestaj()
     {
