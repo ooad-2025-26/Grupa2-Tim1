@@ -409,6 +409,25 @@
                     transform: translateY(0);
                 }
             }
+
+            .btn-view-plan {
+                background: var(--white);
+                color: var(--primary);
+                border: 1px solid var(--primary);
+                margin-right: 8px;
+            }
+
+                .btn-view-plan:hover {
+                    background: var(--primary-accent);
+                    color: var(--primary-light);
+                    border-color: var(--primary-light);
+                }
+
+            .actions-wrapper {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
     </style>
 </head>
 <body>
@@ -504,24 +523,33 @@
                                 </div>
                             </div>
 
-                            <form action="/Agent/TogglePaket" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="paketId" value="@p.Id" />
-                                <input type="hidden" name="agentId" value="@agentId" />
-
+                            <div class="actions-wrapper">
                                 @if (isMine)
                                 {
-                                    <button type="submit" class="action-btn btn-release">
-                                        <i class="fa-solid fa-minus"></i> Pusti paket
-                                    </button>
+                                    <a href="/Agent/PogledajPlan?paketId=@p.Id&agentId=@agentId" class="action-btn btn-view-plan">
+                                        <i class="fa-solid fa-route"></i> Plan putovanja
+                                    </a>
                                 }
-                                else
-                                {
-                                    <button type="submit" class="action-btn btn-take">
-                                        <i class="fa-solid fa-plus"></i> Preuzmi paket
-                                    </button>
-                                }
-                            </form>
+
+                                <form action="/Agent/TogglePaket" method="post" style="display: inline-block;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="paketId" value="@p.Id" />
+                                    <input type="hidden" name="agentId" value="@agentId" />
+
+                                    @if (isMine)
+                                    {
+                                        <button type="submit" class="action-btn btn-release">
+                                            <i class="fa-solid fa-minus"></i> Pusti paket
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="action-btn btn-take">
+                                            <i class="fa-solid fa-plus"></i> Preuzmi paket
+                                        </button>
+                                    }
+                                </form>
+                            </div>
                         </div>
                     }
                 }

@@ -825,15 +825,16 @@
 
                     if (naziv.includes(pojamZaPretragu) || drzava.includes(pojamZaPretragu) || opis.includes(pojamZaPretragu)) {
                         card.style.display = ''; 
+                        vidljivoPaketa++;
                     } else {
                         card.style.display = 'none'; 
                     }
                 });
 
-                if (pojamZaPretragu === '') {
+                if (pojamZaPretragu.trim() === '') {
                     resultTitle.innerHTML = `Prikazano <strong>${ukupnoPaketa}</strong> turističkih paketa`;
                 } else {
-                    resultTitle.innerHTML = `Pronađeno <strong>${vidljivoPaketa}</strong> od <strong>${ukupnoPaketa}</strong> paketa za pojam "${e.target.value}"`;
+                    resultTitle.innerHTML = `Pronađeno <strong>${vidljivoPaketa}</strong> od <strong>${ukupnoPaketa}</strong> paketa za pojam "${pojamZaPretragu}"`;
                 }
             });
         }

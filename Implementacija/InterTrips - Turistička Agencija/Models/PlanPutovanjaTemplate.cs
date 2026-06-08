@@ -15,7 +15,7 @@ namespace InterTrips___Turistička_Agencija.Models
         [ForeignKey(nameof(PaketId))]
         public virtual Paket? Paket { get; set; }
 
-        [MaxLength(1000, ErrorMessage = "Napomena ne može biti duža od 1000 karaktera.")] // Blago povećano radi opširnijih opštih napomena (npr. informacije o vizama, prtljagu)
+        [MaxLength(1000, ErrorMessage = "Napomena ne može biti duža od 1000 karaktera.")] 
         public string? Napomena { get; set; }
 
         public virtual List<StavkaPlanaTemplate> Stavke { get; set; } = new List<StavkaPlanaTemplate>();

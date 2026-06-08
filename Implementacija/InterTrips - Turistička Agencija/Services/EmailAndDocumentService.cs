@@ -96,7 +96,7 @@ namespace InterTrips___Turistička_Agencija.Services
 
             if (rezervacija.Status == StatusRezervacije.Otkazana)
             {
-                statusAranzmana = "OTKAZANO / STORNIRANO";
+                statusAranzmana = "OTKAZANO";
                 statusBoja = "#dc3545"; 
             }
 
@@ -116,7 +116,7 @@ namespace InterTrips___Turistička_Agencija.Services
             string ukupnaCijena = "Na upit";
             if (rezervacija.Status == StatusRezervacije.Otkazana)
             {
-                ukupnaCijena = "0.00 BAM (Storno)";
+                ukupnaCijena = "0.00 BAM";
             }
             else if (placanje != null)
             {
@@ -147,7 +147,7 @@ namespace InterTrips___Turistička_Agencija.Services
                             {
                                 qrRow.RelativeItem().Column(col =>
                                 {
-                                    col.Item().Text(rezervacija.Status == StatusRezervacije.Otkazana ? "DOKUMENT STORNIRAN" : "POTVRDA REZERVACIJE I ITINERER")
+                                    col.Item().Text(rezervacija.Status == StatusRezervacije.Otkazana ? "DOKUMENT OTKAZAN" : "POTVRDA REZERVACIJE I ITINERER")
                                         .FontSize(11).SemiBold().FontColor(statusBoja)
                                         .AlignRight();
                                 });

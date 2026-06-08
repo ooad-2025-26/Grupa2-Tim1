@@ -25,7 +25,7 @@ namespace InterTrips___Turistička_Agencija.Models
         [MaxLength(160, ErrorMessage = "Naziv ne može biti duži od 160 karaktera.")]
         public string Naziv { get; set; } = string.Empty;
 
-        [MaxLength(800, ErrorMessage = "Opis aktivnosti ne može biti duži od 800 karaktera.")] // Blago povećano radi detaljnijeg opisa izleta
+        [MaxLength(800, ErrorMessage = "Opis aktivnosti ne može biti duži od 800 karaktera.")]
         public string? Opis { get; set; }
 
         [DataType(DataType.DateTime)]

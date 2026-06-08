@@ -99,6 +99,7 @@ namespace InterTrips___Turistička_Agencija.Data
                 .HasIndex(ap => new { ap.AgentId, ap.PaketId })
                 .IsUnique();
 
+
             string adminRoleId = "1b63ef27-996b-4b13-98db-00f7e4b9bc10";
             string agentRoleId = "2c74fa38-885b-3b12-87cb-11e8e5c8cd21";
             string klijentRoleId = "3d85fb49-774b-2b11-76da-22f9e6d9de32";

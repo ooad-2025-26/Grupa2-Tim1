@@ -37,7 +37,7 @@ namespace InterTrips___Turistička_Agencija.Models
         public virtual ApplicationUser? Korisnik { get; set; }
 
         [Required(ErrorMessage = "Tip sobe je obavezan.")]
-        [MaxLength(100, ErrorMessage = "Naziv tipa sobe ne može biti duži od 100 karaktera.")] // Popravljen nvarchar(max)
+        [MaxLength(100, ErrorMessage = "Naziv tipa sobe ne može biti duži od 100 karaktera.")]
         public string TipSobe { get; set; } = "Standardna soba";
 
         [Required(ErrorMessage = "Morate odabrati vrstu prevoza.")]

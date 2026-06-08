@@ -210,4 +210,23 @@ namespace InterTrips___Turistička_Agencija.Controllers;
 
         return View(vm);
     }
+    [HttpGet]
+    public async Task<IActionResult> PogledajPlan(int paketId, int agentId)
+    {
+        var plan = await _db.PlanoviPutovanjaTemplate
+            .Include(p => p.Paket)
+                .ThenInclude(pk => pk!.Destinacija)
+            .Include(p => p.Stavke)
+            .FirstOrDefaultAsync(p => p.PaketId == paketId);
+
+        if (plan == null)
+        {
+            TempData["ErrorPoruka"] = "Za ovaj paket još uvijek nije kreiran plan putovanja od strane administratora.";
+            return RedirectToAction("Paketi", new { agentId = agentId });
+        }
+
+        ViewData["AgentId"] = agentId;
+
+        return View(plan);
+    }
 }

@@ -524,8 +524,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
             <br>
             <p>Srdačan pozdrav,<br>Vaš <strong>InterTrips</strong> tim</p>";
 
-                _ = Task.Run(async () =>
-                {
+           
                     await _emailService.PosaljiEmailSaLogomAsync(
                         emailKorisnikaZaNotifikaciju,
                         naslovEmaila,
@@ -533,7 +532,7 @@ namespace InterTrips___Turistička_Agencija.Controllers
                         id,
                         "OtkazivanjeRezervacije"
                     );
-                });
+                
             }
 
             return Ok(new { message = "Rezervacija je uspješno otkazana, kapaciteti su oslobođeni, a e-mail potvrda je poslana." });

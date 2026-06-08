@@ -103,7 +103,7 @@
     align-items: center;
     gap: 6px;
     background: #f0f5f6;
-    color: #435d62;
+    color: #2c3e41;
     padding: 5px 10px;
     border-radius: 6px;
     font-size: 0.85rem;
@@ -152,7 +152,7 @@
 
     .detail-label {
     font-size: 0.72rem;
-    color: #718d92;
+    color: #536e73;
     text-transform: uppercase;
     font-weight: 700;
     margin-bottom: 2px;
@@ -192,7 +192,7 @@
     .elegant-table td {
     padding: 10px 14px;
     border-bottom: 1px solid #f0f5f6;
-    color: #334d52;
+    color: #223437;
     }
 
     .elegant-table tr:last-child td {
@@ -241,10 +241,11 @@
     }
 
     .hero-content p {
-    font-size: 0.95rem;
-    color: #a4bcc0; 
+    font-size: 0.98rem;
+    color: #e2ecee;
     margin: 0;
-    font-weight: 400;
+    font-weight: 500;
+    letter-spacing: 0.3px;
     }
 
     .status-badge {
@@ -326,7 +327,7 @@
     }
 
     .empty-state-box p {
-    color: #536e73;
+    color: #334d52;
     font-size: 0.88rem;
     margin-bottom: 15px;
     }
@@ -365,7 +366,7 @@
 
     .status-badge.status-ceka {
     background-color: #e6f7f0; 
-    color: #10b981;
+    color: #065f46;
     border: 1px solid #a7f3d0;
     padding: 4px 10px;
     border-radius: 4px;
@@ -418,7 +419,7 @@
     async function renderReservations() {
     try {
     const response = await fetch('/Rezervacija/GetMojeRezervacije');
-    const data = await response.json();
+    const data = await response.json(); 
     const list = document.getElementById('reservationsList');
     const empty = document.getElementById('emptyMsg');
 
@@ -432,6 +433,8 @@
     if (empty) empty.style.display = 'none';
     }
 
+    data.sort((a, b) => b.id - a.id);
+
     list.innerHTML = data.map(r => {
     const resCode = `IT-${String(r.id).padStart(4, '0')}`;
     const jeOtkazana = (r.status === 2 || r.status === "Otkazana");
@@ -441,16 +444,7 @@
     r.putnici.forEach((p, idx) => {
     const tipZackica = p.tipPutnika ? ` <span style="font-size: 0.75rem; background: #e4ecee; padding: 2px 6px; border-radius: 4px; color: #1e7f88;">${escapeHtml(p.tipPutnika)}</span>` : '';
     const polZackica = p.pol ? ` (${escapeHtml(p.pol)})` : '';
-    putniciHtml += `
-    <tr>
-    <td style="text-align:center; font-weight:bold;">${idx + 1}.</td>
-    <td><b>${escapeHtml(p.ime)} ${escapeHtml(p.prezime)}</b>${polZackica}${tipZackica}</td>
-    <td>${p.datumRodjenja ? formatirajDatum(p.datumRodjenja) : '—'}</td>
-    <td style="font-family:monospace; font-weight:600;">${p.brojPasosa ? escapeHtml(p.brojPasosa) : '—'}</td>
-    <td>${p.drzavljanstvo ? escapeHtml(p.drzavljanstvo) : '—'}</td>
-    <td>${p.telefon ? escapeHtml(p.telefon) : '—'}</td>
-    </tr>
-    `;
+    putniciHtml += ` <tr> <td style="text-align:center; font-weight:bold;">${idx + 1}.</td> <td><b>${escapeHtml(p.ime)} ${escapeHtml(p.prezime)}</b>${polZackica}${tipZackica}</td> <td>${p.datumRodjenja ? formatirajDatum(p.datumRodjenja) : '—'}</td> <td style="font-family:monospace; font-weight:600;">${p.brojPasosa ? escapeHtml(p.brojPasosa) : '—'}</td> <td>${p.drzavljanstvo ? escapeHtml(p.drzavljanstvo) : '—'}</td> <td>${p.telefon ? escapeHtml(p.telefon) : '—'}</td> </tr> `;
     });
     } else {
     putniciHtml = `<tr><td colspan="6" style="text-align:center; color:#a4bcc0; padding:15px;">Nema registrovanih putnika za ovu rezervaciju.</td></tr>`;
@@ -459,7 +453,6 @@
     let statusKlasa = jeOtkazana ? 'status-otkazano' : 'status-ceka';
     let statusTekst = jeOtkazana ? 'Otkazano' : 'PLAĆENO (Potvrđeno)';
     let sakrijOtkaziDugme = jeOtkazana ? 'display: none;' : '';
-    let prikaziQrKod = !jeOtkazana;
 
     return `
     <div class="reservation-panel" id="panel_${r.id}" style="${jeOtkazana ? 'opacity: 0.85; border-left: 4px solid #dc3545;' : ''}">
@@ -480,36 +473,29 @@
     </div>
     </div>
     </div>
-
     <div class="res-actions-wrapper">
-    ${prikaziQrKod ? `<div class="qr-container-box" id="qr_${r.id}" title="Verifikacija" style="width:48px; height:48px;"></div>` : '<div style="width:48px; height:48px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#dc3545;">🚫</div>'}
     <button class="btn-download" onclick="preuzmiPdf(${r.id}, this)">
-    <i class="fa-solid fa-file-pdf"></i> ${jeOtkazana ? 'Preuzmi Storno' : 'Preuzmi Rezervaciju'}
+    <i class="fa-solid fa-file-pdf"></i> ${jeOtkazana ? 'Preuzmi Otkazanu Rezervaciju' : 'Preuzmi Rezervaciju'}
     </button>
     <button class="btn-cancel" style="${sakrijOtkaziDugme}" onclick="otkaziAranzman(${r.id}, '${resCode}')">
     <i class="fa-solid fa-trash-can"></i> Otkaži putovanje
     </button>
     </div>
     </div>
-
     <div class="res-card-details">
     <div class="details-grid">
     <div class="detail-item">
     <div class="detail-label">Odabrani Smještaj & Soba</div>
     <div class="detail-value">
-    <i class="fa-solid fa-hotel" style="color: #1e7f88; margin-right: 5px;"></i>
-    ${r.hotelNaziv ? escapeHtml(r.hotelNaziv) : 'Smještaj po programu'} ${r.odabranaSoba ? `(${escapeHtml(r.odabranaSoba)})` : ''}
+    <i class="fa-solid fa-hotel" style="color: #1e7f88; margin-right: 5px;"></i> ${r.hotelNaziv ? escapeHtml(r.hotelNaziv) : 'Smještaj po programu'} ${r.odabranaSoba ? `(${escapeHtml(r.odabranaSoba)})` : ''}
     </div>
     </div>
     <div class="detail-item">
     <div class="detail-label">Odabrani Način Prevoza</div>
-    <div class="detail-value">
-    ${mapirajPrevoz(r.odabraniPrevoz)}
+    <div class="detail-value"> ${mapirajPrevoz(r.odabraniPrevoz)} </div>
     </div>
     </div>
     </div>
-    </div>
-
     <div style="margin: 15px 20px 8px 20px; font-size:0.8rem; font-weight:700; color:#0a2228; letter-spacing:0.3px;">POPIS PRIJAVLJENIH PUTNIKA</div>
     <div class="table-responsive" style="margin: 0 20px 20px 20px; width: calc(100% - 40px);">
     <table class="elegant-table">
@@ -523,34 +509,12 @@
     <th style="width: 15%;">Kontakt telefon</th>
     </tr>
     </thead>
-    <tbody>
-    ${putniciHtml}
-    </tbody>
+    <tbody> ${putniciHtml} </tbody>
     </table>
     </div>
-    </div>
-    `;
+    </div> `;
     }).join('');
 
-    setTimeout(() => {
-    data.forEach(r => {
-    const jeOtkazana = (r.status === 2 || r.status === "Otkazana");
-    if (!jeOtkazana) {
-    const qrElement = document.getElementById(`qr_${r.id}`);
-    if (qrElement) {
-    qrElement.innerHTML = "";
-    new QRCode(qrElement, {
-    text: `https://intertrips.ba/Verifikacija/Rezervacija/${r.id}`,
-    width: 48,
-    height: 48,
-    colorDark: "#0a2228",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H
-    });
-    }
-    }
-    });
-    }, 50);
 
     } catch (e) {
     console.error("Greška pri renderovanju rezervacija:", e);

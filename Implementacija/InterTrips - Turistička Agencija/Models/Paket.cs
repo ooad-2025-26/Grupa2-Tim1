@@ -51,10 +51,10 @@ namespace InterTrips___Turistička_Agencija.Models
         [ValidateNever]
         public List<Rezervacija> Rezervacije { get; set; } = new();
 
-        [MaxLength(500, ErrorMessage = "URL slike ne može biti duži od 500 karaktera.")] // Povećano radi sigurnosti dugih eksternih URL-ova
+        [MaxLength(500, ErrorMessage = "URL slike ne može biti duži od 500 karaktera.")] 
         public string? SlikaUrl { get; set; }
 
-        [MaxLength(1000, ErrorMessage = "Opis ne može biti duži od 1000 karaktera.")] // Blago povećano za detaljniji opis programa putovanja
+        [MaxLength(1000, ErrorMessage = "Opis ne može biti duži od 1000 karaktera.")] 
         public string? Opis { get; set; }
 
         public int? HotelId { get; set; }
