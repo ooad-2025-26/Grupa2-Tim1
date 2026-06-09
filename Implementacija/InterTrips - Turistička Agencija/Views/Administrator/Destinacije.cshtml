@@ -141,7 +141,7 @@
                 margin-left: 260px;
                 flex-grow: 1;
                 padding: 40px 48px;
-                max-width: 1300px;
+                max-width: 1400px;
             }
 
             .dash-header {
@@ -240,8 +240,8 @@
 
             .content-grid {
                 display: grid;
-                grid-template-columns: 1.2fr 1.8fr;
-                gap: 24px;
+                grid-template-columns: 350px 1fr;
+                gap: 32px;
                 align-items: start;
             }
 
@@ -320,71 +320,112 @@
                     background-color: #1e293b;
                 }
 
-            .dest-list {
-                display: flex;
-                flex-direction: column;
+            /* NOVI MODERNIZOVANI GRID ZA KARTICE DESTINACIJA */
+            .dest-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 24px;
+                padding: 4px;
+            }
+
+            .dest-card-item {
+                background: var(--card-bg);
                 border: 1px solid var(--border);
                 border-radius: 12px;
                 overflow: hidden;
-                background: #fff;
-            }
-
-            .dest-row {
-                padding: 16px 20px;
+                box-shadow: var(--shadow);
                 display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-bottom: 1px solid var(--border);
-                transition: background-color 0.15s;
+                flex-direction: column;
+                transition: transform 0.2s, box-shadow 0.2s;
             }
 
-                .dest-row:last-child {
-                    border-bottom: none;
+                .dest-card-item:hover {
+                    transform: translateY(-4px);
+                    box-shadow: var(--shadow-md);
                 }
 
-                .dest-row:hover {
-                    background-color: #f8fafc;
-                }
-
-            .dest-meta-flex {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-            }
-
-            .dest-img-thumb {
-                width: 44px;
-                height: 44px;
-                border-radius: 8px;
-                object-fit: cover;
+            .dest-card-img-wrapper {
+                position: relative;
+                width: 100%;
+                height: 180px;
                 background: #e2e8f0;
-                border: 1px solid var(--border);
             }
 
-            .dest-info strong {
-                font-size: 14px;
-                font-weight: 600;
-                color: var(--text-dark);
-                display: block;
+            .dest-card-img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
 
-            .dest-info small {
-                color: var(--text-muted);
-                font-size: 12px;
-                margin-top: 2px;
-                display: block;
-            }
-
-            .actions-group {
+            .dest-card-placeholder {
+                width: 100%;
+                height: 100%;
                 display: flex;
-                gap: 8px;
+                align-items: center;
+                justify-content: center;
+                background: #f1f5f9;
+                color: #cbd5e1;
+                font-size: 2.5rem;
             }
 
-            .btn-action {
-                padding: 8px 14px;
+            .dest-card-badge {
+                position: absolute;
+                top: 12px;
+                left: 12px;
+                background: rgba(15, 23, 42, 0.85);
+                color: #fff;
+                padding: 4px 10px;
+                border-radius: 20px;
+                font-size: 11px;
+                font-weight: 600;
+                backdrop-filter: blur(4px);
+            }
+
+            .dest-card-body {
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+            }
+
+            .dest-card-title {
+                font-size: 16px;
+                font-weight: 700;
+                color: var(--text-dark);
+                margin-bottom: 4px;
+            }
+
+            .dest-card-location {
                 font-size: 13px;
-                font-weight: 500;
-                border-radius: 6px;
+                color: var(--text-muted);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 12px;
+            }
+
+                .dest-card-location i {
+                    color: var(--primary);
+                }
+
+            .dest-card-actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                margin-top: auto;
+                padding-top: 12px;
+                border-top: 1px solid var(--border);
+            }
+
+            .btn-card-action {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                padding: 9px;
+                font-size: 13px;
+                font-weight: 600;
+                border-radius: 8px;
                 text-decoration: none;
                 cursor: pointer;
                 border: 1px solid var(--border);
@@ -393,21 +434,27 @@
                 transition: all 0.15s;
             }
 
-                .btn-action:hover {
+                .btn-card-action:hover {
                     background: #f1f5f9;
                     border-color: #cbd5e1;
                 }
 
-                .btn-action.btn-delete {
+                .btn-card-action.btn-card-delete {
                     color: #ef4444;
-                    border-color: rgba(239,68,68,0.15);
-                    background: rgba(239,68,68,0.02);
+                    border-color: rgba(239, 68, 68, 0.15);
+                    background: rgba(239, 68, 68, 0.02);
                 }
 
-                    .btn-action.btn-delete:hover {
+                    .btn-card-action.btn-card-delete:hover {
                         background: #fef2f2;
                         border-color: #f87171;
                     }
+
+            @@media (max-width: 1200px) {
+                .content-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
 
             @@media (max-width: 1024px) {
                 .sidebar {
@@ -422,10 +469,6 @@
                 .main-content {
                     margin-left: 70px;
                     padding: 32px 24px;
-                }
-
-                .content-grid {
-                    grid-template-columns: 1fr;
                 }
 
                 .stats-grid {
@@ -509,10 +552,7 @@
                 <span>Aktivne Destinacije</span>
                 <strong id="destCount">@Model.DestinacijeCount</strong>
             </div>
-            <div class="stat-card">
-                <span>Ukupno Korisnika</span>
-                <strong id="agentCount">@Model.KorisniciCount</strong>
-            </div>
+           
             <div class="stat-card">
                 <span>Ukupno Rezervacija</span>
                 <strong id="bookingCount">@Model.RezervacijeCount</strong>
@@ -557,50 +597,63 @@
                 </form>
             </div>
 
-            <div class="card" style="padding: 28px 0 0 0;">
-                <h2 style="padding: 0 28px; margin-bottom: 20px;">Dostupne Destinacije</h2>
-                <div class="dest-list" id="destList">
-                    @if (Model.Destinacije != null && Model.Destinacije.Any())
-                    {
-                        foreach (var d in Model.Destinacije)
+            <div>
+                <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 24px;">Dostupne Destinacije</h2>
+
+                @if (Model.Destinacije != null && Model.Destinacije.Any())
+                {
+                    <div class="dest-grid" id="destList">
+                        @foreach (var d in Model.Destinacije)
                         {
-                            <div class="dest-row">
-                                <div class="dest-meta-flex">
+                            <div class="dest-card-item">
+                                <div class="dest-card-img-wrapper">
                                     @if (!string.IsNullOrEmpty(d.SlikaUrl))
                                     {
-                                        <img src="@d.SlikaUrl" class="dest-img-thumb" alt="@d.Naziv" />
+                                        <img src="@d.SlikaUrl" class="dest-card-img" alt="@d.Naziv" />
                                     }
                                     else
                                     {
-                                        <div class="dest-img-thumb" style="display:flex; align-items:center; justify-content:center; background:#f1f5f9;">
-                                            <i class="fa-solid fa-image" style="color:#cbd5e1;"></i>
+                                        <div class="dest-card-placeholder">
+                                            <i class="fa-solid fa-image"></i>
                                         </div>
                                     }
-                                    <div class="dest-info" style="word-break: break-word; max-width: 250px;">
-                                        <strong>@d.Naziv</strong>
-                                        <small>@d.Drzava @(!string.IsNullOrWhiteSpace(d.Kategorija) ? "• " + d.Kategorija : "")</small>
-                                    </div>
+
+                                    @if (!string.IsNullOrWhiteSpace(d.Kategorija))
+                                    {
+                                        <span class="dest-card-badge">@d.Kategorija</span>
+                                    }
                                 </div>
 
-                                <div class="actions-group">
-                                    <a class="btn-action" asp-controller="Administrator" asp-action="DestinacijaEdit" asp-route-id="@d.Id">Uredi</a>
-                                    <form asp-controller="Administrator" asp-action="DestinacijaDelete" asp-route-id="@d.Id" method="post" style="display:inline;">
-                                        @Html.AntiForgeryToken()
-                                        <button class="btn-action btn-delete" type="submit" onclick="return confirm('PAŽNJA: Brisanjem destinacije \u201e@d.Naziv\u201c obrisat ćete i sve povezane pakete i aranžmane ako postoje! Da li ste sigurni?')">
-                                            Obriši
-                                        </button>
-                                    </form>
+                                <div class="dest-card-body">
+                                    <h3 class="dest-card-title">@d.Naziv</h3>
+                                    <div class="dest-card-location">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                        <span>@d.Drzava</span>
+                                    </div>
+
+                                    <div class="dest-card-actions">
+                                        <a class="btn-card-action" asp-controller="Administrator" asp-action="DestinacijaEdit" asp-route-id="@d.Id">
+                                            <i class="fa-regular fa-pen-to-square"></i> Uredi
+                                        </a>
+                                        <form asp-controller="Administrator" asp-action="DestinacijaDelete" asp-route-id="@d.Id" method="post" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <button class="btn-card-action btn-card-delete" type="submit" onclick="return confirm('PAŽNJA: Brisanjem destinacije \u201e@d.Naziv\u201c obrisat ćete i sve povezane pakete i aranžmane ako postoje! Da li ste sigurni?')">
+                                                <i class="fa-regular fa-trash-can"></i> Obriši
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         }
-                    }
-                    else
-                    {
-                        <div style="padding: 28px; text-align: center; color: var(--text-muted);">
-                            Trenutno nema dostupnih destinacija.
-                        </div>
-                    }
-                </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                        <i class="fa-solid fa-map-route" style="font-size: 2rem; margin-bottom: 12px; color: #cbd5e1; display: block;"></i>
+                        Trenutno nema dostupnih destinacija.
+                    </div>
+                }
             </div>
         </div>
     </main>

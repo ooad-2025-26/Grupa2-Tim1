@@ -1,315 +1,216 @@
 ﻿@{
-    ViewData["Title"] = "Politika privatnosti";
-    Layout = null;
+ViewData["Title"] = "Politika privatnosti";
+Layout = "_Layout";
 }
 
-<!DOCTYPE html>
-<html lang="bs">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>InterTrips - @ViewData["Title"]</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
-
+@section Styles {
     <style>
-            :root {
-                --primary: #2aa9b0;
-                --primary-dark: #1e7f88;
-                --text: #24414a;
-                --muted: #5f7c86;
-                --shadow: 0 16px 36px rgba(63,116,128,0.06);
-                --transition: all 0.25s ease;
-            }
+        :root {
+            --primary: #2aa9b0;
+            --primary-dark: #1e7f88;
+            --primary-light: rgba(42, 169, 176, 0.08);
+            --text: #1e353d;
+            --muted: #5f7c86;
+            --bg: #f8fafc;
+            --shadow: 0 20px 40px rgba(36, 65, 74, 0.04);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-            body {
-                font-family: 'Poppins', sans-serif;
-                color: var(--text);
-                margin: 0;
-                background-color: #f6fbfb;
-            }
+        .page {
+            max-width: 900px;
+            margin: 50px auto 80px;
+            padding: 0 24px;
+        }
 
-            .topbar {
-                height: 65px;
-                background: rgba(255, 255, 255, 0.9);
-                border-bottom: 1px solid rgba(95, 181, 187, 0.15);
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0 40px;
-                position: sticky;
-                top: 0;
-                z-index: 50;
-                backdrop-filter: blur(12px);
-                box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-            }
+        .card {
+            background: #ffffff;
+            border: 1px solid rgba(95, 181, 187, 0.1);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            padding: 0;
+            overflow: hidden;
+            counter-reset: section;
+        }
 
-            .logo-link {
-                display: flex;
-                align-items: center;
-            }
+        .page-header-block {
+            background: linear-gradient(135deg, rgba(42, 169, 176, 0.05) 0%, rgba(96, 197, 204, 0.15) 100%);
+            padding: 60px 60px 40px 60px;
+            border-bottom: 1px solid rgba(42, 169, 176, 0.1);
+            position: relative;
+        }
 
-            .logo {
-                width: 90px;
-                height: 45px;
-                object-fit: contain;
-                display: block;
-            }
+        .header-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 16px;
+            box-shadow: 0 4px 10px rgba(42, 169, 176, 0.05);
+            border: 1px solid rgba(42, 169, 176, 0.1);
+        }
 
-            .nav-links {
-                display: flex;
-                align-items: center;
-                gap: 24px;
-                font-size: 13px;
-                font-weight: 600;
-                list-style: none;
-                margin: 0;
-                padding: 0;
-            }
-
-                .nav-links a {
-                    color: rgba(36, 65, 74, 0.8);
-                    transition: var(--transition);
-                    text-decoration: none;
-                }
-
-                    .nav-links a:hover {
-                        color: var(--primary-dark);
-                    }
-
-                .nav-links .pill {
-                    padding: 8px 18px;
-                    border-radius: 999px;
-                    border: 1px solid var(--primary);
-                    color: var(--primary-dark) !important;
-                    background: rgba(42, 169, 176, 0.05);
-                }
-
-                    .nav-links .pill:hover {
-                        background: var(--primary);
-                        color: #fff !important;
-                    }
-
-            .btn-gold {
-                padding: 8px 18px;
-                border-radius: 999px;
-                background: linear-gradient(135deg, #2aa9b0, #86d9ff);
-                color: #fff !important;
-                border: none;
-                font-size: 13px;
-                font-weight: 700;
-                cursor: pointer;
-                transition: var(--transition);
-                display: inline-block;
-                text-decoration: none;
-            }
-
-                .btn-gold:hover {
-                    filter: brightness(1.05);
-                    transform: translateY(-1px);
-                }
-
-            .page {
-                max-width: 860px;
-                margin: 40px auto 60px;
-                padding: 0 20px;
-            }
-
-            .card {
-                background: #ffffff;
-                border: 1px solid rgba(95,181,187,0.14);
-                border-radius: 20px;
-                box-shadow: var(--shadow);
-                padding: 45px 50px;
-            }
-
-            h1 {
-                color: var(--text);
-                margin-top: 0;
-                margin-bottom: 24px;
-                font-size: clamp(1.8rem, 4vw, 2.4rem);
-                font-weight: 800;
-                position: relative;
-            }
-
-                h1::after {
-                    content: '';
-                    display: block;
-                    width: 60px;
-                    height: 4px;
-                    background: var(--primary);
-                    border-radius: 2px;
-                    margin-top: 12px;
-                }
-
-            h2 {
-                margin-top: 36px;
-                margin-bottom: 14px;
-                color: var(--primary-dark);
-                font-size: 17px;
-                font-weight: 700;
-                padding-bottom: 8px;
-                border-bottom: 1px solid rgba(95,181,187,0.12);
-                letter-spacing: 0.3px;
-            }
-
-            p {
-                color: var(--muted);
-                line-height: 1.8;
+            .header-meta i {
                 font-size: 14px;
-                margin-top: 0;
-                margin-bottom: 16px;
             }
 
-            ul {
-                padding-left: 0;
-                list-style: none;
-                margin-top: 12px;
-                margin-bottom: 20px;
+        h1 {
+            color: var(--text);
+            margin: 0;
+            font-size: clamp(2.2rem, 5vw, 2.8rem);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .card-body-content {
+            padding: 40px 60px 60px 60px;
+        }
+
+        h2 {
+            margin-top: 45px;
+            margin-bottom: 18px;
+            color: var(--text);
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card h2::before {
+            counter-increment: section;
+            content: counter(section);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 8px;
+        }
+
+        p {
+            color: var(--muted);
+            line-height: 1.8;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+            p strong {
+                color: var(--text);
             }
 
-            li {
-                color: var(--muted);
-                line-height: 1.8;
-                font-size: 14px;
-                margin-bottom: 10px;
-                position: relative;
-                padding-left: 22px;
+        ul {
+            list-style: none;
+            margin: 16px 0 24px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        li {
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 15px;
+            position: relative;
+            padding-left: 28px;
+        }
+
+            li::before {
+                content: "";
+                position: absolute;
+                left: 6px;
+                top: 10px;
+                width: 6px;
+                height: 6px;
+                background: var(--primary);
+                border-radius: 50%;
             }
 
-                li::before {
-                    content: "✓";
-                    position: absolute;
-                    left: 0;
-                    color: var(--primary);
-                    font-weight: bold;
-                }
+            li strong {
+                color: var(--text);
+                font-weight: 600;
+            }
 
-            .link-style {
+        .link-style {
+            color: var(--primary-dark);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border-bottom: 1.5px dashed rgba(42, 169, 176, 0.4);
+            padding-bottom: 1px;
+        }
+
+            .link-style:hover {
+                color: var(--primary);
+                border-bottom-style: solid;
+                border-color: var(--primary);
+            }
+
+        .back-link-box {
+            margin-top: 50px;
+            padding-top: 24px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .back-link {
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+            .back-link:hover {
                 color: var(--primary-dark);
-                font-weight: 600;
-                text-decoration: none;
-                transition: var(--transition);
-                border-bottom: 1px dashed var(--primary);
-                padding-bottom: 1px;
+                transform: translateX(-5px);
             }
 
-                .link-style:hover {
-                    color: var(--primary);
-                    border-bottom-style: solid;
-                }
-
-            .back-link-box {
-                margin-top: 40px;
-                padding-top: 20px;
-                border-top: 1px solid rgba(95,181,187,0.1);
-            }
-
-            .back-link {
-                color: var(--muted);
-                font-weight: 600;
-                font-size: 13px;
-                text-decoration: none;
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                transition: var(--transition);
-            }
-
-                .back-link:hover {
-                    color: var(--primary-dark);
-                    transform: translateX(-4px);
-                }
-
-            @@media (max-width: 700px) {
-                .topbar {
-                    padding: 16px;
-                    flex-direction: column;
-                    height: auto;
-                    gap: 16px;
-                }
-
-                .nav-links {
-                    flex-direction: column;
-                    width: 100%;
-                    text-align: center;
-                    gap: 14px;
-                }
-
-                .card {
-                    padding: 30px 24px;
-                }
-
-                .page {
-                    margin: 20px auto 40px;
-                }
-            }
     </style>
-</head>
-<body>
+}
 
-    <header class="topbar">
-        <a asp-controller="Home" asp-action="Index" class="logo-link">
-            <img src="~/assets/logo.png" alt="InterTrips logo" class="logo">
-        </a>
-
-        <ul class="nav-links">
-            <li><a asp-controller="Home" asp-action="Index">Početna</a></li>
-            <li><a asp-controller="Destinacije" asp-action="Index">Destinacije</a></li>
-            <li><a asp-controller="Home" asp-action="ONama">O nama</a></li>
-            <li><a asp-controller="Home" asp-action="Kontakt">Kontakt</a></li>
-
-            @if (User?.Identity?.IsAuthenticated == true)
-            {
-                <li><a asp-controller="Rezervacija" asp-action="Index">Moje rezervacije</a></li>
-            }
-
-            <li><a class="pill" asp-controller="Rezervacija" asp-action="Rezervacija">Rezerviraj</a></li>
-
-            @if (User?.Identity?.IsAuthenticated == true)
-            {
-                var profileHref = User.IsInRole("Admin") ? "/Administrator"
-                                : User.IsInRole("Agent") ? "/Agent"
-                                : "/Korisnik/Profil";
-
-                <li><a class="btn btn-gold" href="@profileHref">Profil (@User.Identity.Name)</a></li>
-            }
-            else
-            {
-                <li><a class="btn btn-gold" asp-controller="Account" asp-action="Login">Prijava</a></li>
-            }
-        </ul>
-    </header>
-
-    <main class="page">
-        <div class="card">
+<main class="page">
+    <div class="card">
+        <div class="page-header-block">
+            <div class="header-meta">
+                <i class="fa-solid fa-shield-halved"></i> Sigurnost podataka
+            </div>
             <h1>@ViewData["Title"]</h1>
+        </div>
 
+        <div class="card-body-content">
             <p>
                 Turistička agencija <strong>InterTrips d.o.o.</strong> izuzetno poštuje Vašu privatnost i posvećena je zaštiti Vaših ličnih podataka.
                 Ova Politika privatnosti objašnjava kako prikupljamo, koristimo, čuvamo i štitimo podatke koje nam povjerite prilikom korištenja naše platforme,
                 rezervacije aranžmana ili prijave na naš newsletter.
             </p>
 
-            <h2>1. Podaci koje prikupljamo</h2>
+            <h2>Podaci koje prikupljamo</h2>
             <p>U svrhu pružanja turističkih usluga i organizacije putovanja, prikupljamo sljedeće kategorije podataka:</p>
             <ul>
                 <li><strong>Osnovni identifikacijski podaci:</strong> Ime i prezime, adresa e-pošte i lozinka koje unosite prilikom registracije Vašeg korisničkog profila.</li>
                 <li><strong>Podaci o rezervacijama:</strong> Odabrana destinacija, paket aranžman, datum polaska i povratka, tip smještaja, te specifični zahtjevi vezani za putovanje.</li>
             </ul>
 
-            <h2>2. Svrha obrade podataka</h2>
+            <h2>Svrha obrade podataka</h2>
             <p>Vaše lične podatke obrađujemo isključivo u sljedeće svrhe:</p>
             <ul>
                 <li>Uspješno kreiranje, obrada, praćenje i upravljanje Vašim rezervacijama turističkih aranžmana.</li>
                 <li>Autentifikacija korisnika i omogućavanje pristupa panelu "Moje rezervacije" i korisničkom profilu.</li>
             </ul>
 
-            <h2>3. Dijeljenje podataka sa trećim stranama</h2>
+            <h2>Dijeljenje podataka sa trećim stranama</h2>
             <p>
                 InterTrips Vaše podatke ne prodaje niti neovlašteno ustupa trećim licima. Prosljeđivanje podataka vrši se isključivo onim partnerima čije je učešće neophodno za realizaciju Vašeg putovanja:
             </p>
@@ -318,15 +219,15 @@
                 <li>Prevoznicima (aviokompanije, autobuski prevoznici) radi izdavanja karata.</li>
             </ul>
 
-            <h2>4. Sigurnost i čuvanje podataka</h2>
+            <h2>Sigurnost i čuvanje podataka</h2>
             <p>
                 Primjenjujemo savremene tehničke i organizacijske mjere zaštite kako bismo osigurali da Vaši podaci budu zaštićeni od gubitka, zloupotrebe ili neovlaštenog pristupa. Vaši povjerljivi podaci za komunikaciju sa email serverima skladište se na sigurnim unutrašnjim lokacijama u sistemu (User Secrets).
             </p>
 
-            <h2>5. Vaša prava</h2>
+            <h2>Vaša prava</h2>
             <p>U skladu sa važećim propisima o zaštiti ličnih podataka, imate pravo da zatražite uvid u Vaše podatke, ispravku ili brisanje profila i povlačenje pristanka za newsletter.</p>
 
-            <h2>6. Kontakt i podrška</h2>
+            <h2>Kontakt i podrška</h2>
             <p>
                 Za sva pitanja možete nas kontaktirati direktno putem naše zvanične forme na stranici
                 <a asp-controller="Home" asp-action="Kontakt" class="link-style">Kontakt</a>.
@@ -334,11 +235,9 @@
 
             <div class="back-link-box">
                 <a asp-controller="Home" asp-action="Index" class="back-link">
-                    ← Nazad na početnu
+                    <i class="fa-solid fa-arrow-left"></i> Nazad na početnu
                 </a>
             </div>
         </div>
-    </main>
-
-</body>
-</html>
+    </div>
+</main>

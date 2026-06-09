@@ -23,14 +23,14 @@
                 --sidebar-bg: #0f172a;
                 --sidebar-text: #94a3b8;
                 --sidebar-active: #38bdf8;
-                --text-dark: #0f172a;
+                --text-dark: #1e293b;
                 --text-muted: #64748b;
                 --primary: #0ea5e9;
                 --primary-hover: #0284c7;
                 --border: #e2e8f0;
                 --card-bg: #ffffff;
-                --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
-                --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+                --shadow-input: 0 2px 4px rgba(0, 0, 0, 0.02);
                 --success: #10b981;
                 --danger: #ef4444;
             }
@@ -61,28 +61,38 @@
                 left: 0;
                 top: 0;
                 z-index: 100;
+                box-shadow: 4px 0 20px rgba(15, 23, 42, 0.15);
             }
 
                 .sidebar .logo-area {
-                    padding: 8px 12px 32px;
+                    padding: 8px 12px 28px;
                     border-bottom: 1px solid #1e293b;
                     margin-bottom: 24px;
                 }
 
             .sidebar-logo-text {
                 font-size: 20px;
-                font-weight: 700;
+                font-weight: 800;
                 color: #ffffff;
                 text-decoration: none;
                 letter-spacing: 1.5px;
                 text-transform: uppercase;
-                display: block;
+                display: flex;
+                align-items: center;
+                gap: 10px;
             }
+
+                .sidebar-logo-text::before {
+                    content: "\f5b0";
+                    font-family: "Font Awesome 6 Free";
+                    font-weight: 900;
+                    color: var(--sidebar-active);
+                }
 
             .nav-links {
                 display: flex;
                 flex-direction: column;
-                gap: 4px;
+                gap: 6px;
                 flex-grow: 1;
             }
 
@@ -103,12 +113,17 @@
                     margin-right: 12px;
                     font-size: 16px;
                     text-align: center;
+                    transition: transform 0.2s;
                 }
 
                 .nav-item:hover {
                     background: #1e293b;
                     color: #fff;
                 }
+
+                    .nav-item:hover i {
+                        transform: translateX(2px);
+                    }
 
                 .nav-item.active {
                     background: rgba(14, 165, 233, 0.15);
@@ -124,51 +139,60 @@
             .logout-btn-nav {
                 width: 100%;
                 background: transparent;
-                border: 1px solid rgba(239, 68, 68, 0.25);
-                color: #ef4444;
-                padding: 10px;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+                color: #f87171;
+                padding: 12px;
                 border-radius: 8px;
                 cursor: pointer;
                 font-weight: 600;
                 font-size: 13px;
                 transition: all 0.2s;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 8px;
             }
 
                 .logout-btn-nav:hover {
                     background: rgba(239, 68, 68, 0.1);
+                    border-color: #ef4444;
+                    color: #ef4444;
                 }
 
             .main-content {
                 margin-left: 260px;
                 flex-grow: 1;
-                padding: 40px 48px;
-                max-width: 900px;
+                padding: 40px 50px;
+                max-width: 1000px;
+                width: 100%;
             }
 
             .dash-header {
-                margin-bottom: 32px;
+                margin-bottom: 36px;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                border-bottom: 1px solid #e2e8f0;
+                padding-bottom: 20px;
             }
 
                 .dash-header h1 {
-                    font-size: 26px;
+                    font-size: 28px;
                     font-weight: 700;
-                    color: var(--text-dark);
+                    color: #0f172a;
                     letter-spacing: -0.5px;
                 }
 
                 .dash-header p {
                     color: var(--text-muted);
                     font-size: 14px;
-                    margin-top: 4px;
+                    margin-top: 6px;
                 }
 
             .btn-secondary-top {
                 display: inline-flex;
                 align-items: center;
-                padding: 10px 16px;
+                padding: 10px 18px;
                 background: #fff;
                 border: 1px solid var(--border);
                 border-radius: 8px;
@@ -176,70 +200,83 @@
                 font-size: 13px;
                 font-weight: 600;
                 text-decoration: none;
-                box-shadow: var(--shadow);
-                transition: background 0.2s;
+                box-shadow: var(--shadow-input);
+                transition: all 0.2s;
             }
 
                 .btn-secondary-top:hover {
-                    background: #f8fafc;
+                    background: #f1f5f9;
+                    border-color: #cbd5e1;
                 }
-
-            .alert {
-                padding: 14px 20px;
-                border-radius: 8px;
-                margin-bottom: 24px;
-                font-size: 14px;
-                font-weight: 500;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-
-            .alert-danger {
-                background: #fef2f2;
-                color: #991b1b;
-                border: 1px solid #fca5a5;
-            }
 
             .card {
                 background: var(--card-bg);
                 border: 1px solid var(--border);
-                border-radius: 12px;
+                border-radius: 16px;
                 box-shadow: var(--shadow);
-                padding: 28px;
+                padding: 32px;
             }
 
                 .card h2 {
                     font-size: 18px;
                     font-weight: 600;
-                    color: var(--text-dark);
+                    color: #0f172a;
                     margin-bottom: 24px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
                 }
 
+            .form-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            .full-width {
+                grid-column: span 2;
+            }
+
             .form-group {
-                margin-bottom: 16px;
+                margin-bottom: 4px;
             }
 
             .field-label {
                 display: block;
-                font-size: 12px;
-                font-weight: 600;
-                color: var(--text-dark);
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--text-muted);
                 margin-bottom: 6px;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
             }
+
+            .input-wrapper {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+                .input-wrapper i {
+                    position: absolute;
+                    left: 14px;
+                    color: #94a3b8;
+                    font-size: 15px;
+                    pointer-events: none;
+                }
 
             .input, .select {
                 width: 100%;
                 background: #fff;
                 border: 1px solid var(--border);
-                color: var(--text-dark);
+                color: #0f172a;
                 outline: none;
                 border-radius: 8px;
-                height: 42px;
-                padding: 0 14px;
+                height: 44px;
+                padding: 0 14px 0 40px; 
                 font-size: 14px;
-                transition: all 0.15s ease-in-out;
+                transition: all 0.2s ease-in-out;
                 font-family: inherit;
+                box-shadow: var(--shadow-input);
             }
 
             .select {
@@ -254,25 +291,47 @@
 
                 .input:focus, .select:focus {
                     border-color: var(--primary);
-                    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+                    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12), var(--shadow-input);
+                    background-color: #fff;
                 }
 
             .field-validation-error {
                 color: var(--danger);
                 font-size: 12px;
                 font-weight: 500;
-                margin-top: 4px;
+                margin-top: 6px;
                 display: block;
+            }
+
+            .alert {
+                padding: 14px 20px;
+                border-radius: 8px;
+                margin-bottom: 24px;
+                font-size: 14px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                box-shadow: var(--shadow-input);
+            }
+
+            .alert-danger {
+                background: #fef2f2;
+                color: #991b1b;
+                border: 1px solid #fee2e2;
             }
 
             .form-actions {
                 display: flex;
+                justify-content: flex-end;
                 gap: 12px;
-                margin-top: 24px;
+                margin-top: 32px;
+                padding-top: 20px;
+                border-top: 1px solid #e2e8f0;
             }
 
             .main-btn {
-                flex: 1;
+                padding: 0 24px;
                 height: 44px;
                 border-radius: 8px;
                 border: none;
@@ -281,11 +340,22 @@
                 font-size: 14px;
                 background-color: var(--primary);
                 color: #fff;
-                transition: background 0.2s;
+                transition: all 0.2s;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                box-shadow: 0 2px 4px rgba(14, 165, 233, 0.2);
             }
 
                 .main-btn:hover {
                     background-color: var(--primary-hover);
+                    box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3);
+                }
+
+                .main-btn:disabled {
+                    background-color: #94a3b8;
+                    cursor: not-allowed;
+                    box-shadow: none;
                 }
 
             .cancel-btn {
@@ -301,11 +371,12 @@
                 font-size: 14px;
                 font-weight: 600;
                 text-decoration: none;
-                transition: background 0.2s;
+                transition: all 0.2s;
             }
 
                 .cancel-btn:hover {
                     background: #f1f5f9;
+                    border-color: #cbd5e1;
                 }
 
             @@media (max-width: 1024px) {
@@ -314,13 +385,32 @@
                     padding: 24px 8px;
                 }
 
-                    .sidebar .logo-area, .sidebar .nav-item span, .sidebar .logout-btn-nav {
+                    .sidebar .logo-area, .sidebar .nav-item span, .sidebar .logout-btn-nav span {
                         display: none;
                     }
 
                 .main-content {
                     margin-left: 70px;
                     padding: 32px 24px;
+                }
+            }
+
+           @@media (max-width: 768px) {
+                .form-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .full-width {
+                    grid-column: span 1;
+                }
+
+                .form-actions {
+                    flex-direction: column-reverse;
+                }
+
+                .cancel-btn, .main-btn {
+                    width: 100%;
+                    justify-content: center;
                 }
             }
     </style>
@@ -365,7 +455,9 @@
         <div class="sidebar-footer">
             <form method="post" action="/Account/Logout">
                 @Html.AntiForgeryToken()
-                <button class="logout-btn-nav" type="submit">Odjavi se</button>
+                <button class="logout-btn-nav" type="submit">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Odjavi se</span>
+                </button>
             </form>
         </div>
     </aside>
@@ -391,56 +483,77 @@
         }
 
         <div class="card">
-            <h2>Podaci o letu</h2>
+            <h2><i class="fa-solid fa-pen-to-square" style="color: var(--primary);"></i> Podaci o letu</h2>
+
             <form id="letEditForm" asp-controller="Administrator" asp-action="LetEdit" method="post">
                 @Html.AntiForgeryToken()
-
                 <input type="hidden" asp-for="Id" />
 
-                <div asp-validation-summary="ModelOnly" style="color: var(--danger); font-size: 13px; font-weight: 600; margin-bottom: 15px;"></div>
+                <div asp-validation-summary="ModelOnly" style="color: var(--danger); font-size: 13px; font-weight: 600; margin-bottom: 20px;"></div>
 
-                <div class="form-group">
-                    <label class="field-label">BROJ LETA</label>
-                    <input class="input" id="inputBrojLeta" asp-for="BrojLeta" type="text" maxlength="20" required placeholder="Npr. JU-100">
-                    <span asp-validation-for="BrojLeta" class="field-validation-error"></span>
-                </div>
+                <div class="form-grid">
 
-                <div class="form-group">
-                    <label class="field-label">POLAZAK SA</label>
-                    <input class="input" id="inputPolazak" asp-for="Polazak" type="text" maxlength="100" required placeholder="Npr. Aerodrom Sarajevo (SJJ)">
-                    <span asp-validation-for="Polazak" class="field-validation-error"></span>
-                </div>
+                    <div class="form-group">
+                        <label class="field-label">Broj leta</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-hashtag"></i>
+                            <input class="input" id="inputBrojLeta" asp-for="BrojLeta" type="text" maxlength="20" required placeholder="Npr. JU-100">
+                        </div>
+                        <span asp-validation-for="BrojLeta" class="field-validation-error"></span>
+                    </div>
 
-                <div class="form-group">
-                    <label class="field-label">AVIOKOMPANIJA</label>
-                    <input class="input" id="inputAviokompanija" asp-for="Aviokompanija" type="text" maxlength="100" required placeholder="Npr. Turkish Airlines">
-                    <span asp-validation-for="Aviokompanija" class="field-validation-error"></span>
-                </div>
+                    <div class="form-group">
+                        <label class="field-label">Aviokompanija</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-building"></i>
+                            <input class="input" id="inputAviokompanija" asp-for="Aviokompanija" type="text" maxlength="100" required placeholder="Npr. Turkish Airlines">
+                        </div>
+                        <span asp-validation-for="Aviokompanija" class="field-validation-error"></span>
+                    </div>
 
-                <div class="form-group">
-                    <label class="field-label">ODREDIŠTE (DESTINACIJA)</label>
-                    <select class="select" asp-for="Odrediste" required id="selectOdrediste">
-                        <option value="">-- Odaberite destinaciju --</option>
-                        @if (destinacije != null && destinacije.Any())
-                        {
-                            foreach (var d in destinacije)
-                            {
-                                <option value="@d.Naziv">@d.Naziv (@d.Drzava)</option>
-                            }
-                        }
-                    </select>
-                    <span asp-validation-for="Odrediste" class="field-validation-error"></span>
-                </div>
+                    <div class="form-group full-width">
+                        <label class="field-label">Polazak sa</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-plane-departure"></i>
+                            <input class="input" id="inputPolazak" asp-for="Polazak" type="text" maxlength="100" required placeholder="Npr. Aerodrom Sarajevo (SJJ)">
+                        </div>
+                        <span asp-validation-for="Polazak" class="field-validation-error"></span>
+                    </div>
 
-                <div class="form-group">
-                    <label class="field-label">SLOBODNA SJEDIŠTA (KAPACITET)</label>
-                    <input class="input" id="inputSlobodnaSjedista" asp-for="SlobodnaSjedista" type="number" min="0" max="1000" step="1" required>
-                    <span asp-validation-for="SlobodnaSjedista" class="field-validation-error"></span>
+                    <div class="form-group">
+                        <label class="field-label">Odredište (Destinacija)</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-plane-arrival"></i>
+                            <select class="select" asp-for="Odrediste" required id="selectOdrediste">
+                                <option value="">-- Odaberite destinaciju --</option>
+                                @if (destinacije != null && destinacije.Any())
+                                {
+                                    foreach (var d in destinacije)
+                                    {
+                                        <option value="@d.Naziv">@d.Naziv (@d.Drzava)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <span asp-validation-for="Odrediste" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">Slobodna sjedišta (Kapacitet)</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-chair"></i>
+                            <input class="input" id="inputSlobodnaSjedista" asp-for="SlobodnaSjedista" type="number" min="0" max="1000" step="1" required>
+                        </div>
+                        <span asp-validation-for="SlobodnaSjedista" class="field-validation-error"></span>
+                    </div>
+
                 </div>
 
                 <div class="form-actions">
                     <a href="/Administrator/Letovi" class="cancel-btn">Otkaži</a>
-                    <button class="main-btn" type="submit" id="submitBtn">Spasi izmjene</button>
+                    <button class="main-btn" type="submit" id="submitBtn">
+                        <i class="fa-solid fa-floppy-disk"></i> Spasi izmjene
+                    </button>
                 </div>
             </form>
         </div>
@@ -473,7 +586,7 @@
 
         if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerText = "Spašavanje u toku...";
+        submitBtn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Spašavanje u toku...";
         }
         });
     </script>

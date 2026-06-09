@@ -69,6 +69,7 @@ public class PlanPutovanjaController : Controller
                 .ThenInclude(pk => pk!.Destinacija)
             .Include(p => p.Stavke)
             .FirstOrDefaultAsync(p => p.PaketId == paketId);
+        if (plan == null) return NotFound();
 
         return View(plan);
     }

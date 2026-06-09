@@ -50,7 +50,7 @@
                                 }
                                 else if (!string.IsNullOrEmpty(n.TipNotifikacije) && (n.TipNotifikacije.Contains("Otkazivanje") || n.TipNotifikacije.Contains("Otkazana")))
                                 {
-                                    <span style="color: #c92a2a;">Admin otkazao rezervaciju @(n.Rezervacija?.Paket?.Destinacija != null ? $"za {n.Rezervacija.Paket.Destinacija.Naziv}" : "")</span>
+                                    <span style="color: #c92a2a;">Otkazana rezervacija @(n.Rezervacija?.Paket?.Destinacija != null ? $"za {n.Rezervacija.Paket.Destinacija.Naziv}" : "")</span>
                                 }
                                 else
                                 {
