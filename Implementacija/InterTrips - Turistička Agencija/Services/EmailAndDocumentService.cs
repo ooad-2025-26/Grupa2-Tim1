@@ -1,6 +1,6 @@
 ﻿using InterTrips___Turistička_Agencija.Data;
 using InterTrips___Turistička_Agencija.Models;
-using InterTrips___Turistička_Agencija.Enums; 
+using InterTrips___Turistička_Agencija.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using QuestPDF.Fluent;
@@ -28,10 +28,12 @@ namespace InterTrips___Turistička_Agencija.Services
 
         public async Task<bool> PosaljiEmailSaLogomAsync(string primalac, string naslov, string sadrzaj, int? rezervacijaId, string tip)
         {
+            primalac = "amelaobhodas2@gmail.com";
+
             var log = new LogNotifikacija
             {
                 RezervacijaId = rezervacijaId,
-                EmailPrimaoca = primalac,
+                EmailPrimaoca = primalac, 
                 TipNotifikacije = tip,
                 VrijemeSlanja = DateTime.Now,
                 Procitana = false
@@ -41,8 +43,8 @@ namespace InterTrips___Turistička_Agencija.Services
             {
                 using var poruka = new MailMessage();
 
-                string senderEmail = _configuration["EmailSettings:SenderEmail"] ?? "intertrips2@gmail.com";
-                string appPassword = _configuration["EmailSettings:AppPassword"] ?? "mcslzibvvzoatmnw";
+                string senderEmail = _configuration["EmailSettings:SenderEmail"] ?? "amelaobhodas2@gmail.com";
+                string appPassword = _configuration["EmailSettings:AppPassword"] ?? "bpryrmvxwohfzodx";
 
                 poruka.To.Add(new MailAddress(primalac));
                 poruka.From = new MailAddress(senderEmail, "InterTrips Agencija");
@@ -81,7 +83,7 @@ namespace InterTrips___Turistička_Agencija.Services
             }
         }
 
-        public byte[] GenerisiPdfDokument(string naslovDokumenta, Rezervacija rezervacija, string qrCodeBase64)
+        public byte[] GenerisiPdfDokument(string naslovDokumenta, Rezervacija rezervacija)
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
@@ -92,12 +94,12 @@ namespace InterTrips___Turistička_Agencija.Services
             string datumIzdavanja = DateTime.Now.ToString("dd.MM.yyyy.");
 
             string statusAranzmana = "PLAĆENO (Potvrđeno)";
-            string statusBoja = "#10b981"; 
+            string statusBoja = "#10b981";
 
             if (rezervacija.Status == StatusRezervacije.Otkazana)
             {
                 statusAranzmana = "OTKAZANO";
-                statusBoja = "#dc3545"; 
+                statusBoja = "#dc3545";
             }
 
             string nazivPaketa = rezervacija.Paket?.Naziv ?? "Nije specificirano";
@@ -143,25 +145,11 @@ namespace InterTrips___Turistička_Agencija.Services
                                 col.Item().Text("Turistička agencija").FontSize(9).FontColor("#6f8a90");
                             });
 
-                            row.ConstantItem(220).AlignRight().Row(qrRow =>
+                            row.RelativeItem().AlignRight().Column(col =>
                             {
-                                qrRow.RelativeItem().Column(col =>
-                                {
-                                    col.Item().Text(rezervacija.Status == StatusRezervacije.Otkazana ? "DOKUMENT OTKAZAN" : "POTVRDA REZERVACIJE I ITINERER")
-                                        .FontSize(11).SemiBold().FontColor(statusBoja)
-                                        .AlignRight();
-                                });
-
-                                if (!string.IsNullOrEmpty(qrCodeBase64) && rezervacija.Status != StatusRezervacije.Otkazana)
-                                {
-                                    try
-                                    {
-                                        qrRow.ConstantItem(10);
-                                        byte[] qrImageBytes = Convert.FromBase64String(qrCodeBase64);
-                                        qrRow.ConstantItem(60).Height(60).Image(qrImageBytes);
-                                    }
-                                    catch { }
-                                }
+                                col.Item().Text(rezervacija.Status == StatusRezervacije.Otkazana ? "DOKUMENT OTKAZAN" : "POTVRDA REZERVACIJE I ITINERER")
+                                    .FontSize(11).SemiBold().FontColor(statusBoja)
+                                    .AlignRight();
                             });
                         });
 

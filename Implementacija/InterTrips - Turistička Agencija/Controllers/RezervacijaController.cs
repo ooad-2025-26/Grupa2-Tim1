@@ -558,19 +558,10 @@ namespace InterTrips___Turistička_Agencija.Controllers
             if (rezervacija == null) return NotFound("Rezervacija nije pronađena.");
 
             string resCode = $"IT-{rezervacija.Id:D4}-{rezervacija.DatumPolaska.Year}";
-            string verifikacijaUrl = $"https://intertrips.ba/Verifikacija/Rezervacija/{rezervacija.Id}";
-
-            string base64Qr = string.Empty;
-            using (var qrGenerator = new QRCoder.QRCodeGenerator())
-            using (var qrCodeData = qrGenerator.CreateQrCode(verifikacijaUrl, QRCoder.QRCodeGenerator.ECCLevel.H))
-            using (var qrCode = new QRCoder.PngByteQRCode(qrCodeData))
-            {
-                byte[] qrBytes = qrCode.GetGraphic(20);
-                base64Qr = Convert.ToBase64String(qrBytes);
-            }
 
             var emailService = HttpContext.RequestServices.GetRequiredService<EmailAndDocumentService>();
-            byte[] pdfBytes = emailService.GenerisiPdfDokument($"POTVRDA_{resCode}", rezervacija, base64Qr);
+
+            byte[] pdfBytes = emailService.GenerisiPdfDokument($"POTVRDA_{resCode}", rezervacija);
 
             return File(pdfBytes, "application/pdf", $"Potvrda_InterTrips_{resCode}.pdf");
         }

@@ -657,6 +657,8 @@
                                             }).ToList() ?? new List<object>();
 
                                             var jsonPutnici = System.Text.Json.JsonSerializer.Serialize(putniciList);
+                                            string tipPrevoza = (r.Paket?.Let != null) ? "Avion" : "Autobus";
+
                                         }
                                         <button class="btn-pogledaj-detalje"
                                                 data-id="@r.Id"
@@ -669,6 +671,7 @@
                                                 data-hotel="@(r.Paket?.Hotel != null ? r.Paket.Hotel.Naziv : "Nije uključeno")"
                                                 data-hotelid="@(r.Paket?.Hotel != null ? r.Paket.Hotel.Id : 0)"
                                                 data-let="@(r.Paket?.Let != null ? $"{r.Paket.Let.Aviokompanija} ({r.Paket.Let.BrojLeta})" : "Nije uključeno")"
+                                                data-prevoz="@tipPrevoza"
                                                 data-putnici="@Html.Raw(System.Web.HttpUtility.HtmlAttributeEncode(jsonPutnici))"
                                                 style="cursor: pointer;">
                                             <i class="fa-solid fa-eye"></i> Detalji
@@ -740,6 +743,11 @@
                             </div>
                         </div>
                         <div class="info-item">
+                            <div class="info-label">Vrsta prevoza</div>
+                            <div class="info-value" id="modalPrevoz"></div>
+                        </div>
+
+                        <div class="info-item">
                             <div class="info-label">Informacije o letu</div>
                             <div class="info-value" id="modalLet"></div>
                         </div>
@@ -747,7 +755,7 @@
                 </div>
 
                 <div class="details-section">
-                    <h4>Prijavljeni putnici (Manifest)</h4>
+                    <h4>Prijavljeni putnici</h4>
                     <div class="passengers-list" id="modalPutniciLista" style="display: flex; flex-direction: column; gap: 12px;">
                     </div>
                 </div>
@@ -769,6 +777,7 @@
                 const modalDestinacija = document.getElementById("modalDestinacija");
                 const modalPolazak = document.getElementById("modalPolazak");
                 const modalPovratak = document.getElementById("modalPovratak");
+                const modalPrevoz = document.getElementById("modalPrevoz");
                 const modalLet = document.getElementById("modalLet");
                 const modalPutniciLista = document.getElementById("modalPutniciLista");
 
@@ -803,6 +812,7 @@
                         const status = this.getAttribute("data-status");
                         const hotel = this.getAttribute("data-hotel");
                         const hotelId = parseInt(this.getAttribute('data-hotelid')) || 0;
+                        const prevoz = this.getAttribute("data-prevoz");
                         const letInfo = this.getAttribute("data-let");
 
                         let putniciData = [];
@@ -822,6 +832,11 @@
                         modalLet.innerText = letInfo;
                         hotelNazivSpan.innerText = hotel;
 
+                        if (prevoz === "Avion") {
+                            modalPrevoz.innerHTML = `<i class="fa-solid fa-plane" style="color: #0ea5e9;"></i> Avion`;
+                        } else {
+                            modalPrevoz.innerHTML = `<i class="fa-solid fa-bus" style="color: #475569;"></i> Autobus`;
+                        }
                         if (hotelId > 0) {
                             hotelLink.href = `/Administrator/Hoteli/Details/${hotelId}`;
                             hotelLink.style.display = "inline-flex";
