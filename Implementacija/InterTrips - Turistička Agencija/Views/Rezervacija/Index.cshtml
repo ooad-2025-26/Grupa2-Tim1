@@ -120,8 +120,6 @@
     gap: 12px;
     }
 
-   
-
     .res-card-details {
     background: #fafcfb;
     border-top: 1px dashed rgba(42, 169, 176, 0.18);
@@ -272,6 +270,27 @@
     background-color: #a4bcc0;
     }
 
+    .btn-plan {
+    background-color: #2aa9b0;
+    color: #0a2228;
+    border: none;
+    padding: 10px 20px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    }
+
+    .btn-plan:hover {
+    background-color: #1e7f88;
+    color: #ffffff;
+    }
+
     .btn-cancel {
     background-color: #fff;
     color: #dc3545;
@@ -342,7 +361,7 @@
 
     .res-actions-wrapper {
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-wrap: wrap;
     }
     }
@@ -357,7 +376,7 @@
     }
 
     .status-badge.status-ceka {
-    background-color: #e6f7f0; 
+    background-color: #e6f7f0;
     color: #065f46;
     border: 1px solid #a7f3d0;
     padding: 4px 10px;
@@ -411,7 +430,7 @@
     async function renderReservations() {
     try {
     const response = await fetch('/Rezervacija/GetMojeRezervacije');
-    const data = await response.json(); 
+    const data = await response.json();
     const list = document.getElementById('reservationsList');
     const empty = document.getElementById('emptyMsg');
 
@@ -446,6 +465,8 @@
     let statusTekst = jeOtkazana ? 'Otkazano' : 'PLAĆENO (Potvrđeno)';
     let sakrijOtkaziDugme = jeOtkazana ? 'display: none;' : '';
 
+    const paketId = r.paketId || (r.paket ? r.paket.id : 0);
+
     return `
     <div class="reservation-panel" id="panel_${r.id}" style="${jeOtkazana ? 'opacity: 0.85; border-left: 4px solid #dc3545;' : ''}">
     <div class="res-card-header">
@@ -466,9 +487,14 @@
     </div>
     </div>
     <div class="res-actions-wrapper">
+    <a href="/PlanPutovanja/Preview?paketId=${paketId}" target="_blank" class="btn-download">
+    <i class="fa-solid fa-map"></i> Plan putovanja
+    </a>
+
     <button class="btn-download" onclick="preuzmiPdf(${r.id}, this)">
     <i class="fa-solid fa-file-pdf"></i> ${jeOtkazana ? 'Preuzmi Otkazanu Rezervaciju' : 'Preuzmi Rezervaciju'}
     </button>
+
     <button class="btn-cancel" style="${sakrijOtkaziDugme}" onclick="otkaziAranzman(${r.id}, '${resCode}')">
     <i class="fa-solid fa-trash-can"></i> Otkaži putovanje
     </button>
@@ -506,7 +532,6 @@
     </div>
     </div> `;
     }).join('');
-
 
     } catch (e) {
     console.error("Greška pri renderovanju rezervacija:", e);
