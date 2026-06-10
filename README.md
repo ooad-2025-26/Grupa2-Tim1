@@ -32,7 +32,7 @@ Aplikacija koristi seedovane korisničke naloge za testiranje.
 
 | Uloga | E-mail adresa | Lozinka | Opis |
 | --- | --- | --- | --- |
-| Administrator | `admin@intertrips.ba` | `admin123` | Pristup admin panelu i upravljanje sistemom |
+| Administrator | `admin@intertrips.ba` | ` ` | Pristup admin panelu i upravljanje sistemom |
 | Turistički agent | `agent@intertrips.ba` | `agent123` | Upravljanje turističkim paketima i ponudom |
 | Klijent / turist | `test@intertrips.ba` | `password123` | Kreiranje i pregled rezervacija |
 
