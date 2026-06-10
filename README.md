@@ -38,6 +38,16 @@ Aplikacija koristi seedovane korisničke naloge za testiranje.
 
 ---
 
+
+## Demo aplikacije
+
+Aplikacija je dostupna online na sljedećoj adresi:
+
+🌐 **InterTrips Web Aplikacija**  
+http://aobhodas2-001-site1.site4future.com/
+
+
+---
 ##  Konekcijski string
 
 Za povezivanje sa bazom podataka koristi se sljedeći connection string:
