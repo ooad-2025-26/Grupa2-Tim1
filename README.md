@@ -13,8 +13,16 @@
 Aplikacija je razvijena kao projektni zadatak i obuhvata funkcionalnosti za **klijente**, **turističke agente** i **administratore**.
 
 
+---
+## Demo aplikacije
+
+Aplikacija je dostupna online na sljedećoj adresi:
+
+🌐 **InterTrips Web Aplikacija**  
+http://aobhodas2-001-site1.site4future.com/
 
 ---
+
 
 ## Uloge korisnika
 
@@ -39,13 +47,15 @@ Aplikacija koristi seedovane korisničke naloge za testiranje.
 ---
 
 
-## Demo aplikacije
 
-Aplikacija je dostupna online na sljedećoj adresi:
+## Članovi tima
 
-🌐 **InterTrips Web Aplikacija**  
-http://aobhodas2-001-site1.site4future.com/
+Projekt je razvijen od strane sljedećih članova tima:
 
+* Amela Obhođaš
+* Hamza Jašarević
+* Zerina Avdušinović
+* Benjamin Bikić
 
 ---
 ##  Konekcijski string
@@ -53,8 +63,9 @@ http://aobhodas2-001-site1.site4future.com/
 Za povezivanje sa bazom podataka koristi se sljedeći connection string:
 
 ```json
-{
+
   "ConnectionStrings": {
     "DefaultConnection": "Data Source=SQL1004.site4now.net;Initial Catalog=db_ac97b2_intertrips;User Id=db_ac97b2_intertrips_admin;Password=" ";Encrypt=True;TrustServerCertificate=True;"
   }
-}
+
+
