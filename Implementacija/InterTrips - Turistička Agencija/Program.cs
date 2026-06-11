@@ -34,9 +34,10 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    options.LoginPath = "/Identity/Account/Login";
-    options.LogoutPath = "/Identity/Account/Logout";
-    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
 builder.Services.AddRazorPages();
@@ -112,11 +113,13 @@ else
 }
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+
 app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseStaticFiles(); 
 
 app.MapControllerRoute(
     name: "default",
