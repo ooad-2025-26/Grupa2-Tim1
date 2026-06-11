@@ -2,7 +2,9 @@
 
 **Sistem za upravljanje turističkom agencijom koji omogućava rezervaciju putovanja, upravljanje paketima i finansijama te generisanje planova putovanja.**
 
-![InterTrips Logo](https://github.com/user-attachments/assets/d2d97bfc-5d9e-4676-845d-1460f6837ef3)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/d2d97bfc-5d9e-4676-845d-1460f6837ef3" alt="InterTrips Logo" width="50%">
+</p>
 
 ---
 
