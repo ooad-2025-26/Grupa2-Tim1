@@ -16,9 +16,9 @@ Aplikacija je razvijena kao projektni zadatak i obuhvata funkcionalnosti za **kl
 
 
 ---
-## Demo aplikacije
+## Deployment aplikacije
 
-Aplikacija je dostupna online na sljedećoj adresi:
+Aplikacija je dostupna na sljedećoj adresi:
 
 🌐 **InterTrips Web Aplikacija**  
 http://aobhodas2-001-site1.site4future.com/
@@ -38,7 +38,6 @@ Sistem podržava sljedeće korisničke uloge:
 
 ## Testni podaci za prijavu
 
-Aplikacija koristi seedovane korisničke naloge za testiranje.
 
 | Uloga | E-mail adresa | Lozinka | Opis |
 | --- | --- | --- | --- |
